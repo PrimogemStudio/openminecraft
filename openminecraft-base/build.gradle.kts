@@ -2,12 +2,8 @@ plugins {
     kotlin("jvm")
 }
 
-group = "com.primogemstudio"
+group = "${properties["openminecraft.group"]}"
 version = "${properties["openminecraft.version"]}"
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
     implementation("org.fusesource.jansi:jansi:${properties["openminecraft.jansi_version"]}")

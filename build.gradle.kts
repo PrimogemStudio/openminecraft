@@ -1,12 +1,14 @@
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm").version("2.0.21")
 }
 
 version = "${properties["openminecraft.version"]}"
-group = "com.primogemstudio"
+group = "${properties["openminecraft.group"]}"
 
-repositories {
-    mavenCentral()
+allprojects {
+    repositories {
+        mavenCentral()
+    }
 }
 
 dependencies {

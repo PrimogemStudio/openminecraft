@@ -12,6 +12,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/openminecraft-base" />
+            <option value="$PROJECT_DIR$/openminecraft-vkengine" />
           </set>
         </option>
       </GradleProjectSettings>
