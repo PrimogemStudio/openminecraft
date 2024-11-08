@@ -1,5 +1,6 @@
 package com.primogemstudio
 
+import com.primogemstudio.utils.MemoryManager
 import com.primogemstudio.utils.TestLog
 import org.lwjgl.PointerBuffer
 import org.lwjgl.glfw.GLFW.*
@@ -21,7 +22,7 @@ var debugMessenger: Long? = null
 
 fun debugCallback(messageSeverity: Int, messageType: Int, pCallbackData: Long, pUserData: Long): Int {
     val callbackData = VkDebugUtilsMessengerCallbackDataEXT.create(pCallbackData)
-    println(callbackData.pMessageString())
+    println("Vulkan validation: ${callbackData.pMessageString()}")
     return VK_FALSE
 }
 
@@ -148,6 +149,8 @@ fun main() {
         vkInstance = VkInstance(vkInstancePtr.get(0), vkCreateInfo)
     }
     setupDebugMessenger()
+
+    MemoryManager.test()
 
     println(vkInstance)
     TestLog.log()
