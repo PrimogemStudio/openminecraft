@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" monitorInterval = "1">
+    <Appenders>
+        <Console name="SysOut" target="SYSTEM_OUT">
+            <PatternLayout pattern="%highlight{[%d{HH:mm:ss}] [%t/%level]: %msg%n}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan,TRACE=blue}" />
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="SysOut"/>
+        </Root>
+    </Loggers>
+</Configuration>
