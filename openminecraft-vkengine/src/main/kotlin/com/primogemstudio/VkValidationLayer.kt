@@ -14,7 +14,7 @@ import org.lwjgl.vulkan.VkLayerProperties
 
 @Suppress("ALL")
 class VkValidationLayer(
-    val instanceEngine: VkInstanceEngine,
+    instanceEngine: VkInstanceEngine,
     var enableValidationLayer: Boolean = true,
     val vkDebugCallback: VkDebugCallback? = null
 ) {
@@ -102,10 +102,16 @@ class VkValidationLayer(
         return debugCreateInfo
     }
 
-    fun vkInitArgs(stack: MemoryStack, initFunc: (PointerBuffer, Long) -> Unit) {
+    inline fun vkInitArgs(stack: MemoryStack, initFunc: (PointerBuffer, Long) -> Unit) {
         if (enableValidationLayer) initFunc(
             stack.mallocPointer(1).put(stack.UTF8("VK_LAYER_KHRONOS_validation")).rewind(),
             getDebugCreateInfo(stack).address()
+        )
+    }
+
+    inline fun vkDeviceCreateArgs(stack: MemoryStack, initFunc: (PointerBuffer) -> Unit) {
+        if (enableValidationLayer) initFunc(
+            stack.mallocPointer(1).put(stack.UTF8("VK_LAYER_KHRONOS_validation")).rewind()
         )
     }
 }

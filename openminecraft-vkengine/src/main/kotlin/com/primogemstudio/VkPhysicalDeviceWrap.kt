@@ -2,12 +2,13 @@ package com.primogemstudio
 
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryStack.stackPush
-import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.VK10.*
+import org.lwjgl.vulkan.VkInstance
+import org.lwjgl.vulkan.VkPhysicalDevice
+import org.lwjgl.vulkan.VkQueueFamilyProperties
 import java.util.stream.IntStream
 
-
-class VkPhysicalDeviceWrap(val vkDevice: VkPhysicalDevice, private val graphicsFamily: Int?) {
+class VkPhysicalDeviceWrap(val vkDevice: VkPhysicalDevice, val graphicsFamily: Int?) {
     companion object {
         fun fetchList(vkInstance: VkInstance): List<VkPhysicalDeviceWrap> {
             stackPush().use {

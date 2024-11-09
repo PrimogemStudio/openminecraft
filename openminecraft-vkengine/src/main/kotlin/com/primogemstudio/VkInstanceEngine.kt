@@ -1,12 +1,13 @@
 package com.primogemstudio
 
 import com.primogemstudio.utils.LoggerFactory
-import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.glfw.GLFW.glfwInit
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
-import org.lwjgl.vulkan.*
-import org.lwjgl.vulkan.EXTDebugUtils.*
 import org.lwjgl.vulkan.VK10.*
+import org.lwjgl.vulkan.VkApplicationInfo
+import org.lwjgl.vulkan.VkInstance
+import org.lwjgl.vulkan.VkInstanceCreateInfo
 import java.io.Closeable
 
 class VkInstanceEngine(
@@ -18,7 +19,8 @@ class VkInstanceEngine(
     private val logger = LoggerFactory.getLogger("VkInstanceEngine $appName")
 
     private var vkInstance: VkInstance? = null
-    private lateinit var vkValidationLayer: VkValidationLayer
+    private var vkValidationLayer: VkValidationLayer
+    private var vkPhysicalDevice: VkPhysicalDeviceWrap? = null
 
     init {
         val vkVer = appVer.split("-")[0].split(".").flatMap {
@@ -30,10 +32,17 @@ class VkInstanceEngine(
 
         vkValidationLayer = VkValidationLayer(this, enableValidationLayer, vkDebugCallback)
 
-        stackPush().use {
+        stackPush().use { stk ->
+            logger.info("GLFW Init...")
             glfwInit()
-            initVkInstance(it, appName, vkVer)
-            VkPhysicalDeviceWrap.fetchList(vkInstance!!)
+            logger.info("Vulkan Instance Init...")
+            initVkInstance(stk, appName, vkVer)
+            logger.info("Selecting Physical Device...")
+            vkPhysicalDevice = VkPhysicalDeviceWrap.fetchList(vkInstance!!).firstOrNull { it.suitable() }.let {
+                if (it == null) throw IllegalStateException("No suitable GPU was found")
+                it
+            }
+            logger.info(VkLogicalDeviceWrap.create(stk, vkPhysicalDevice!!, vkValidationLayer))
         }
     }
 
