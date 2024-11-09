@@ -2,7 +2,7 @@
 <Configuration status="INFO" monitorInterval = "1">
     <Appenders>
         <Console name="SysOut" target="SYSTEM_OUT">
-            <PatternLayout pattern="%highlight{[%d{HH:mm:ss}] [%t/%level]: %msg%n}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=cyan,TRACE=blue}" />
+            <PatternLayout pattern="%style{[%d{HH:mm:ss}]}{blue} %highlight{[%t/%level]}{FATAL=red, ERROR=red, WARN=yellow, INFO=green, DEBUG=green, TRACE=blue} %style{(%logger)}{cyan} %highlight{%msg%n}{FATAL=red, ERROR=red, WARN=normal, INFO=normal, DEBUG=normal, TRACE=normal}" />
         </Console>
     </Appenders>
     <Loggers>
