@@ -5,19 +5,20 @@ import org.lwjgl.PointerBuffer
 import org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
+import org.lwjgl.system.MemoryUtil.NULL
+import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.EXTDebugUtils.*
-import org.lwjgl.vulkan.VK10.VK_FALSE
-import org.lwjgl.vulkan.VK10.vkEnumerateInstanceLayerProperties
-import org.lwjgl.vulkan.VkDebugUtilsMessengerCallbackDataEXT
-import org.lwjgl.vulkan.VkDebugUtilsMessengerCreateInfoEXT
-import org.lwjgl.vulkan.VkLayerProperties
+import org.lwjgl.vulkan.VK10.*
+import java.io.Closeable
+import java.nio.LongBuffer
 
 @Suppress("ALL")
 class VkValidationLayer(
     instanceEngine: VkInstanceEngine,
+    private val instanceAccessor: () -> VkInstance,
     var enableValidationLayer: Boolean = true,
-    val vkDebugCallback: VkDebugCallback? = null
-) {
+    private val vkDebugCallback: VkDebugCallback? = null
+) : Closeable {
     companion object {
         private fun fetchVkLayers(): List<String> = stackPush().use { stack ->
             val layerCount = stack.ints(0)
@@ -30,6 +31,7 @@ class VkValidationLayer(
         }
     }
     private val logger = LoggerFactory.getLogger("VkValidationLayer ${instanceEngine.appName}")
+    private var debugMessenger: Long = 0
 
     init {
         val vkLayers = fetchVkLayers()
@@ -96,10 +98,53 @@ class VkValidationLayer(
             logCall("$type ${callbackData.pMessageString()}")
 
             vkDebugCallback?.invoke(severityT, type, callbackData)
-
             VK_FALSE
         }
         return debugCreateInfo
+    }
+
+    private fun createDebugUtilsMessengerEXT(
+        instance: VkInstance,
+        createInfo: VkDebugUtilsMessengerCreateInfoEXT,
+        allocationCallbacks: VkAllocationCallbacks?,
+        pDebugMessenger: LongBuffer
+    ): Int {
+        if (vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT") != NULL) {
+            return vkCreateDebugUtilsMessengerEXT(instance, createInfo, allocationCallbacks, pDebugMessenger)
+        }
+
+        return VK_ERROR_EXTENSION_NOT_PRESENT
+    }
+
+    private fun destroyDebugUtilsMessengerEXT(
+        instance: VkInstance,
+        debugMessenger: Long,
+        allocationCallbacks: VkAllocationCallbacks?
+    ) {
+        if (vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT") != NULL) {
+            vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, allocationCallbacks)
+        }
+    }
+
+    fun preInstance(stack: MemoryStack) {
+        if (!enableValidationLayer) return
+
+        val pDebugMessenger = stack.longs(VK_NULL_HANDLE)
+        if (createDebugUtilsMessengerEXT(
+                instanceAccessor(),
+                getDebugCreateInfo(stack),
+                null,
+                pDebugMessenger
+            ) != VK_SUCCESS
+        ) {
+            throw RuntimeException("Failed to set up debug messenger")
+        }
+
+        debugMessenger = pDebugMessenger[0]
+    }
+
+    override fun close() {
+        if (enableValidationLayer) destroyDebugUtilsMessengerEXT(instanceAccessor(), debugMessenger, null)
     }
 
     inline fun vkInitArgs(stack: MemoryStack, initFunc: (PointerBuffer, Long) -> Unit) {

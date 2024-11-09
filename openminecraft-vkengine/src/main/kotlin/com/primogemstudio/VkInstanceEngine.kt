@@ -2,6 +2,7 @@ package com.primogemstudio
 
 import com.primogemstudio.utils.LoggerFactory
 import org.lwjgl.glfw.GLFW.glfwInit
+import org.lwjgl.glfw.GLFW.glfwTerminate
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.vulkan.VK10.*
@@ -21,6 +22,7 @@ class VkInstanceEngine(
     private var vkInstance: VkInstance? = null
     private var vkValidationLayer: VkValidationLayer
     private var vkPhysicalDevice: VkPhysicalDeviceWrap? = null
+    private var vkLogicalDevice: VkLogicalDeviceWrap? = null
 
     init {
         val vkVer = appVer.split("-")[0].split(".").flatMap {
@@ -30,7 +32,7 @@ class VkInstanceEngine(
 
         if (vkVer.size < 3) throw IllegalArgumentException("Corrupt version!")
 
-        vkValidationLayer = VkValidationLayer(this, enableValidationLayer, vkDebugCallback)
+        vkValidationLayer = VkValidationLayer(this, { vkInstance!! }, enableValidationLayer, vkDebugCallback)
 
         stackPush().use { stk ->
             logger.info("GLFW Init...")
@@ -42,7 +44,10 @@ class VkInstanceEngine(
                 if (it == null) throw IllegalStateException("No suitable GPU was found")
                 it
             }
-            logger.info(VkLogicalDeviceWrap.create(stk, vkPhysicalDevice!!, vkValidationLayer))
+            logger.info("Creating Logical Device...")
+            vkLogicalDevice = VkLogicalDeviceWrap.create(stk, vkPhysicalDevice!!, vkValidationLayer)
+
+            vkValidationLayer.preInstance(stk)
         }
     }
 
@@ -76,6 +81,9 @@ class VkInstanceEngine(
     }
 
     override fun close() {
-
+        vkValidationLayer.close()
+        vkDestroyDevice(vkLogicalDevice!!.vkDevice, null)
+        vkDestroyInstance(vkInstance!!, null)
+        glfwTerminate()
     }
 }
