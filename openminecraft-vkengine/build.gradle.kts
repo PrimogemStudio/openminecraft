@@ -52,4 +52,8 @@ dependencies {
 
 kotlin {
     jvmToolchain(17)
+    compilerOptions {
+        verbose = true
+        allWarningsAsErrors = true
+    }
 }
