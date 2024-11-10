@@ -118,7 +118,8 @@ class VkInstanceEngine(
 
     override fun close() {
         vkValidationLayer.close()
-        vkLogicalDevice!!.destroy()
+        vkSwapChain!!.close()
+        vkLogicalDevice!!.close()
         vkDestroyInstance(vkInstance!!, null)
         glfwTerminate()
     }

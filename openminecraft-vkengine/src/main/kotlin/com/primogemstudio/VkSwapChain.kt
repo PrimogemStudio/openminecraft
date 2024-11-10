@@ -2,13 +2,10 @@ package com.primogemstudio
 
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
+import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.KHRSurface.*
 import org.lwjgl.vulkan.KHRSwapchain.*
 import org.lwjgl.vulkan.VK10.*
-import org.lwjgl.vulkan.VkExtent2D
-import org.lwjgl.vulkan.VkSurfaceCapabilitiesKHR
-import org.lwjgl.vulkan.VkSurfaceFormatKHR
-import org.lwjgl.vulkan.VkSwapchainCreateInfoKHR
 import java.io.Closeable
 import java.nio.IntBuffer
 import kotlin.math.max
@@ -21,6 +18,7 @@ class VkSwapChain(
 ) : Closeable {
     private var swapChain: Long = 0
     private var swapChainImages: List<Long> = listOf()
+    private var swapChainImageViews: List<Long> = listOf()
     private var swapChainImageFormat: Int = 0
     private var swapChainExtent: VkExtent2D? = null
 
@@ -81,6 +79,41 @@ class VkSwapChain(
 
             swapChainImageFormat = surfaceFormat.format()
             swapChainExtent = VkExtent2D.create().set(extent)
+
+            val swapChainImageViewsT = mutableListOf<Long>()
+            val pImageView = it.mallocLong(1)
+
+            for (swapChainImage in swapChainImages) {
+                val createInfo = VkImageViewCreateInfo.calloc(it).apply {
+                    sType(VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)
+                    image(swapChainImage)
+                    viewType(VK_IMAGE_VIEW_TYPE_2D)
+                    format(swapChainImageFormat)
+
+                    components().apply {
+                        r(VK_COMPONENT_SWIZZLE_IDENTITY)
+                        g(VK_COMPONENT_SWIZZLE_IDENTITY)
+                        b(VK_COMPONENT_SWIZZLE_IDENTITY)
+                        a(VK_COMPONENT_SWIZZLE_IDENTITY)
+                    }
+
+                    subresourceRange().apply {
+                        aspectMask(VK_IMAGE_ASPECT_COLOR_BIT)
+                        baseMipLevel(0)
+                        levelCount(1)
+                        baseArrayLayer(0)
+                        layerCount(1)
+                    }
+                }
+
+                if (vkCreateImageView(logicalDevice.vkDevice, createInfo, null, pImageView) != VK_SUCCESS) {
+                    throw RuntimeException("Failed to create image views")
+                }
+
+                swapChainImageViewsT.add(pImageView[0])
+            }
+
+            swapChainImageViews = swapChainImageViewsT
         }
     }
 
@@ -114,6 +147,7 @@ class VkSwapChain(
     }
 
     override fun close() {
+        swapChainImageViews.forEach { vkDestroyImageView(logicalDevice.vkDevice, it, null) }
         vkDestroySwapchainKHR(logicalDevice.vkDevice, swapChain, null)
     }
 }
