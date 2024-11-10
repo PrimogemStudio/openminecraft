@@ -72,4 +72,5 @@ class VkPhysicalDeviceWrap(val vkDevice: VkPhysicalDevice, val graphicsFamily: I
     }
 
     fun suitable(): Boolean = graphicsFamily != null && currentFamily != null
+    fun unique(): IntArray = intArrayOf(graphicsFamily!!, currentFamily!!).distinct().toIntArray()
 }

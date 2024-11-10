@@ -12,12 +12,17 @@ class VkLogicalDeviceWrap(val vkDevice: VkDevice, val vkGraphicsQueue: VkQueue, 
             physicalDevice: VkPhysicalDeviceWrap,
             validationLayer: VkValidationLayer
         ): VkLogicalDeviceWrap {
-            val queueCreateInfos = VkDeviceQueueCreateInfo.calloc(1, stack).let {
-                it.sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO)
-                it.queueFamilyIndex(physicalDevice.graphicsFamily!!)
-                it.pQueuePriorities(stack.floats(1.0f))
-                it
+            val fm = physicalDevice.unique()
+            val queueCreateInfos = VkDeviceQueueCreateInfo.calloc(fm.size, stack)
+
+            for (i in fm.indices) {
+                queueCreateInfos[i].apply {
+                    sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO)
+                    queueFamilyIndex(physicalDevice.graphicsFamily!!)
+                    pQueuePriorities(stack.floats(1.0f))
+                }
             }
+
             val deviceFeatures = VkPhysicalDeviceFeatures.calloc(stack)
             val createInfo = VkDeviceCreateInfo.calloc(stack).apply {
                 sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO)
