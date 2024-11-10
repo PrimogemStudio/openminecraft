@@ -3,8 +3,7 @@ package com.primogemstudio
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.vulkan.*
-import org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR
-import org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR
+import org.lwjgl.vulkan.KHRSurface.*
 import org.lwjgl.vulkan.KHRSwapchain.VK_KHR_SWAPCHAIN_EXTENSION_NAME
 import org.lwjgl.vulkan.VK10.*
 import java.nio.IntBuffer
@@ -94,12 +93,25 @@ class VkPhysicalDeviceWrap(
                 vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vkDevice, surface, capabilities!!)
 
                 val count = stack.ints(0)
+                vkGetPhysicalDeviceSurfaceFormatsKHR(vkDevice, surface, count, null)
 
+                if (count[0] != 0) {
+                    swapChainSupport.formats = VkSurfaceFormatKHR.malloc(count[0], stack)
+                    vkGetPhysicalDeviceSurfaceFormatsKHR(vkDevice, surface, count, swapChainSupport.formats)
+                }
+
+                vkGetPhysicalDeviceSurfacePresentModesKHR(vkDevice, surface, count, null)
+
+                if (count[0] != 0) {
+                    swapChainSupport.presentModes = stack.mallocInt(count[0])
+                    vkGetPhysicalDeviceSurfacePresentModesKHR(vkDevice, surface, count, swapChainSupport.presentModes)
+                }
             }
         }
     }
 
     fun suitable(): Boolean =
-        graphicsFamily != null && currentFamily != null && extensions.containsKey(VK_KHR_SWAPCHAIN_EXTENSION_NAME)
+        graphicsFamily != null && currentFamily != null && extensions.containsKey(VK_KHR_SWAPCHAIN_EXTENSION_NAME) && (swapChainSupport.formats?.hasRemaining()
+            ?: false) && (swapChainSupport.presentModes?.hasRemaining() ?: false)
     fun unique(): IntArray = intArrayOf(graphicsFamily!!, currentFamily!!).distinct().toIntArray()
 }
