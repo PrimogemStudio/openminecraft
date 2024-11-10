@@ -2,15 +2,19 @@ package com.primogemstudio
 
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryStack.stackPush
+import org.lwjgl.vulkan.*
+import org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceCapabilitiesKHR
 import org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR
+import org.lwjgl.vulkan.KHRSwapchain.VK_KHR_SWAPCHAIN_EXTENSION_NAME
 import org.lwjgl.vulkan.VK10.*
-import org.lwjgl.vulkan.VkInstance
-import org.lwjgl.vulkan.VkPhysicalDevice
-import org.lwjgl.vulkan.VkQueueFamilyProperties
 import java.nio.IntBuffer
 
-
-class VkPhysicalDeviceWrap(val vkDevice: VkPhysicalDevice, val graphicsFamily: Int?, val currentFamily: Int?) {
+class VkPhysicalDeviceWrap(
+    val vkDevice: VkPhysicalDevice,
+    val surface: Long,
+    val graphicsFamily: Int?,
+    val currentFamily: Int?
+) {
     companion object {
         fun fetchList(vkInstance: VkInstance, vkWindow: VkWindow): List<VkPhysicalDeviceWrap> {
             stackPush().use {
@@ -28,6 +32,7 @@ class VkPhysicalDeviceWrap(val vkDevice: VkPhysicalDevice, val graphicsFamily: I
                     val fm = findQueueFamilies(vkDevice, vkWindow.surface)
                     devices.add(VkPhysicalDeviceWrap(
                         vkDevice,
+                        vkWindow.surface,
                         fm[0],
                         fm[1]
                     ))
@@ -71,6 +76,30 @@ class VkPhysicalDeviceWrap(val vkDevice: VkPhysicalDevice, val graphicsFamily: I
         }
     }
 
-    fun suitable(): Boolean = graphicsFamily != null && currentFamily != null
+    private var extensions: Map<String, Int>
+    private var swapChainSupport = VkSwapChainSupportDetails()
+
+    init {
+        stackPush().use { stack ->
+            val extensionCount = stack.ints(0)
+            vkEnumerateDeviceExtensionProperties(vkDevice, null as String?, extensionCount, null)
+
+            val availableExtensions = VkExtensionProperties.malloc(extensionCount[0], stack)
+            vkEnumerateDeviceExtensionProperties(vkDevice, null as String?, extensionCount, availableExtensions)
+
+            extensions = availableExtensions.associate { Pair(it.extensionNameString(), it.specVersion()) }
+
+            swapChainSupport.apply {
+                capabilities = VkSurfaceCapabilitiesKHR.malloc(stack)
+                vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vkDevice, surface, capabilities!!)
+
+                val count = stack.ints(0)
+
+            }
+        }
+    }
+
+    fun suitable(): Boolean =
+        graphicsFamily != null && currentFamily != null && extensions.containsKey(VK_KHR_SWAPCHAIN_EXTENSION_NAME)
     fun unique(): IntArray = intArrayOf(graphicsFamily!!, currentFamily!!).distinct().toIntArray()
 }

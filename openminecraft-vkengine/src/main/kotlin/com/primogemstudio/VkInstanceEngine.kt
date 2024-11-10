@@ -51,7 +51,7 @@ class VkInstanceEngine(
                 logger.info("Creating Main Window and Surface...")
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
                 glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE)
-                vkWindow = VkWindow(this, { vkInstance!! }, glfwCreateWindow(400, 400, "Test!", 0, 0))
+                vkWindow = VkWindow({ vkInstance!! }, glfwCreateWindow(400, 400, "Test!", 0, 0))
             }
 
             run {

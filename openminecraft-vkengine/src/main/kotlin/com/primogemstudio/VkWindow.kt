@@ -7,7 +7,6 @@ import org.lwjgl.vulkan.VK10.VK_SUCCESS
 import org.lwjgl.vulkan.VkInstance
 
 class VkWindow(
-    instanceEngine: VkInstanceEngine,
     private val instanceAccessor: () -> VkInstance,
     window: Long
 ) {
