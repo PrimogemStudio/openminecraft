@@ -23,6 +23,7 @@ class VkInstanceEngine(
     private var vkValidationLayer: VkValidationLayer
     private var vkPhysicalDevice: VkPhysicalDeviceWrap? = null
     private var vkLogicalDevice: VkLogicalDeviceWrap? = null
+    private var vkQueue: VkQueueWrap? = null
     private var vkWindow: VkWindow? = null
 
     init {
@@ -66,6 +67,11 @@ class VkInstanceEngine(
             run {
                 logger.info("Creating Logical Device...")
                 vkLogicalDevice = VkLogicalDeviceWrap.create(stk, vkPhysicalDevice!!, vkValidationLayer)
+            }
+
+            run {
+                logger.info("Fetching Queue...")
+                vkQueue = VkQueueWrap.createFromLogicalDevice(stk, vkLogicalDevice!!)
             }
         }
     }

@@ -19,26 +19,23 @@ class VkValidationLayer(
     var enableValidationLayer: Boolean = true,
     private val vkDebugCallback: VkDebugCallback? = null
 ) : Closeable {
-    companion object {
-        private fun fetchVkLayers(): List<String> = stackPush().use { stack ->
+    private val logger = LoggerFactory.getLogger("VkValidationLayer ${instanceEngine.appName}")
+    private var debugMessenger: Long = 0
+
+    init {
+        stackPush().use { stack ->
             val layerCount = stack.ints(0)
 
             vkEnumerateInstanceLayerProperties(layerCount, null)
             val availableLayers = VkLayerProperties.malloc(layerCount[0], stack)
 
             vkEnumerateInstanceLayerProperties(layerCount, availableLayers)
-            return availableLayers.map(VkLayerProperties::layerNameString)
-        }
-    }
-    private val logger = LoggerFactory.getLogger("VkValidationLayer ${instanceEngine.appName}")
-    private var debugMessenger: Long = 0
-
-    init {
-        val vkLayers = fetchVkLayers()
-        logger.info("Vulkan layers: $vkLayers")
-        if (enableValidationLayer && !vkLayers.contains("VK_LAYER_KHRONOS_validation")) {
-            enableValidationLayer = false
-            logger.warn("Vulkan validation layer not supported")
+            val vkLayers = availableLayers.map(VkLayerProperties::layerNameString)
+            logger.info("Vulkan layers: $vkLayers")
+            if (enableValidationLayer && !vkLayers.contains("VK_LAYER_KHRONOS_validation")) {
+                enableValidationLayer = false
+                logger.warn("Vulkan validation layer not supported")
+            }
         }
     }
 

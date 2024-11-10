@@ -1,11 +1,14 @@
 package com.primogemstudio
 
 import org.lwjgl.system.MemoryStack
-import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.VK10.*
+import org.lwjgl.vulkan.VkDevice
+import org.lwjgl.vulkan.VkDeviceCreateInfo
+import org.lwjgl.vulkan.VkDeviceQueueCreateInfo
+import org.lwjgl.vulkan.VkPhysicalDeviceFeatures
 
 
-class VkLogicalDeviceWrap(val vkDevice: VkDevice, val vkGraphicsQueue: VkQueue, val vkCurrentQueue: VkQueue) {
+class VkLogicalDeviceWrap(val vkDevice: VkDevice, val graphicsFamily: Int, val currentFamily: Int) {
     companion object {
         fun create(
             stack: MemoryStack,
@@ -38,15 +41,11 @@ class VkLogicalDeviceWrap(val vkDevice: VkDevice, val vkGraphicsQueue: VkQueue, 
                 throw RuntimeException("Failed to create logical device")
             }
 
-            val device = VkDevice(pDevice[0], physicalDevice.vkDevice, createInfo)
-
-            val pQueue = stack.pointers(VK_NULL_HANDLE)
-            vkGetDeviceQueue(device, physicalDevice.graphicsFamily!!, 0, pQueue)
-            val graphicsQueue = VkQueue(pQueue[0], device)
-            vkGetDeviceQueue(device, physicalDevice.currentFamily!!, 0, pQueue)
-            val currentQueue = VkQueue(pQueue[0], device)
-
-            return VkLogicalDeviceWrap(device, graphicsQueue, currentQueue)
+            return VkLogicalDeviceWrap(
+                VkDevice(pDevice[0], physicalDevice.vkDevice, createInfo),
+                physicalDevice.graphicsFamily!!,
+                physicalDevice.currentFamily!!
+            )
         }
     }
 
