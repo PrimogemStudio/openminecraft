@@ -1,12 +1,12 @@
 package com.primogemstudio
 
 import org.lwjgl.system.MemoryStack
+import org.lwjgl.vulkan.KHRSwapchain.VK_KHR_SWAPCHAIN_EXTENSION_NAME
 import org.lwjgl.vulkan.VK10.*
 import org.lwjgl.vulkan.VkDevice
 import org.lwjgl.vulkan.VkDeviceCreateInfo
 import org.lwjgl.vulkan.VkDeviceQueueCreateInfo
 import org.lwjgl.vulkan.VkPhysicalDeviceFeatures
-
 
 class VkLogicalDeviceWrap(val vkDevice: VkDevice, val graphicsFamily: Int, val currentFamily: Int) {
     companion object {
@@ -31,6 +31,9 @@ class VkLogicalDeviceWrap(val vkDevice: VkDevice, val graphicsFamily: Int, val c
                 sType(VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO)
                 pQueueCreateInfos(queueCreateInfos)
                 pEnabledFeatures(deviceFeatures)
+                ppEnabledExtensionNames(
+                    stack.mallocPointer(1).apply { put(stack.UTF8(VK_KHR_SWAPCHAIN_EXTENSION_NAME)) }.rewind()
+                )
                 validationLayer.vkDeviceCreateArgs(stack) {
                     ppEnabledLayerNames(it)
                 }

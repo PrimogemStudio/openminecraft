@@ -75,7 +75,7 @@ class VkPhysicalDeviceWrap(
     }
 
     private var extensions: Map<String, Int>
-    private var swapChainSupport = VkSwapChainSupportDetails()
+    val swapChainSupport = VkSwapChainSupportDetails()
 
     init {
         stackPush().use { stack ->

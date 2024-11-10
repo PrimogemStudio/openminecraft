@@ -24,6 +24,7 @@ class VkInstanceEngine(
     private var vkPhysicalDevice: VkPhysicalDeviceWrap? = null
     private var vkLogicalDevice: VkLogicalDeviceWrap? = null
     private var vkQueue: VkQueueWrap? = null
+    private var vkSwapChain: VkSwapChain? = null
     private var vkWindow: VkWindow? = null
 
     init {
@@ -52,13 +53,13 @@ class VkInstanceEngine(
                 logger.info("Creating Main Window and Surface...")
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
                 glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE)
-                vkWindow = VkWindow({ vkInstance!! }, glfwCreateWindow(400, 400, "Test!", 0, 0))
+                vkWindow = VkWindow({ vkInstance!! }, 400, 400, "Test!")
             }
 
             run {
                 logger.info("Selecting Physical Device...")
                 vkPhysicalDevice =
-                    VkPhysicalDeviceWrap.fetchList(vkInstance!!, vkWindow!!).firstOrNull { it.suitable() }.let {
+                    VkPhysicalDeviceWrap.fetchList(stk, vkInstance!!, vkWindow!!).firstOrNull { it.suitable() }.let {
                         if (it == null) throw IllegalStateException("No suitable GPU was found")
                         it
                     }
@@ -72,6 +73,11 @@ class VkInstanceEngine(
             run {
                 logger.info("Fetching Queue...")
                 vkQueue = VkQueueWrap.createFromLogicalDevice(stk, vkLogicalDevice!!)
+            }
+
+            run {
+                logger.info("Creating Swap Chain...")
+                vkSwapChain = VkSwapChain(vkLogicalDevice!!, vkPhysicalDevice!!, vkWindow!!)
             }
         }
     }
