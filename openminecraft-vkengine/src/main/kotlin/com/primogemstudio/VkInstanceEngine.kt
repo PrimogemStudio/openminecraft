@@ -4,6 +4,7 @@ import com.primogemstudio.utils.LoggerFactory
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
+import org.lwjgl.vulkan.KHRSwapchain.VK_KHR_SWAPCHAIN_EXTENSION_NAME
 import org.lwjgl.vulkan.VK10.*
 import org.lwjgl.vulkan.VkApplicationInfo
 import org.lwjgl.vulkan.VkInstance
@@ -69,27 +70,32 @@ class VkInstanceEngine(
         }
     }
 
-    private fun initVkInstance(it: MemoryStack, appName: String, vkVer: List<Int>) {
-        val vkAppInfo = VkApplicationInfo.calloc(it).apply {
+    private fun initVkInstance(stk: MemoryStack, appName: String, vkVer: List<Int>) {
+        val vkAppInfo = VkApplicationInfo.calloc(stk).apply {
             sType(VK_STRUCTURE_TYPE_APPLICATION_INFO)
-            pApplicationName(it.UTF8Safe(appName))
+            pApplicationName(stk.UTF8Safe(appName))
             applicationVersion(VK_MAKE_VERSION(vkVer[0], vkVer[1], vkVer[2]))
-            pEngineName(it.UTF8Safe(appName))
+            pEngineName(stk.UTF8Safe(appName))
             engineVersion(VK_MAKE_VERSION(vkVer[0], vkVer[1], vkVer[2]))
             apiVersion(VK_API_VERSION_1_0)
         }
 
-        val vkCreateInfo = VkInstanceCreateInfo.calloc(it).apply {
+        val vkCreateInfo = VkInstanceCreateInfo.calloc(stk).apply {
             sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
             pApplicationInfo(vkAppInfo)
-            ppEnabledExtensionNames(vkValidationLayer.getRequiredExtensions(it))
-            vkValidationLayer.vkInitArgs(it) { pb, l ->
+            ppEnabledExtensionNames(vkValidationLayer.getRequiredExtensions(stk).let {
+                val nBuff = stk.mallocPointer((it?.capacity() ?: 0) + 1)
+                if (it != null) nBuff.put(it)
+                nBuff.put(stk.UTF8Safe(VK_KHR_SWAPCHAIN_EXTENSION_NAME)!!)
+                it
+            })
+            vkValidationLayer.vkInitArgs(stk) { pb, l ->
                 ppEnabledLayerNames(pb)
                 pNext(l)
             }
         }
 
-        val vkInstancePtr = it.mallocPointer(1)
+        val vkInstancePtr = stk.mallocPointer(1)
 
         if (vkCreateInstance(vkCreateInfo, null, vkInstancePtr) != VK_SUCCESS) {
             throw RuntimeException("Failed to create vulkan instance")
