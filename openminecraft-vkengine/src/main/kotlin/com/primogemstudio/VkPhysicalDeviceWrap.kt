@@ -2,15 +2,17 @@ package com.primogemstudio
 
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryStack.stackPush
+import org.lwjgl.vulkan.KHRSurface.vkGetPhysicalDeviceSurfaceSupportKHR
 import org.lwjgl.vulkan.VK10.*
 import org.lwjgl.vulkan.VkInstance
 import org.lwjgl.vulkan.VkPhysicalDevice
 import org.lwjgl.vulkan.VkQueueFamilyProperties
-import java.util.stream.IntStream
+import java.nio.IntBuffer
 
-class VkPhysicalDeviceWrap(val vkDevice: VkPhysicalDevice, val graphicsFamily: Int?) {
+
+class VkPhysicalDeviceWrap(val vkDevice: VkPhysicalDevice, val graphicsFamily: Int?, val currentFamily: Int?) {
     companion object {
-        fun fetchList(vkInstance: VkInstance): List<VkPhysicalDeviceWrap> {
+        fun fetchList(vkInstance: VkInstance, vkWindow: VkWindow): List<VkPhysicalDeviceWrap> {
             stackPush().use {
                 val devices = mutableListOf<VkPhysicalDeviceWrap>()
 
@@ -23,9 +25,11 @@ class VkPhysicalDeviceWrap(val vkDevice: VkPhysicalDevice, val graphicsFamily: I
 
                 for (i in 0 ..< ppPhysicalDevices.capacity()) {
                     val vkDevice = VkPhysicalDevice(ppPhysicalDevices[i], vkInstance)
+                    val fm = findQueueFamilies(vkDevice, vkWindow.surface)
                     devices.add(VkPhysicalDeviceWrap(
                         vkDevice,
-                        findQueueFamilies(vkDevice)
+                        fm[0],
+                        fm[1]
                     ))
                 }
 
@@ -33,28 +37,39 @@ class VkPhysicalDeviceWrap(val vkDevice: VkPhysicalDevice, val graphicsFamily: I
             }
         }
 
-        private fun findQueueFamilies(device: VkPhysicalDevice): Int? {
+        private fun findQueueFamilies(device: VkPhysicalDevice, surface: Long): IntArray {
             stackPush().use { stack ->
                 var result: Int? = null
+                var current: Int? = null
+
                 val queueFamilyCount = stack.ints(0)
                 vkGetPhysicalDeviceQueueFamilyProperties(device, queueFamilyCount, null)
 
-                val queueFamilies =
-                    VkQueueFamilyProperties.malloc(queueFamilyCount[0], stack)
+                val queueFamilies = VkQueueFamilyProperties.malloc(queueFamilyCount[0], stack)
 
                 vkGetPhysicalDeviceQueueFamilyProperties(device, queueFamilyCount, queueFamilies)
 
-                IntStream.range(0, queueFamilies.capacity())
-                    .filter { index: Int ->
-                        (queueFamilies[index]
-                            .queueFlags() and VK_QUEUE_GRAPHICS_BIT) != 0
+                val presentSupport: IntBuffer = stack.ints(VK_FALSE)
+
+                for (i in 0..<queueFamilies.capacity()) {
+                    if ((queueFamilies[i].queueFlags() and VK_QUEUE_GRAPHICS_BIT) != 0) {
+                        result = i
                     }
-                    .findFirst()
-                    .ifPresent { index: Int -> result = index }
-                return result
+                    vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, presentSupport)
+
+                    if (presentSupport[0] == VK_TRUE) {
+                        current = i
+                    }
+
+                    if (result != null && current != null) break
+                }
+
+                if (result == null || current == null) throw IllegalStateException("Unable to find a suitable device queue family")
+
+                return intArrayOf(result, current)
             }
         }
     }
 
-    fun suitable(): Boolean = graphicsFamily != null
+    fun suitable(): Boolean = graphicsFamily != null && currentFamily != null
 }

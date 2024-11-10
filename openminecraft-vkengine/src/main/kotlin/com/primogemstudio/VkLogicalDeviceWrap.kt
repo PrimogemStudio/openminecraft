@@ -5,7 +5,7 @@ import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.VK10.*
 
 
-class VkLogicalDeviceWrap(val vkDevice: VkDevice, val vkQueue: VkQueue) {
+class VkLogicalDeviceWrap(val vkDevice: VkDevice, val vkGraphicsQueue: VkQueue, val vkCurrentQueue: VkQueue) {
     companion object {
         fun create(
             stack: MemoryStack,
@@ -34,11 +34,14 @@ class VkLogicalDeviceWrap(val vkDevice: VkDevice, val vkQueue: VkQueue) {
             }
 
             val device = VkDevice(pDevice[0], physicalDevice.vkDevice, createInfo)
-            val pGraphicsQueue = stack.pointers(VK_NULL_HANDLE)
-            vkGetDeviceQueue(device, physicalDevice.graphicsFamily!!, 0, pGraphicsQueue)
-            val graphicsQueue = VkQueue(pGraphicsQueue[0], device)
 
-            return VkLogicalDeviceWrap(device, graphicsQueue)
+            val pQueue = stack.pointers(VK_NULL_HANDLE)
+            vkGetDeviceQueue(device, physicalDevice.graphicsFamily!!, 0, pQueue)
+            val graphicsQueue = VkQueue(pQueue[0], device)
+            vkGetDeviceQueue(device, physicalDevice.currentFamily!!, 0, pQueue)
+            val currentQueue = VkQueue(pQueue[0], device)
+
+            return VkLogicalDeviceWrap(device, graphicsQueue, currentQueue)
         }
     }
 

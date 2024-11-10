@@ -1,8 +1,7 @@
 package com.primogemstudio
 
 import com.primogemstudio.utils.LoggerFactory
-import org.lwjgl.glfw.GLFW.glfwInit
-import org.lwjgl.glfw.GLFW.glfwTerminate
+import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.vulkan.VK10.*
@@ -23,6 +22,7 @@ class VkInstanceEngine(
     private var vkValidationLayer: VkValidationLayer
     private var vkPhysicalDevice: VkPhysicalDeviceWrap? = null
     private var vkLogicalDevice: VkLogicalDeviceWrap? = null
+    private var vkWindow: VkWindow? = null
 
     init {
         val vkVer = appVer.split("-")[0].split(".").flatMap {
@@ -35,19 +35,37 @@ class VkInstanceEngine(
         vkValidationLayer = VkValidationLayer(this, { vkInstance!! }, enableValidationLayer, vkDebugCallback)
 
         stackPush().use { stk ->
-            logger.info("GLFW Init...")
-            glfwInit()
-            logger.info("Vulkan Instance Init...")
-            initVkInstance(stk, appName, vkVer)
-            logger.info("Selecting Physical Device...")
-            vkPhysicalDevice = VkPhysicalDeviceWrap.fetchList(vkInstance!!).firstOrNull { it.suitable() }.let {
-                if (it == null) throw IllegalStateException("No suitable GPU was found")
-                it
+            run {
+                logger.info("GLFW Init...")
+                glfwInit()
             }
-            logger.info("Creating Logical Device...")
-            vkLogicalDevice = VkLogicalDeviceWrap.create(stk, vkPhysicalDevice!!, vkValidationLayer)
 
-            vkValidationLayer.preInstance(stk)
+            run {
+                logger.info("Vulkan Instance Init...")
+                initVkInstance(stk, appName, vkVer)
+                vkValidationLayer.preInstance(stk)
+            }
+
+            run {
+                logger.info("Creating Main Window and Surface...")
+                glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
+                glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE)
+                vkWindow = VkWindow(this, { vkInstance!! }, glfwCreateWindow(400, 400, "Test!", 0, 0))
+            }
+
+            run {
+                logger.info("Selecting Physical Device...")
+                vkPhysicalDevice =
+                    VkPhysicalDeviceWrap.fetchList(vkInstance!!, vkWindow!!).firstOrNull { it.suitable() }.let {
+                        if (it == null) throw IllegalStateException("No suitable GPU was found")
+                        it
+                    }
+            }
+
+            run {
+                logger.info("Creating Logical Device...")
+                vkLogicalDevice = VkLogicalDeviceWrap.create(stk, vkPhysicalDevice!!, vkValidationLayer)
+            }
         }
     }
 
@@ -82,7 +100,7 @@ class VkInstanceEngine(
 
     override fun close() {
         vkValidationLayer.close()
-        vkDestroyDevice(vkLogicalDevice!!.vkDevice, null)
+        vkLogicalDevice!!.destroy()
         vkDestroyInstance(vkInstance!!, null)
         glfwTerminate()
     }
