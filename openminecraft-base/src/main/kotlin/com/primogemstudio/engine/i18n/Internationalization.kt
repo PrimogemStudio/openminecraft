@@ -28,4 +28,6 @@ object Internationalization {
     }
 
     fun tr(key: String): String = targetTranslations[Locale.getDefault().toString()]?.get(key) ?: key
+    fun tr(key: String, vararg args: Any?): String =
+        targetTranslations[Locale.getDefault().toString()]?.get(key)?.format(*args) ?: key
 }

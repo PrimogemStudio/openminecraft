@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.vk
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
+import com.primogemstudio.engine.i18n.OutputOverride
 import com.primogemstudio.engine.utils.LoggerFactory
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack
@@ -18,6 +19,12 @@ class VkInstanceEngine(
     enableValidationLayer: Boolean = true,
     vkDebugCallback: VkDebugCallback? = null
 ): Closeable {
+    companion object {
+        init {
+            OutputOverride.init()
+        }
+    }
+
     private val logger = LoggerFactory.getLogger("VkInstanceEngine $appName")
 
     private var vkInstance: VkInstance? = null
@@ -34,7 +41,7 @@ class VkInstanceEngine(
             catch (e: Exception) { listOf() }
         }
 
-        if (vkVer.size < 3) throw IllegalArgumentException("Corrupt version!")
+        if (vkVer.size < 3) throw IllegalArgumentException(tr("exception.engine.app.version_corrupt", appVer))
 
         vkValidationLayer = VkValidationLayer(this, { vkInstance!! }, enableValidationLayer, vkDebugCallback)
 
