@@ -1,4 +1,4 @@
-package com.primogemstudio
+package com.primogemstudio.engine.vk
 
 import org.lwjgl.vulkan.VkDebugUtilsMessengerCallbackDataEXT
 

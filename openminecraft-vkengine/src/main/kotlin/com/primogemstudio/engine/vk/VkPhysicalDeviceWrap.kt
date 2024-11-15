@@ -1,4 +1,4 @@
-package com.primogemstudio
+package com.primogemstudio.engine.vk
 
 import org.lwjgl.PointerBuffer
 import org.lwjgl.system.MemoryStack

@@ -48,6 +48,7 @@ dependencies {
     implementation("org.joml", "joml-primitives", "${properties["openminecraft.joml_primitives_version"]}")
 
     implementation("org.apache.logging.log4j:log4j-api:${properties["openminecraft.log4j2_version"]}")
+    implementation(rootProject.project(":openminecraft-base"))
 }
 
 kotlin {

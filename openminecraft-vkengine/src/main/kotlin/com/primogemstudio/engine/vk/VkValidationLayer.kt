@@ -1,6 +1,6 @@
-package com.primogemstudio
+package com.primogemstudio.engine.vk
 
-import com.primogemstudio.utils.LoggerFactory
+import com.primogemstudio.engine.utils.LoggerFactory
 import org.lwjgl.PointerBuffer
 import org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions
 import org.lwjgl.system.MemoryStack

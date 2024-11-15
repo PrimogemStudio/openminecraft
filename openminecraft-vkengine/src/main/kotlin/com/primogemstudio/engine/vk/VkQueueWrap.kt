@@ -1,4 +1,4 @@
-package com.primogemstudio
+package com.primogemstudio.engine.vk
 
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.vulkan.VK10.VK_NULL_HANDLE

@@ -1,6 +1,7 @@
-package com.primogemstudio
+package com.primogemstudio.engine.vk
 
-import com.primogemstudio.utils.LoggerFactory
+import com.primogemstudio.engine.i18n.Internationalization.tr
+import com.primogemstudio.engine.utils.LoggerFactory
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
@@ -39,7 +40,7 @@ class VkInstanceEngine(
 
         stackPush().use { stk ->
             run {
-                logger.info("GLFW Init...")
+                logger.info(tr("engine.stage.glfw_init"))
                 glfwInit()
             }
 

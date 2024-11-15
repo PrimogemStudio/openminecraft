@@ -1,4 +1,4 @@
-package com.primogemstudio
+package com.primogemstudio.engine.vk
 
 import org.lwjgl.glfw.GLFW.glfwCreateWindow
 import org.lwjgl.glfw.GLFWVulkan.glfwCreateWindowSurface

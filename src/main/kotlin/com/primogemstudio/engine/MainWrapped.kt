@@ -1,4 +1,6 @@
-package com.primogemstudio
+package com.primogemstudio.engine
+
+import com.primogemstudio.engine.vk.VkInstanceEngine
 
 fun main() {
     System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
