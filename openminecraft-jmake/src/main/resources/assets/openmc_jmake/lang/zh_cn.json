@@ -1,6 +1,8 @@
 {
   "exception.jmake.env_cmake.corrupt": "CMake 环境不完整!",
   "exception.jmake.env_cmake.fail": "CMake/Make 失败!",
+  "exception.jmake.env_jmake_gcc.corrupt": "GCC 环境不完整!",
+  "exception.jmake.env_jmake_clang.corrupt": "Clang 环境不完整!",
   "jmake.replacement.cmake_ccompiler": "C 编译器为",
   "jmake.replacement.cmake_cxxcompiler": "C++ 编译器为",
   "jmake.replacement.cmake_ccompiler_abi": "检测 C 编译器 ABI",
@@ -17,11 +19,11 @@
   "jmake.objs.c.name": "进度 %d%%: 编译 C 源码 %s",
   "jmake.objs.cpp.name": "进度 %d%%: 编译 C++ 源码 %s",
   "jmake.objs.c_dll.name": "进度 %d%%: 链接 C 动态链接库 %s",
-  "jmake.objs.cpp_dll.name": "进度 %d%%: 编译 C++ 动态链接库 %s",
+  "jmake.objs.cpp_dll.name": "进度 %d%%: 链接 C++ 动态链接库 %s",
   "jmake.objs.c_lib.name": "进度 %d%%: 链接 C 静态库 %s",
-  "jmake.objs.cpp_lib.name": "进度 %d%%: 编译 C++ 静态库 %s",
+  "jmake.objs.cpp_lib.name": "进度 %d%%: 链接 C++ 静态库 %s",
   "jmake.objs.c_exe.name": "进度 %d%%: 链接 C 可执行文件 %s",
-  "jmake.objs.cpp_exe.name": "进度 %d%%: 编译 C++ 可执行文件 %s",
+  "jmake.objs.cpp_exe.name": "进度 %d%%: 链接 C++ 可执行文件 %s",
   "jmake.objs.target.name": "进度 %d%%: 完成目标 %s",
   "jmake.objs.unknown.name": "进度 %d%%: %s"
 }

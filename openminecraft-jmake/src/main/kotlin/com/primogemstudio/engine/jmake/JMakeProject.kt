@@ -26,12 +26,17 @@ class JMakeProject(private val projPath: File, val resultCallback: (String, Doub
             Files.newInputStream(projPath.resolve("jmake.json").toPath()).readAllBytes().toString(Charsets.UTF_8)
         )
 
-        if (jobj["type"] == "cmake") builder = CMakeProjectBuilder(projPath, buildPath, resultCallback)
-        else builder = BaseProjectBuilder()
+        builder = if (jobj["type"] == "cmake") CMakeProjectBuilder(projPath, buildPath, resultCallback)
+        else BaseProjectBuilder(
+            projPath,
+            buildPath,
+            Toolchain.GCC,
+            jobj.getJSONArray("files").toList().map { it.toString() },
+            jobj.getJSONArray("includes").toList().map { it.toString() })
 
         builder.checkEnv()
 
-        jobj.getJSONObject("configs").apply {
+        if (jobj.has("configs")) jobj.getJSONObject("configs").apply {
             keys().forEach {
                 builder.config(
                     it,
@@ -40,7 +45,7 @@ class JMakeProject(private val projPath: File, val resultCallback: (String, Doub
             }
         }
 
-        jobj.getJSONObject("defines").apply {
+        if (jobj.has("defines")) jobj.getJSONObject("defines").apply {
             keys().forEach {
                 builder.addDefine(
                     it,
@@ -52,6 +57,7 @@ class JMakeProject(private val projPath: File, val resultCallback: (String, Doub
 
     fun build() {
         builder.buildProject().forEach {
+            println(it)
             if (it.toProcess(builder::outputProcessor)
                     .waitForProcess() != 0
             ) throw IllegalStateException(tr("exception.jmake.env_cmake.fail"))

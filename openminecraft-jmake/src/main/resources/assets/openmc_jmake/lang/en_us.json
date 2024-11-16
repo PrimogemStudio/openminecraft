@@ -1,6 +1,8 @@
 {
   "exception.jmake.env_cmake.corrupt": "Corrupt CMake environment!",
   "exception.jmake.env_cmake.fail": "CMake/Make Process failed!",
+  "exception.jmake.env_jmake_gcc.corrupt": "Corrupt GCC environment!",
+  "exception.jmake.env_jmake_clang.corrupt": "Corrupt Clang environment!",
   "jmake.replacement.cmake_ccompiler": "C Compiler is",
   "jmake.replacement.cmake_cxxcompiler": "C++ Compiler is",
   "jmake.replacement.cmake_state_done": "- Done",
