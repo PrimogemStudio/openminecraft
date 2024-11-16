@@ -27,7 +27,13 @@ object Internationalization {
         }
     }
 
-    fun tr(key: String): String = targetTranslations[Locale.getDefault().toString()]?.get(key) ?: key
+    fun tr(key: String): String =
+        targetTranslations[Locale.getDefault().toString()]?.get(key) ?: targetTranslations["en_US"]?.get(key) ?: key
     fun tr(key: String, vararg args: Any?): String =
-        targetTranslations[Locale.getDefault().toString()]?.get(key)?.format(*args) ?: key
+        try {
+            targetTranslations[Locale.getDefault().toString()]?.get(key)?.format(*args)
+                ?: targetTranslations["en_US"]?.get(key)?.format(*args) ?: key
+        } catch (e: Exception) {
+            "$key ${args.toList()}"
+        }
 }

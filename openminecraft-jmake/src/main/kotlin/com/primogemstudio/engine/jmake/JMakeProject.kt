@@ -35,7 +35,9 @@ class JMakeProject(val projPath: File) {
         builder.addDefine("BUILD_SHARED_LIBS", "OFF")
 
         builder.buildProject().forEach {
-            if (it.toProcess().waitForProcess() != 0) throw IllegalStateException(tr("exception.jmake.env_cmake.fail"))
+            if (it.toProcess(builder::outputProcessor)
+                    .waitForProcess() != 0
+            ) throw IllegalStateException(tr("exception.jmake.env_cmake.fail"))
         }
     }
 

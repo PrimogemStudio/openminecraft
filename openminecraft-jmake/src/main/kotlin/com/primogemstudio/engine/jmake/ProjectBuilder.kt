@@ -7,7 +7,8 @@ data class CommandProp(
     val runPath: File,
     val commandArgs: List<String>
 ) {
-    fun toProcess(): WrappedProcess = WrappedProcess(ProcessBuilder().command(commandArgs).directory(runPath).start())
+    fun toProcess(proc: (String) -> Unit): WrappedProcess =
+        WrappedProcess(ProcessBuilder().command(commandArgs).directory(runPath).start(), proc)
 }
 
 interface ProjectBuilder {
@@ -15,4 +16,5 @@ interface ProjectBuilder {
     fun buildProject(): List<CommandProp>
     fun addDefine(key: String, value: Any)
     fun config(key: String, value: Any)
+    fun outputProcessor(data: String)
 }

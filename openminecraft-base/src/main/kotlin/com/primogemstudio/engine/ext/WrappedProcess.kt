@@ -5,13 +5,13 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @OptIn(DelicateCoroutinesApi::class)
-class WrappedProcess(val proc: Process) {
+class WrappedProcess(val proc: Process, val textProcessor: (String) -> Unit = ::println) {
     init {
         GlobalScope.launch {
             val r = proc.inputReader(Charsets.UTF_8)
             while (proc.isAlive) {
                 r.readLine()?.let {
-                    println(it)
+                    textProcessor(it)
                 }
             }
         }
@@ -20,7 +20,7 @@ class WrappedProcess(val proc: Process) {
             val r = proc.errorReader(Charsets.UTF_8)
             while (proc.isAlive) {
                 r.readLine()?.let {
-                    println(it)
+                    textProcessor(it)
                 }
             }
         }
