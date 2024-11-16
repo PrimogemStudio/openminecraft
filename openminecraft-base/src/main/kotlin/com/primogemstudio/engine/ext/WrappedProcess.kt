@@ -8,6 +8,7 @@ import kotlinx.coroutines.launch
 class WrappedProcess(val proc: Process, val textProcessor: (String) -> Unit) {
     init {
         GlobalScope.launch {
+            Thread.currentThread().name = "Process #${proc.pid()}"
             val r = proc.inputReader(Charsets.UTF_8)
             while (proc.isAlive) {
                 r.readLine()?.let {
@@ -17,6 +18,7 @@ class WrappedProcess(val proc: Process, val textProcessor: (String) -> Unit) {
         }
 
         GlobalScope.launch {
+            Thread.currentThread().name = "Process #${proc.pid()}"
             val r = proc.errorReader(Charsets.UTF_8)
             while (proc.isAlive) {
                 r.readLine()?.let {

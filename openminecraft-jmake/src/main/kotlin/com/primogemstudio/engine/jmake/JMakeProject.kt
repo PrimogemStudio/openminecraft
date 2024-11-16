@@ -11,9 +11,9 @@ import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 
 class JMakeProject(val projPath: File) {
-    lateinit var rootPath: File
-    lateinit var buildPath: File
-    lateinit var builder: ProjectBuilder
+    private lateinit var rootPath: File
+    private lateinit var buildPath: File
+    private lateinit var builder: ProjectBuilder
     private val logger = LoggerFactory.getLogger()
 
     fun prepareBuild() {
@@ -22,7 +22,7 @@ class JMakeProject(val projPath: File) {
         buildPath = rootPath.toPath().resolve("build").toFile()
         buildPath.mkdirs()
 
-        builder = CMakeProjectBuilder(projPath, buildPath) { d, _ -> logger.info(d) }
+        builder = CMakeProjectBuilder(projPath, buildPath) { d, b -> if (b != -1.0) logger.info(d) else logger.warn(d) }
         builder.checkEnv()
     }
 
