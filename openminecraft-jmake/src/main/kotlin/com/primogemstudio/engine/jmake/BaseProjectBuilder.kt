@@ -69,7 +69,7 @@ class BaseProjectBuilder(
                         defines.forEach { (t, u) -> add("-D$t=$u") }
                     })
                 },
-                4,
+                configs["JOBS"]?.toString()?.toInt() ?: 1,
                 fileMap.map { (t, _) -> t.path }
             )
         ).apply {
@@ -96,6 +96,6 @@ class BaseProjectBuilder(
 
     override fun outputProcessor(data: String) {
         val d = data.split("&")
-        resultCallback(d[2], d[0].toDouble() / d[1].toDouble())
+        resultCallback(if (d.size == 3) d[2] else tr("jmake.objs.dll.name"), d[0].toDouble() / d[1].toDouble())
     }
 }

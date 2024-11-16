@@ -41,7 +41,7 @@ class MultiWrappedProcess(
             }
             Thread.sleep(100)
         }
-        textProcessor("${processes()}&${processes()}&*")
+        textProcessor("${processes()}&${processes()}")
         return processList.mapNotNull { it }.map { it.waitForProcess() }.firstOrNull { it != 0 } ?: 0
     }
 
