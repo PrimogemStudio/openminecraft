@@ -10,7 +10,12 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 
-class JMakeProject(projPath: File, private val target: File?, resultCallback: (String, Double) -> Unit) {
+class JMakeProject(
+    projPath: File,
+    private val target: File?,
+    private val linkLibs: List<File>,
+    resultCallback: (String, Double) -> Unit
+) {
     private var rootPath: File = projPath.toPath().resolve(".jmake").toFile()
     private var buildPath: File
     private var builder: ProjectBuilder
@@ -35,6 +40,7 @@ class JMakeProject(projPath: File, private val target: File?, resultCallback: (S
                 jobj.getJSONArray("files").toList().map { it.toString() },
                 jobj.getJSONArray("includes").toList().map { it.toString() },
                 target,
+                linkLibs,
                 resultCallback
             )
         }
@@ -64,7 +70,7 @@ class JMakeProject(projPath: File, private val target: File?, resultCallback: (S
         builder.buildProject().forEach {
             if (it.toProcess(builder::outputProcessor)
                     .waitForProcess() != 0
-            ) throw IllegalStateException(tr("exception.jmake.env_cmake.fail"))
+            ) throw IllegalStateException(tr("exception.jmake.env_make.fail"))
         }
     }
 

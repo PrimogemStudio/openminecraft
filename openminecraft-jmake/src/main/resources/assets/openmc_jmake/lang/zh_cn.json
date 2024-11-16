@@ -1,6 +1,6 @@
 {
   "exception.jmake.env_cmake.corrupt": "CMake 环境不完整!",
-  "exception.jmake.env_cmake.fail": "CMake/Make 失败!",
+  "exception.jmake.env_make.fail": "构建失败!",
   "exception.jmake.env_jmake_gcc.corrupt": "GCC 环境不完整!",
   "exception.jmake.env_jmake_clang.corrupt": "Clang 环境不完整!",
   "jmake.replacement.cmake_ccompiler": "C 编译器为",

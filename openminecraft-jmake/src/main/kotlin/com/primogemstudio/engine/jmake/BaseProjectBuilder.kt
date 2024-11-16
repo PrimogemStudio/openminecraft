@@ -23,6 +23,7 @@ class BaseProjectBuilder(
     files: List<String>,
     private val includes: List<String>,
     private val target: File,
+    private val linkLibs: List<File>,
     val resultCallback: (String, Double) -> Unit
 ) : ProjectBuilder {
     private val defines: MutableMap<String, Any> = mutableMapOf()
@@ -77,7 +78,8 @@ class BaseProjectBuilder(
             add(
                 CommandProp(
                     projBase, mutableListOf("/usr/bin/gcc").apply {
-                        fileMap.values.forEach { t -> add(t.toString()) }
+                        fileMap.values.forEach { t -> add(t.path) }
+                        linkLibs.forEach { t -> add(t.path) }
                         add("-shared")
                         add("-o")
                         add(target.path)
