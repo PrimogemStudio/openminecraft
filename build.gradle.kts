@@ -13,6 +13,7 @@ allprojects {
 
 dependencies {
     implementation(rootProject.project(":openminecraft-vkengine"))
+    implementation(rootProject.project(":openminecraft-jmake"))
 }
 
 tasks.jar {

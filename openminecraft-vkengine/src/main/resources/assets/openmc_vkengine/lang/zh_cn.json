@@ -1,0 +1,4 @@
+{
+  "exception.engine.app.version_corrupt": "错误的版本 %s!",
+  "engine.stage.glfw_init": "GLFW 初始化 ..."
+}

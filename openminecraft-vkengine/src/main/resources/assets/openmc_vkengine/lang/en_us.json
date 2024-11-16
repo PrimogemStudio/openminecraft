@@ -1,0 +1,4 @@
+{
+  "exception.engine.app.version_corrupt": "Corrupt version %s!",
+  "engine.stage.glfw_init": "GLFW Initialization ..."
+}

@@ -1,7 +1,0 @@
-{
-  "exception.i18n.replacement.at": "位于",
-  "exception.i18n.replacement.thread": "异常发生于线程",
-  "exception.i18n.replacement.trace": "堆栈追踪",
-  "exception.engine.app.version_corrupt": "错误的版本 %s!",
-  "engine.stage.glfw_init": "GLFW 初始化 ..."
-}

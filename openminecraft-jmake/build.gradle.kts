@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-
+    implementation(rootProject.project(":openminecraft-base"))
 }
 
 kotlin {

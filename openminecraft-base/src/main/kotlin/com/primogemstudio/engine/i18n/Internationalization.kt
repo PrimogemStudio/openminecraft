@@ -13,7 +13,7 @@ object Internationalization {
             JSONObject(it.openStream().readAllBytes().toString(Charsets.UTF_8)).apply {
                 keys().forEach { k ->
                     val t = Internationalization.javaClass.classLoader.getResource(this[k].toString())
-                    targetTranslations[k] = mutableMapOf()
+                    if (!targetTranslations.containsKey(k)) targetTranslations[k] = mutableMapOf()
                     logger.info("Processing $k -> ${this[k]}")
                     if (t != null) {
                         JSONObject(t.openStream().readAllBytes().toString(Charsets.UTF_8)).apply {

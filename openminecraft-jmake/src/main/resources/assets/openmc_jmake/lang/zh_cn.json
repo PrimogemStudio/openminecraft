@@ -1,0 +1,4 @@
+{
+  "exception.jmake.env_cmake.corrupt": "CMake 环境不完整!",
+  "exception.jmake.env_cmake.fail": "CMake/Make 失败!"
+}
