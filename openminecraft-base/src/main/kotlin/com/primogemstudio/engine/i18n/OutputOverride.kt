@@ -16,8 +16,12 @@ object OutputOverride {
 }
 
 class I18nPrintStream(private val parent: PrintStream) : PrintStream(parent) {
-    override fun println(x: String?) {
-        parent.println("test!")
+    override fun println(i: String?) {
+        parent.println(
+            i?.replace("at", tr("exception.i18n.replacement.at"))
+                ?.replace("Exception in thread", tr("exception.i18n.replacement.thread"))
+                ?.replace("Stack trace", tr("exception.i18n.replacement.trace"))
+        )
     }
 
     override fun print(i: String?) {

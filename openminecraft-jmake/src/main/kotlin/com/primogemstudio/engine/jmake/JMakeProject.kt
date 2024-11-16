@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.jmake
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
+import com.primogemstudio.engine.utils.LoggerFactory
 import java.io.File
 import java.io.IOException
 import java.nio.file.FileVisitResult
@@ -13,6 +14,7 @@ class JMakeProject(val projPath: File) {
     lateinit var rootPath: File
     lateinit var buildPath: File
     lateinit var builder: ProjectBuilder
+    private val logger = LoggerFactory.getLogger()
 
     fun prepareBuild() {
         rootPath = projPath.toPath().resolve(".jmake").toFile()
@@ -20,7 +22,7 @@ class JMakeProject(val projPath: File) {
         buildPath = rootPath.toPath().resolve("build").toFile()
         buildPath.mkdirs()
 
-        builder = CMakeProjectBuilder(projPath, buildPath)
+        builder = CMakeProjectBuilder(projPath, buildPath) { d, _ -> logger.info(d) }
         builder.checkEnv()
     }
 

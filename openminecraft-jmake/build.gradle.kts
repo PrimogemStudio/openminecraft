@@ -11,6 +11,8 @@ repositories {
 
 dependencies {
     implementation(rootProject.project(":openminecraft-base"))
+
+    implementation("org.apache.logging.log4j:log4j-api:${properties["openminecraft.log4j2_version"]}")
 }
 
 kotlin {

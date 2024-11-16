@@ -7,7 +7,7 @@ import java.util.regex.Pattern
 class CMakeProjectBuilder(
     private val projBase: File,
     private val build: File,
-    private val msgHandler: (String, Double) -> Unit = { _, _ -> }
+    private val msgHandler: (String, Double) -> Unit
 ) : ProjectBuilder {
     companion object {
         private const val CMAKE_CONF_STR = "-- Configuring done"

@@ -5,7 +5,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 @OptIn(DelicateCoroutinesApi::class)
-class WrappedProcess(val proc: Process, val textProcessor: (String) -> Unit = ::println) {
+class WrappedProcess(val proc: Process, val textProcessor: (String) -> Unit) {
     init {
         GlobalScope.launch {
             val r = proc.inputReader(Charsets.UTF_8)
