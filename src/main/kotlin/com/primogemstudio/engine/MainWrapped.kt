@@ -13,12 +13,11 @@ fun main() {
 
     val logger = LoggerFactory.getLogger()
     val proj =
-        JMakeProject(File("/home/coder2/extsources/sabatest")) { d, b ->
-            if (b != -1.0) logger.info(d) else logger.warn(
+        JMakeProject(File("/home/coder2/extsources/sabatest"), File("/home/coder2/temp.so")) { d, b ->
+            if (b != -1.0) logger.info("${(b * 100).toInt()}% $d") else logger.warn(
                 d
             )
         }
-    proj.prepareBuild()
     proj.build()
     proj.getTargets().forEach { println(it) }
 }

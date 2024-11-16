@@ -10,13 +10,12 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 
-class JMakeProject(private val projPath: File, private val resultCallback: (String, Double) -> Unit) {
-    private lateinit var rootPath: File
-    private lateinit var buildPath: File
-    private lateinit var builder: ProjectBuilder
+class JMakeProject(projPath: File, private val target: File?, resultCallback: (String, Double) -> Unit) {
+    private var rootPath: File = projPath.toPath().resolve(".jmake").toFile()
+    private var buildPath: File
+    private var builder: ProjectBuilder
 
-    fun prepareBuild() {
-        rootPath = projPath.toPath().resolve(".jmake").toFile()
+    init {
         if (rootPath.exists()) rootPath.deleteRecursively()
         rootPath.mkdirs()
         buildPath = rootPath.toPath().resolve("build").toFile()
@@ -27,14 +26,18 @@ class JMakeProject(private val projPath: File, private val resultCallback: (Stri
         )
 
         builder = if (jobj["type"] == "cmake") CMakeProjectBuilder(projPath, buildPath, resultCallback)
-        else BaseProjectBuilder(
-            projPath,
-            buildPath,
-            Toolchain.GCC,
-            jobj.getJSONArray("files").toList().map { it.toString() },
-            jobj.getJSONArray("includes").toList().map { it.toString() },
-            resultCallback
-        )
+        else {
+            if (target == null) throw IllegalArgumentException()
+            BaseProjectBuilder(
+                projPath,
+                buildPath,
+                Toolchain.GCC,
+                jobj.getJSONArray("files").toList().map { it.toString() },
+                jobj.getJSONArray("includes").toList().map { it.toString() },
+                target,
+                resultCallback
+            )
+        }
 
         builder.checkEnv()
 
@@ -66,6 +69,10 @@ class JMakeProject(private val projPath: File, private val resultCallback: (Stri
     }
 
     fun getTargets(): List<File> {
+        if (builder is BaseProjectBuilder) {
+            return listOf(target!!)
+        }
+
         val targets = mutableListOf<File>()
         Files.walkFileTree(buildPath.toPath(), object : FileVisitor<Path> {
             override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult =
@@ -79,7 +86,6 @@ class JMakeProject(private val projPath: File, private val resultCallback: (Stri
             }
 
             override fun visitFileFailed(file: Path?, exc: IOException?): FileVisitResult = FileVisitResult.CONTINUE
-
             override fun postVisitDirectory(dir: Path?, exc: IOException?): FileVisitResult = FileVisitResult.CONTINUE
         })
 

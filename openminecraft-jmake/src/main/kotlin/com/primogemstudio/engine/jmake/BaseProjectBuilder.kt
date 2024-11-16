@@ -22,6 +22,7 @@ class BaseProjectBuilder(
     private val toolchain: Toolchain,
     files: List<String>,
     private val includes: List<String>,
+    private val target: File,
     val resultCallback: (String, Double) -> Unit
 ) : ProjectBuilder {
     private val defines: MutableMap<String, Any> = mutableMapOf()
@@ -79,7 +80,7 @@ class BaseProjectBuilder(
                         fileMap.values.forEach { t -> add(t.toString()) }
                         add("-shared")
                         add("-o")
-                        add("temp.so")
+                        add(target.path)
                     }
                 )
             )
@@ -96,6 +97,9 @@ class BaseProjectBuilder(
 
     override fun outputProcessor(data: String) {
         val d = data.split("&")
-        resultCallback(if (d.size == 3) d[2] else tr("jmake.objs.dll.name"), d[0].toDouble() / d[1].toDouble())
+        resultCallback(
+            if (d.size == 3) d[2] else tr("jmake.objs.dll.name", target.path),
+            d[0].toDouble() / d[1].toDouble()
+        )
     }
 }
