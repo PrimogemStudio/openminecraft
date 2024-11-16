@@ -15,9 +15,7 @@ data class CommandProp(
     val commandArgs: List<String>
 ) : CommandPropI {
     override fun toProcess(proc: (String) -> Unit): WrappedProcess =
-        WrappedProcess(builder().start(), proc).apply {
-            println(commandArgs)
-        }
+        WrappedProcess(builder().start(), proc)
 
     override fun builder(): ProcessBuilder = ProcessBuilder().command(commandArgs).directory(runPath)
 }

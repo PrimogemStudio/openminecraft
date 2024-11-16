@@ -1,6 +1,7 @@
 package com.primogemstudio.engine
 
 import com.primogemstudio.engine.jmake.JMakeProject
+import com.primogemstudio.engine.jmake.Toolchain
 import com.primogemstudio.engine.utils.LoggerFactory
 import java.io.File
 
@@ -13,7 +14,7 @@ fun main() {
 
     val logger = LoggerFactory.getLogger()
     val projb =
-        JMakeProject(File("/home/coder2/extsources/bullet3"), null, listOf()) { d, b ->
+        JMakeProject(File("/home/coder2/extsources/bullet3"), null, listOf(), Toolchain.CLANG) { d, b ->
             if (b != -1.0) logger.info("${(b * 100).toInt()}% $d") else logger.warn(
                 d
             )
@@ -24,7 +25,8 @@ fun main() {
         JMakeProject(
             File("/home/coder2/extsources/sabatest"),
             File("/home/coder2/temp.so"),
-            projb.getTargets()
+            projb.getTargets(),
+            Toolchain.CLANG
         ) { d, b ->
             if (b != -1.0) logger.info("${(b * 100).toInt()}% $d") else logger.warn(
                 d

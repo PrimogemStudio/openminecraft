@@ -30,9 +30,9 @@ class BaseProjectBuilder(
     private val configs: MutableMap<String, Any> = mutableMapOf()
     private val patts = files.map { Pattern.compile(it) }
     override fun checkEnv() {
-        if (toolchain == Toolchain.GCC && !File("/usr/bin/gcc").exists()) {
+        if (toolchain == Toolchain.GCC && (!File("/usr/bin/g++").exists() || !File("/usr/bin/gcc").exists())) {
             throw IllegalStateException(tr("exception.jmake.env_jmake_gcc.corrupt"))
-        } else if (!File("/usr/bin/clang").exists()) {
+        } else if (!File("/usr/bin/clang++").exists() || !File("/usr/bin/clang").exists()) {
             throw IllegalStateException(tr("exception.jmake.env_jmake_clang.corrupt"))
         }
     }
@@ -61,11 +61,14 @@ class BaseProjectBuilder(
             override fun postVisitDirectory(dir: Path?, exc: IOException?): FileVisitResult = FileVisitResult.CONTINUE
         })
 
+        val chain = if (toolchain == Toolchain.GCC) "/usr/bin/gcc" else "/usr/bin/clang"
+        val chainxx = if (toolchain == Toolchain.GCC) "/usr/bin/g++" else "/usr/bin/clang++"
+
         return mutableListOf<CommandPropI>(
             MultiCommandProp(
                 fileMap.map { (t, u) ->
                     CommandProp(projBase, mutableListOf(
-                        "/usr/bin/gcc", "-c", "-fPIC", t.toString(), "-o", u.toString()
+                        chain, "-c", "-fPIC", t.toString(), "-o", u.toString()
                     ).apply {
                         includes.forEach { add("-I$it") }
                         defines.forEach { (t, u) -> add("-D$t=$u") }
@@ -77,7 +80,8 @@ class BaseProjectBuilder(
         ).apply {
             add(
                 CommandProp(
-                    projBase, mutableListOf("/usr/bin/gcc").apply {
+                    projBase, mutableListOf(if (fileMap.keys.map { it.toString() }
+                            .any { it.endsWith(".cpp") || it.endsWith(".cppm") }) chainxx else chain).apply {
                         fileMap.values.forEach { t -> add(t.path) }
                         linkLibs.forEach { t -> add(t.path) }
                         add("-shared")

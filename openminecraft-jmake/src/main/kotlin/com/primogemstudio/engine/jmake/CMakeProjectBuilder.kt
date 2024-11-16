@@ -7,6 +7,7 @@ import java.util.regex.Pattern
 class CMakeProjectBuilder(
     private val projBase: File,
     private val build: File,
+    toolchain: Toolchain,
     private val msgHandler: (String, Double) -> Unit
 ) : ProjectBuilder {
     companion object {
@@ -44,6 +45,11 @@ class CMakeProjectBuilder(
     }
     private val defines: MutableMap<String, Any> = mutableMapOf()
     private val configs: MutableMap<String, Any> = mutableMapOf()
+
+    init {
+        defines["CMAKE_C_COMPILER"] = if (toolchain == Toolchain.GCC) "gcc" else "clang"
+        defines["CMAKE_CXX_COMPILER"] = if (toolchain == Toolchain.GCC) "g++" else "clang++"
+    }
 
     override fun checkEnv() {
         if (!File("/usr/bin/cmake").exists() || !File("/usr/bin/make").exists()) throw IllegalStateException(tr("exception.jmake.env_cmake.corrupt"))

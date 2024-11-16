@@ -13,7 +13,8 @@ import java.nio.file.attribute.BasicFileAttributes
 class JMakeProject(
     projPath: File,
     private val target: File?,
-    private val linkLibs: List<File>,
+    linkLibs: List<File>,
+    toolchain: Toolchain,
     resultCallback: (String, Double) -> Unit
 ) {
     private var rootPath: File = projPath.toPath().resolve(".jmake").toFile()
@@ -30,13 +31,13 @@ class JMakeProject(
             Files.newInputStream(projPath.resolve("jmake.json").toPath()).readAllBytes().toString(Charsets.UTF_8)
         )
 
-        builder = if (jobj["type"] == "cmake") CMakeProjectBuilder(projPath, buildPath, resultCallback)
+        builder = if (jobj["type"] == "cmake") CMakeProjectBuilder(projPath, buildPath, toolchain, resultCallback)
         else {
             if (target == null) throw IllegalArgumentException()
             BaseProjectBuilder(
                 projPath,
                 buildPath,
-                Toolchain.GCC,
+                toolchain,
                 jobj.getJSONArray("files").toList().map { it.toString() },
                 jobj.getJSONArray("includes").toList().map { it.toString() },
                 target,
