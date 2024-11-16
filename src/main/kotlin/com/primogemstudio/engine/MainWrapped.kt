@@ -1,6 +1,7 @@
 package com.primogemstudio.engine
 
 import com.primogemstudio.engine.jmake.JMakeProject
+import com.primogemstudio.engine.utils.LoggerFactory
 import java.io.File
 
 fun main() {
@@ -10,8 +11,10 @@ fun main() {
         Thread.sleep(1000)
     }*/
 
-    val proj = JMakeProject(File("/home/coder2/extsources/bullet3"))
+    val logger = LoggerFactory.getLogger()
+    val proj =
+        JMakeProject(File("/home/coder2/extsources/bullet3")) { d, b -> if (b != -1.0) logger.info(d) else logger.warn(d) }
     proj.prepareBuild()
     proj.build()
-    proj.findFiles()
+    proj.getTargets().forEach { println(it) }
 }

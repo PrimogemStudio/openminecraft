@@ -1,7 +1,7 @@
 package com.primogemstudio.engine.jmake
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
-import com.primogemstudio.engine.utils.LoggerFactory
+import org.json.JSONObject
 import java.io.File
 import java.io.IOException
 import java.nio.file.FileVisitResult
@@ -10,32 +10,47 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 
-class JMakeProject(val projPath: File) {
+class JMakeProject(private val projPath: File, val resultCallback: (String, Double) -> Unit) {
     private lateinit var rootPath: File
     private lateinit var buildPath: File
     private lateinit var builder: ProjectBuilder
-    private val logger = LoggerFactory.getLogger()
 
     fun prepareBuild() {
         rootPath = projPath.toPath().resolve(".jmake").toFile()
+        if (rootPath.exists()) rootPath.deleteRecursively()
         rootPath.mkdirs()
         buildPath = rootPath.toPath().resolve("build").toFile()
         buildPath.mkdirs()
 
-        builder = CMakeProjectBuilder(projPath, buildPath) { d, b -> if (b != -1.0) logger.info(d) else logger.warn(d) }
+        val jobj = JSONObject(
+            Files.newInputStream(projPath.resolve("jmake.json").toPath()).readAllBytes().toString(Charsets.UTF_8)
+        )
+
+        if (jobj["type"] == "cmake") builder = CMakeProjectBuilder(projPath, buildPath, resultCallback)
+        else builder = BaseProjectBuilder()
+
         builder.checkEnv()
+
+        jobj.getJSONObject("configs").apply {
+            keys().forEach {
+                builder.config(
+                    it,
+                    get(it).toString().replace("\$cpu_cores", Runtime.getRuntime().availableProcessors().toString())
+                )
+            }
+        }
+
+        jobj.getJSONObject("defines").apply {
+            keys().forEach {
+                builder.addDefine(
+                    it,
+                    get(it).toString().replace("\$cpu_cores", Runtime.getRuntime().availableProcessors().toString())
+                )
+            }
+        }
     }
 
     fun build() {
-        builder.config("JOBS", 8)
-
-        builder.addDefine("BUILD_CPU_DEMOS", "OFF")
-        builder.addDefine("BUILD_OPENGL3_DEMOS", "OFF")
-        builder.addDefine("BUILD_BULLET2_DEMOS", "OFF")
-        builder.addDefine("BUILD_UNIT_TESTS", "OFF")
-        builder.addDefine("INSTALL_LIBS", "ON")
-        builder.addDefine("BUILD_SHARED_LIBS", "OFF")
-
         builder.buildProject().forEach {
             if (it.toProcess(builder::outputProcessor)
                     .waitForProcess() != 0
@@ -43,14 +58,15 @@ class JMakeProject(val projPath: File) {
         }
     }
 
-    fun findFiles() {
+    fun getTargets(): List<File> {
+        val targets = mutableListOf<File>()
         Files.walkFileTree(buildPath.toPath(), object : FileVisitor<Path> {
             override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult =
                 FileVisitResult.CONTINUE
 
             override fun visitFile(file: Path?, attrs: BasicFileAttributes?): FileVisitResult {
                 file?.fileName?.toString()?.also {
-                    if (it.endsWith(".a")) println(file)
+                    if (it.endsWith(".a")) targets.add(file.toFile())
                 }
                 return FileVisitResult.CONTINUE
             }
@@ -59,5 +75,7 @@ class JMakeProject(val projPath: File) {
 
             override fun postVisitDirectory(dir: Path?, exc: IOException?): FileVisitResult = FileVisitResult.CONTINUE
         })
+
+        return targets
     }
 }

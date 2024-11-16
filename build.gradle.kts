@@ -14,6 +14,9 @@ allprojects {
 dependencies {
     implementation(rootProject.project(":openminecraft-vkengine"))
     implementation(rootProject.project(":openminecraft-jmake"))
+    implementation(rootProject.project(":openminecraft-base"))
+
+    implementation("org.apache.logging.log4j:log4j-api:${properties["openminecraft.log4j2_version"]}")
 }
 
 tasks.jar {

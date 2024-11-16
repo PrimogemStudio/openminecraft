@@ -14,6 +14,17 @@ class CMakeProjectBuilder(
         private const val CMAKE_GEN_STR = "-- Generating done"
         private const val CMAKE_BUILD_FILE_STR = "-- Build files have been written to:"
 
+        private const val CMAKE_CCOMP_IDENT_STR = "-- The C compiler identification is"
+        private const val CMAKE_CXXCOMP_IDENT_STR = "-- The CXX compiler identification is"
+        private const val CMAKE_CHECK_STATE_DONE = "- done"
+        private const val CMAKE_CHECK_STATE_SKIPPED = "- skipped"
+        private const val CMAKE_DET_CCOMP_ABI = "-- Detecting C compiler ABI info"
+        private const val CMAKE_DET_CXXCOMP_ABI = "-- Detecting CXX compiler ABI info"
+        private const val CMAKE_DET_CCOMP = "-- Check for working C compiler"
+        private const val CMAKE_DET_CXXCOMP = "-- Check for working CXX compiler"
+        private const val CMAKE_DET_CCOMP_FEAT = "-- Detecting C compile features"
+        private const val CMAKE_DET_CXXCOMP_FEAT = "-- Detecting CXX compile features"
+
         private val CMAKE_PROCESS_HINT = Pattern.compile("\\[(\u0020*)(?<status>.*)%] (?<msg>.*)")
 
         private const val CMAKE_BUILD_CXX_STR = "Building CXX object "
@@ -39,7 +50,7 @@ class CMakeProjectBuilder(
     }
 
     override fun buildProject(): List<CommandProp> = listOf(
-        CommandProp(build, mutableListOf("/usr/bin/cmake", "$projBase", "-G", "Unix Makefiles").apply {
+        CommandProp(build, mutableListOf("/usr/bin/cmake", "$projBase", "-G", "Unix Makefiles", "-Wno-dev").apply {
             defines.forEach { (t, u) -> add("-D$t=$u") }
         }),
         CommandProp(build, listOf("/usr/bin/make", "clean")),
@@ -55,10 +66,20 @@ class CMakeProjectBuilder(
     }
 
     override fun outputProcessor(data: String) {
-        var datae = data
+        val datae = data
             .replace(CMAKE_CONF_STR, tr("jmake.replacement.cmake_config"))
             .replace(CMAKE_GEN_STR, tr("jmake.replacement.cmake_gen"))
             .replace(CMAKE_BUILD_FILE_STR, tr("jmake.replacement.cmake_build"))
+            .replace(CMAKE_CCOMP_IDENT_STR, tr("jmake.replacement.cmake_ccompiler"))
+            .replace(CMAKE_CXXCOMP_IDENT_STR, tr("jmake.replacement.cmake_cxxcompiler"))
+            .replace(CMAKE_CHECK_STATE_DONE, tr("jmake.replacement.cmake_state_done"))
+            .replace(CMAKE_CHECK_STATE_SKIPPED, tr("jmake.replacement.cmake_state_skipped"))
+            .replace(CMAKE_DET_CCOMP_ABI, tr("jmake.replacement.cmake_ccompiler_abi"))
+            .replace(CMAKE_DET_CXXCOMP_ABI, tr("jmake.replacement.cmake_cxxcompiler_abi"))
+            .replace(CMAKE_DET_CCOMP, tr("jmake.replacement.cmake_ccompiler_check"))
+            .replace(CMAKE_DET_CXXCOMP, tr("jmake.replacement.cmake_cxxcompiler_check"))
+            .replace(CMAKE_DET_CCOMP_FEAT, tr("jmake.replacement.cmake_ccompiler_feat"))
+            .replace(CMAKE_DET_CXXCOMP_FEAT, tr("jmake.replacement.cmake_cxxcompiler_feat"))
 
         CMAKE_PROCESS_HINT.matcher(datae).apply {
             if (find()) {
