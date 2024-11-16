@@ -8,7 +8,8 @@ import kotlinx.coroutines.launch
 class MultiWrappedProcess(
     private val processes: List<ProcessBuilder>,
     private val concurrentCount: Int,
-    private val textProcessor: (String) -> Unit
+    private val textProcessor: (String) -> Unit,
+    private val details: List<String>
 ) : WrappedProcessI {
     private val processList = Array<WrappedProcess?>(processes.size) { null }
     private var procPointer: Int = 0
@@ -29,10 +30,18 @@ class MultiWrappedProcess(
         }
     }
 
+    private var lastRemaining = processes()
+
     override fun waitForProcess(): Int {
         while (!exited()) {
-            print("")
+            val fini = procPointer - running()
+            if (lastRemaining != fini && fini >= 0) {
+                textProcessor("$fini&${processes()}&${details[fini]}")
+                lastRemaining = fini
+            }
+            Thread.sleep(100)
         }
+        textProcessor("${processes()}&${processes()}&*")
         return processList.mapNotNull { it }.map { it.waitForProcess() }.firstOrNull { it != 0 } ?: 0
     }
 

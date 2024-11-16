@@ -110,7 +110,7 @@ class CMakeProjectBuilder(
                                 CMAKE_BUILT_TARGET_STR -> "target"
                                 else -> "unknown"
                             }
-                        }.name", prog, file
+                        }.name", file
                     ), prog.toDouble() / 100
                 )
 

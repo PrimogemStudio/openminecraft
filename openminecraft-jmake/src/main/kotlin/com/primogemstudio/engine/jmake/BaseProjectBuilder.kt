@@ -17,11 +17,11 @@ enum class Toolchain {
 }
 
 class BaseProjectBuilder(
-    val projBase: File,
+    private val projBase: File,
     val buildDir: File,
-    val toolchain: Toolchain,
-    val files: List<String>,
-    val includes: List<String>,
+    private val toolchain: Toolchain,
+    files: List<String>,
+    private val includes: List<String>,
     val resultCallback: (String, Double) -> Unit
 ) : ProjectBuilder {
     private val defines: MutableMap<String, Any> = mutableMapOf()
@@ -69,7 +69,8 @@ class BaseProjectBuilder(
                         defines.forEach { (t, u) -> add("-D$t=$u") }
                     })
                 },
-                4
+                4,
+                fileMap.map { (t, _) -> t.path }
             )
         ).apply {
             add(
@@ -94,6 +95,7 @@ class BaseProjectBuilder(
     }
 
     override fun outputProcessor(data: String) {
-        resultCallback(data, -1.0)
+        val d = data.split("&")
+        resultCallback(d[2], d[0].toDouble() / d[1].toDouble())
     }
 }

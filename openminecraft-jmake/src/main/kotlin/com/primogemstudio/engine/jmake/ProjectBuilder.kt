@@ -22,10 +22,11 @@ data class CommandProp(
 
 data class MultiCommandProp(
     val props: List<CommandProp>,
-    val concurrent: Int
+    val concurrent: Int,
+    val details: List<String>
 ) : CommandPropI {
     override fun toProcess(proc: (String) -> Unit): WrappedProcessI =
-        MultiWrappedProcess(props.map { it.builder() }, concurrent, proc)
+        MultiWrappedProcess(props.map { it.builder() }, concurrent, proc, details)
 
     override fun builder(): ProcessBuilder {
         TODO("Not yet implemented")
