@@ -21,7 +21,8 @@ class BaseProjectBuilder(
     val buildDir: File,
     val toolchain: Toolchain,
     val files: List<String>,
-    val includes: List<String>
+    val includes: List<String>,
+    val resultCallback: (String, Double) -> Unit
 ) : ProjectBuilder {
     private val defines: MutableMap<String, Any> = mutableMapOf()
     private val configs: MutableMap<String, Any> = mutableMapOf()
@@ -35,7 +36,7 @@ class BaseProjectBuilder(
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    override fun buildProject(): List<CommandProp> {
+    override fun buildProject(): List<CommandPropI> {
         val fileMap = mutableMapOf<File, File>()
         Files.walkFileTree(projBase.toPath(), object : FileVisitor<Path> {
             override fun preVisitDirectory(dir: Path?, attrs: BasicFileAttributes?): FileVisitResult =
@@ -58,16 +59,19 @@ class BaseProjectBuilder(
             override fun postVisitDirectory(dir: Path?, exc: IOException?): FileVisitResult = FileVisitResult.CONTINUE
         })
 
-        return fileMap.map { (t, u) ->
-            CommandProp(
-                projBase, mutableListOf(
-                    "/usr/bin/gcc", "-c", "-fPIC", t.toString(), "-o", u.toString()
-                ).apply {
-                    includes.forEach { add("-I$it") }
-                    defines.forEach { (t, u) -> add("-D$t=$u") }
-                }
+        return mutableListOf<CommandPropI>(
+            MultiCommandProp(
+                fileMap.map { (t, u) ->
+                    CommandProp(projBase, mutableListOf(
+                        "/usr/bin/gcc", "-c", "-fPIC", t.toString(), "-o", u.toString()
+                    ).apply {
+                        includes.forEach { add("-I$it") }
+                        defines.forEach { (t, u) -> add("-D$t=$u") }
+                    })
+                },
+                4
             )
-        }.toMutableList().apply {
+        ).apply {
             add(
                 CommandProp(
                     projBase, mutableListOf("/usr/bin/gcc").apply {
@@ -90,6 +94,6 @@ class BaseProjectBuilder(
     }
 
     override fun outputProcessor(data: String) {
-        println(data)
+        resultCallback(data, -1.0)
     }
 }

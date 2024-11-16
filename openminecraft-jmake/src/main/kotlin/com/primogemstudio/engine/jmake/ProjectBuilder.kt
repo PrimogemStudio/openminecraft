@@ -1,10 +1,13 @@
 package com.primogemstudio.engine.jmake
 
+import com.primogemstudio.engine.ext.MultiWrappedProcess
 import com.primogemstudio.engine.ext.WrappedProcess
+import com.primogemstudio.engine.ext.WrappedProcessI
 import java.io.File
 
 interface CommandPropI {
-    fun toProcess(proc: (String) -> Unit): WrappedProcess
+    fun toProcess(proc: (String) -> Unit): WrappedProcessI
+    fun builder(): ProcessBuilder
 }
 
 data class CommandProp(
@@ -12,7 +15,21 @@ data class CommandProp(
     val commandArgs: List<String>
 ) : CommandPropI {
     override fun toProcess(proc: (String) -> Unit): WrappedProcess =
-        WrappedProcess(ProcessBuilder().command(commandArgs).directory(runPath).start(), proc)
+        WrappedProcess(builder().start(), proc)
+
+    override fun builder(): ProcessBuilder = ProcessBuilder().command(commandArgs).directory(runPath)
+}
+
+data class MultiCommandProp(
+    val props: List<CommandProp>,
+    val concurrent: Int
+) : CommandPropI {
+    override fun toProcess(proc: (String) -> Unit): WrappedProcessI =
+        MultiWrappedProcess(props.map { it.builder() }, concurrent, proc)
+
+    override fun builder(): ProcessBuilder {
+        TODO("Not yet implemented")
+    }
 }
 
 interface ProjectBuilder {

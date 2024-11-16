@@ -10,7 +10,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.attribute.BasicFileAttributes
 
-class JMakeProject(private val projPath: File, val resultCallback: (String, Double) -> Unit) {
+class JMakeProject(private val projPath: File, private val resultCallback: (String, Double) -> Unit) {
     private lateinit var rootPath: File
     private lateinit var buildPath: File
     private lateinit var builder: ProjectBuilder
@@ -32,7 +32,9 @@ class JMakeProject(private val projPath: File, val resultCallback: (String, Doub
             buildPath,
             Toolchain.GCC,
             jobj.getJSONArray("files").toList().map { it.toString() },
-            jobj.getJSONArray("includes").toList().map { it.toString() })
+            jobj.getJSONArray("includes").toList().map { it.toString() },
+            resultCallback
+        )
 
         builder.checkEnv()
 
@@ -57,7 +59,6 @@ class JMakeProject(private val projPath: File, val resultCallback: (String, Doub
 
     fun build() {
         builder.buildProject().forEach {
-            println(it)
             if (it.toProcess(builder::outputProcessor)
                     .waitForProcess() != 0
             ) throw IllegalStateException(tr("exception.jmake.env_cmake.fail"))
