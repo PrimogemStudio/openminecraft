@@ -8,9 +8,10 @@ import com.primogemstudio.engine.vk.shader.ShaderType
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.vulkan.VK10.*
 import org.lwjgl.vulkan.VkShaderModuleCreateInfo
+import java.io.Closeable
 import java.nio.ByteBuffer
 
-class VkRendererTest(private val stack: MemoryStack, private val vkDeviceWrap: VkLogicalDeviceWrap) {
+class VkRendererTest(private val stack: MemoryStack, private val vkDeviceWrap: VkLogicalDeviceWrap) : Closeable {
     private val vkShaderCompiler = ShaderCompiler()
     private val vkBaseShaderFrag = vkShaderCompiler.compile(
         ResourceManager.getResource("jar:shaders/basic_shader.frag")?.readAllBytes()?.toString(Charsets.UTF_8) ?: "",
@@ -28,15 +29,22 @@ class VkRendererTest(private val stack: MemoryStack, private val vkDeviceWrap: V
     )
 
     init {
-        println(createShaderModule(vkBaseShaderFrag))
-        println(createShaderModule(vkBaseShaderVert))
+        println(createShaderModule(vkBaseShaderFrag.buffer))
+        println(createShaderModule(vkBaseShaderVert.buffer))
+
+        vkBaseShaderFrag.close()
+        vkBaseShaderVert.close()
     }
 
-    private fun createShaderModule(ba: ByteArray): Long {
+    override fun close() {
+        vkDestroyShaderModule(vkDeviceWrap.vkDevice, 0, null)
+    }
+
+    private fun createShaderModule(ba: ByteBuffer?): Long {
         val createInfo = VkShaderModuleCreateInfo.calloc(stack)
 
         createInfo.sType(VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO)
-        createInfo.pCode(ByteBuffer.allocateDirect(ba.size).put(ba))
+        createInfo.pCode(ba!!)
 
         val pShaderModule = stack.mallocLong(1)
 

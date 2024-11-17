@@ -34,7 +34,7 @@ class ShaderCompiler {
         lang: ShaderLanguage,
         type: ShaderType,
         werror: Boolean = true
-    ): ByteArray {
+    ): VkShaderData {
         val option = shaderc_compile_options_initialize()
         if (werror) shaderc_compile_options_set_warnings_as_errors(option)
         shaderc_compile_options_set_source_language(option, lang.data)
@@ -79,11 +79,6 @@ class ShaderCompiler {
             )
         )
 
-        return shaderc_result_get_bytes(r)!!.compact().let {
-            it.flip()
-            val ba = ByteArray(it.limit() - it.position())
-            it.get(ba)
-            ba
-        }
+        return VkShaderData(r, shaderc_result_get_bytes(r))
     }
 }
