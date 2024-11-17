@@ -1,5 +1,5 @@
 {
-  "exception.i18n.replacement.at": "位于",
+  "exception.i18n.replacement.at": "\t位于",
   "exception.i18n.replacement.thread": "异常发生于线程",
   "exception.i18n.replacement.trace": "堆栈追踪"
 }

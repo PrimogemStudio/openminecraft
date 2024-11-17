@@ -1,6 +1,6 @@
 package com.primogemstudio.engine.vk
 
-import org.lwjgl.glfw.GLFW.glfwCreateWindow
+import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWVulkan.glfwCreateWindowSurface
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.vulkan.VK10.VK_NULL_HANDLE
@@ -25,6 +25,13 @@ class VkWindow(
             }
 
             surface = pSurface[0]
+        }
+    }
+
+    fun mainLoop() {
+        while (!glfwWindowShouldClose(window)) {
+            glfwPollEvents()
+            glfwSwapBuffers(window)
         }
     }
 }

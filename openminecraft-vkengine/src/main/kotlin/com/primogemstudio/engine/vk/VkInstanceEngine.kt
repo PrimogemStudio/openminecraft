@@ -33,7 +33,7 @@ class VkInstanceEngine(
     private var vkLogicalDevice: VkLogicalDeviceWrap? = null
     private var vkQueue: VkQueueWrap? = null
     private var vkSwapChain: VkSwapChain? = null
-    private var vkWindow: VkWindow? = null
+    var vkWindow: VkWindow? = null
 
     init {
         val vkVer = appVer.split("-")[0].split(".").flatMap {

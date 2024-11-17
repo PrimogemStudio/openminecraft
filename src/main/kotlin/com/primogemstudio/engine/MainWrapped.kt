@@ -1,18 +1,13 @@
 package com.primogemstudio.engine
 
-import com.primogemstudio.engine.jmake.JMakeProject
-import com.primogemstudio.engine.jmake.Toolchain
-import com.primogemstudio.engine.utils.LoggerFactory
-import java.io.File
+import com.primogemstudio.engine.vk.VkInstanceEngine
 
 fun main() {
     System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
-    /*println(VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1"))
-    while (true) {
-        Thread.sleep(1000)
-    }*/
+    val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
+    instance.vkWindow!!.mainLoop()
 
-    val logger = LoggerFactory.getLogger()
+    /*val logger = LoggerFactory.getLogger()
     val projb =
         JMakeProject(File("/home/coder2/extsources/bullet3"), null, listOf(), Toolchain.CLANG) { d, b ->
             if (b != -1.0) logger.info("${(b * 100).toInt()}% $d") else logger.warn(
@@ -33,5 +28,5 @@ fun main() {
             )
         }
     proj.build()
-    proj.getTargets().forEach { println(it) }
+    proj.getTargets().forEach { println(it) }*/
 }

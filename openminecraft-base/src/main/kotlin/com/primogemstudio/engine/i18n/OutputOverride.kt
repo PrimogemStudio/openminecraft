@@ -18,7 +18,7 @@ object OutputOverride {
 class I18nPrintStream(private val parent: PrintStream) : PrintStream(parent) {
     override fun println(i: String?) {
         parent.println(
-            i?.replace("at", tr("exception.i18n.replacement.at"))
+            i?.replace("\tat", tr("exception.i18n.replacement.at"))
                 ?.replace("Exception in thread", tr("exception.i18n.replacement.thread"))
                 ?.replace("Stack trace", tr("exception.i18n.replacement.trace"))
         )
@@ -26,7 +26,7 @@ class I18nPrintStream(private val parent: PrintStream) : PrintStream(parent) {
 
     override fun print(i: String?) {
         parent.print(
-            i?.replace("at", tr("exception.i18n.replacement.at"))
+            i?.replace("\tat", tr("exception.i18n.replacement.at"))
                 ?.replace("Exception in thread", tr("exception.i18n.replacement.thread"))
                 ?.replace("Stack trace", tr("exception.i18n.replacement.trace"))
         )

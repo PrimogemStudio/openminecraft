@@ -1,5 +1,5 @@
 {
-  "exception.i18n.replacement.at": "at",
+  "exception.i18n.replacement.at": "\tAt",
   "exception.i18n.replacement.thread": "Exception in thread",
   "exception.i18n.replacement.trace": "Stack trace"
 }
