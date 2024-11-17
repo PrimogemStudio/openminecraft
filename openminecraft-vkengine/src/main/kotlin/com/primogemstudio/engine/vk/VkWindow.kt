@@ -3,17 +3,19 @@ package com.primogemstudio.engine.vk
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWVulkan.glfwCreateWindowSurface
 import org.lwjgl.system.MemoryStack.stackPush
+import org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR
 import org.lwjgl.vulkan.VK10.VK_NULL_HANDLE
 import org.lwjgl.vulkan.VK10.VK_SUCCESS
 import org.lwjgl.vulkan.VkInstance
+import java.io.Closeable
 
 class VkWindow(
     private val instanceAccessor: () -> VkInstance,
     var width: Int,
     var height: Int,
     private var title: String
-) {
-    var surface: Long = 0
+) : Closeable {
+    var vkSurface: Long = 0
     private var window: Long = 0
 
     init {
@@ -24,8 +26,12 @@ class VkWindow(
                 throw RuntimeException("Failed to create window surface")
             }
 
-            surface = pSurface[0]
+            vkSurface = pSurface[0]
         }
+    }
+
+    override fun close() {
+        vkDestroySurfaceKHR(instanceAccessor(), vkSurface, null)
     }
 
     fun mainLoop() {

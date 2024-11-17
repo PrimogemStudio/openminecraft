@@ -28,11 +28,11 @@ class VkPhysicalDeviceWrap(
 
             for (i in 0..<ppPhysicalDevices.capacity()) {
                 val vkDevice = VkPhysicalDevice(ppPhysicalDevices[i], vkInstance)
-                val fm = findQueueFamilies(stack, vkDevice, vkWindow.surface)
+                val fm = findQueueFamilies(stack, vkDevice, vkWindow.vkSurface)
                 devices.add(
                     VkPhysicalDeviceWrap(
                         vkDevice,
-                        vkWindow.surface,
+                        vkWindow.vkSurface,
                         fm[0],
                         fm[1]
                     )

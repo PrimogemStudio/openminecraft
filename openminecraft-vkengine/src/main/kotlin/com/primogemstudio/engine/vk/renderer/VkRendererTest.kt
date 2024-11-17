@@ -27,17 +27,20 @@ class VkRendererTest(private val stack: MemoryStack, private val vkDeviceWrap: V
         ShaderLanguage.Glsl,
         ShaderType.Vertex
     )
+    private var vkBaseShaderMFrag: Long = 0
+    private var vkBaseShaderMVert: Long = 0
 
     init {
-        println(createShaderModule(vkBaseShaderFrag.buffer))
-        println(createShaderModule(vkBaseShaderVert.buffer))
+        vkBaseShaderMFrag = createShaderModule(vkBaseShaderFrag.buffer)
+        vkBaseShaderMVert = createShaderModule(vkBaseShaderVert.buffer)
 
         vkBaseShaderFrag.close()
         vkBaseShaderVert.close()
     }
 
     override fun close() {
-        vkDestroyShaderModule(vkDeviceWrap.vkDevice, 0, null)
+        vkDestroyShaderModule(vkDeviceWrap.vkDevice, vkBaseShaderMFrag, null)
+        vkDestroyShaderModule(vkDeviceWrap.vkDevice, vkBaseShaderMVert, null)
     }
 
     private fun createShaderModule(ba: ByteBuffer?): Long {

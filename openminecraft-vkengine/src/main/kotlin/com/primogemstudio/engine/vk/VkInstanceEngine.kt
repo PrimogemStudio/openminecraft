@@ -133,9 +133,11 @@ class VkInstanceEngine(
     }
 
     override fun close() {
-        vkValidationLayer.close()
+        vkTestRenderer!!.close()
         vkSwapChain!!.close()
+        vkWindow!!.close()
         vkLogicalDevice!!.close()
+        vkValidationLayer.close()
         vkDestroyInstance(vkInstance!!, null)
         glfwTerminate()
     }

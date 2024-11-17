@@ -38,7 +38,7 @@ class VkSwapChain(
 
             val createInfo = VkSwapchainCreateInfoKHR.calloc(it).apply {
                 sType(VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR)
-                surface(vkWindow.surface)
+                surface(vkWindow.vkSurface)
 
                 minImageCount(imageCount[0])
                 imageFormat(surfaceFormat.format())
