@@ -3,6 +3,7 @@ package com.primogemstudio.engine.vk
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.i18n.OutputOverride
 import com.primogemstudio.engine.utils.LoggerFactory
+import com.primogemstudio.engine.vk.renderer.VkRendererTest
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
@@ -34,6 +35,8 @@ class VkInstanceEngine(
     private var vkQueue: VkQueueWrap? = null
     private var vkSwapChain: VkSwapChain? = null
     var vkWindow: VkWindow? = null
+
+    private var vkTestRenderer: VkRendererTest? = null
 
     init {
         val vkVer = appVer.split("-")[0].split(".").flatMap {
@@ -86,6 +89,11 @@ class VkInstanceEngine(
             run {
                 logger.info("Creating Swap Chain...")
                 vkSwapChain = VkSwapChain(vkLogicalDevice!!, vkPhysicalDevice!!, vkWindow!!)
+            }
+
+            run {
+                logger.info("Initialize renderer...")
+                vkTestRenderer = VkRendererTest(stk, vkLogicalDevice!!)
             }
         }
     }

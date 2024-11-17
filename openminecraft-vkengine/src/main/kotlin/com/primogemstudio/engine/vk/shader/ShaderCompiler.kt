@@ -1,5 +1,7 @@
 package com.primogemstudio.engine.vk.shader
 
+import com.primogemstudio.engine.i18n.Internationalization.tr
+import com.primogemstudio.engine.utils.LoggerFactory
 import org.lwjgl.util.shaderc.Shaderc.*
 
 enum class ShaderLanguage(val data: Int) {
@@ -23,24 +25,65 @@ enum class ShaderType(val glslType: Int, val hlslType: Int) {
 
 class ShaderCompiler {
     private val compiler = shaderc_compiler_initialize()
+    private val logger = LoggerFactory.getLogger()
 
-    init {
-        println(compiler)
+    fun compile(
+        source: String,
+        filename: String,
+        entrypoint: String,
+        lang: ShaderLanguage,
+        type: ShaderType,
+        werror: Boolean = true
+    ): ByteArray {
         val option = shaderc_compile_options_initialize()
-        shaderc_compile_options_set_warnings_as_errors(option)
-        shaderc_compile_options_set_source_language(option, shaderc_source_language_glsl)
+        if (werror) shaderc_compile_options_set_warnings_as_errors(option)
+        shaderc_compile_options_set_source_language(option, lang.data)
+
         val r = shaderc_compile_into_spv(
             compiler,
-            "#version 140\nvoid main() {gl_FragColor0=vec4(1.0);}",
-            shaderc_fragment_shader,
-            "test",
-            "main",
+            source,
+            if (lang == ShaderLanguage.Glsl) type.glslType else type.hlslType,
+            filename,
+            entrypoint,
             option
         )
-        println(shaderc_result_get_compilation_status(r))
-        println(shaderc_result_get_error_message(r))
-        println(shaderc_result_get_num_errors(r))
-        println(shaderc_result_get_num_warnings(r))
 
+        shaderc_compile_options_release(option)
+
+        logger.info(
+            tr(
+                "engine.shader.compile.result",
+                shaderc_result_get_num_warnings(r),
+                shaderc_result_get_num_errors(r),
+                filename
+            )
+        )
+        shaderc_result_get_error_message(r)?.split("\n")?.filter { it.isNotEmpty() }?.forEach {
+            logger.error(it)
+        }
+
+        logger.info(
+            tr(
+                when (shaderc_result_get_compilation_status(r)) {
+                    shaderc_compilation_status_success -> "engine.shader.compile_status.success"
+                    shaderc_compilation_status_invalid_stage -> "engine.shader.compile_status.invalid_stage"
+                    shaderc_compilation_status_compilation_error -> "engine.shader.compile_status.compile_error"
+                    shaderc_compilation_status_internal_error -> "engine.shader.compile_status.internal_error"
+                    shaderc_compilation_status_null_result_object -> "engine.shader.compile_status.null_result_object"
+                    shaderc_compilation_status_invalid_assembly -> "engine.shader.compile_status.invalid_assembly"
+                    shaderc_compilation_status_validation_error -> "engine.shader.compile_status.validation_error"
+                    shaderc_compilation_status_transformation_error -> "engine.shader.compile_status.transform_error"
+                    shaderc_compilation_status_configuration_error -> "engine.shader.compile_status.config_error"
+                    else -> "null"
+                }, filename
+            )
+        )
+
+        return shaderc_result_get_bytes(r)!!.compact().let {
+            it.flip()
+            val ba = ByteArray(it.limit() - it.position())
+            it.get(ba)
+            ba
+        }
     }
 }

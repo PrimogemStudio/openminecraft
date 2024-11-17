@@ -1,4 +1,14 @@
 {
   "exception.engine.app.version_corrupt": "错误的版本 %s!",
-  "engine.stage.glfw_init": "GLFW 初始化 ..."
+  "engine.stage.glfw_init": "GLFW 初始化 ...",
+  "engine.shader.compile_status.success": "编译成功: %s",
+  "engine.shader.compile_status.invalid_stage": "编译错误 (错误阶段): %s",
+  "engine.shader.compile_status.compile_error": "编译错误: %s",
+  "engine.shader.compile_status.internal_error": "编译错误 (内部错误): %s",
+  "engine.shader.compile_status.null_result_object": "编译错误 (空指针): %s",
+  "engine.shader.compile_status.invalid_assembly": "编译错误 (错误的汇编): %s",
+  "engine.shader.compile_status.validation_error": "编译错误 (验证错误): %s",
+  "engine.shader.compile_status.transform_error": "编译错误 (转换错误): %s",
+  "engine.shader.compile_status.config_error": "编译错误 (设置错误): %s",
+  "engine.shader.compile.result": "%d 警告, %d 错误: %s"
 }

@@ -10,6 +10,10 @@ object Internationalization {
     private val logger = LoggerFactory.getLogger()
 
     init {
+        load()
+    }
+
+    private fun load() {
         ResourceManager.getResources("jar:locale.json").forEach {
             JSONObject(it.readAllBytes().toString(Charsets.UTF_8)).apply {
                 keys().forEach { k ->

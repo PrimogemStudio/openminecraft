@@ -1,4 +1,14 @@
 {
   "exception.engine.app.version_corrupt": "Corrupt version %s!",
-  "engine.stage.glfw_init": "GLFW Initialization ..."
+  "engine.stage.glfw_init": "GLFW Initialization ...",
+  "engine.shader.compile_status.success": "Compilation success: %s",
+  "engine.shader.compile_status.invalid_stage": "Compilation failed (invalid stage): %s",
+  "engine.shader.compile_status.compile_error": "Compilation failed: %s",
+  "engine.shader.compile_status.internal_error": "Compilation failed (internal error): %s",
+  "engine.shader.compile_status.null_result_object": "Compilation failed (null result): %s",
+  "engine.shader.compile_status.invalid_assembly": "Compilation failed (invalid assembly): %s",
+  "engine.shader.compile_status.validation_error": "Compilation failed (validation error): %s",
+  "engine.shader.compile_status.transform_error": "Compilation failed (transform error): %s",
+  "engine.shader.compile_status.config_error": "Compilation failed (config error): %s",
+  "engine.shader.compile.result": "%d Warnings, $d Errors: %s"
 }
