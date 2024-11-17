@@ -1,11 +1,15 @@
 package com.primogemstudio.engine
 
-import com.primogemstudio.engine.vk.VkInstanceEngine
+import com.primogemstudio.engine.vk.shader.ShaderCompiler
 
 fun main() {
     System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
-    val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
-    instance.vkWindow!!.mainLoop()
+    /*val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
+    instance.close()*/
+    // instance.vkWindow!!.mainLoop()
+
+    val comp = ShaderCompiler()
+    println(comp)
 
     /*val logger = LoggerFactory.getLogger()
     val projb =

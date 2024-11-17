@@ -1,4 +1,4 @@
 {
-  "zh_CN": "assets/openmc/lang/zh_cn.json",
-  "en_US": "assets/openmc/lang/en_us.json"
+  "zh_CN": "jar:assets/openmc/lang/zh_cn.json",
+  "en_US": "jar:assets/openmc/lang/en_us.json"
 }
