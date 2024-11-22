@@ -1,7 +1,7 @@
 package com.primogemstudio.engine.i18n
 
+import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.ResourceManager
-import com.primogemstudio.engine.utils.LoggerFactory
 import org.json.JSONObject
 import java.util.*
 

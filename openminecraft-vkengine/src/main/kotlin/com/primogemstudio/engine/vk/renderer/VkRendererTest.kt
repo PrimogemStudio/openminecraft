@@ -14,14 +14,16 @@ import java.nio.ByteBuffer
 class VkRendererTest(private val stack: MemoryStack, private val vkDeviceWrap: VkLogicalDeviceWrap) : Closeable {
     private val vkShaderCompiler = ShaderCompiler()
     private val vkBaseShaderFrag = vkShaderCompiler.compile(
-        ResourceManager.getResource("jar:shaders/basic_shader.frag")?.readAllBytes()?.toString(Charsets.UTF_8) ?: "",
+        ResourceManager.getResource("jar:assets/openmc_vkengine/shaders/basic_shader.frag")?.readAllBytes()
+            ?.toString(Charsets.UTF_8) ?: "",
         "basic_shader.frag",
         "main",
         ShaderLanguage.Glsl,
         ShaderType.Fragment
     )
     private val vkBaseShaderVert = vkShaderCompiler.compile(
-        ResourceManager.getResource("jar:shaders/basic_shader.vert")?.readAllBytes()?.toString(Charsets.UTF_8) ?: "",
+        ResourceManager.getResource("jar:assets/openmc_vkengine/shaders/basic_shader.vert")?.readAllBytes()
+            ?.toString(Charsets.UTF_8) ?: "",
         "basic_shader.vert",
         "main",
         ShaderLanguage.Glsl,

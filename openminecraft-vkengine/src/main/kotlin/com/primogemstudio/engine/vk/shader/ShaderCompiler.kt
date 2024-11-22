@@ -1,7 +1,7 @@
 package com.primogemstudio.engine.vk.shader
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
-import com.primogemstudio.engine.utils.LoggerFactory
+import com.primogemstudio.engine.logging.LoggerFactory
 import org.lwjgl.util.shaderc.Shaderc.*
 
 enum class ShaderLanguage(val data: Int) {

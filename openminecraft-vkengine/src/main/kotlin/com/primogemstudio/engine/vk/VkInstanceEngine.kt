@@ -2,7 +2,7 @@ package com.primogemstudio.engine.vk
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.i18n.OutputOverride
-import com.primogemstudio.engine.utils.LoggerFactory
+import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.vk.renderer.VkRendererTest
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.system.MemoryStack

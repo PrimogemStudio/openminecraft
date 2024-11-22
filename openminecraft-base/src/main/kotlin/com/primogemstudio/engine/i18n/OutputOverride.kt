@@ -4,8 +4,8 @@ import com.primogemstudio.engine.i18n.Internationalization.tr
 import java.io.PrintStream
 
 object OutputOverride {
-    lateinit var out: PrintStream
-    lateinit var err: PrintStream
+    private lateinit var out: PrintStream
+    private lateinit var err: PrintStream
     fun init() {
         out = System.out
         err = System.err
