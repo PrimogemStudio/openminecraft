@@ -8,8 +8,8 @@ fun main() {
 
     OutputOverride.init()
     val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
-    instance.close()
-    // instance.vkWindow!!.mainLoop()
+    // instance.close()
+    instance.vkWindow!!.mainLoop()
 
     /*val logger = LoggerFactory.getLogger()
     val projb =

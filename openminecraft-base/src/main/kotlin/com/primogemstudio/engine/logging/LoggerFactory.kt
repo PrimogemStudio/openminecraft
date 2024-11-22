@@ -11,11 +11,20 @@ import org.apache.logging.log4j.spi.AbstractLogger
 @Suppress("UNUSED")
 object LoggerFactory {
     private val stackWalker = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE)
-    fun getLogger(s: String): Logger = TestLogger(LogManager.getLogger(s))
-    fun getLogger(): Logger = getLogger(stackWalker.callerClass.simpleName)
+    val logStack = mutableListOf<LogMsg>()
+
+    fun getLogger(s: String): TracedLogger = TracedLogger(LogManager.getLogger(s))
+    fun getLogger(): TracedLogger = getLogger(stackWalker.callerClass.simpleName)
 }
 
-class TestLogger(private val parent: Logger) : AbstractLogger() {
+data class LogMsg(
+    val level: Level,
+    val logger: String,
+    val msg: String,
+    val extra: Any?
+)
+
+class TracedLogger(private val parent: Logger) : AbstractLogger() {
     override fun getLevel(): Level = Level.ALL
 
     override fun isEnabled(level: Level?, marker: Marker?, message: Message?, t: Throwable?): Boolean = true
@@ -121,7 +130,26 @@ class TestLogger(private val parent: Logger) : AbstractLogger() {
     ): Boolean = true
 
     override fun logMessage(fqcn: String?, level: Level?, marker: Marker?, message: Message?, t: Throwable?) {
+        LoggerFactory.logStack.add(
+            LogMsg(
+                level ?: Level.INFO,
+                parent.name,
+                message?.format ?: "",
+                null
+            )
+        )
         parent.logMessage(level, marker, fqcn, t?.stackTrace?.get(0), message, t)
-        println(message)
+    }
+
+    fun forwardLog(msg: String, progress: Double) {
+        LoggerFactory.logStack.add(
+            LogMsg(
+                Level.INFO,
+                parent.name,
+                "[${(progress * 100).toInt()}%] $msg",
+                progress
+            )
+        )
+        parent.info("[${(progress * 100).toInt()}%] $msg")
     }
 }
