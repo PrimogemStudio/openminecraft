@@ -3,12 +3,9 @@ package com.primogemstudio.engine.vk.renderer
 import com.primogemstudio.engine.vk.VkLogicalDeviceWrap
 import com.primogemstudio.engine.vk.VkSwapChain
 import org.lwjgl.system.MemoryStack
+import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
 import org.lwjgl.vulkan.VK10.*
-import org.lwjgl.vulkan.VkAttachmentDescription
-import org.lwjgl.vulkan.VkAttachmentReference
-import org.lwjgl.vulkan.VkRenderPassCreateInfo
-import org.lwjgl.vulkan.VkSubpassDescription
 
 class VkTestRenderPass(stack: MemoryStack, vkDeviceWrap: VkLogicalDeviceWrap, private val vkSwapChain: VkSwapChain) {
     var renderPass: Long = 0
@@ -36,10 +33,20 @@ class VkTestRenderPass(stack: MemoryStack, vkDeviceWrap: VkLogicalDeviceWrap, pr
             it.pColorAttachments(colorAttachmentRef)
         }
 
+        val dependency = VkSubpassDependency.calloc(1, stack).let {
+            it.srcSubpass(VK_SUBPASS_EXTERNAL)
+            it.dstSubpass(0)
+            it.srcStageMask(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT)
+            it.srcAccessMask(0)
+            it.dstStageMask(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT)
+            it.dstAccessMask(VK_ACCESS_COLOR_ATTACHMENT_READ_BIT or VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT)
+        }
+
         val renderPassInfo = VkRenderPassCreateInfo.calloc(stack).apply {
             sType(VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO)
             pAttachments(colorAttachment)
             pSubpasses(subpass)
+            pDependencies(dependency)
         }
 
         val pRenderPass = stack.mallocLong(1)
