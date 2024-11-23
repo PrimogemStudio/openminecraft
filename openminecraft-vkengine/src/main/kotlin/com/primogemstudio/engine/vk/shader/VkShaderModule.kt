@@ -8,7 +8,7 @@ import java.io.Closeable
 
 class VkShaderModule(stack: MemoryStack, private val vkDeviceWrap: VkLogicalDeviceWrap, shaderData: VkShaderData) :
     Closeable {
-    private var shaderModule: Long
+    val shaderModule: Long
 
     init {
         val createInfo = VkShaderModuleCreateInfo.calloc(stack).apply {

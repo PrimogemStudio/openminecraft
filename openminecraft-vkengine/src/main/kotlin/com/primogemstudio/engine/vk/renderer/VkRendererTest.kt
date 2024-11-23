@@ -6,16 +6,16 @@ import com.primogemstudio.engine.vk.VkSwapChain
 import com.primogemstudio.engine.vk.shader.ShaderCompiler
 import com.primogemstudio.engine.vk.shader.ShaderLanguage
 import com.primogemstudio.engine.vk.shader.ShaderType
+import com.primogemstudio.engine.vk.shader.VkShaderModule
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.vulkan.VK10.*
-import org.lwjgl.vulkan.VkShaderModuleCreateInfo
+import org.lwjgl.vulkan.VkPipelineShaderStageCreateInfo
 import java.io.Closeable
-import java.nio.ByteBuffer
 
 class VkRendererTest(
-    private val stack: MemoryStack,
-    private val vkDeviceWrap: VkLogicalDeviceWrap,
-    private val vkSwapChain: VkSwapChain
+    stack: MemoryStack,
+    vkDeviceWrap: VkLogicalDeviceWrap,
+    vkSwapChain: VkSwapChain
 ) : Closeable {
     private val vkShaderCompiler = ShaderCompiler()
     private val vkBaseShaderFrag = vkShaderCompiler.compile(
@@ -34,38 +34,32 @@ class VkRendererTest(
         ShaderLanguage.Glsl,
         ShaderType.Vertex
     )
-    private var vkBaseShaderMFrag: Long = 0
-    private var vkBaseShaderMVert: Long = 0
+    private var vkBaseShaderMFrag = VkShaderModule(stack, vkDeviceWrap, vkBaseShaderFrag)
+    private var vkBaseShaderMVert = VkShaderModule(stack, vkDeviceWrap, vkBaseShaderVert)
 
     private var pipelineLayout: VkTestPipelineLayout
 
     init {
-        vkBaseShaderMFrag = createShaderModule(vkBaseShaderFrag.buffer)
-        vkBaseShaderMVert = createShaderModule(vkBaseShaderVert.buffer)
+        val shaderStages = VkPipelineShaderStageCreateInfo.calloc(2, stack)
+        shaderStages[0].apply {
+            sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+            stage(VK_SHADER_STAGE_VERTEX_BIT)
+            module(vkBaseShaderMVert.shaderModule)
+            pName(stack.UTF8("main"))
+        }
 
-        pipelineLayout = VkTestPipelineLayout(stack, vkDeviceWrap, vkSwapChain)
+        shaderStages[1].apply {
+            sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+            stage(VK_SHADER_STAGE_FRAGMENT_BIT)
+            module(vkBaseShaderMFrag.shaderModule)
+            pName(stack.UTF8("main"))
+        }
 
-        vkBaseShaderFrag.close()
-        vkBaseShaderVert.close()
+        pipelineLayout = VkTestPipelineLayout(stack, vkDeviceWrap, vkSwapChain, shaderStages)
     }
 
     override fun close() {
-        vkDestroyShaderModule(vkDeviceWrap.vkDevice, vkBaseShaderMFrag, null)
-        vkDestroyShaderModule(vkDeviceWrap.vkDevice, vkBaseShaderMVert, null)
-    }
-
-    private fun createShaderModule(ba: ByteBuffer?): Long {
-        val createInfo = VkShaderModuleCreateInfo.calloc(stack)
-
-        createInfo.sType(VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO)
-        createInfo.pCode(ba!!)
-
-        val pShaderModule = stack.mallocLong(1)
-
-        if (vkCreateShaderModule(vkDeviceWrap.vkDevice, createInfo, null, pShaderModule) != VK_SUCCESS) {
-            throw IllegalStateException("Failed to create shader module")
-        }
-
-        return pShaderModule[0]
+        vkBaseShaderMFrag.close()
+        vkBaseShaderMVert.close()
     }
 }
