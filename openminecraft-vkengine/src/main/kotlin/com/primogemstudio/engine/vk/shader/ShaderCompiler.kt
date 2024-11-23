@@ -8,13 +8,13 @@ enum class ShaderLanguage(val data: Int) {
     Glsl(shaderc_source_language_glsl), Hlsl(shaderc_source_language_hlsl)
 }
 
-enum class ShaderType(val glslType: Int, val hlslType: Int) {
-    Vertex(shaderc_glsl_vertex_shader, shaderc_vertex_shader),
-    Fragment(shaderc_glsl_fragment_shader, shaderc_fragment_shader),
-    Compute(shaderc_glsl_compute_shader, shaderc_compute_shader),
-    Geometry(shaderc_glsl_geometry_shader, shaderc_geometry_shader),
-    TessControl(shaderc_glsl_tess_control_shader, shaderc_tess_control_shader),
-    TessEvaluation(shaderc_glsl_tess_evaluation_shader, shaderc_tess_evaluation_shader),
+enum class ShaderType(val glslType: Int, val hlslType: Int, val type: String) {
+    Vertex(shaderc_glsl_vertex_shader, shaderc_vertex_shader, "vertex"),
+    Fragment(shaderc_glsl_fragment_shader, shaderc_fragment_shader, "frag"),
+    Compute(shaderc_glsl_compute_shader, shaderc_compute_shader, "compute"),
+    Geometry(shaderc_glsl_geometry_shader, shaderc_geometry_shader, "geometry"),
+    TessControl(shaderc_glsl_tess_control_shader, shaderc_tess_control_shader, "tess_control"),
+    TessEvaluation(shaderc_glsl_tess_evaluation_shader, shaderc_tess_evaluation_shader, "tess_evaluation"),
     /*RayGen(shaderc_glsl_raygen_shader, shaderc_raygen_shader),
     AnyHit(shaderc_glsl_anyhit_shader, shaderc_anyhit_shader),
     ClosesThit(shaderc_glsl_closesthit_shader, shaderc_closesthit_shader),
@@ -62,21 +62,25 @@ class ShaderCompiler {
             logger.error(it)
         }
 
+
+
         logger.info(
-            tr(
-                when (shaderc_result_get_compilation_status(r)) {
-                    shaderc_compilation_status_success -> "engine.shader.compile_status.success"
-                    shaderc_compilation_status_invalid_stage -> "engine.shader.compile_status.invalid_stage"
-                    shaderc_compilation_status_compilation_error -> "engine.shader.compile_status.compile_error"
-                    shaderc_compilation_status_internal_error -> "engine.shader.compile_status.internal_error"
-                    shaderc_compilation_status_null_result_object -> "engine.shader.compile_status.null_result_object"
-                    shaderc_compilation_status_invalid_assembly -> "engine.shader.compile_status.invalid_assembly"
-                    shaderc_compilation_status_validation_error -> "engine.shader.compile_status.validation_error"
-                    shaderc_compilation_status_transformation_error -> "engine.shader.compile_status.transform_error"
-                    shaderc_compilation_status_configuration_error -> "engine.shader.compile_status.config_error"
-                    else -> "null"
-                }, filename
-            )
+            "${tr("engine.shader.types.${type.type}")}${
+                tr(
+                    when (shaderc_result_get_compilation_status(r)) {
+                        shaderc_compilation_status_success -> "engine.shader.compile_status.success"
+                        shaderc_compilation_status_invalid_stage -> "engine.shader.compile_status.invalid_stage"
+                        shaderc_compilation_status_compilation_error -> "engine.shader.compile_status.compile_error"
+                        shaderc_compilation_status_internal_error -> "engine.shader.compile_status.internal_error"
+                        shaderc_compilation_status_null_result_object -> "engine.shader.compile_status.null_result_object"
+                        shaderc_compilation_status_invalid_assembly -> "engine.shader.compile_status.invalid_assembly"
+                        shaderc_compilation_status_validation_error -> "engine.shader.compile_status.validation_error"
+                        shaderc_compilation_status_transformation_error -> "engine.shader.compile_status.transform_error"
+                        shaderc_compilation_status_configuration_error -> "engine.shader.compile_status.config_error"
+                        else -> "null"
+                    }, filename
+                )
+            }"
         )
 
         return VkShaderData(r, shaderc_result_get_bytes(r))

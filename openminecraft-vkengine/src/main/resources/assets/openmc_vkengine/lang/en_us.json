@@ -10,5 +10,11 @@
   "engine.shader.compile_status.validation_error": "Compilation failed (validation error): %s",
   "engine.shader.compile_status.transform_error": "Compilation failed (transform error): %s",
   "engine.shader.compile_status.config_error": "Compilation failed (config error): %s",
-  "engine.shader.compile.result": "%d Warnings, $d Errors: %s"
+  "engine.shader.compile.result": "%d Warnings, $d Errors: %s",
+  "engine.shader.types.vertex": "Vertex Shader ",
+  "engine.shader.types.frag": "Fragment Shader ",
+  "engine.shader.types.compute": "Compute Shader ",
+  "engine.shader.types.geometry": "Geometry Shader ",
+  "engine.shader.types.tess_control": "Tesselation Control Shader ",
+  "engine.shader.types.tess_evaluation": "Tesselation Evaluation Shader "
 }
