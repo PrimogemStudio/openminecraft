@@ -6,8 +6,13 @@ import org.lwjgl.system.MemoryStack
 import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
 import org.lwjgl.vulkan.VK10.*
+import java.io.Closeable
 
-class VkTestRenderPass(stack: MemoryStack, vkDeviceWrap: VkLogicalDeviceWrap, private val vkSwapChain: VkSwapChain) {
+class VkTestRenderPass(
+    stack: MemoryStack,
+    private val vkDeviceWrap: VkLogicalDeviceWrap,
+    private val vkSwapChain: VkSwapChain
+) : Closeable {
     var renderPass: Long = 0
 
     init {
@@ -55,5 +60,9 @@ class VkTestRenderPass(stack: MemoryStack, vkDeviceWrap: VkLogicalDeviceWrap, pr
         }
 
         renderPass = pRenderPass[0]
+    }
+
+    override fun close() {
+        vkDestroyRenderPass(vkDeviceWrap.vkDevice, renderPass, null)
     }
 }

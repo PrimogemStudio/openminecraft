@@ -1,5 +1,7 @@
 package com.primogemstudio.engine.vk
 
+import org.lwjgl.glfw.GLFW.glfwGetFramebufferSize
+import org.lwjgl.glfw.GLFW.glfwWaitEvents
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.vulkan.*
@@ -14,7 +16,8 @@ import kotlin.math.min
 class VkSwapChain(
     private val logicalDevice: VkLogicalDeviceWrap,
     private val physicalDevice: VkPhysicalDeviceWrap,
-    private val vkWindow: VkWindow
+    private val vkWindow: VkWindow,
+    private val onRecreate: () -> Unit
 ) : Closeable {
     var swapChain: Long = 0
     private var swapChainImages: List<Long> = listOf()
@@ -23,6 +26,10 @@ class VkSwapChain(
     var swapChainExtent: VkExtent2D? = null
 
     init {
+        initBase()
+    }
+
+    private fun initBase() {
         stackPush().use {
             val support = physicalDevice.swapChainSupport
 
@@ -144,6 +151,24 @@ class VkSwapChain(
         actualExtent.height(clamp(minExtent.height(), maxExtent.height(), actualExtent.height()))
 
         return actualExtent
+    }
+
+    fun recreate() {
+        stackPush().use {
+            val width = it.ints(0)
+            val height = it.ints(0)
+
+            while (width[0] == 0 && height[0] == 0) {
+                glfwGetFramebufferSize(vkWindow.window, width, height)
+                glfwWaitEvents()
+            }
+
+            vkDeviceWaitIdle(logicalDevice.vkDevice)
+
+            close()
+        }
+        initBase()
+        onRecreate()
     }
 
     override fun close() {

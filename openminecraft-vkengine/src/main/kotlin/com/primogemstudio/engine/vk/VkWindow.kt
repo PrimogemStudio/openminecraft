@@ -17,7 +17,7 @@ class VkWindow(
     var renderCall: () -> Unit
 ) : Closeable {
     var vkSurface: Long = 0
-    private var window: Long = 0
+    var window: Long = 0
 
     init {
         stackPush().use {
@@ -25,7 +25,7 @@ class VkWindow(
             window = glfwCreateWindow(width, height, title, 0, 0)
             val pSurface = it.longs(VK_NULL_HANDLE)
             if (glfwCreateWindowSurface(instanceAccessor(), window, null, pSurface) != VK_SUCCESS) {
-                // throw RuntimeException("Failed to create window surface")
+                throw RuntimeException("Failed to create window surface")
             }
 
             vkSurface = pSurface[0]

@@ -22,7 +22,7 @@ class VkRendererTest(
     private val vkQueueWrap: VkQueueWrap
 ) : Closeable {
     companion object {
-        private val MAX_FRAMES_IN_FLIGHT: Int = 2
+        private const val MAX_FRAMES_IN_FLIGHT: Int = 2
     }
     private val vkShaderCompiler = ShaderCompiler()
     private val vkBaseShaderFrag = vkShaderCompiler.compile(
@@ -43,7 +43,7 @@ class VkRendererTest(
     )
     private var vkBaseShaderMFrag = VkShaderModule(stack, vkDeviceWrap, vkBaseShaderFrag)
     private var vkBaseShaderMVert = VkShaderModule(stack, vkDeviceWrap, vkBaseShaderVert)
-    private var vkRenderPass = VkTestRenderPass(stack, vkDeviceWrap, vkSwapChain)
+    private var vkRenderPass: VkTestRenderPass
     private var vkPipeline: VkTestPipeline
     private var vkFramebufs: VkTestFrameBuffers
     private var vkCommandBuffer: VkTestCommandBuffer
@@ -68,6 +68,7 @@ class VkRendererTest(
             pName(stack.UTF8("main"))
         }
 
+        vkRenderPass = VkTestRenderPass(stack, vkDeviceWrap, vkSwapChain)
         vkPipeline = VkTestPipeline(stack, vkDeviceWrap, vkSwapChain, shaderStages, vkRenderPass)
         vkFramebufs = VkTestFrameBuffers(stack, vkDeviceWrap, vkSwapChain, vkRenderPass)
         vkCommandBuffer = VkTestCommandBuffer(stack, vkDeviceWrap, vkSwapChain, vkFramebufs, vkPipeline, vkRenderPass)
@@ -147,11 +148,41 @@ class VkRendererTest(
         }
     }
 
+    fun recreate() {
+        val shaderStages = VkPipelineShaderStageCreateInfo.calloc(2, stack)
+        shaderStages[0].apply {
+            sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+            stage(VK_SHADER_STAGE_VERTEX_BIT)
+            module(vkBaseShaderMVert.shaderModule)
+            pName(stack.UTF8("main"))
+        }
+
+        shaderStages[1].apply {
+            sType(VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+            stage(VK_SHADER_STAGE_FRAGMENT_BIT)
+            module(vkBaseShaderMFrag.shaderModule)
+            pName(stack.UTF8("main"))
+        }
+
+        vkCommandBuffer.close()
+        vkFramebufs.close()
+        vkPipeline.close()
+        vkRenderPass.close()
+
+        vkRenderPass = VkTestRenderPass(stack, vkDeviceWrap, vkSwapChain)
+        vkPipeline = VkTestPipeline(stack, vkDeviceWrap, vkSwapChain, shaderStages, vkRenderPass)
+        vkFramebufs = VkTestFrameBuffers(stack, vkDeviceWrap, vkSwapChain, vkRenderPass)
+        vkCommandBuffer = VkTestCommandBuffer(stack, vkDeviceWrap, vkSwapChain, vkFramebufs, vkPipeline, vkRenderPass)
+    }
+
     override fun close() {
         vkBaseShaderMFrag.close()
         vkBaseShaderMVert.close()
+
+        vkCommandBuffer.close()
         vkFramebufs.close()
         vkPipeline.close()
+        vkRenderPass.close()
 
         inFlightFrames.forEach {
             vkDestroySemaphore(vkDeviceWrap.vkDevice, it.imageAvailableSemaphore, null)

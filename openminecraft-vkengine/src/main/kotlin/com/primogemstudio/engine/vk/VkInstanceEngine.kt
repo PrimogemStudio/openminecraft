@@ -81,7 +81,8 @@ class VkInstanceEngine(
 
             run {
                 logger.info("Creating Swap Chain...")
-                vkSwapChain = VkSwapChain(vkLogicalDevice!!, vkPhysicalDevice!!, vkWindow!!)
+                vkSwapChain =
+                    VkSwapChain(vkLogicalDevice!!, vkPhysicalDevice!!, vkWindow!!) { vkTestRenderer!!.recreate() }
             }
 
             run {

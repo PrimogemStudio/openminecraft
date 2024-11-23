@@ -3,6 +3,7 @@ package com.primogemstudio.engine.vk.renderer
 import com.primogemstudio.engine.vk.VkLogicalDeviceWrap
 import com.primogemstudio.engine.vk.VkSwapChain
 import org.lwjgl.system.MemoryStack
+import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.VK10.*
 import java.io.Closeable
@@ -11,8 +12,8 @@ class VkTestCommandBuffer(
     stack: MemoryStack,
     private val vkDeviceWrap: VkLogicalDeviceWrap,
     private val vkSwapChain: VkSwapChain,
-    private val vkFrameBuffers: VkTestFrameBuffers,
-    private val vkPipeline: VkTestPipeline,
+    vkFrameBuffers: VkTestFrameBuffers,
+    vkPipeline: VkTestPipeline,
     private val vkRenderPass: VkTestRenderPass
 ) : Closeable {
     private var commandPool: Long
@@ -91,6 +92,11 @@ class VkTestCommandBuffer(
     }
 
     override fun close() {
+        stackPush().use {
+            val p = it.mallocPointer(commandBuffers.size)
+            commandBuffers.forEach(p::put)
+            vkFreeCommandBuffers(vkDeviceWrap.vkDevice, commandPool, p.rewind())
+        }
         vkDestroyCommandPool(vkDeviceWrap.vkDevice, commandPool, null)
     }
 }
