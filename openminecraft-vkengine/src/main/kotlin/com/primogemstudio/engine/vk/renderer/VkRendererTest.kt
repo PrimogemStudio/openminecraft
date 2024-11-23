@@ -2,6 +2,7 @@ package com.primogemstudio.engine.vk.renderer
 
 import com.primogemstudio.engine.resource.ResourceManager
 import com.primogemstudio.engine.vk.VkLogicalDeviceWrap
+import com.primogemstudio.engine.vk.VkSwapChain
 import com.primogemstudio.engine.vk.shader.ShaderCompiler
 import com.primogemstudio.engine.vk.shader.ShaderLanguage
 import com.primogemstudio.engine.vk.shader.ShaderType
@@ -11,7 +12,11 @@ import org.lwjgl.vulkan.VkShaderModuleCreateInfo
 import java.io.Closeable
 import java.nio.ByteBuffer
 
-class VkRendererTest(private val stack: MemoryStack, private val vkDeviceWrap: VkLogicalDeviceWrap) : Closeable {
+class VkRendererTest(
+    private val stack: MemoryStack,
+    private val vkDeviceWrap: VkLogicalDeviceWrap,
+    private val vkSwapChain: VkSwapChain
+) : Closeable {
     private val vkShaderCompiler = ShaderCompiler()
     private val vkBaseShaderFrag = vkShaderCompiler.compile(
         ResourceManager.getResource("jar:assets/openmc_vkengine/shaders/basic_shader.frag")?.readAllBytes()
@@ -32,9 +37,13 @@ class VkRendererTest(private val stack: MemoryStack, private val vkDeviceWrap: V
     private var vkBaseShaderMFrag: Long = 0
     private var vkBaseShaderMVert: Long = 0
 
+    private var pipelineLayout: VkTestPipelineLayout
+
     init {
         vkBaseShaderMFrag = createShaderModule(vkBaseShaderFrag.buffer)
         vkBaseShaderMVert = createShaderModule(vkBaseShaderVert.buffer)
+
+        pipelineLayout = VkTestPipelineLayout(stack, vkDeviceWrap, vkSwapChain)
 
         vkBaseShaderFrag.close()
         vkBaseShaderVert.close()

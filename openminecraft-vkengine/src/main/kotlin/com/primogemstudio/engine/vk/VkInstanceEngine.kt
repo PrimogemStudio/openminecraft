@@ -86,7 +86,7 @@ class VkInstanceEngine(
 
             run {
                 logger.info("Initialize renderer...")
-                vkTestRenderer = VkRendererTest(stk, vkLogicalDevice!!)
+                vkTestRenderer = VkRendererTest(stk, vkLogicalDevice!!, vkSwapChain!!)
             }
         }
     }
