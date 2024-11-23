@@ -15,7 +15,7 @@ class VkTestPipeline(
     private val vkRenderPass: VkTestRenderPass
 ) : Closeable {
     private var pipelineLayout: Long
-    private var graphicsPipeline: Long
+    var graphicsPipeline: Long
 
     init {
         val vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack).apply {

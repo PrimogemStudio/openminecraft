@@ -37,7 +37,6 @@ class VkWindow(
     fun mainLoop() {
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents()
-            glfwSwapBuffers(window)
         }
     }
 }

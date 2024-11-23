@@ -10,7 +10,7 @@ import org.lwjgl.vulkan.VkAttachmentReference
 import org.lwjgl.vulkan.VkRenderPassCreateInfo
 import org.lwjgl.vulkan.VkSubpassDescription
 
-class VkTestRenderPass(stack: MemoryStack, val vkDeviceWrap: VkLogicalDeviceWrap, val vkSwapChain: VkSwapChain) {
+class VkTestRenderPass(stack: MemoryStack, vkDeviceWrap: VkLogicalDeviceWrap, private val vkSwapChain: VkSwapChain) {
     var renderPass: Long = 0
 
     init {

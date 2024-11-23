@@ -37,7 +37,8 @@ class VkRendererTest(
     private var vkBaseShaderMFrag = VkShaderModule(stack, vkDeviceWrap, vkBaseShaderFrag)
     private var vkBaseShaderMVert = VkShaderModule(stack, vkDeviceWrap, vkBaseShaderVert)
     private var vkRenderPass = VkTestRenderPass(stack, vkDeviceWrap, vkSwapChain)
-    private var pipelineLayout: VkTestPipeline
+    private var vkPipeline: VkTestPipeline
+    private var vkFramebufs: VkTestFrameBuffers
 
     init {
         val shaderStages = VkPipelineShaderStageCreateInfo.calloc(2, stack)
@@ -55,7 +56,8 @@ class VkRendererTest(
             pName(stack.UTF8("main"))
         }
 
-        pipelineLayout = VkTestPipeline(stack, vkDeviceWrap, vkSwapChain, shaderStages, vkRenderPass)
+        vkPipeline = VkTestPipeline(stack, vkDeviceWrap, vkSwapChain, shaderStages, vkRenderPass)
+        vkFramebufs = VkTestFrameBuffers(stack, vkDeviceWrap, vkSwapChain, vkRenderPass)
     }
 
     override fun close() {
