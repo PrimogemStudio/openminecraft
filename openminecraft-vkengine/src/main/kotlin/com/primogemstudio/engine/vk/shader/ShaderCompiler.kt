@@ -15,12 +15,12 @@ enum class ShaderType(val glslType: Int, val hlslType: Int) {
     Geometry(shaderc_glsl_geometry_shader, shaderc_geometry_shader),
     TessControl(shaderc_glsl_tess_control_shader, shaderc_tess_control_shader),
     TessEvaluation(shaderc_glsl_tess_evaluation_shader, shaderc_tess_evaluation_shader),
-    RayGen(shaderc_glsl_raygen_shader, shaderc_raygen_shader),
+    /*RayGen(shaderc_glsl_raygen_shader, shaderc_raygen_shader),
     AnyHit(shaderc_glsl_anyhit_shader, shaderc_anyhit_shader),
     ClosesThit(shaderc_glsl_closesthit_shader, shaderc_closesthit_shader),
     Miss(shaderc_glsl_miss_shader, shaderc_miss_shader),
     Intersection(shaderc_glsl_intersection_shader, shaderc_intersection_shader),
-    Callable(shaderc_glsl_callable_shader, shaderc_callable_shader)
+    Callable(shaderc_glsl_callable_shader, shaderc_callable_shader)*/
 }
 
 class ShaderCompiler {

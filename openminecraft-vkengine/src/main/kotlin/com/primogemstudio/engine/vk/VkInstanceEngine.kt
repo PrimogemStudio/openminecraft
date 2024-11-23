@@ -1,7 +1,6 @@
 package com.primogemstudio.engine.vk
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
-import com.primogemstudio.engine.i18n.OutputOverride
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.vk.renderer.VkRendererTest
 import org.lwjgl.glfw.GLFW.*
@@ -20,12 +19,6 @@ class VkInstanceEngine(
     enableValidationLayer: Boolean = true,
     vkDebugCallback: VkDebugCallback? = null
 ): Closeable {
-    companion object {
-        init {
-            OutputOverride.init()
-        }
-    }
-
     private val logger = LoggerFactory.getLogger("VkInstanceEngine $appName")
 
     private var vkInstance: VkInstance? = null

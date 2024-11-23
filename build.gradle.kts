@@ -28,7 +28,7 @@ tasks.jar {
     })
 
     manifest {
-        attributes["Main-Class"] = "com.primogemstudio.MainWrappedKt"
+        attributes["Main-Class"] = "com.primogemstudio.engine.MainWrappedKt"
     }
 }
 

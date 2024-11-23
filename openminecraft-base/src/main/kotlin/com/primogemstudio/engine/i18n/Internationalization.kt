@@ -9,12 +9,19 @@ object Internationalization {
     private val targetTranslations = mutableMapOf<String, MutableMap<String, String>>()
     private val logger = LoggerFactory.getLogger()
 
+    private val localeList = mutableListOf(
+        "jar:assets/openmc/locale.json",
+        "jar:assets/openmc_vkengine/locale.json",
+        "jar:assets/openmc_jmake/locale.json"
+    )
+
     init {
         load()
     }
 
     private fun load() {
-        ResourceManager.getResources("jar:locale.json").forEach {
+        targetTranslations.clear()
+        localeList.mapNotNull { ResourceManager.getResource(it) }.forEach {
             JSONObject(it.readAllBytes().toString(Charsets.UTF_8)).apply {
                 keys().forEach { k ->
                     val t = ResourceManager.getResource(this[k].toString())
@@ -30,6 +37,11 @@ object Internationalization {
                 }
             }
         }
+    }
+
+    fun append(path: String) {
+        localeList.add(path)
+        load()
     }
 
     fun tr(key: String): String =

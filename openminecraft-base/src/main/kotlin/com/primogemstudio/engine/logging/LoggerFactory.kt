@@ -134,7 +134,7 @@ class TracedLogger(private val parent: Logger) : AbstractLogger() {
             LogMsg(
                 level ?: Level.INFO,
                 parent.name,
-                message?.format ?: "",
+                message?.formattedMessage ?: "",
                 null
             )
         )
