@@ -4,6 +4,7 @@ import com.primogemstudio.engine.resource.ResourceManager
 import com.primogemstudio.engine.vk.VkLogicalDeviceWrap
 import com.primogemstudio.engine.vk.VkQueueWrap
 import com.primogemstudio.engine.vk.VkSwapChain
+import com.primogemstudio.engine.vk.VkWindow
 import com.primogemstudio.engine.vk.shader.ShaderCompiler
 import com.primogemstudio.engine.vk.shader.ShaderLanguage
 import com.primogemstudio.engine.vk.shader.ShaderType
@@ -19,7 +20,8 @@ class VkRendererTest(
     private val stack: MemoryStack,
     private val vkDeviceWrap: VkLogicalDeviceWrap,
     private val vkSwapChain: VkSwapChain,
-    private val vkQueueWrap: VkQueueWrap
+    private val vkQueueWrap: VkQueueWrap,
+    private val vkWindow: VkWindow
 ) : Closeable {
     companion object {
         private const val MAX_FRAMES_IN_FLIGHT: Int = 2
@@ -105,7 +107,7 @@ class VkRendererTest(
             vkWaitForFences(vkDeviceWrap.vkDevice, thisFrame.fence, true, Long.MAX_VALUE)
 
             val pImageIndex = stk.mallocInt(1)
-            vkAcquireNextImageKHR(
+            val result = vkAcquireNextImageKHR(
                 vkDeviceWrap.vkDevice,
                 vkSwapChain.swapChain,
                 Long.MAX_VALUE,
@@ -113,6 +115,10 @@ class VkRendererTest(
                 VK_NULL_HANDLE,
                 pImageIndex
             )
+            if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+                vkSwapChain.recreate()
+                return
+            }
 
             val imageIndex = pImageIndex[0]
 
@@ -143,7 +149,14 @@ class VkRendererTest(
                 pImageIndices(pImageIndex)
             }
 
-            vkQueuePresentKHR(vkQueueWrap.vkPresentQueue, presentInfo)
+            val result2 = vkQueuePresentKHR(vkQueueWrap.vkPresentQueue, presentInfo)
+            if (result2 == VK_ERROR_OUT_OF_DATE_KHR || result2 == VK_SUBOPTIMAL_KHR || vkWindow.sizeChanging) {
+                vkWindow.sizeChanging = false
+                vkSwapChain.recreate()
+            } else if (result2 != VK_SUCCESS) {
+                throw RuntimeException("Failed to present swap chain image")
+            }
+
             currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT
         }
     }

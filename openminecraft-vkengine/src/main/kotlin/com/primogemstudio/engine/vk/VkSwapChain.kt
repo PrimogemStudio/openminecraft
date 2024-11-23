@@ -141,7 +141,11 @@ class VkSwapChain(
     private fun chooseSwapExtent(stack: MemoryStack, capabilities: VkSurfaceCapabilitiesKHR): VkExtent2D {
         if (capabilities.currentExtent().width().toUInt() != UInt.MAX_VALUE) capabilities.currentExtent()
 
-        val actualExtent = VkExtent2D.malloc(stack).set(vkWindow.width, vkWindow.height)
+        val width = stack.ints(0)
+        val height = stack.ints(0)
+        glfwGetFramebufferSize(vkWindow.window, width, height)
+        println("${width[0]} ${height[0]}")
+        val actualExtent = VkExtent2D.malloc(stack).set(width[0], height[0])
 
         val minExtent = capabilities.minImageExtent()
         val maxExtent = capabilities.maxImageExtent()
