@@ -7,7 +7,7 @@ import org.lwjgl.vulkan.*
 import org.lwjgl.vulkan.VK10.*
 import java.io.Closeable
 
-class VkTestPipelineLayout(
+class VkTestPipeline(
     val stack: MemoryStack,
     private val vkDeviceWrap: VkLogicalDeviceWrap,
     private val vkSwapChain: VkSwapChain,
