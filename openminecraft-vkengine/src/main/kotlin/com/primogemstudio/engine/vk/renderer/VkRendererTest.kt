@@ -36,7 +36,7 @@ class VkRendererTest(
     )
     private var vkBaseShaderMFrag = VkShaderModule(stack, vkDeviceWrap, vkBaseShaderFrag)
     private var vkBaseShaderMVert = VkShaderModule(stack, vkDeviceWrap, vkBaseShaderVert)
-
+    private var vkRenderPass = VkTestRenderPass(stack, vkDeviceWrap, vkSwapChain)
     private var pipelineLayout: VkTestPipelineLayout
 
     init {
@@ -55,7 +55,7 @@ class VkRendererTest(
             pName(stack.UTF8("main"))
         }
 
-        pipelineLayout = VkTestPipelineLayout(stack, vkDeviceWrap, vkSwapChain, shaderStages)
+        pipelineLayout = VkTestPipelineLayout(stack, vkDeviceWrap, vkSwapChain, shaderStages, vkRenderPass)
     }
 
     override fun close() {

@@ -11,7 +11,8 @@ class VkTestPipelineLayout(
     val stack: MemoryStack,
     private val vkDeviceWrap: VkLogicalDeviceWrap,
     private val vkSwapChain: VkSwapChain,
-    private val vkShaderStage: VkPipelineShaderStageCreateInfo.Buffer
+    private val vkShaderStage: VkPipelineShaderStageCreateInfo.Buffer,
+    private val vkRenderPass: VkTestRenderPass
 ) : Closeable {
     private var pipelineLayout: Long
     private var graphicsPipeline: Long
@@ -31,7 +32,7 @@ class VkTestPipelineLayout(
             it.x(0f)
             it.y(0f)
             it.width(vkSwapChain.swapChainExtent!!.width().toFloat())
-            it.width(vkSwapChain.swapChainExtent!!.height().toFloat())
+            it.height(vkSwapChain.swapChainExtent!!.height().toFloat())
             it.minDepth(0f)
             it.maxDepth(1f)
         }
@@ -104,7 +105,7 @@ class VkTestPipelineLayout(
             it.pMultisampleState(multisampling)
             it.pColorBlendState(colorBlending)
             it.layout(pipelineLayout)
-            // renderPass !!
+            it.renderPass(vkRenderPass.renderPass)
             it.subpass(0)
             it.basePipelineHandle(VK_NULL_HANDLE)
             it.basePipelineIndex(-1)

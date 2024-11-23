@@ -19,7 +19,7 @@ class VkSwapChain(
     private var swapChain: Long = 0
     private var swapChainImages: List<Long> = listOf()
     private var swapChainImageViews: List<Long> = listOf()
-    private var swapChainImageFormat: Int = 0
+    var swapChainImageFormat: Int = 0
     var swapChainExtent: VkExtent2D? = null
 
     init {
