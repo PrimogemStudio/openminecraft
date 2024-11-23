@@ -9,7 +9,7 @@ import org.lwjgl.vulkan.VkDeviceQueueCreateInfo
 import org.lwjgl.vulkan.VkPhysicalDeviceFeatures
 import java.io.Closeable
 
-class VkLogicalDeviceWrap(val vkDevice: VkDevice, val graphicsFamily: Int, val currentFamily: Int) : Closeable {
+class VkLogicalDeviceWrap(val vkDevice: VkDevice, val graphicsFamily: Int, val presentFamily: Int) : Closeable {
     companion object {
         fun create(
             stack: MemoryStack,

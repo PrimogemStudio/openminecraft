@@ -16,7 +16,7 @@ class VkTestCommandBuffer(
     private val vkRenderPass: VkTestRenderPass
 ) : Closeable {
     private var commandPool: Long
-    private var commandBuffers: List<VkCommandBuffer>
+    var commandBuffers: List<VkCommandBuffer>
 
     init {
         val poolInfo = VkCommandPoolCreateInfo.calloc(stack).apply {

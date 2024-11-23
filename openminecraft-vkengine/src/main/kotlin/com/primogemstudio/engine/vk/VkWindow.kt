@@ -13,17 +13,19 @@ class VkWindow(
     private val instanceAccessor: () -> VkInstance,
     var width: Int,
     var height: Int,
-    private var title: String
+    private var title: String,
+    var renderCall: () -> Unit
 ) : Closeable {
     var vkSurface: Long = 0
     private var window: Long = 0
 
     init {
         stackPush().use {
+            glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
             window = glfwCreateWindow(width, height, title, 0, 0)
             val pSurface = it.longs(VK_NULL_HANDLE)
             if (glfwCreateWindowSurface(instanceAccessor(), window, null, pSurface) != VK_SUCCESS) {
-                throw RuntimeException("Failed to create window surface")
+                // throw RuntimeException("Failed to create window surface")
             }
 
             vkSurface = pSurface[0]
@@ -36,6 +38,7 @@ class VkWindow(
 
     fun mainLoop() {
         while (!glfwWindowShouldClose(window)) {
+            renderCall()
             glfwPollEvents()
         }
     }

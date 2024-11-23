@@ -57,7 +57,7 @@ class VkInstanceEngine(
                 logger.info("Creating Main Window and Surface...")
                 glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
                 glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE)
-                vkWindow = VkWindow({ vkInstance!! }, 400, 400, "Test!")
+                vkWindow = VkWindow({ vkInstance!! }, 400, 400, "Test!", { vkTestRenderer!!.render() })
             }
 
             run {
@@ -86,7 +86,7 @@ class VkInstanceEngine(
 
             run {
                 logger.info("Initialize renderer...")
-                vkTestRenderer = VkRendererTest(stk, vkLogicalDevice!!, vkSwapChain!!)
+                vkTestRenderer = VkRendererTest(stk, vkLogicalDevice!!, vkSwapChain!!, vkQueue!!)
             }
         }
     }

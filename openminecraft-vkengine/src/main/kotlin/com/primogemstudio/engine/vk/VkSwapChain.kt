@@ -16,7 +16,7 @@ class VkSwapChain(
     private val physicalDevice: VkPhysicalDeviceWrap,
     private val vkWindow: VkWindow
 ) : Closeable {
-    private var swapChain: Long = 0
+    var swapChain: Long = 0
     private var swapChainImages: List<Long> = listOf()
     var swapChainImageViews: List<Long> = listOf()
     var swapChainImageFormat: Int = 0
