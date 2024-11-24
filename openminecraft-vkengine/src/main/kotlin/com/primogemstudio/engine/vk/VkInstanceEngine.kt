@@ -44,6 +44,7 @@ class VkInstanceEngine(
         stackPush().use { stk ->
             run {
                 logger.info(tr("engine.stage.glfw_init"))
+                glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11)
                 glfwInit()
             }
 
@@ -55,8 +56,6 @@ class VkInstanceEngine(
 
             run {
                 logger.info("Creating Main Window and Surface...")
-                glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
-                glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE)
                 vkWindow = VkWindow({ vkInstance!! }, 400, 400, "Test!", { vkTestRenderer!!.render() })
             }
 

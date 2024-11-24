@@ -11,8 +11,8 @@ import java.io.Closeable
 
 class VkWindow(
     private val instanceAccessor: () -> VkInstance,
-    var width: Int,
-    var height: Int,
+    private var width: Int,
+    private var height: Int,
     private var title: String,
     var renderCall: () -> Unit
 ) : Closeable {
@@ -22,6 +22,7 @@ class VkWindow(
 
     init {
         stackPush().use {
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
             window = glfwCreateWindow(width, height, title, 0, 0)
             val pSurface = it.longs(VK_NULL_HANDLE)

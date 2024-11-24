@@ -22,7 +22,7 @@ class VkLogicalDeviceWrap(val vkDevice: VkDevice, val graphicsFamily: Int, val p
             for (i in fm.indices) {
                 queueCreateInfos[i].apply {
                     sType(VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO)
-                    queueFamilyIndex(physicalDevice.graphicsFamily!!)
+                    queueFamilyIndex(fm[i])
                     pQueuePriorities(stack.floats(1.0f))
                 }
             }

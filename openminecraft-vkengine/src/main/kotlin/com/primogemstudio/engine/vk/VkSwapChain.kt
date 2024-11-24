@@ -5,6 +5,7 @@ import org.lwjgl.glfw.GLFW.glfwWaitEvents
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.vulkan.*
+import org.lwjgl.vulkan.EXTSwapchainMaintenance1.VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_SCALING_CREATE_INFO_EXT
 import org.lwjgl.vulkan.KHRSurface.*
 import org.lwjgl.vulkan.KHRSwapchain.*
 import org.lwjgl.vulkan.VK10.*
@@ -147,12 +148,12 @@ class VkSwapChain(
         println("${width[0]} ${height[0]}")
         val actualExtent = VkExtent2D.malloc(stack).set(width[0], height[0])
 
-        val minExtent = capabilities.minImageExtent()
+        /*val minExtent = capabilities.minImageExtent()
         val maxExtent = capabilities.maxImageExtent()
 
         val clamp = { min: Int, max: Int, value: Int -> max(min, min(max, value)) }
         actualExtent.width(clamp(minExtent.width(), maxExtent.width(), actualExtent.width()))
-        actualExtent.height(clamp(minExtent.height(), maxExtent.height(), actualExtent.height()))
+        actualExtent.height(clamp(minExtent.height(), maxExtent.height(), actualExtent.height()))*/
 
         return actualExtent
     }
