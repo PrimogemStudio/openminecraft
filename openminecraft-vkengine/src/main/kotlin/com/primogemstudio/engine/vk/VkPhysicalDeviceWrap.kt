@@ -65,7 +65,7 @@ class VkPhysicalDeviceWrap(
                     current = i
                 }
 
-                if (result != null && current != null) break
+                // if (result != null && current != null) break
             }
 
             if (result == null || current == null) throw IllegalStateException("Unable to find a suitable device queue family")
