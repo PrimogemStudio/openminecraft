@@ -130,11 +130,10 @@ class VkSwapChain(
     }
 
     private fun chooseSwapPresentMode(availablePresentModes: IntBuffer): Int {
-        /*for (i in 0..<availablePresentModes.capacity()) {
+        for (i in 0..<availablePresentModes.capacity()) {
             if (availablePresentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR) return availablePresentModes[i]
         }
 
-        return VK_PRESENT_MODE_FIFO_KHR*/
         return VK_PRESENT_MODE_IMMEDIATE_KHR
     }
 
