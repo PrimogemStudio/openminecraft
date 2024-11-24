@@ -5,14 +5,11 @@ import org.lwjgl.glfw.GLFW.glfwWaitEvents
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.vulkan.*
-import org.lwjgl.vulkan.EXTSwapchainMaintenance1.VK_STRUCTURE_TYPE_SWAPCHAIN_PRESENT_SCALING_CREATE_INFO_EXT
 import org.lwjgl.vulkan.KHRSurface.*
 import org.lwjgl.vulkan.KHRSwapchain.*
 import org.lwjgl.vulkan.VK10.*
 import java.io.Closeable
 import java.nio.IntBuffer
-import kotlin.math.max
-import kotlin.math.min
 
 class VkSwapChain(
     private val logicalDevice: VkLogicalDeviceWrap,
@@ -32,6 +29,7 @@ class VkSwapChain(
 
     private fun initBase() {
         stackPush().use {
+            physicalDevice.updateChainSupport()
             val support = physicalDevice.swapChainSupport
 
             val surfaceFormat = chooseSwapSurfaceFormat(support.formats!!)
@@ -140,20 +138,13 @@ class VkSwapChain(
     }
 
     private fun chooseSwapExtent(stack: MemoryStack, capabilities: VkSurfaceCapabilitiesKHR): VkExtent2D {
-        if (capabilities.currentExtent().width().toUInt() != UInt.MAX_VALUE) capabilities.currentExtent()
+        if (capabilities.currentExtent().width() != -1) return capabilities.currentExtent()
 
         val width = stack.ints(0)
         val height = stack.ints(0)
         glfwGetFramebufferSize(vkWindow.window, width, height)
         println("${width[0]} ${height[0]}")
         val actualExtent = VkExtent2D.malloc(stack).set(width[0], height[0])
-
-        /*val minExtent = capabilities.minImageExtent()
-        val maxExtent = capabilities.maxImageExtent()
-
-        val clamp = { min: Int, max: Int, value: Int -> max(min, min(max, value)) }
-        actualExtent.width(clamp(minExtent.width(), maxExtent.width(), actualExtent.width()))
-        actualExtent.height(clamp(minExtent.height(), maxExtent.height(), actualExtent.height()))*/
 
         return actualExtent
     }

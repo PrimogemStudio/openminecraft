@@ -74,10 +74,14 @@ class VkPhysicalDeviceWrap(
         }
     }
 
-    private var extensions: Map<String, Int>
+    private lateinit var extensions: Map<String, Int>
     val swapChainSupport = VkSwapChainSupportDetails()
 
     init {
+        updateChainSupport()
+    }
+
+    fun updateChainSupport() {
         stackPush().use { stack ->
             val extensionCount = stack.ints(0)
             vkEnumerateDeviceExtensionProperties(vkDevice, null as String?, extensionCount, null)
