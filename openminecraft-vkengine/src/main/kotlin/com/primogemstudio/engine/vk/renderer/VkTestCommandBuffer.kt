@@ -62,7 +62,7 @@ class VkTestCommandBuffer(
         }
 
         val clearValues = VkClearValue.calloc(1, stack)
-        clearValues.color().float32(stack.floats(0f, 0f, 0f, 1f))
+        clearValues.color().float32(stack.floats(0f, 0f, 0f, 0f))
 
         val renderPassInfo = VkRenderPassBeginInfo.calloc(stack).apply {
             sType(VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO)
