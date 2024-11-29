@@ -11,6 +11,7 @@ import java.io.Closeable
 
 class VkWindow(
     private val instanceAccessor: () -> VkInstance,
+    private val instanceClose: () -> Unit,
     private var width: Int,
     private var height: Int,
     private var title: String,
@@ -46,5 +47,7 @@ class VkWindow(
             renderCall()
             glfwPollEvents()
         }
+
+        instanceClose()
     }
 }

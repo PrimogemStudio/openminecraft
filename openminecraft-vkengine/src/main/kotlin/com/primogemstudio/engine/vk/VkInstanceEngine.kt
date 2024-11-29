@@ -56,7 +56,7 @@ class VkInstanceEngine(
 
             run {
                 logger.info("Creating Main Window and Surface...")
-                vkWindow = VkWindow({ vkInstance!! }, 400, 400, "Test!", { vkTestRenderer!!.render() })
+                vkWindow = VkWindow({ vkInstance!! }, { close() }, 400, 400, "Test!", { vkTestRenderer!!.render() })
             }
 
             run {

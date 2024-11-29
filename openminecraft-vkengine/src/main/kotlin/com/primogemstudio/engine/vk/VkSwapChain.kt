@@ -10,6 +10,8 @@ import org.lwjgl.vulkan.KHRSwapchain.*
 import org.lwjgl.vulkan.VK10.*
 import java.io.Closeable
 import java.nio.IntBuffer
+import kotlin.math.max
+import kotlin.math.min
 
 class VkSwapChain(
     private val logicalDevice: VkLogicalDeviceWrap,
@@ -143,7 +145,12 @@ class VkSwapChain(
         val width = stack.ints(0)
         val height = stack.ints(0)
         glfwGetFramebufferSize(vkWindow.window, width, height)
-        val actualExtent = VkExtent2D.malloc(stack).set(width[0], height[0])
+
+        val clamp = { v: Int, min: Int, max: Int -> min(max, max(v, min)) }
+        val actualExtent = VkExtent2D.malloc(stack).set(
+            clamp(width[0], capabilities.minImageExtent().width(), capabilities.maxImageExtent().width()),
+            clamp(height[0], capabilities.minImageExtent().height(), capabilities.maxImageExtent().height())
+        )
 
         return actualExtent
     }

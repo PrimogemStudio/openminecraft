@@ -138,6 +138,7 @@ class VkRendererTest(
             vkResetFences(vkDeviceWrap.vkDevice, thisFrame.fence)
 
             if (vkQueueSubmit(vkQueueWrap.vkGraphicsQueue, submitInfo, thisFrame.fence) != VK_SUCCESS) {
+                vkResetFences(vkDeviceWrap.vkDevice, thisFrame.fence)
                 throw RuntimeException("Failed to submit draw command buffer")
             }
 
