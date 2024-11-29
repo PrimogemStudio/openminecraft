@@ -16,5 +16,11 @@
   "engine.shader.types.compute": "Compute Shader ",
   "engine.shader.types.geometry": "Geometry Shader ",
   "engine.shader.types.tess_control": "Tesselation Control Shader ",
-  "engine.shader.types.tess_evaluation": "Tesselation Evaluation Shader "
+  "engine.shader.types.tess_evaluation": "Tesselation Evaluation Shader ",
+  "engine,shader.types.ray_gen": "Ray Gen Shader ",
+  "engine,shader.types.any_hit": "Any Hit Shader ",
+  "engine,shader.types.closest_hit": "Closest Hit Shader ",
+  "engine,shader.types.miss": "Miss Shader ",
+  "engine,shader.types.intersection": "Intersection Shader ",
+  "engine,shader.types.callable": "Callable Shader "
 }

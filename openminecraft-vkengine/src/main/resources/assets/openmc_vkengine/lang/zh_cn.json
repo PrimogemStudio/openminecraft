@@ -16,5 +16,11 @@
   "engine.shader.types.compute": "计算着色器",
   "engine.shader.types.geometry": "几何着色器",
   "engine.shader.types.tess_control": "曲面细分控制着色器",
-  "engine.shader.types.tess_evaluation": "曲面细分着色器"
+  "engine.shader.types.tess_evaluation": "曲面细分着色器",
+  "engine,shader.types.ray_gen": "光线生成着色器",
+  "engine,shader.types.any_hit": "任意命中着色器",
+  "engine,shader.types.closest_hit": "最近命中着色器",
+  "engine,shader.types.miss": "未命中着色器",
+  "engine,shader.types.intersection": "相交着色器",
+  "engine,shader.types.callable": "可调用着色器"
 }
