@@ -9,38 +9,41 @@ dependencies {
     implementation(rootProject.project(":openminecraft-base"))
 
     properties["openminecraft.lwjgl_version"].toString().apply {
-        implementation("org.lwjgl", "lwjgl", this)
-        implementation("org.lwjgl", "lwjgl-freetype", this)
-        implementation("org.lwjgl", "lwjgl-glfw", this)
-        implementation("org.lwjgl", "lwjgl-harfbuzz", this)
-        implementation("org.lwjgl", "lwjgl-nfd", this)
-        implementation("org.lwjgl", "lwjgl-openal", this)
-        implementation("org.lwjgl", "lwjgl-shaderc", this)
-        implementation("org.lwjgl", "lwjgl-stb", this)
-        implementation("org.lwjgl", "lwjgl-vma", this)
-        implementation("org.lwjgl", "lwjgl-vulkan", this)
         listOf(
-            "natives-windows",
-            "natives-windows-x86",
-            "natives-windows-arm64",
-            "natives-linux",
-            "natives-linux-riscv64",
-            "natives-linux-ppc64le",
-            "natives-linux-arm32",
-            "natives-linux-arm64",
-            "natives-freebsd",
-            "natives-macos",
-            "natives-macos-arm64"
-        ).forEach {
-            runtimeOnly("org.lwjgl", "lwjgl", this, classifier = it)
-            runtimeOnly("org.lwjgl", "lwjgl-freetype", this, classifier = it)
-            runtimeOnly("org.lwjgl", "lwjgl-glfw", this, classifier = it)
-            runtimeOnly("org.lwjgl", "lwjgl-nfd", this, classifier = it)
-            runtimeOnly("org.lwjgl", "lwjgl-openal", this, classifier = it)
-            runtimeOnly("org.lwjgl", "lwjgl-shaderc", this, classifier = it)
-            runtimeOnly("org.lwjgl", "lwjgl-stb", this, classifier = it)
-            runtimeOnly("org.lwjgl", "lwjgl-vma", this, classifier = it)
-            if (it == "natives-macos" || it == "natives-macos-arm64") runtimeOnly("org.lwjgl", "lwjgl-vulkan", this, classifier = it)
+            "lwjgl",
+            "lwjgl-freetype",
+            "lwjgl-glfw",
+            "lwjgl-harfbuzz",
+            "lwjgl-nfd",
+            "lwjgl-openal",
+            "lwjgl-shaderc",
+            "lwjgl-stb",
+            "lwjgl-vulkan"
+        ).forEach { mod ->
+            implementation("org.lwjgl", mod, this)
+
+            if (mod != "lwjgl-harfbuzz") listOf(
+                "natives-windows",
+                "natives-windows-x86",
+                "natives-windows-arm64",
+                "natives-linux",
+                "natives-linux-riscv64",
+                "natives-linux-ppc64le",
+                "natives-linux-arm32",
+                "natives-linux-arm64",
+                "natives-freebsd",
+                "natives-macos",
+                "natives-macos-arm64"
+            ).forEach {
+                if (mod == "lwjgl-vulkan") {
+                    if (it == "natives-macos" || it == "natives-macos-arm64") runtimeOnly(
+                        "org.lwjgl",
+                        mod,
+                        this,
+                        classifier = it
+                    )
+                } else runtimeOnly("org.lwjgl", mod, this, classifier = it)
+            }
         }
     }
 
