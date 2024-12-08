@@ -1,8 +1,10 @@
 package com.primogemstudio.engine.font
 
+import org.lwjgl.system.MemoryUtil
 import org.lwjgl.util.harfbuzz.HarfBuzz.*
 import org.lwjgl.util.harfbuzz.OpenType.hb_ot_color_palette_get_count
 
+@OptIn(ExperimentalStdlibApi::class)
 fun main() {
     System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
     System.setProperty("org.lwjgl.util.NoFunctionChecks", "true")
@@ -35,7 +37,7 @@ fun main() {
         println("pop_clip")
     }, 0, {})
     hb_paint_funcs_set_color_func(funcs, { _, _, fore, c, _ ->
-        println("color $fore, $c")
+        println("color $fore, 0x${c.toHexString()}")
     }, 0, {})
     hb_paint_funcs_set_image_func(funcs, { _, _, image, width, height, format, slant, extents, _ ->
         println("image $image, $width, $height, $format, $slant, $extents")
@@ -57,7 +59,7 @@ fun main() {
         println("pop_group $mode")
     }, 0, {})
     hb_paint_funcs_set_custom_palette_color_func(funcs, { _, _, ci, c, _ ->
-        println("custom_palette_color $ci, $c")
+        println("custom_palette_color $ci, 0x${MemoryUtil.memGetInt(c).toHexString()}")
     }, 0, {})
 
     for (i in 1200..<1216) {
