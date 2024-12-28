@@ -97,6 +97,9 @@ class VkTestCommandBuffer(
             commandBuffers.forEach(p::put)
             vkFreeCommandBuffers(vkDeviceWrap.vkDevice, commandPool, p.rewind())
         }
+    }
+
+    fun cleanup() {
         vkDestroyCommandPool(vkDeviceWrap.vkDevice, commandPool, null)
     }
 }

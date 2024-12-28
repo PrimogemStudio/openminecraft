@@ -193,9 +193,10 @@ class VkRendererTest(
         vkBaseShaderMFrag.close()
         vkBaseShaderMVert.close()
 
-        vkCommandBuffer.close()
-        vkFramebufs.close()
         vkPipeline.close()
+        vkFramebufs.close()
+        vkCommandBuffer.close()
+        vkCommandBuffer.cleanup()
         vkRenderPass.close()
 
         inFlightFrames.forEach {

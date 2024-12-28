@@ -48,6 +48,8 @@ class VkWindow(
             glfwPollEvents()
         }
 
+        // vkDeviceWaitIdle()
+        Thread.sleep(2000)
         instanceClose()
     }
 }
