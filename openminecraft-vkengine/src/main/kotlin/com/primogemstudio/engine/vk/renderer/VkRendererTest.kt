@@ -193,11 +193,11 @@ class VkRendererTest(
         vkBaseShaderMFrag.close()
         vkBaseShaderMVert.close()
 
-        vkPipeline.close()
         vkFramebufs.close()
         vkCommandBuffer.close()
-        vkCommandBuffer.cleanup()
+        vkPipeline.close()
         vkRenderPass.close()
+        vkSwapChain.close()
 
         inFlightFrames.forEach {
             vkDestroySemaphore(vkDeviceWrap.vkDevice, it.imageAvailableSemaphore, null)
@@ -205,6 +205,8 @@ class VkRendererTest(
             vkDestroyFence(vkDeviceWrap.vkDevice, it.fence, null)
         }
         imagesInFlight.clear()
+
+        vkCommandBuffer.destroy()
     }
 }
 

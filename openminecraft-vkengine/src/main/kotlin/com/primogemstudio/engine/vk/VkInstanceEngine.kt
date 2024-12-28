@@ -56,7 +56,13 @@ class VkInstanceEngine(
 
             run {
                 logger.info("Creating Main Window and Surface...")
-                vkWindow = VkWindow({ vkInstance!! }, { close() }, 400, 400, "Test!", { vkTestRenderer!!.render() })
+                vkWindow = VkWindow({ vkInstance!! },
+                    { vkLogicalDevice!! },
+                    { close() },
+                    400,
+                    400,
+                    "Test!",
+                    { vkTestRenderer!!.render() })
             }
 
             run {
@@ -127,10 +133,9 @@ class VkInstanceEngine(
 
     override fun close() {
         vkTestRenderer!!.close()
-        vkSwapChain!!.close()
-        vkWindow!!.close()
         vkLogicalDevice!!.close()
         vkValidationLayer.close()
+        vkWindow!!.close()
         vkDestroyInstance(vkInstance!!, null)
         glfwTerminate()
     }

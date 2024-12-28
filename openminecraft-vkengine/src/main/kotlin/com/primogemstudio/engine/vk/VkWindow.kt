@@ -4,13 +4,13 @@ import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWVulkan.glfwCreateWindowSurface
 import org.lwjgl.system.MemoryStack.stackPush
 import org.lwjgl.vulkan.KHRSurface.vkDestroySurfaceKHR
-import org.lwjgl.vulkan.VK10.VK_NULL_HANDLE
-import org.lwjgl.vulkan.VK10.VK_SUCCESS
+import org.lwjgl.vulkan.VK10.*
 import org.lwjgl.vulkan.VkInstance
 import java.io.Closeable
 
 class VkWindow(
     private val instanceAccessor: () -> VkInstance,
+    private val deviceAccessor: () -> VkLogicalDeviceWrap,
     private val instanceClose: () -> Unit,
     private var width: Int,
     private var height: Int,
@@ -48,8 +48,7 @@ class VkWindow(
             glfwPollEvents()
         }
 
-        // vkDeviceWaitIdle()
-        Thread.sleep(2000)
+        vkDeviceWaitIdle(deviceAccessor().vkDevice)
         instanceClose()
     }
 }

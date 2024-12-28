@@ -99,7 +99,7 @@ class VkTestCommandBuffer(
         }
     }
 
-    fun cleanup() {
+    fun destroy() {
         vkDestroyCommandPool(vkDeviceWrap.vkDevice, commandPool, null)
     }
 }
