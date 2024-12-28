@@ -8,7 +8,7 @@ import org.lwjgl.vulkan.KHRSwapchain.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
 import org.lwjgl.vulkan.VK10.*
 import java.io.Closeable
 
-class VkTestRenderPass(
+class VkRenderPass(
     stack: MemoryStack,
     private val vkDeviceWrap: VkLogicalDeviceWrap,
     private val vkSwapChain: VkSwapChain

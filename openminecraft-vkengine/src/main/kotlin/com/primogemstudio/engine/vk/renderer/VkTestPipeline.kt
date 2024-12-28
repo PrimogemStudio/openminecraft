@@ -12,7 +12,7 @@ class VkTestPipeline(
     private val vkDeviceWrap: VkLogicalDeviceWrap,
     private val vkSwapChain: VkSwapChain,
     private val vkShaderStage: VkPipelineShaderStageCreateInfo.Buffer,
-    private val vkRenderPass: VkTestRenderPass
+    private val vkRenderPass: VkRenderPass
 ) : Closeable {
     private var pipelineLayout: Long
     var graphicsPipeline: Long
@@ -20,6 +20,26 @@ class VkTestPipeline(
     init {
         val vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack).apply {
             sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO)
+
+            /*pVertexBindingDescriptions(VkVertexInputBindingDescription.calloc(1, stack).let {
+                it.binding(0)
+                it.stride((2 + 3) * Float.SIZE_BYTES)
+                it.inputRate(VK_VERTEX_INPUT_RATE_VERTEX)
+            })
+
+            pVertexAttributeDescriptions(VkVertexInputAttributeDescription.calloc(2).let {
+                it[0].binding(0)
+                it[0].location(0)
+                it[0].format(VK_FORMAT_R32G32_SFLOAT)
+                it[0].offset(0)
+
+                it[1].binding(0)
+                it[1].location(1)
+                it[1].format(VK_FORMAT_R32G32B32_SFLOAT)
+                it[1].offset(2 * Float.SIZE_BYTES)
+
+                it.rewind()
+            })*/
         }
 
         val inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack).apply {

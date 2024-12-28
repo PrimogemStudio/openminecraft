@@ -12,9 +12,9 @@ class VkTestCommandBuffer(
     stack: MemoryStack,
     private val vkDeviceWrap: VkLogicalDeviceWrap,
     private val vkSwapChain: VkSwapChain,
-    vkFrameBuffers: VkTestFrameBuffers,
+    vkFrameBuffers: VkFrameBuffers,
     vkPipeline: VkTestPipeline,
-    private val vkRenderPass: VkTestRenderPass
+    private val vkRenderPass: VkRenderPass
 ) : Closeable {
     private var commandPool: Long
     var commandBuffers: List<VkCommandBuffer>

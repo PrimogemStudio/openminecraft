@@ -45,9 +45,9 @@ class VkRendererTest(
     )
     private var vkBaseShaderMFrag = VkShaderModule(stack, vkDeviceWrap, vkBaseShaderFrag)
     private var vkBaseShaderMVert = VkShaderModule(stack, vkDeviceWrap, vkBaseShaderVert)
-    private var vkRenderPass: VkTestRenderPass
+    private var vkRenderPass: VkRenderPass
     private var vkPipeline: VkTestPipeline
-    private var vkFramebufs: VkTestFrameBuffers
+    private var vkFramebufs: VkFrameBuffers
     private var vkCommandBuffer: VkTestCommandBuffer
 
     private var inFlightFrames: MutableList<Frame>
@@ -70,9 +70,9 @@ class VkRendererTest(
             pName(stack.UTF8("main"))
         }
 
-        vkRenderPass = VkTestRenderPass(stack, vkDeviceWrap, vkSwapChain)
+        vkRenderPass = VkRenderPass(stack, vkDeviceWrap, vkSwapChain)
         vkPipeline = VkTestPipeline(stack, vkDeviceWrap, vkSwapChain, shaderStages, vkRenderPass)
-        vkFramebufs = VkTestFrameBuffers(stack, vkDeviceWrap, vkSwapChain, vkRenderPass)
+        vkFramebufs = VkFrameBuffers(stack, vkDeviceWrap, vkSwapChain, vkRenderPass)
         vkCommandBuffer = VkTestCommandBuffer(stack, vkDeviceWrap, vkSwapChain, vkFramebufs, vkPipeline, vkRenderPass)
 
         inFlightFrames = mutableListOf()
@@ -183,9 +183,9 @@ class VkRendererTest(
         vkPipeline.close()
         vkRenderPass.close()
 
-        vkRenderPass = VkTestRenderPass(stack, vkDeviceWrap, vkSwapChain)
+        vkRenderPass = VkRenderPass(stack, vkDeviceWrap, vkSwapChain)
         vkPipeline = VkTestPipeline(stack, vkDeviceWrap, vkSwapChain, shaderStages, vkRenderPass)
-        vkFramebufs = VkTestFrameBuffers(stack, vkDeviceWrap, vkSwapChain, vkRenderPass)
+        vkFramebufs = VkFrameBuffers(stack, vkDeviceWrap, vkSwapChain, vkRenderPass)
         vkCommandBuffer = VkTestCommandBuffer(stack, vkDeviceWrap, vkSwapChain, vkFramebufs, vkPipeline, vkRenderPass)
     }
 

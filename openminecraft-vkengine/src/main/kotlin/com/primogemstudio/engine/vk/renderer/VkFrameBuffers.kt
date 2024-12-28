@@ -7,11 +7,11 @@ import org.lwjgl.vulkan.VK10.*
 import org.lwjgl.vulkan.VkFramebufferCreateInfo
 import java.io.Closeable
 
-class VkTestFrameBuffers(
+class VkFrameBuffers(
     stack: MemoryStack,
     private val vkDeviceWrap: VkLogicalDeviceWrap,
     vkSwapChain: VkSwapChain,
-    vkTestRenderPass: VkTestRenderPass
+    vkRenderPass: VkRenderPass
 ) : Closeable {
     val framebufs = ArrayList<Long>(vkSwapChain.swapChainImageViews.size)
 
@@ -22,7 +22,7 @@ class VkTestFrameBuffers(
 
         val framebufferInfo = VkFramebufferCreateInfo.calloc(stack).apply {
             sType(VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO)
-            renderPass(vkTestRenderPass.renderPass)
+            renderPass(vkRenderPass.renderPass)
             width(vkSwapChain.swapChainExtent!!.width())
             height(vkSwapChain.swapChainExtent!!.height())
             layers(1)
