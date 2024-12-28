@@ -205,8 +205,6 @@ class VkRendererTest(
             vkDestroyFence(vkDeviceWrap.vkDevice, it.fence, null)
         }
         imagesInFlight.clear()
-
-        vkCommandBuffer.destroy()
     }
 }
 
