@@ -21,7 +21,7 @@ class VkTestPipeline(
         val vertexInputInfo = VkPipelineVertexInputStateCreateInfo.calloc(stack).apply {
             sType(VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO)
 
-            /*pVertexBindingDescriptions(VkVertexInputBindingDescription.calloc(1, stack).let {
+            pVertexBindingDescriptions(VkVertexInputBindingDescription.calloc(1, stack).let {
                 it.binding(0)
                 it.stride((2 + 3) * Float.SIZE_BYTES)
                 it.inputRate(VK_VERTEX_INPUT_RATE_VERTEX)
@@ -39,7 +39,7 @@ class VkTestPipeline(
                 it[1].offset(2 * Float.SIZE_BYTES)
 
                 it.rewind()
-            })*/
+            })
         }
 
         val inputAssembly = VkPipelineInputAssemblyStateCreateInfo.calloc(stack).apply {

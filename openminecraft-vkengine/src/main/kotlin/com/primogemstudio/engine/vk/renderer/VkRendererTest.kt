@@ -1,10 +1,7 @@
 package com.primogemstudio.engine.vk.renderer
 
 import com.primogemstudio.engine.resource.ResourceManager
-import com.primogemstudio.engine.vk.VkLogicalDeviceWrap
-import com.primogemstudio.engine.vk.VkQueueWrap
-import com.primogemstudio.engine.vk.VkSwapChain
-import com.primogemstudio.engine.vk.VkWindow
+import com.primogemstudio.engine.vk.*
 import com.primogemstudio.engine.vk.shader.ShaderCompiler
 import com.primogemstudio.engine.vk.shader.ShaderLanguage
 import com.primogemstudio.engine.vk.shader.ShaderType
@@ -18,6 +15,7 @@ import java.io.Closeable
 
 class VkRendererTest(
     private val stack: MemoryStack,
+    vkPhysicalDeviceWrap: VkPhysicalDeviceWrap,
     private val vkDeviceWrap: VkLogicalDeviceWrap,
     private val vkSwapChain: VkSwapChain,
     private val vkQueueWrap: VkQueueWrap,
@@ -28,17 +26,17 @@ class VkRendererTest(
     }
     private val vkShaderCompiler = ShaderCompiler()
     private val vkBaseShaderFrag = vkShaderCompiler.compile(
-        ResourceManager.getResource("jar:assets/openmc_vkengine/shaders/basic_shader.frag")?.readAllBytes()
+        ResourceManager.getResource("jar:assets/openmc_vkengine/shaders/vtx_shader.frag")?.readAllBytes()
             ?.toString(Charsets.UTF_8) ?: "",
-        "basic_shader.frag",
+        "vtx_shader.frag",
         "main",
         ShaderLanguage.Glsl,
         ShaderType.Fragment
     )
     private val vkBaseShaderVert = vkShaderCompiler.compile(
-        ResourceManager.getResource("jar:assets/openmc_vkengine/shaders/basic_shader.vert")?.readAllBytes()
+        ResourceManager.getResource("jar:assets/openmc_vkengine/shaders/vtx_shader.vert")?.readAllBytes()
             ?.toString(Charsets.UTF_8) ?: "",
-        "basic_shader.vert",
+        "vtx_shader.vert",
         "main",
         ShaderLanguage.Glsl,
         ShaderType.Vertex
@@ -49,6 +47,7 @@ class VkRendererTest(
     private var vkPipeline: VkTestPipeline
     private var vkFramebufs: VkFrameBuffers
     private var vkCommandBuffer: VkTestCommandBuffer
+    private var vkVertexBuffer: VkTestVertexBuffer
 
     private var inFlightFrames: MutableList<Frame>
     private var imagesInFlight: MutableMap<Int, Frame>
@@ -73,7 +72,9 @@ class VkRendererTest(
         vkRenderPass = VkRenderPass(stack, vkDeviceWrap, vkSwapChain)
         vkPipeline = VkTestPipeline(stack, vkDeviceWrap, vkSwapChain, shaderStages, vkRenderPass)
         vkFramebufs = VkFrameBuffers(stack, vkDeviceWrap, vkSwapChain, vkRenderPass)
-        vkCommandBuffer = VkTestCommandBuffer(stack, vkDeviceWrap, vkSwapChain, vkFramebufs, vkPipeline, vkRenderPass)
+        vkVertexBuffer = VkTestVertexBuffer(stack, vkPhysicalDeviceWrap, vkDeviceWrap)
+        vkCommandBuffer =
+            VkTestCommandBuffer(stack, vkDeviceWrap, vkSwapChain, vkFramebufs, vkPipeline, vkRenderPass, vkVertexBuffer)
 
         inFlightFrames = mutableListOf()
         imagesInFlight = mutableMapOf()
@@ -186,7 +187,8 @@ class VkRendererTest(
         vkRenderPass = VkRenderPass(stack, vkDeviceWrap, vkSwapChain)
         vkPipeline = VkTestPipeline(stack, vkDeviceWrap, vkSwapChain, shaderStages, vkRenderPass)
         vkFramebufs = VkFrameBuffers(stack, vkDeviceWrap, vkSwapChain, vkRenderPass)
-        vkCommandBuffer = VkTestCommandBuffer(stack, vkDeviceWrap, vkSwapChain, vkFramebufs, vkPipeline, vkRenderPass)
+        vkCommandBuffer =
+            VkTestCommandBuffer(stack, vkDeviceWrap, vkSwapChain, vkFramebufs, vkPipeline, vkRenderPass, vkVertexBuffer)
     }
 
     override fun close() {
@@ -198,6 +200,8 @@ class VkRendererTest(
         vkPipeline.close()
         vkRenderPass.close()
         vkSwapChain.close()
+
+        vkVertexBuffer.close()
 
         inFlightFrames.forEach {
             vkDestroySemaphore(vkDeviceWrap.vkDevice, it.imageAvailableSemaphore, null)

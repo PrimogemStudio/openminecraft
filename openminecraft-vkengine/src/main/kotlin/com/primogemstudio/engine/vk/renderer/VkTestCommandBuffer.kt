@@ -14,7 +14,8 @@ class VkTestCommandBuffer(
     private val vkSwapChain: VkSwapChain,
     vkFrameBuffers: VkFrameBuffers,
     vkPipeline: VkTestPipeline,
-    private val vkRenderPass: VkRenderPass
+    private val vkRenderPass: VkRenderPass,
+    vkVertexBuffer: VkTestVertexBuffer
 ) : Closeable {
     private var commandPool: Long
     var commandBuffers: List<VkCommandBuffer>
@@ -80,6 +81,10 @@ class VkTestCommandBuffer(
 
             vkCmdBeginRenderPass(commandBuffer, renderPassInfo, VK_SUBPASS_CONTENTS_INLINE)
             vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, vkPipeline.graphicsPipeline)
+
+            val vertexBuffers = stack.longs(vkVertexBuffer.vertexBuffer)
+            val offsets = stack.longs(0)
+            vkCmdBindVertexBuffers(commandBuffer, 0, vertexBuffers, offsets)
             vkCmdDraw(commandBuffer, 3, 1, 0, 0)
             vkCmdEndRenderPass(commandBuffer)
 
