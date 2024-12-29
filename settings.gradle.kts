@@ -4,5 +4,5 @@ plugins {
 
 rootProject.name = "openminecraft"
 include("openminecraft-base")
-include("openminecraft-vkengine")
+include("openminecraft-graphic")
 include("openminecraft-fonts")
