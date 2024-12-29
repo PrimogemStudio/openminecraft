@@ -17,6 +17,7 @@ class VkTestVertexBuffer(
 ) : Closeable {
     var vertexBuffer = 0L
     private var vertexBufferMemory = 0L
+    private var tempPointerBuffer = stack.mallocPointer(1)
 
     init {
         val bufferInfo = VkBufferCreateInfo.calloc(stack).apply {
@@ -55,9 +56,8 @@ class VkTestVertexBuffer(
         vertexBufferMemory = pVertexBufferMemory[0]
 
         vkBindBufferMemory(vkDeviceWrap.vkDevice, vertexBuffer, vertexBufferMemory, 0)
-        val data = stack.mallocPointer(1)
-        vkMapMemory(vkDeviceWrap.vkDevice, vertexBufferMemory, 0, bufferInfo.size(), 0, data)
-        data.getByteBuffer(0, bufferInfo.size().toInt()).apply {
+        vkMapMemory(vkDeviceWrap.vkDevice, vertexBufferMemory, 0, bufferInfo.size(), 0, tempPointerBuffer)
+        tempPointerBuffer.getByteBuffer(0, bufferInfo.size().toInt()).apply {
             floatArrayOf(
                 0.0f, -0.5f, 1.0f, 0.0f, 0.0f,
                 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
