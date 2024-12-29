@@ -13,7 +13,7 @@ class VkPhysicalDeviceWrap(
     val vkDevice: VkPhysicalDevice,
     val surface: Long,
     val graphicsFamily: Int?,
-    val currentFamily: Int?
+    val presentFamily: Int?
 ) {
     companion object {
         fun fetchList(stack: MemoryStack, vkInstance: VkInstance, vkWindow: VkWindow): List<VkPhysicalDeviceWrap> {
@@ -44,7 +44,7 @@ class VkPhysicalDeviceWrap(
 
         private fun findQueueFamilies(stack: MemoryStack, device: VkPhysicalDevice, surface: Long): IntArray {
             var result: Int? = null
-            var current: Int? = null
+            var present: Int? = null
 
             val queueFamilyCount = stack.ints(0)
             vkGetPhysicalDeviceQueueFamilyProperties(device, queueFamilyCount, null)
@@ -62,15 +62,13 @@ class VkPhysicalDeviceWrap(
                 vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, presentSupport)
 
                 if (presentSupport[0] == VK_TRUE) {
-                    current = i
+                    present = i
                 }
-
-                // if (result != null && current != null) break
             }
 
-            if (result == null || current == null) throw IllegalStateException("Unable to find a suitable device queue family")
+            if (result == null || present == null) throw IllegalStateException("Unable to find a suitable device queue family")
 
-            return intArrayOf(result, current)
+            return intArrayOf(result, present)
         }
     }
 
@@ -94,6 +92,7 @@ class VkPhysicalDeviceWrap(
             swapChainSupport.apply {
                 capabilities = VkSurfaceCapabilitiesKHR.malloc(stack)
                 vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vkDevice, surface, capabilities!!)
+                // println(capabilities!!.supportedCompositeAlpha())
 
                 val count = stack.ints(0)
                 vkGetPhysicalDeviceSurfaceFormatsKHR(vkDevice, surface, count, null)
@@ -114,7 +113,8 @@ class VkPhysicalDeviceWrap(
     }
 
     fun suitable(): Boolean =
-        graphicsFamily != null && currentFamily != null && extensions.containsKey(VK_KHR_SWAPCHAIN_EXTENSION_NAME) && (swapChainSupport.formats?.hasRemaining()
+        graphicsFamily != null && presentFamily != null && extensions.containsKey(VK_KHR_SWAPCHAIN_EXTENSION_NAME) && (swapChainSupport.formats?.hasRemaining()
             ?: false) && (swapChainSupport.presentModes?.hasRemaining() ?: false)
-    fun unique(): IntArray = intArrayOf(graphicsFamily!!, currentFamily!!).distinct().toIntArray()
+
+    fun unique(): IntArray = intArrayOf(graphicsFamily!!, presentFamily!!).distinct().toIntArray()
 }

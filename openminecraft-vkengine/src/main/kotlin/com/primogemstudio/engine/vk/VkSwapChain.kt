@@ -55,9 +55,9 @@ class VkSwapChain(
                 imageArrayLayers(1)
                 imageUsage(VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT)
 
-                if (physicalDevice.graphicsFamily != physicalDevice.currentFamily) {
+                if (physicalDevice.graphicsFamily != physicalDevice.presentFamily) {
                     imageSharingMode(VK_SHARING_MODE_CONCURRENT)
-                    pQueueFamilyIndices(it.ints(physicalDevice.graphicsFamily!!, physicalDevice.currentFamily!!))
+                    pQueueFamilyIndices(it.ints(physicalDevice.graphicsFamily!!, physicalDevice.presentFamily!!))
                 } else imageSharingMode(VK_SHARING_MODE_EXCLUSIVE)
 
                 preTransform(support.capabilities!!.currentTransform())
@@ -136,7 +136,7 @@ class VkSwapChain(
             if (availablePresentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR) return availablePresentModes[i]
         }
 
-        return VK_PRESENT_MODE_IMMEDIATE_KHR
+        return VK_PRESENT_MODE_FIFO_KHR
     }
 
     private fun chooseSwapExtent(stack: MemoryStack, capabilities: VkSurfaceCapabilitiesKHR): VkExtent2D {

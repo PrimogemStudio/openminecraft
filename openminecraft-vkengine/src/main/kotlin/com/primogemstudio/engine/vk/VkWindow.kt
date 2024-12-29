@@ -25,6 +25,7 @@ class VkWindow(
         stackPush().use {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
             glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
+            glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE)
             window = glfwCreateWindow(width, height, title, 0, 0)
             val pSurface = it.longs(VK_NULL_HANDLE)
             if (glfwCreateWindowSurface(instanceAccessor(), window, null, pSurface) != VK_SUCCESS) {

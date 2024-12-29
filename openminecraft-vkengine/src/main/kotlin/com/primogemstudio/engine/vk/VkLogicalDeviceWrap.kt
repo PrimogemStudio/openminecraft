@@ -48,7 +48,7 @@ class VkLogicalDeviceWrap(val vkDevice: VkDevice, val graphicsFamily: Int, val p
             return VkLogicalDeviceWrap(
                 VkDevice(pDevice[0], physicalDevice.vkDevice, createInfo),
                 physicalDevice.graphicsFamily!!,
-                physicalDevice.currentFamily!!
+                physicalDevice.presentFamily!!
             )
         }
     }
