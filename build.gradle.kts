@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm").version("2.0.21")
+    id("application")
 }
 
 version = "${properties["openminecraft.version"]}"
@@ -41,4 +42,8 @@ kotlin {
         verbose = true
         allWarningsAsErrors = true
     }
+}
+
+application {
+    mainClass = "com.primogemstudio.engine.MainWrappedKt"
 }
