@@ -55,7 +55,7 @@ jobs:
           arguments: build --scan
 
       - name: Upload JAR file
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenMinecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
           path: |
