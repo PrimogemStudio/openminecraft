@@ -17,6 +17,7 @@ dependencies {
     implementation(rootProject.project(":openminecraft-base"))
 
     implementation("org.apache.logging.log4j:log4j-api:${properties["openminecraft.log4j2_version"]}")
+    implementation("org.fusesource.jansi:jansi:${properties["openminecraft.jansi_version"]}")
 }
 
 tasks.jar {

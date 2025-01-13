@@ -1,5 +1,6 @@
 package com.primogemstudio.engine.i18n
 
+import com.primogemstudio.engine.json.GsonObjects
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.ResourceManager
 import org.json.JSONObject
@@ -21,19 +22,17 @@ object Internationalization {
     private fun load() {
         targetTranslations.clear()
         localeList.mapNotNull { ResourceManager.getResource(it) }.forEach {
-            JSONObject(it.readAllBytes().toString(Charsets.UTF_8)).apply {
-                keys().forEach { k ->
-                    val t = ResourceManager.getResource(this[k].toString())
-                    if (!targetTranslations.containsKey(k)) targetTranslations[k] = mutableMapOf()
-                    logger.info("Processing $k -> ${this[k]}")
-                    if (t != null) {
-                        JSONObject(t.readAllBytes().toString(Charsets.UTF_8)).apply {
-                            keys().forEach { kt ->
-                                targetTranslations[k]?.set(kt, this[kt].toString())
-                            }
+            GsonObjects.GSON.fromJson(it.readAllBytes().toString(Charsets.UTF_8), Map::class.java).forEach { (k, v) ->
+                val t = ResourceManager.getResource(v.toString())
+                if (!targetTranslations.containsKey(k)) targetTranslations[k.toString()] = mutableMapOf()
+                logger.info("Processing $k -> $v")
+                if (t != null) {
+                    JSONObject(t.readAllBytes().toString(Charsets.UTF_8)).apply {
+                        keys().forEach { kt ->
+                            targetTranslations[k]?.set(kt, this[kt].toString())
                         }
-                    } else logger.warn("Translation file not found: ${this[k]}")
-                }
+                    }
+                } else logger.warn("Translation file not found: $v")
             }
         }
     }

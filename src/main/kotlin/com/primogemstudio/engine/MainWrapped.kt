@@ -1,5 +1,6 @@
 package com.primogemstudio.engine
 
+import com.primogemstudio.engine.i18n.Internationalization
 import java.lang.foreign.Arena
 import java.lang.foreign.FunctionDescriptor
 import java.lang.foreign.Linker
@@ -14,8 +15,12 @@ fun main() {
     val offHeap = Arena.ofConfined()
 
     val linker = Linker.nativeLinker()
-    linker.downcallHandle(
-        linker.defaultLookup().find("printf").get(),
-        FunctionDescriptor.ofVoid(OfChar.ADDRESS)
-    ).invoke(offHeap.allocateUtf8String("test %llx %llx"))
+    println(
+        linker.downcallHandle(
+            linker.defaultLookup().find("printf").get(),
+            FunctionDescriptor.ofVoid(OfChar.ADDRESS)
+        ).invoke(offHeap.allocateUtf8String("%llx\n".repeat(16)))
+    )
+
+    println(Internationalization.tr("exception.i18n.replacement.trace"))
 }
