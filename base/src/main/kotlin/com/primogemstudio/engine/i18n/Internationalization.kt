@@ -3,7 +3,6 @@ package com.primogemstudio.engine.i18n
 import com.primogemstudio.engine.json.GsonObjects
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.ResourceManager
-import org.json.JSONObject
 import java.util.*
 
 object Internationalization {
@@ -21,18 +20,17 @@ object Internationalization {
 
     private fun load() {
         targetTranslations.clear()
-        println(localeList.mapNotNull { ResourceManager.getResource(it) })
+        logger.info("Available locale files: ${localeList.filter { ResourceManager.getResource(it) != null }}")
         localeList.mapNotNull { ResourceManager.getResource(it) }.forEach {
             GsonObjects.GSON.fromJson(it.readAllBytes().toString(Charsets.UTF_8), Map::class.java).forEach { (k, v) ->
                 val t = ResourceManager.getResource(v.toString())
                 if (!targetTranslations.containsKey(k)) targetTranslations[k.toString()] = mutableMapOf()
                 logger.info("Processing $k -> $v")
                 if (t != null) {
-                    JSONObject(t.readAllBytes().toString(Charsets.UTF_8)).apply {
-                        keys().forEach { kt ->
-                            targetTranslations[k]?.set(kt, this[kt].toString())
+                    GsonObjects.GSON.fromJson(t.readAllBytes().toString(Charsets.UTF_8), Map::class.java)
+                        .forEach { (ki, vi) ->
+                            targetTranslations[k]?.set(ki.toString(), vi.toString())
                         }
-                    }
                 } else logger.warn("Translation file not found: $v")
             }
         }
@@ -45,6 +43,7 @@ object Internationalization {
 
     fun tr(key: String): String =
         targetTranslations[Locale.getDefault().toString()]?.get(key) ?: targetTranslations["en_US"]?.get(key) ?: key
+
     fun tr(key: String, vararg args: Any?): String =
         try {
             targetTranslations[Locale.getDefault().toString()]?.get(key)?.format(*args)

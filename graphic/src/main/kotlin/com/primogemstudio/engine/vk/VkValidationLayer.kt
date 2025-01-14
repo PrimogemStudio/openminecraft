@@ -49,8 +49,7 @@ class VkValidationLayer(
             extensions.put(glfwExtensions)
             extensions.put(stack.UTF8(VK_EXT_DEBUG_UTILS_EXTENSION_NAME))
             return extensions.rewind()
-        }
-        else return stack.mallocPointer(1).apply { put(stack.UTF8(VK_EXT_DEBUG_UTILS_EXTENSION_NAME)) }.rewind()
+        } else return stack.mallocPointer(1).apply { put(stack.UTF8(VK_EXT_DEBUG_UTILS_EXTENSION_NAME)) }.rewind()
     }
 
     fun getDebugCreateInfo(stack: MemoryStack): VkDebugUtilsMessengerCreateInfoEXT {

@@ -3,6 +3,7 @@ plugins {
 }
 
 rootProject.name = "openminecraft"
-include("openminecraft-base")
-include("openminecraft-graphic")
-include("openminecraft-fonts")
+include("base")
+include("graphic")
+include("fonts")
+include("nativeloader")

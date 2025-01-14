@@ -24,6 +24,7 @@ class VkRendererTest(
     companion object {
         private const val MAX_FRAMES_IN_FLIGHT: Int = 2
     }
+
     private val vkShaderCompiler = ShaderCompiler()
     private val vkBaseShaderFrag = vkShaderCompiler.compile(
         ResourceManager.getResource("jar:assets/openmc_vkengine/shaders/vtx_shader.frag")?.readAllBytes()

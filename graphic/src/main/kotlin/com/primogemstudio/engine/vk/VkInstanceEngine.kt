@@ -18,7 +18,7 @@ class VkInstanceEngine(
     appVer: String,
     enableValidationLayer: Boolean = true,
     vkDebugCallback: VkDebugCallback? = null
-): Closeable {
+) : Closeable {
     private val logger = LoggerFactory.getLogger("VkInstanceEngine $appName")
 
     private var vkInstance: VkInstance? = null
@@ -33,8 +33,11 @@ class VkInstanceEngine(
 
     init {
         val vkVer = appVer.split("-")[0].split(".").flatMap {
-            try { listOf(it.toInt()) }
-            catch (e: Exception) { listOf() }
+            try {
+                listOf(it.toInt())
+            } catch (e: Exception) {
+                listOf()
+            }
         }
 
         if (vkVer.size < 3) throw IllegalArgumentException(tr("exception.engine.app.version_corrupt", appVer))

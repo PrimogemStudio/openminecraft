@@ -13,8 +13,8 @@ allprojects {
 }
 
 dependencies {
-    implementation(rootProject.project(":openminecraft-graphic"))
-    implementation(rootProject.project(":openminecraft-base"))
+    implementation(rootProject.project(":graphic"))
+    implementation(rootProject.project(":base"))
 }
 
 tasks.jar {
