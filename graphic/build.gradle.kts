@@ -6,7 +6,7 @@ group = "${properties["openminecraft.group"]}"
 version = "${properties["openminecraft.version"]}"
 
 dependencies {
-    implementation(rootProject.project(":base"))
+    implementation(rootProject.project(":openminecraft-base"))
 
     properties["openminecraft.lwjgl_version"].toString().apply {
         properties["openminecraft.lwjgl_mods"].toString().split(",").forEach { mod ->

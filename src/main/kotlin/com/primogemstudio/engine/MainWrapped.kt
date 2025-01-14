@@ -2,7 +2,7 @@ package com.primogemstudio.engine
 
 import com.primogemstudio.engine.i18n.Internationalization
 import com.primogemstudio.engine.logging.LoggerFactory
-import java.lang.foreign.Arena
+import java.lang.foreign.Arena.ofConfined
 import java.lang.foreign.FunctionDescriptor
 import java.lang.foreign.Linker
 import java.lang.foreign.ValueLayout.ADDRESS
@@ -14,7 +14,7 @@ fun main() {
     val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
     instance.vkWindow!!.mainLoop()*/
 
-    val offHeap = Arena.ofConfined()
+    val offHeap = ofConfined()
 
     val linker = Linker.nativeLinker()
     linker.downcallHandle(

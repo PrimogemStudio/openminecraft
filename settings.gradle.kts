@@ -3,7 +3,10 @@ plugins {
 }
 
 rootProject.name = "openminecraft"
-include("base")
-include("graphic")
-include("fonts")
-include("nativeloader")
+
+listOf("base", "graphic", "fonts", "nativeloader").forEach { n ->
+    include(n)
+    project(":$n").name = "openminecraft-$n"
+}
+
+

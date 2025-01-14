@@ -13,13 +13,12 @@ allprojects {
 }
 
 dependencies {
-    implementation(rootProject.project(":graphic"))
-    implementation(rootProject.project(":base"))
+    implementation(rootProject.project(":openminecraft-graphic"))
+    implementation(rootProject.project(":openminecraft-base"))
 }
 
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveBaseName = "OpenMinecraft"
 
     from (configurations.runtimeClasspath.get().map {
         if (it.isDirectory) it else zipTree(it)

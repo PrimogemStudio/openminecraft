@@ -10,7 +10,7 @@ repositories {
 }
 
 dependencies {
-    implementation(rootProject.project(":base"))
+    implementation(rootProject.project(":openminecraft-base"))
 
     properties["openminecraft.lwjgl_version"].toString().let { version ->
         properties["openminecraft.lwjgl_mods"].toString().split(",").forEach { mod ->
