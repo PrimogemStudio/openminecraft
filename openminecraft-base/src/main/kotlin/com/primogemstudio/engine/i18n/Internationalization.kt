@@ -21,6 +21,7 @@ object Internationalization {
 
     private fun load() {
         targetTranslations.clear()
+        println(localeList.mapNotNull { ResourceManager.getResource(it) })
         localeList.mapNotNull { ResourceManager.getResource(it) }.forEach {
             GsonObjects.GSON.fromJson(it.readAllBytes().toString(Charsets.UTF_8), Map::class.java).forEach { (k, v) ->
                 val t = ResourceManager.getResource(v.toString())
