@@ -1,6 +1,7 @@
 package com.primogemstudio.engine
 
 import com.primogemstudio.engine.i18n.Internationalization
+import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.Arena.ofConfined
 import java.lang.foreign.FunctionDescriptor
@@ -38,4 +39,7 @@ fun main() {
         ),
         FunctionDescriptor.ofVoid(JAVA_INT)
     ).invoke(55)
+
+    println(Platform.system.id)
+    println(Platform.arch.id)
 }
