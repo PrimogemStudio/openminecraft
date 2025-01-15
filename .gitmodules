@@ -1,0 +1,3 @@
+[submodule "nativeloader/src/main/resources/assets/openminecraft-nativeloader/libs"]
+	path = nativeloader/src/main/resources/assets/openminecraft-nativeloader/libs
+	url = https://github.com/PrimogemStudio/openminecraft-cross-test

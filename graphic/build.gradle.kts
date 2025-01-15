@@ -26,7 +26,6 @@ dependencies {
     }
 
     implementation("org.joml", "joml", "${properties["openminecraft.joml_version"]}")
-    implementation("org.joml", "joml-primitives", "${properties["openminecraft.joml_primitives_version"]}")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["openminecraft.kotlinx_coroutines_core_version"]}")
 }
