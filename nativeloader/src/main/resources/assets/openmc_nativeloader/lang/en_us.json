@@ -1,5 +1,11 @@
 {
   "engine.nativeloader.libname": "Native Lib %s",
   "engine.nativeloader.libname.embedded": "Native Lib %s (Embedded)",
-  "engine.nativeloader.libname.external": "Native Lib %s (External)"
+  "engine.nativeloader.libname.external": "Native Lib %s (External)",
+  "engine.nativeloader.libname.system": "Native Lib %s (System)",
+  "engine.nativeloader.load": "Loading %s ...",
+  "engine.nativeloader.load.nofile": "Failed to load %s: not found",
+  "engine.nativeloader.load.copy": "Copied %s to %s",
+  "engine.nativeloader.load.success": "%s loaded",
+  "engine.nativeloader.load.fail": "%s loading failed"
 }

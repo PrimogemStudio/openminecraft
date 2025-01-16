@@ -7,4 +7,7 @@ interface INativeLibSource {
     fun fetch(): InputStream?
     fun push(lib: NativeLibInfo)
     fun list(): List<NativeLibInfo>
+
+    fun needEmbeddedLib(e: Boolean)
+    fun needSystemLib(e: Boolean)
 }

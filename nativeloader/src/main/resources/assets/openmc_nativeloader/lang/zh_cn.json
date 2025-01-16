@@ -1,5 +1,11 @@
 {
   "engine.nativeloader.libname": "本地库 %s",
   "engine.nativeloader.libname.embedded": "本地库 %s (内置)",
-  "engine.nativeloader.libname.external": "本地库 %s (外置)"
+  "engine.nativeloader.libname.external": "本地库 %s (外置)",
+  "engine.nativeloader.libname.system": "本地库 %s (系统)",
+  "engine.nativeloader.load": "加载 %s 中...",
+  "engine.nativeloader.load.copy": "已复制 %s 至 %s",
+  "engine.nativeloader.load.nofile": "无法加载 %s: 未找到",
+  "engine.nativeloader.load.success": "%s 已加载",
+  "engine.nativeloader.load.fail": "%s 加载失败"
 }

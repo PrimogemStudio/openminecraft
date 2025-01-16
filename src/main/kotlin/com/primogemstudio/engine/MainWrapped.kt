@@ -1,8 +1,6 @@
 package com.primogemstudio.engine
 
-import com.primogemstudio.engine.i18n.Internationalization
 import com.primogemstudio.engine.loader.Platform
-import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.Arena.ofConfined
 import java.lang.foreign.FunctionDescriptor
 import java.lang.foreign.Linker
@@ -23,13 +21,6 @@ fun main() {
         FunctionDescriptor.ofVoid(ADDRESS)
     ).invoke(offHeap.allocateUtf8String("test!"))
 
-    val la = LoggerFactory.getLogger("Test")
-    la.debug(Internationalization.tr("exception.i18n.replacement.trace"))
-    la.info(Internationalization.tr("exception.i18n.replacement.trace"))
-    la.warn(Internationalization.tr("exception.i18n.replacement.trace"))
-    la.error(Internationalization.tr("exception.i18n.replacement.trace"))
-    la.fatal(Internationalization.tr("exception.i18n.replacement.trace"))
-
     val test = TestNativeCall()
     linker.downcallHandle(
         linker.upcallStub(
@@ -40,9 +31,5 @@ fun main() {
         FunctionDescriptor.ofVoid(JAVA_INT)
     ).invoke(55)
 
-    val test2 = Platform.libProvider("glfw")
-
-    println(Platform.system.id)
-    println(Platform.arch.id)
-    println(test2)
+    Platform.load(Platform.libProvider("glfw"))
 }
