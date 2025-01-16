@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.loader
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
+import com.primogemstudio.engine.json.GsonObjects
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.ResourceManager
 import java.nio.file.Files
@@ -32,6 +33,9 @@ enum class PlatformArch(val id: String) {
 
 object Platform {
     private val logger = LoggerFactory.getLogger()
+    private val libStatus = mutableMapOf<String, Boolean>()
+    fun libAvailable(name: String): Boolean = libStatus[name] == true
+
     val system = System.getProperty("os.name").lowercase(Locale.ROOT).let {
         if (it.contains("windows")) PlatformSystem.Windows
         else if (it.contains("linux")) PlatformSystem.Linux
@@ -103,13 +107,13 @@ object Platform {
         }
     }
 
-    fun load(source: INativeLibSource) {
+    fun load(source: INativeLibSource): Boolean {
         logger.info(tr("engine.nativeloader.load", source.name()))
 
         val sourcefile = source.fetch()
         if (sourcefile == null) {
             logger.warn(tr("engine.nativeloader.load.nofile", source.name()))
-            return
+            return false
         }
 
         val path = Files.createTempFile("openminecraftlib", system.suffix)
@@ -121,9 +125,28 @@ object Platform {
             System.load(path.toString())
         } catch (e: Throwable) {
             logger.error(tr("engine.nativeloader.load.fail", source.name()), e)
-            return
+            return false
         }
 
         logger.info(tr("engine.nativeloader.load.success", source.name()))
+        return true
+    }
+
+    fun init(): Boolean {
+        val libst = GsonObjects.GSON.fromJson(
+            ResourceManager.getResource("jar:assets/openmc_nativeloader/lib.json")?.readAllBytes()
+                ?.toString(Charsets.UTF_8),
+            NativeLibConfigModel::class.java
+        )
+        libst.required?.forEach {
+            if (!load(libProvider(it))) {
+                logger.error(tr("engine.nativeloader.load.requiredfail"))
+                return false
+            }
+        }
+        libst.optional?.forEach {
+            libStatus[it] = load(libProvider(it))
+        }
+        return true
     }
 }

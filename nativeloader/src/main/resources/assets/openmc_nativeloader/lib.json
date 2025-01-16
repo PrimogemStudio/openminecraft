@@ -1,0 +1,15 @@
+{
+  "required": [
+    "freetype",
+    "mmd",
+    "openal",
+    "shaderc",
+    "stb",
+    "yoga"
+  ],
+  "optional": [
+    "glfw",
+    "meshoptimizer",
+    "xxhash"
+  ]
+}

@@ -31,5 +31,8 @@ fun main() {
         FunctionDescriptor.ofVoid(JAVA_INT)
     ).invoke(55)
 
-    Platform.load(Platform.libProvider("glfw"))
+    /*listOf("freetype", "glfw", "meshoptimizer", "mmd", "openal", "shaderc", "stb", "xxhash", "yoga").forEach {
+        Platform.load(Platform.libProvider(it))
+    }*/
+    Platform.init()
 }

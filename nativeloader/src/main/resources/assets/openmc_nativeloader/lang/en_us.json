@@ -7,5 +7,7 @@
   "engine.nativeloader.load.nofile": "Failed to load %s: not found",
   "engine.nativeloader.load.copy": "Copied %s to %s",
   "engine.nativeloader.load.success": "%s loaded",
-  "engine.nativeloader.load.fail": "%s loading failed"
+  "engine.nativeloader.load.fail": "%s loading failed",
+  "engine.nativeloader.libdetail": "%s (Available: %s)",
+  "engine.nativeloader.load.requiredfail": "Required lib loading failed"
 }

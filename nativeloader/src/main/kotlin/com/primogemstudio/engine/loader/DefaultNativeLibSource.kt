@@ -1,7 +1,10 @@
 package com.primogemstudio.engine.loader
 
+import com.primogemstudio.engine.i18n.Internationalization.tr
+import com.primogemstudio.engine.logging.LoggerFactory
 import java.io.InputStream
 
+private val logger = LoggerFactory.getLogger()
 class DefaultNativeLibSource(private val name: String) : INativeLibSource {
     private val libStack = mutableListOf<NativeLibInfo>()
     private var embedded = true
@@ -22,5 +25,8 @@ class DefaultNativeLibSource(private val name: String) : INativeLibSource {
 
     override fun name(): String = name
     override fun fetch(): InputStream? =
-        libStack.firstOrNull { (embedded || !it.isEmbedded) || (system || !it.isSystem) }?.source
+        libStack.filter {
+            logger.debug(tr("engine.nativeloader.libdetail", it.name, it.source != null))
+            return@filter (embedded || !it.isEmbedded) || (system || !it.isSystem)
+        }.firstOrNull()?.source
 }
