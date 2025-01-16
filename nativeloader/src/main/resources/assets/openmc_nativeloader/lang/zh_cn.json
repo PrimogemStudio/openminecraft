@@ -1,0 +1,5 @@
+{
+  "engine.nativeloader.libname": "本地库 %s",
+  "engine.nativeloader.libname.embedded": "本地库 %s (内置)",
+  "engine.nativeloader.libname.external": "本地库 %s (外置)"
+}

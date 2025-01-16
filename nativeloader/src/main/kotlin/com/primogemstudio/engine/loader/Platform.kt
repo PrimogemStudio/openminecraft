@@ -1,16 +1,20 @@
 package com.primogemstudio.engine.loader
 
+import com.primogemstudio.engine.i18n.Internationalization.tr
+import com.primogemstudio.engine.resource.ResourceManager
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.*
 
-enum class PlatformSystem(val id: String) {
-    Windows("windows"),
-    Linux("linux"),
-    MacOS("macos"),
-    FreeBSD("freebsd"),
-    Android("android"),
-    IOS("ios"),
-    OpenHarmony("harmony"),
-    Unknown("unknown")
+enum class PlatformSystem(val id: String, val prefix: String, val suffix: String) {
+    Windows("windows", "", ".dll"),
+    Linux("linux", "lib", ".so"),
+    MacOS("macos", "lib", ".dylib"),
+    FreeBSD("freebsd", "lib", ".so"),
+    Android("android", "lib", ".so"),
+    IOS("ios", "lib", ".dylib"),
+    OpenHarmony("harmony", "lib", ".so"),
+    Unknown("unknown", "lib", ".so")
 }
 
 enum class PlatformArch(val id: String) {
@@ -54,6 +58,29 @@ object Platform {
                 else if (it.startsWith("armv8") || it.startsWith("armv9")) PlatformArch.Arm64
                 else PlatformArch.Unknown
             }
+        }
+    }
+
+    fun libProvider(name: String): INativeLibSource = libProvider(name, system, arch)
+
+    fun libProvider(name: String, system: PlatformSystem, arch: PlatformArch): INativeLibSource {
+        return DefaultNativeLibSource(tr("engine.nativeloader.libname", name)).apply {
+            push(
+                NativeLibInfo(
+                    tr("engine.nativeloader.libname.embedded", name),
+                    ResourceManager.getResource("jar:assets/openmc_nativeloader/lib/${system.id}/${arch.id}/${system.prefix}$name${system.suffix}")
+                )
+            )
+            push(
+                NativeLibInfo(
+                    tr("engine.nativeloader.libname.external", "name"),
+                    try {
+                        Files.newInputStream(Path.of("${system.prefix}$name${system.suffix}"))
+                    } catch (_: Exception) {
+                        null
+                    }
+                )
+            )
         }
     }
 }

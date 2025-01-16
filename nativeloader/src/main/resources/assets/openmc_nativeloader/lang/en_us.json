@@ -1,0 +1,5 @@
+{
+  "engine.nativeloader.libname": "Native Lib %s",
+  "engine.nativeloader.libname.embedded": "Native Lib %s (Embedded)",
+  "engine.nativeloader.libname.external": "Native Lib %s (External)"
+}

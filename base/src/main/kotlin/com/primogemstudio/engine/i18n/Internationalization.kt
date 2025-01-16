@@ -11,7 +11,8 @@ object Internationalization {
 
     private val localeList = mutableListOf(
         "jar:assets/openmc/locale.json",
-        "jar:assets/openmc_vkengine/locale.json"
+        "jar:assets/openmc_graphic/locale.json",
+        "jar:assets/openmc_nativeloader/locale.json"
     )
 
     init {

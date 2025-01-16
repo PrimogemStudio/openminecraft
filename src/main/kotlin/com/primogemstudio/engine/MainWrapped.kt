@@ -40,6 +40,9 @@ fun main() {
         FunctionDescriptor.ofVoid(JAVA_INT)
     ).invoke(55)
 
+    val test2 = Platform.libProvider("glfw")
+
     println(Platform.system.id)
     println(Platform.arch.id)
+    println(test2)
 }
