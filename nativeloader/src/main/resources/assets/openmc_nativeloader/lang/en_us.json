@@ -9,5 +9,6 @@
   "engine.nativeloader.load.success": "%s loaded",
   "engine.nativeloader.load.fail": "%s loading failed",
   "engine.nativeloader.libdetail": "%s (Available: %s)",
-  "engine.nativeloader.load.requiredfail": "Required lib loading failed"
+  "engine.nativeloader.load.requiredfail": "Required lib loading failed",
+  "engine.nativeloader.func": "Symbol %s linked (0x%s)"
 }

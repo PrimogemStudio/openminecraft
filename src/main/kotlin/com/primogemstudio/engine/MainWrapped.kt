@@ -1,12 +1,13 @@
 package com.primogemstudio.engine
 
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.loader.Platform
 import java.lang.foreign.Arena.ofConfined
 import java.lang.foreign.FunctionDescriptor
 import java.lang.foreign.Linker
 import java.lang.foreign.MemorySegment
-import java.lang.foreign.SymbolLookup
-import java.lang.foreign.ValueLayout.*
+import java.lang.foreign.ValueLayout.ADDRESS
+import java.lang.foreign.ValueLayout.JAVA_INT
 
 
 fun main() {
@@ -36,34 +37,17 @@ fun main() {
         Platform.load(Platform.libProvider(it))
     }*/
     Platform.init()
-    linker.downcallHandle(SymbolLookup.loaderLookup().find("glfwInit").get(), FunctionDescriptor.ofVoid()).invoke()
-    val window = linker.downcallHandle(
-        SymbolLookup.loaderLookup().find("glfwCreateWindow").get(),
-        FunctionDescriptor.of(ADDRESS, JAVA_INT, JAVA_INT, ADDRESS, JAVA_LONG, JAVA_LONG)
-    ).invoke(640, 480, offHeap.allocateUtf8String("test!"), 0L, 0L) as MemorySegment
-    linker.downcallHandle(
-        SymbolLookup.loaderLookup().find("glfwShowWindow").get(),
-        FunctionDescriptor.ofVoid(ADDRESS)
-    ).invoke(window)
+    callFunc("glfwInit", MemorySegment::class).address()
+    val window =
+        callFunc("glfwCreateWindow", MemorySegment::class, 640, 480, offHeap.allocateUtf8String("test!"), 0L, 0L)
 
-    while (!(linker.downcallHandle(
-            SymbolLookup.loaderLookup().find("glfwWindowShouldClose").get(),
-            FunctionDescriptor.of(JAVA_BOOLEAN, ADDRESS)
-        ).invoke(window) as Boolean)
-    ) {
-        linker.downcallHandle(
-            SymbolLookup.loaderLookup().find("glfwSwapBuffers").get(),
-            FunctionDescriptor.ofVoid(ADDRESS)
-        ).invoke(window)
+    callFunc("glfwShowWindow", MemorySegment::class, window)
 
-        linker.downcallHandle(
-            SymbolLookup.loaderLookup().find("glfwPollEvents").get(),
-            FunctionDescriptor.ofVoid()
-        ).invoke()
+    while (!callFunc("glfwWindowShouldClose", Boolean::class, window)) {
+        callFunc<Any>("glfwSwapBuffers", null, window)
+        callFunc<Any>("glfwPollEvents", null)
     }
 
-    linker.downcallHandle(
-        SymbolLookup.loaderLookup().find("glfwDestroyWindow").get(),
-        FunctionDescriptor.ofVoid(ADDRESS)
-    ).invoke(window)
+    callFunc<Any>("glfwDestroyWindow", null, window)
+    callFunc("glfwTerminate", MemorySegment::class)
 }

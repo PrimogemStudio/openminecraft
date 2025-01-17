@@ -9,5 +9,6 @@
   "engine.nativeloader.load.success": "%s 已加载",
   "engine.nativeloader.load.fail": "%s 加载失败",
   "engine.nativeloader.libdetail": "%s (可用: %s)",
-  "engine.nativeloader.load.requiredfail": "必要库加载失败"
+  "engine.nativeloader.load.requiredfail": "必要库加载失败",
+  "engine.nativeloader.func": "已链接符号 %s (0x%s)"
 }
