@@ -53,8 +53,7 @@ object NativeMethodCache {
             if (rettypeDesc == null) FunctionDescriptor.ofVoid(*argDesc) else FunctionDescriptor.of(
                 rettypeDesc,
                 *argDesc
-            ),
-            Linker.Option.isTrivial()
+            )
         )
         logger.info(tr("engine.nativeloader.func", name, funcP.address().toHexString()))
         return if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(args.toList()) as T
