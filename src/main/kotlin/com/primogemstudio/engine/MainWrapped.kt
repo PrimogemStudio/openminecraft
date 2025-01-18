@@ -1,8 +1,8 @@
 package com.primogemstudio.engine
 
-import com.primogemstudio.engine.bindings.GLFW.glfwInit
-import com.primogemstudio.engine.bindings.GLFW.glfwSetErrorCallback
-import com.primogemstudio.engine.bindings.GLFW.glfwTerminate
+import com.primogemstudio.engine.bindings.glfw.GLFWBase.glfwInit
+import com.primogemstudio.engine.bindings.glfw.GLFWBase.glfwSetErrorCallback
+import com.primogemstudio.engine.bindings.glfw.GLFWBase.glfwTerminate
 import com.primogemstudio.engine.interfaces.IStub
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub

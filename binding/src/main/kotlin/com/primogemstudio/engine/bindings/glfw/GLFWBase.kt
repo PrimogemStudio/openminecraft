@@ -1,4 +1,4 @@
-package com.primogemstudio.engine.bindings
+package com.primogemstudio.engine.bindings.glfw
 
 import com.primogemstudio.engine.interfaces.IStruct
 import com.primogemstudio.engine.interfaces.IStub
@@ -82,7 +82,7 @@ class GLFWAllocator(
     }
 }
 
-object GLFW {
+object GLFWBase {
     const val GLFW_NO_ERROR = 0
     const val GLFW_NOT_INITIALIZED = 0x00010001
     const val GLFW_NO_CURRENT_CONTEXT = 0x00010002
