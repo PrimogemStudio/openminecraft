@@ -1,10 +1,12 @@
 package com.primogemstudio.engine
 
 import com.primogemstudio.engine.bindings.GLFW.glfwInit
+import com.primogemstudio.engine.bindings.GLFW.glfwSetErrorCallback
 import com.primogemstudio.engine.bindings.GLFW.glfwTerminate
 import com.primogemstudio.engine.interfaces.IStub
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
+import com.primogemstudio.engine.interfaces.fetchCString
 import com.primogemstudio.engine.loader.Platform
 import java.lang.foreign.Arena.ofConfined
 import java.lang.foreign.MemorySegment
@@ -32,14 +34,17 @@ fun main() {
     Platform.init()
 
     glfwInit()
+    glfwSetErrorCallback { err, desc ->
+        println("$err ${desc.fetchCString()}")
+    }
 
     val window =
         callFunc("glfwCreateWindow", MemorySegment::class, 640, 480, offHeap.allocateUtf8String("test!"), 0L, 0L)
 
     callFunc("glfwShowWindow", MemorySegment::class, window)
-    callFunc<Any>(
+    callFunc(
         "glfwSetFramebufferSizeCallback",
-        null,
+        Unit::class,
         window,
         constructStub(CallbackTest::class, CallbackTest { w: MemorySegment, a: Int, b: Int ->
             println("$w $a $b")
@@ -47,10 +52,10 @@ fun main() {
     )
 
     while (!callFunc("glfwWindowShouldClose", Boolean::class, window)) {
-        callFunc<Any>("glfwSwapBuffers", null, window)
-        callFunc<Any>("glfwWaitEvents", null)
+        callFunc("glfwSwapBuffers", Unit::class, window)
+        callFunc("glfwWaitEvents", Unit::class)
     }
 
-    callFunc<Any>("glfwDestroyWindow", null, window)
+    callFunc("glfwDestroyWindow", Unit::class, window)
     glfwTerminate()
 }

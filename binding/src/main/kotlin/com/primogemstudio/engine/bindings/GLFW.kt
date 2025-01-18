@@ -6,6 +6,7 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
 import com.primogemstudio.engine.interfaces.fetchCString
 import com.primogemstudio.engine.interfaces.heap.HeapInt
+import com.primogemstudio.engine.interfaces.heap.HeapStringArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.loader.Platform.sizetMap
 import java.lang.foreign.MemoryLayout
@@ -14,27 +15,12 @@ import java.lang.foreign.ValueLayout.ADDRESS
 import java.lang.invoke.MethodType
 
 interface GLFWAllocateFun : IStub {
-    fun call(size: Long, user: MemorySegment)
-    fun call(size: Int, user: MemorySegment)
+    fun call(size: Long, user: MemorySegment): MemorySegment
+    fun call(size: Int, user: MemorySegment): MemorySegment
     override fun register(): Pair<String, MethodType> =
         Pair(
             "call",
             MethodType.methodType(
-                Void.TYPE,
-                sizetMap().java,
-                MemorySegment::class.java
-            )
-        )
-}
-
-interface GLFWReallocateFun : IStub {
-    fun call(block: MemorySegment, size: Long, user: MemorySegment)
-    fun call(block: MemorySegment, size: Int, user: MemorySegment)
-    override fun register(): Pair<String, MethodType> =
-        Pair(
-            "call",
-            MethodType.methodType(
-                Void.TYPE,
                 MemorySegment::class.java,
                 sizetMap().java,
                 MemorySegment::class.java
@@ -42,7 +28,22 @@ interface GLFWReallocateFun : IStub {
         )
 }
 
-interface GLFWDeallocateFun : IStub {
+interface GLFWReallocateFun : IStub {
+    fun call(block: MemorySegment, size: Long, user: MemorySegment): MemorySegment
+    fun call(block: MemorySegment, size: Int, user: MemorySegment): MemorySegment
+    override fun register(): Pair<String, MethodType> =
+        Pair(
+            "call",
+            MethodType.methodType(
+                MemorySegment::class.java,
+                MemorySegment::class.java,
+                sizetMap().java,
+                MemorySegment::class.java
+            )
+        )
+}
+
+fun interface GLFWDeallocateFun : IStub {
     fun call(block: MemorySegment, user: MemorySegment)
     override fun register(): Pair<String, MethodType> =
         Pair(
@@ -55,7 +56,7 @@ interface GLFWDeallocateFun : IStub {
         )
 }
 
-interface GLFWErrorFun : IStub {
+fun interface GLFWErrorFun : IStub {
     fun call(errorCode: Int, desc: MemorySegment)
     override fun register(): Pair<String, MethodType> =
         Pair(
@@ -82,6 +83,22 @@ class GLFWAllocator(
 }
 
 object GLFW {
+    const val GLFW_NO_ERROR = 0
+    const val GLFW_NOT_INITIALIZED = 0x00010001
+    const val GLFW_NO_CURRENT_CONTEXT = 0x00010002
+    const val GLFW_INVALID_ENUM = 0x00010003
+    const val GLFW_INVALID_VALUE = 0x00010004
+    const val GLFW_OUT_OF_MEMORY = 0x00010005
+    const val GLFW_API_UNAVAILABLE = 0x00010006
+    const val GLFW_VERSION_UNAVAILABLE = 0x00010007
+    const val GLFW_PLATFORM_ERROR = 0x00010008
+    const val GLFW_FORMAT_UNAVAILABLE = 0x00010009
+    const val GLFW_NO_WINDOW_CONTEXT = 0x0001000a
+    const val GLFW_CURSOR_UNAVAILABLE = 0x0001000b
+    const val GLFW_FEATURE_UNAVAILABLE = 0x0001000c
+    const val GLFW_FEATURE_UNIMPLEMENTED = 0x0001000d
+    const val GLFW_PLATFORM_UNAVAILABLE = 0x0001000e
+
     const val GLFW_TRUE = 1
     const val GLFW_FALSE = 0
     const val GLFW_JOYSTICK_HAT_BUTTONS = 0x00050001
@@ -101,11 +118,16 @@ object GLFW {
     fun glfwInit(): Boolean = callFunc("glfwInit", Boolean::class)
     fun glfwTerminate() = callFunc("glfwTerminate", Unit::class)
     fun glfwInitHint(hint: Int, value: Int) = callFunc("glfwInitHint", Unit::class, hint, value)
-
+    fun glfwInitAllocator(allocator: GLFWAllocator) = callFunc("glfwInitAllocator", Unit::class, allocator)
     // glfwInitVulkanLoader(PFN_vkGetInstanceProcAddr)
     // PFN_vkGetInstanceAddr -> VkInstance, char*
-
-    fun glfwGetVersionString(): String = callFunc("glfwGetVersionString", MemorySegment::class).fetchCString()
     fun glfwGetVersion(major: HeapInt, minor: HeapInt, rev: HeapInt) =
         callFunc("glfwGetVersion", Unit::class, major, minor, rev)
+    fun glfwGetVersionString(): String = callFunc("glfwGetVersionString", MemorySegment::class).fetchCString()
+    fun glfwGetError(desc: HeapStringArray): Int = callFunc("glfwGetError", Int::class, desc)
+    fun glfwSetErrorCallback(callback: GLFWErrorFun): MemorySegment =
+        callFunc("glfwSetErrorCallback", MemorySegment::class, constructStub(GLFWErrorFun::class, callback))
+
+    fun glfwGetPlatform(): Int = callFunc("glfwGetPlatform", Int::class)
+    fun glfwPlatformSupported(platform: Int): Int = callFunc("glfwPlatformSupported", Int::class, platform)
 }

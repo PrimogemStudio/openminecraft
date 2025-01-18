@@ -154,6 +154,7 @@ object Platform {
 
     fun sizetMap(): KClass<*> = if (arch == PlatformArch.Arm32 || arch == PlatformArch.X86) Int::class else Long::class
     fun sizetLength(): Int = if (arch == PlatformArch.Arm32 || arch == PlatformArch.X86) 4 else 8
+    fun is32bits(): Boolean = arch == PlatformArch.Arm32 || arch == PlatformArch.X86
 
     init {
         if (!init()) throw PlatformLibInitException()
