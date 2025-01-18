@@ -1,5 +1,6 @@
 package com.primogemstudio.engine.loader
 
+import com.primogemstudio.engine.exceptions.PlatformLibInitException
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.json.GsonObjects
 import com.primogemstudio.engine.logging.LoggerFactory
@@ -148,5 +149,9 @@ object Platform {
             libStatus[it] = load(libProvider(it))
         }
         return true
+    }
+
+    init {
+        if (!init()) throw PlatformLibInitException()
     }
 }

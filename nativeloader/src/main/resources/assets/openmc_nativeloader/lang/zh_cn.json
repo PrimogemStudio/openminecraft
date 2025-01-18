@@ -10,5 +10,6 @@
   "engine.nativeloader.load.fail": "%s 加载失败",
   "engine.nativeloader.libdetail": "%s (可用: %s)",
   "engine.nativeloader.load.requiredfail": "必要库加载失败",
-  "engine.nativeloader.func": "已链接符号 %s (0x%s)"
+  "engine.nativeloader.func": "已链接符号 %s (0x%s)",
+  "engine.nativeloader.stub": "桩函数已创建, 类型 %s (0x%s)"
 }
