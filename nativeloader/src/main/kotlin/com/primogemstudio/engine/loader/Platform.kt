@@ -9,6 +9,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.util.*
+import kotlin.reflect.KClass
 
 enum class PlatformSystem(val id: String, val prefix: String, val suffix: String, val syslib: String) {
     Windows("windows", "", ".dll", "C:\\Windows\\System32"),
@@ -150,6 +151,9 @@ object Platform {
         }
         return true
     }
+
+    fun sizetMap(): KClass<*> = if (arch == PlatformArch.Arm32 || arch == PlatformArch.X86) Int::class else Long::class
+    fun sizetLength(): Int = if (arch == PlatformArch.Arm32 || arch == PlatformArch.X86) 4 else 8
 
     init {
         if (!init()) throw PlatformLibInitException()

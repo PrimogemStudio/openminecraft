@@ -13,6 +13,7 @@ import kotlin.reflect.KClass
 object NativeMethodCache {
     private val logger = LoggerFactory.getLogger()
     private val funcCache = mutableMapOf<String, MethodHandle>()
+    private val stubCache = mutableMapOf<Any, MemorySegment>()
     private val linker = Linker.nativeLinker()
     private val symbolLookup = SymbolLookup.loaderLookup()
 
@@ -31,6 +32,7 @@ object NativeMethodCache {
 
     @OptIn(ExperimentalStdlibApi::class)
     fun <T : IStub> constructStub(klass: KClass<T>, callback: T): MemorySegment {
+        if (stubCache.containsKey(callback)) return stubCache[callback]!!
         val content = callback.register()
 
         val argArr =
@@ -49,6 +51,7 @@ object NativeMethodCache {
             fd,
             Arena.ofConfined()
         ).apply {
+            stubCache[callback] = this
             logger.info(tr("engine.nativeloader.stub", klass.qualifiedName, this.address().toHexString()))
         }
     }
@@ -56,7 +59,15 @@ object NativeMethodCache {
     @OptIn(ExperimentalStdlibApi::class)
     fun <T : Any> callFunc(name: String, rettype: KClass<T>?, vararg args: Any): T {
         val argListNew = args.map {
-            return@map if (it is IHeapVar<*>) it.ref() else it
+            return@map if (it is IHeapVar<*>) {
+                it.ref()
+            } else if (it is IStruct) {
+                val seg = Arena.ofConfined().allocate(it.layout())
+                it.construct(seg)
+                seg
+            } else {
+                it
+            }
         }
 
         if (funcCache.containsKey(name)) {
