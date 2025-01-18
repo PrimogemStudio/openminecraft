@@ -70,7 +70,6 @@ object Platform {
     }
 
     fun libProvider(name: String): INativeLibSource = libProvider(name, system, arch)
-
     fun libProvider(name: String, system: PlatformSystem, arch: PlatformArch): INativeLibSource {
         return DefaultNativeLibSource(tr("engine.nativeloader.libname", name)).apply {
             push(
@@ -118,6 +117,7 @@ object Platform {
         }
 
         val path = Files.createTempFile("openminecraftlib", system.suffix)
+        path.toFile().deleteOnExit()
         Files.copy(sourcefile, path, StandardCopyOption.REPLACE_EXISTING)
 
         logger.info(tr("engine.nativeloader.load.copy", source.name(), path))

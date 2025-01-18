@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.interfaces
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
+import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.*
@@ -54,8 +55,14 @@ object NativeMethodCache {
 
     @OptIn(ExperimentalStdlibApi::class)
     fun <T : Any> callFunc(name: String, rettype: KClass<T>?, vararg args: Any): T {
+        val argListNew = args.map {
+            return@map if (it is IHeapVar<*>) it.ref() else it
+        }
+
         if (funcCache.containsKey(name)) {
-            return if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(args.toList()) as T
+            return if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(
+                argListNew
+            ) as T
         }
 
         val rettypeDesc: MemoryLayout? = klassToLayout(rettype)
@@ -70,6 +77,6 @@ object NativeMethodCache {
             )
         )
         logger.info(tr("engine.nativeloader.func", name, funcP.address().toHexString()))
-        return if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(args.toList()) as T
+        return if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(argListNew) as T
     }
 }

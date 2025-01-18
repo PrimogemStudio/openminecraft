@@ -1,5 +1,6 @@
 package com.primogemstudio.engine
 
+import com.primogemstudio.engine.bindings.GLFW
 import com.primogemstudio.engine.interfaces.IStub
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
@@ -21,6 +22,7 @@ fun interface CallbackTest : IStub {
     )
 }
 
+@OptIn(ExperimentalStdlibApi::class)
 fun main() {
     /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
     val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
@@ -29,7 +31,9 @@ fun main() {
     val offHeap = ofConfined()
     Platform.init()
 
-    callFunc("glfwInit", MemorySegment::class).address()
+    println(GLFW.glfwInit())
+    println(GLFW.glfwGetVersionString())
+
     val window =
         callFunc("glfwCreateWindow", MemorySegment::class, 640, 480, offHeap.allocateUtf8String("test!"), 0L, 0L)
 

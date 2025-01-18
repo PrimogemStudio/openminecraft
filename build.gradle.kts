@@ -16,6 +16,7 @@ dependencies {
     implementation(rootProject.project(":openminecraft-graphic"))
     implementation(rootProject.project(":openminecraft-nativeloader"))
     implementation(rootProject.project(":openminecraft-base"))
+    implementation(rootProject.project(":openminecraft-binding"))
 }
 
 tasks.jar {
