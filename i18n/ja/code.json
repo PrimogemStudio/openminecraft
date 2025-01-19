@@ -309,5 +309,26 @@
   "theme.tags.tagsPageTitle": {
     "message": "タグ",
     "description": "The title of the tag list page"
+  },
+  "ui.main.feature.kt.title": {
+    "message": "Kotlinに基づいて"
+  },
+  "ui.main.feature.kt": {
+    "message": "エンジンの大部分はKotlin/JVMプラットフォーム上に構築されており、移植が容易です"
+  },
+  "ui.tagline": {
+    "message": "LWJGLの再実装"
+  },
+  "ui.main.feature.api.title": {
+    "message": "JNIの代わりにFFMを使用してく"
+  },
+  "ui.main.feature.api": {
+    "message": "スタブコードとスプリングボード関数の作成に追加のlibffiライブラリは必要なく、依存ライブラリの数が減少します。"
+  },
+  "ui.main.feature.kt.subtitle": {
+    "message": "ui.main.feature.kt.subtitle"
+  },
+  "ui.main.feature.api.subtitle": {
+    "message": "ui.main.feature.api.subtitle"
   }
 }

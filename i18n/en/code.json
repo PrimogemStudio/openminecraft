@@ -309,5 +309,26 @@
   "theme.tags.tagsPageTitle": {
     "message": "Tags",
     "description": "The title of the tag list page"
+  },
+  "ui.main.feature.kt.title": {
+    "message": "Based on Kotlin"
+  },
+  "ui.main.feature.kt": {
+    "message": "Most of the engine is built on the Kotlin/JVM platform, which is easy to port"
+  },
+  "ui.tagline": {
+    "message": "Reimplementation of LWJGL"
+  },
+  "ui.main.feature.api.title": {
+    "message": "Use FFM instead of JNI"
+  },
+  "ui.main.feature.api": {
+    "message": "There is no need for additional libffi libraries for stubbing code and trampoline function creation, reducing the number of dependent libraries"
+  },
+  "ui.main.feature.kt.subtitle": {
+    "message": "ui.main.feature.kt.subtitle"
+  },
+  "ui.main.feature.api.subtitle": {
+    "message": "ui.main.feature.api.subtitle"
   }
 }

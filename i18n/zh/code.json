@@ -311,11 +311,24 @@
     "description": "The title of the tag list page"
   },
   "ui.main.feature.kt.title": {
-    "message": "使用 Kotlin", 
-    "description": "Engine desc"
-  }, 
+    "message": "使用 Kotlin"
+  },
   "ui.main.feature.kt": {
-    "message": "引擎的大部分内容在 Kotlin/JVM 平台上搭建", 
-    "description": "Engine desc"
+    "message": "引擎的大部分内容在 Kotlin/JVM 平台上搭建, 易于移植"
+  },
+  "ui.tagline": {
+    "message": "LWJGL 的重新实现"
+  },
+  "ui.main.feature.api.title": {
+    "message": "使用 FFM 替代 JNI"
+  },
+  "ui.main.feature.api": {
+    "message": "不需要额外的 libffi 库进行桩代码、跳板函数创建, 减少依赖库数量"
+  },
+  "ui.main.feature.kt.subtitle": {
+    "message": "「Java? Kotlin!」"
+  },
+  "ui.main.feature.api.subtitle": {
+    "message": "「新底层 API!」"
   }
 }
