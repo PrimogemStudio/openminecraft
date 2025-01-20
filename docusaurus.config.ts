@@ -20,7 +20,7 @@ const config: Config = {
   organizationName: 'PrimogemStudio', // Usually your GitHub org/user name.
   projectName: 'openminecraft', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   i18n: {

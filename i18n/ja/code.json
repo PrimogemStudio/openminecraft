@@ -326,9 +326,21 @@
     "message": "スタブコードとスプリングボード関数の作成に追加のlibffiライブラリは必要なく、依存ライブラリの数が減少します。"
   },
   "ui.main.feature.kt.subtitle": {
-    "message": "ui.main.feature.kt.subtitle"
+    "message": "「Java? Kotlin! 」"
   },
   "ui.main.feature.api.subtitle": {
-    "message": "ui.main.feature.api.subtitle"
+    "message": "「新しい基盤API! 」"
+  },
+  "ui.main.feature.modular.title": {
+    "message": "モジュラー"
+  },
+  "ui.main.feature.modular.subtitle": {
+    "message": "「モジュールは切り離されることを意図しています！」"
+  },
+  "ui.main.feature.modular": {
+    "message": "各モジュールは同時に1つのことだけを行い、各モジュールは互いに独立して実行できます。"
+  },
+  "ui.startbutton": {
+    "message": "始めて構築しましょう"
   }
 }

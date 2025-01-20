@@ -21,20 +21,15 @@ const FeatureList: FeatureItem[] = [
   },
   {
     title: translate({id: "ui.main.feature.api.title"}),
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    Svg: require('@site/static/img/functional.svg').default,
     textline: translate({id: "ui.main.feature.api.subtitle"}),
     description: <Translate id="ui.main.feature.api"></Translate>,
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
-    textline: "test",
-    description: (
-      <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
-      </>
-    ),
+    title: translate({id: "ui.main.feature.modular.title"}),
+    Svg: require('@site/static/img/modular.svg').default,
+    textline: translate({id: "ui.main.feature.modular.subtitle"}),
+    description: <Translate id="ui.main.feature.modular"></Translate>,
   },
 ];
 
@@ -45,7 +40,7 @@ function Feature({title, Svg, textline, description}: FeatureItem) {
         <Svg className={styles.featureSvg} role="img" />
       </div>
       <div className="text--center padding-horiz--md">
-        <Heading as="h4" style={{color: 'grey', fontStyle: 'italic'}}>{textline}</Heading>
+        <Heading as="h4" style={{color: 'grey'}}>{textline}</Heading>
         <Heading as="h3">{title}</Heading>
         <p>{description}</p>
       </div>

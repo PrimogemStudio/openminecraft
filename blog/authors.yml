@@ -1,23 +1,15 @@
-yangshun:
-  name: Yangshun Tay
-  title: Front End Engineer @ Facebook
-  url: https://github.com/yangshun
-  image_url: https://github.com/yangshun.png
-  page: true
+coder2: 
+  name: Coder2
+  title: OpenMinecraft maintainer
+  url: https://github.com/Jack253-png
+  image_url: https://avatars.githubusercontent.com/u/83895170?v=4
   socials:
-    x: yangshunz
-    github: yangshun
+    github: Jack253-png
 
-slorber:
-  name: Sébastien Lorber
-  title: Docusaurus maintainer
-  url: https://sebastienlorber.com
-  image_url: https://github.com/slorber.png
-  page:
-    # customize the url of the author page at /blog/authors/<permalink>
-    permalink: '/all-sebastien-lorber-articles'
-  socials:
-    x: sebastienlorber
-    linkedin: sebastienlorber
-    github: slorber
-    newsletter: https://thisweekinreact.com
+hackermdch: 
+  name: hackermdch
+  title: Native module maintainer
+  url: https://github.com/hackermdch
+  image_url: https://avatars.githubusercontent.com/u/58121864?v=4
+  socials: 
+    github: hackermdch

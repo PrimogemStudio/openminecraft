@@ -271,15 +271,15 @@
     "description": "The title of the page for a blog author"
   },
   "theme.blog.authorsList.pageTitle": {
-    "message": "Authors",
+    "message": "作者",
     "description": "The title of the authors page"
   },
   "theme.blog.authorsList.viewAll": {
-    "message": "View All Authors",
+    "message": "查看所有作者",
     "description": "The label of the link targeting the blog authors page"
   },
   "theme.blog.author.noPosts": {
-    "message": "This author has not written any posts yet.",
+    "message": "该作者尚未撰写任何文章",
     "description": "The text for authors with 0 blog post"
   },
   "theme.contentVisibility.unlistedBanner.title": {
@@ -291,11 +291,11 @@
     "description": "The unlisted content banner message"
   },
   "theme.contentVisibility.draftBanner.title": {
-    "message": "Draft page",
+    "message": "草稿页",
     "description": "The draft content banner title"
   },
   "theme.contentVisibility.draftBanner.message": {
-    "message": "This page is a draft. It will only be visible in dev and be excluded from the production build.",
+    "message": "此页面为草稿, 它仅在开发版中可见",
     "description": "The draft content banner message"
   },
   "theme.ErrorPageContent.tryAgain": {
@@ -326,9 +326,21 @@
     "message": "不需要额外的 libffi 库进行桩代码、跳板函数创建, 减少依赖库数量"
   },
   "ui.main.feature.kt.subtitle": {
-    "message": "「Java? Kotlin!」"
+    "message": "「Java? Kotlin! 」"
   },
   "ui.main.feature.api.subtitle": {
-    "message": "「新底层 API!」"
+    "message": "「新底层 API ! 」"
+  },
+  "ui.main.feature.modular.title": {
+    "message": "模块化"
+  },
+  "ui.main.feature.modular.subtitle": {
+    "message": "「模块就是用来解耦的! 」"
+  },
+  "ui.main.feature.modular": {
+    "message": "每一个模块都只同时做一件事, 每一个模块也可以互相分离运行"
+  },
+  "ui.startbutton": {
+    "message": "开始构建 & 使用"
   }
 }

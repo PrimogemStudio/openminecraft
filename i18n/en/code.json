@@ -326,9 +326,21 @@
     "message": "There is no need for additional libffi libraries for stubbing code and trampoline function creation, reducing the number of dependent libraries"
   },
   "ui.main.feature.kt.subtitle": {
-    "message": "ui.main.feature.kt.subtitle"
+    "message": "Java? Kotlin!"
   },
   "ui.main.feature.api.subtitle": {
-    "message": "ui.main.feature.api.subtitle"
+    "message": "New Low-Level API!"
+  },
+  "ui.main.feature.modular.title": {
+    "message": "Modular"
+  },
+  "ui.main.feature.modular.subtitle": {
+    "message": "Modules are meant to be decoupled! "
+  },
+  "ui.main.feature.modular": {
+    "message": "Each module does only one thing at the same time, and each module can be run separately from each other"
+  },
+  "ui.startbutton": {
+    "message": "Get started and build"
   }
 }
