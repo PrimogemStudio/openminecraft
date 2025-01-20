@@ -69,6 +69,20 @@ fun interface GLFWErrorFun : IStub {
         )
 }
 
+// vkInstance -> VkInstance
+fun interface PFN_vkGetInstanceProcAddr : IStub {
+    fun call(vkInstance: MemorySegment, funcname: MemorySegment)
+    override fun register(): Pair<String, MethodType> =
+        Pair(
+            "call",
+            MethodType.methodType(
+                Void.TYPE,
+                MemorySegment::class.java,
+                MemorySegment::class.java
+            )
+        )
+}
+
 class GLFWAllocator(
     private val allocator: GLFWAllocateFun,
     private val reallocator: GLFWReallocateFun,
@@ -82,7 +96,7 @@ class GLFWAllocator(
     }
 }
 
-object GLFWBase {
+object GLFWBaseFuncs {
     const val GLFW_NO_ERROR = 0
     const val GLFW_NOT_INITIALIZED = 0x00010001
     const val GLFW_NO_CURRENT_CONTEXT = 0x00010002
@@ -119,15 +133,13 @@ object GLFWBase {
     fun glfwTerminate() = callFunc("glfwTerminate", Unit::class)
     fun glfwInitHint(hint: Int, value: Int) = callFunc("glfwInitHint", Unit::class, hint, value)
     fun glfwInitAllocator(allocator: GLFWAllocator) = callFunc("glfwInitAllocator", Unit::class, allocator)
-    // glfwInitVulkanLoader(PFN_vkGetInstanceProcAddr)
-    // PFN_vkGetInstanceAddr -> VkInstance, char*
+    fun glfwInitVulkanLoader(proc: PFN_vkGetInstanceProcAddr) = callFunc("glfwInitVulkanLoader", Unit::class, proc)
     fun glfwGetVersion(major: HeapInt, minor: HeapInt, rev: HeapInt) =
         callFunc("glfwGetVersion", Unit::class, major, minor, rev)
     fun glfwGetVersionString(): String = callFunc("glfwGetVersionString", MemorySegment::class).fetchCString()
     fun glfwGetError(desc: HeapStringArray): Int = callFunc("glfwGetError", Int::class, desc)
     fun glfwSetErrorCallback(callback: GLFWErrorFun): MemorySegment =
         callFunc("glfwSetErrorCallback", MemorySegment::class, constructStub(GLFWErrorFun::class, callback))
-
     fun glfwGetPlatform(): Int = callFunc("glfwGetPlatform", Int::class)
     fun glfwPlatformSupported(platform: Int): Int = callFunc("glfwPlatformSupported", Int::class, platform)
 }
