@@ -1,6 +1,9 @@
 <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
     <polygon points="40,70 40,90 90,90 90,70" stroke="grey" stroke-width="20" stroke-linejoin="round" border="5px" />
+    <polygon points="50,80 50,100 100,100 100,80" stroke="#999999" stroke-width="20" stroke-linejoin="round" border="5px" />
     <polygon points="60,90 60,110 110,110 110,90" stroke="#aaaaaa" stroke-width="20" stroke-linejoin="round" border="5px" />
+    <polygon points="70,100 70,120 120,120 120,100" stroke="#bbbbbb" stroke-width="20" stroke-linejoin="round" border="5px" />
     <polygon points="80,110 80,130 130,130 130,110" stroke="#cccccc" stroke-width="20" stroke-linejoin="round" border="5px" />
+    <polygon points="90,120 90,140 140,140 140,120" stroke="#dddddd" stroke-width="20" stroke-linejoin="round" border="5px" />
     <polygon points="100,130 100,150 150,150 150,130" stroke="#eeeeee" stroke-width="20" stroke-linejoin="round" border="5px" />
 </svg>
