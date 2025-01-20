@@ -314,7 +314,7 @@
     "message": "Based on Kotlin"
   },
   "ui.main.feature.kt": {
-    "message": "Most of the engine is built on the Kotlin/JVM platform, which is easy to port"
+    "message": "Much of the engine is built on the Kotlin/JVM platform, which is easy to port, and it uses Kotlin's syntax features to make it faster to call native functions"
   },
   "ui.tagline": {
     "message": "Reimplementation of LWJGL"

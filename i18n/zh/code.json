@@ -314,7 +314,7 @@
     "message": "使用 Kotlin"
   },
   "ui.main.feature.kt": {
-    "message": "引擎的大部分内容在 Kotlin/JVM 平台上搭建, 易于移植"
+    "message": "引擎的大部分内容在 Kotlin/JVM 平台上搭建, 易于移植, 同时使用了 Kotlin 的语法特性, 调用 Native 函数更快速"
   },
   "ui.tagline": {
     "message": "LWJGL 的重新实现"

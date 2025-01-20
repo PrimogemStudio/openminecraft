@@ -314,7 +314,7 @@
     "message": "Kotlinに基づいて"
   },
   "ui.main.feature.kt": {
-    "message": "エンジンの大部分はKotlin/JVMプラットフォーム上に構築されており、移植が容易です"
+    "message": "エンジンの多くはKotlin/JVMプラットフォーム上に構築されており、移植が容易で、Kotlinの構文機能を使用してネイティブ関数を呼び出す速度を向上させています"
   },
   "ui.tagline": {
     "message": "LWJGLの再実装"
@@ -323,7 +323,7 @@
     "message": "JNIの代わりにFFMを使用してく"
   },
   "ui.main.feature.api": {
-    "message": "スタブコードとスプリングボード関数の作成に追加のlibffiライブラリは必要なく、依存ライブラリの数が減少します。"
+    "message": "スタブコードとスプリングボード関数の作成に追加のlibffiライブラリは必要なく、依存ライブラリの数が減少します"
   },
   "ui.main.feature.kt.subtitle": {
     "message": "「Java? Kotlin! 」"
