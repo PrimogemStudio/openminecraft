@@ -8,7 +8,7 @@
     "description": "The alt text of navbar logo"
   },
   "item.label.Tutorial": {
-    "message": "Tutorial",
+    "message": "Build and use",
     "description": "Navbar item with label Tutorial"
   },
   "item.label.Blog": {

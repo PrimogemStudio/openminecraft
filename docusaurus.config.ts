@@ -117,7 +117,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} PrimogemStudio, Inc. Built with Docusaurus.`,
+      copyright: `OpenMinecraft wiki, built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

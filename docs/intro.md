@@ -19,31 +19,10 @@ sidebar_position: 1
 - shaderc
 - glfw
 
-## Generate a new site
+## JVM 部分
 
-Generate a new Docusaurus site using the **classic template**.
+使用 gradle 构建系统, Kotlin 2.0
 
-The classic template will automatically be added to your project after you run the command:
+### 构建需求
 
-```bash
-npm init docusaurus@latest my-website classic
-```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+Java: 必须使用 jdk 21 或以上支持 FFM API 的版本

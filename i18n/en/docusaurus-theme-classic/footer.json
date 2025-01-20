@@ -12,7 +12,7 @@
     "description": "The title of the footer links column with title=More in the footer"
   },
   "link.item.label.Tutorial": {
-    "message": "Tutorial",
+    "message": "Build and use",
     "description": "The label of footer link with label=Tutorial linking to /docs/intro"
   },
   "link.item.label.Github Issues": {
@@ -28,7 +28,7 @@
     "description": "The label of footer link with label=GitHub linking to https://github.com/PrimogemStudio/openminecraft"
   },
   "copyright": {
-    "message": "Copyright © 2025 PrimogemStudio, Inc. Built with Docusaurus.",
+    "message": "OpenMinecraft wiki, built with Docusaurus.",
     "description": "The footer copyright"
   }
 }
