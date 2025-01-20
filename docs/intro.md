@@ -4,18 +4,20 @@ sidebar_position: 1
 
 # 项目结构
 
-Let's discover **Docusaurus in less than 5 minutes**.
+目前, 引擎由 [Native 部分](https://github.com/PrimogemStudio/openminecraft-binding)和 [JVM 部分](https://github.com/PrimogemStudio/openminecraft)组成
 
-## Getting Started
+## Native 部分
 
-Get started by **creating a new site**.
-
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
-
-### What you'll need
-
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+目前使用 xmake 构建系统, 包含如下项目
+- freetype
+- harfbuzz
+- xxhash
+- openal
+- meshoptimizer
+- yoga
+- stb
+- shaderc
+- glfw
 
 ## Generate a new site
 
