@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.bindings.glfw
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.fetchCString
 import com.primogemstudio.engine.interfaces.genCString
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import java.lang.foreign.MemorySegment
@@ -78,4 +79,15 @@ object GLFWWindowFuncs {
         share: MemorySegment
     ): GLFWWindow =
         GLFWWindow(callFunc("glfwCreateWindow", MemorySegment::class, width, height, genCString(title), monitor, share))
+    fun glfwDestroyWindow(window: GLFWWindow) = callFunc("glfwDestroyWindow", Unit::class, window)
+    fun glfwWindowShouldClose(window: GLFWWindow): Int = callFunc("glfwWindowShouldClose", Int::class, window)
+    fun glfwSetWindowShouldClose(window: GLFWWindow, value: Int) =
+        callFunc("glfwSetWindowShouldClose", Unit::class, window, value)
+
+    fun glfwGetWindowTitle(window: GLFWWindow): String =
+        callFunc("glfwGetWindowTitle", MemorySegment::class, window).fetchCString()
+
+    fun glfwSetWindowTitle(window: GLFWWindow, title: String) =
+        callFunc("glfwSetWindowTitle", Unit::class, window, genCString(title))
+
 }
