@@ -2,6 +2,8 @@ package com.primogemstudio.engine.interfaces
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.interfaces.struct.IStruct
+import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.*
@@ -59,14 +61,10 @@ object NativeMethodCache {
     @OptIn(ExperimentalStdlibApi::class)
     fun <T : Any> callFunc(name: String, rettype: KClass<T>?, vararg args: Any): T {
         val argListNew = args.map {
-            return@map if (it is IHeapVar<*>) {
-                it.ref()
-            } else if (it is IStruct) {
-                val seg = Arena.ofConfined().allocate(it.layout())
-                it.construct(seg)
-                seg
-            } else {
-                it
+            return@map when (it) {
+                is IHeapVar<*> -> it.ref()
+                is IStruct -> Arena.ofConfined().allocate(it.layout()).apply { it.construct(this) }
+                else -> it
             }
         }
 

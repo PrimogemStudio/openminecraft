@@ -1,12 +1,12 @@
 package com.primogemstudio.engine.bindings.glfw
 
-import com.primogemstudio.engine.interfaces.IStruct
-import com.primogemstudio.engine.interfaces.IStub
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
 import com.primogemstudio.engine.interfaces.fetchCString
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.HeapStringArray
+import com.primogemstudio.engine.interfaces.struct.IStruct
+import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.loader.Platform.sizetMap
 import java.lang.foreign.MemoryLayout

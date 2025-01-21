@@ -4,11 +4,31 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.fetchCString
 import com.primogemstudio.engine.interfaces.genCString
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.interfaces.struct.IStruct
+import java.lang.foreign.Arena
+import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
+import java.lang.foreign.ValueLayout.ADDRESS
+import java.lang.foreign.ValueLayout.JAVA_INT
 
 class GLFWWindow(private val data: MemorySegment) : IHeapVar<MemorySegment> {
     override fun ref(): MemorySegment = data
     override fun value(): MemorySegment = data
+}
+
+class GLFWImage(
+    private val width: Int,
+    private val height: Int,
+    private val pixels: ByteArray
+) : IStruct {
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(JAVA_INT, JAVA_INT, ADDRESS)
+    override fun construct(seg: MemorySegment) {
+        val parr = Arena.ofConfined().allocate(pixels.size.toLong())
+        parr.asByteBuffer().put(pixels)
+        seg.set(JAVA_INT, 0, width)
+        seg.set(JAVA_INT, 4, height)
+        seg.set(ADDRESS, 8, parr)
+    }
 }
 
 object GLFWWindowFuncs {
@@ -90,4 +110,6 @@ object GLFWWindowFuncs {
     fun glfwSetWindowTitle(window: GLFWWindow, title: String) =
         callFunc("glfwSetWindowTitle", Unit::class, window, genCString(title))
 
+    fun glfwSetWindowIcon(window: GLFWWindow, count: Int, vararg images: GLFWImage) =
+        callFunc("glfwSetWindowIcon", Unit::class, window, count, *images)
 }

@@ -1,4 +1,4 @@
-package com.primogemstudio.engine.interfaces
+package com.primogemstudio.engine.interfaces.stub
 
 import java.lang.invoke.MethodType
 

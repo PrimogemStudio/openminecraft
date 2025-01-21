@@ -1,4 +1,4 @@
-package com.primogemstudio.engine.interfaces
+package com.primogemstudio.engine.interfaces.struct
 
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
