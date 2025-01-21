@@ -58,7 +58,8 @@ fun interface GLFWDeallocateFun : IStub {
 }
 
 fun interface GLFWErrorFun : IStub {
-    fun call(errorCode: Int, desc: MemorySegment)
+    fun call(errorCode: Int, desc: String)
+    fun call(errorCode: Int, desc: MemorySegment) = call(errorCode, desc.fetchCString())
     override fun register(): Pair<String, MethodType> =
         Pair(
             "call",
@@ -72,7 +73,8 @@ fun interface GLFWErrorFun : IStub {
 
 // vkInstance -> VkInstance
 fun interface PFN_vkGetInstanceProcAddr : IStub {
-    fun call(vkInstance: MemorySegment, funcname: MemorySegment)
+    fun call(vkInstance: MemorySegment, funcname: String)
+    fun call(vkInstance: MemorySegment, funcname: MemorySegment) = call(vkInstance, funcname.fetchCString())
     override fun register(): Pair<String, MethodType> =
         Pair(
             "call",

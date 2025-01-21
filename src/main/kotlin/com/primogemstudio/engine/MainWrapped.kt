@@ -3,12 +3,14 @@ package com.primogemstudio.engine
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwInit
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwSetErrorCallback
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwTerminate
+import com.primogemstudio.engine.bindings.glfw.GLFWMonitor
+import com.primogemstudio.engine.bindings.glfw.GLFWWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwCreateWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwDestroyWindow
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwShowWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
-import com.primogemstudio.engine.interfaces.fetchCString
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.loader.Platform
 import java.lang.foreign.Arena.ofConfined
@@ -38,12 +40,12 @@ fun main() {
 
     glfwInit()
     glfwSetErrorCallback { err, desc ->
-        println("$err ${desc.fetchCString()}")
+        println("$err $desc")
     }
 
-    val window = glfwCreateWindow(640, 480, "test!", MemorySegment.NULL, MemorySegment.NULL)
+    val window = glfwCreateWindow(640, 480, "test!", GLFWMonitor(MemorySegment.NULL), GLFWWindow(MemorySegment.NULL))
 
-    callFunc("glfwShowWindow", MemorySegment::class, window)
+    glfwShowWindow(window)
     callFunc(
         "glfwSetFramebufferSizeCallback",
         Unit::class,
@@ -55,7 +57,7 @@ fun main() {
 
     while (glfwWindowShouldClose(window) != 1) {
         callFunc("glfwSwapBuffers", Unit::class, window)
-        callFunc("glfwWaitEvents", Unit::class)
+        callFunc("glfwPollEvents", Unit::class)
     }
 
     glfwDestroyWindow(window)

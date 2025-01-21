@@ -1,10 +1,12 @@
 package com.primogemstudio.engine.interfaces
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
 
+val logger = LoggerFactory.getLogger()
 fun MemorySegment.fetchCString(): String {
     val buf = reinterpret(callFunc("strlen", Int::class, this).toLong() + 1).asByteBuffer()
     val bList = mutableListOf<Byte>()
@@ -26,4 +28,11 @@ fun genCString(str: String): MemorySegment {
     seg.copyFrom(MemorySegment.ofArray(barr))
     seg.set(ValueLayout.JAVA_BYTE, barr.size.toLong(), 0)
     return seg
+}
+
+inline fun <T : Any> time(func: () -> T): T {
+    val s = System.currentTimeMillis()
+    return func().apply {
+        logger.info("${System.currentTimeMillis() - s} ms")
+    }
 }

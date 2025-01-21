@@ -4,6 +4,7 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.fetchCString
 import com.primogemstudio.engine.interfaces.genCString
+import com.primogemstudio.engine.interfaces.heap.HeapFloat
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.IStruct
@@ -14,6 +15,11 @@ import java.lang.foreign.ValueLayout.ADDRESS
 import java.lang.foreign.ValueLayout.JAVA_INT
 
 class GLFWWindow(private val data: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = data
+    override fun value(): MemorySegment = data
+}
+
+class GLFWMonitor(private val data: MemorySegment) : IHeapVar<MemorySegment> {
     override fun ref(): MemorySegment = data
     override fun value(): MemorySegment = data
 }
@@ -97,8 +103,8 @@ object GLFWWindowFuncs {
         width: Int,
         height: Int,
         title: String,
-        monitor: MemorySegment,
-        share: MemorySegment
+        monitor: GLFWMonitor,
+        share: GLFWWindow
     ): GLFWWindow =
         GLFWWindow(callFunc("glfwCreateWindow", MemorySegment::class, width, height, genCString(title), monitor, share))
     fun glfwDestroyWindow(window: GLFWWindow) = callVoidFunc("glfwDestroyWindow", window)
@@ -135,4 +141,25 @@ object GLFWWindowFuncs {
 
     fun glfwGetFramebufferSize(window: GLFWWindow, width: HeapInt, height: HeapInt) =
         callVoidFunc("glfwGetFramebufferSize", window, width, height)
+
+    fun glfwGetWindowFrameSize(window: GLFWWindow, left: HeapInt, top: HeapInt, right: HeapInt, bottom: HeapInt) =
+        callVoidFunc("glfwGetWindowFrameSize", window, left, top, right, bottom)
+
+    fun glfwGetWindowContentScale(window: GLFWWindow, xscale: HeapFloat, yscale: HeapFloat) =
+        callVoidFunc("glfwGetWindowContentScale", window, xscale, yscale)
+
+    fun glfwGetWindowOpacity(window: GLFWWindow): Float = callFunc("glfwGetWindowOpacity", Float::class, window)
+
+    fun glfwSetWindowOpacity(window: GLFWWindow, opacity: Float) = callVoidFunc("glfwSetWindowOpacity", window, opacity)
+
+    fun glfwIconifyWindow(window: GLFWWindow) = callVoidFunc("glfwIconifyWindow", window)
+    fun glfwRestoreWindow(window: GLFWWindow) = callVoidFunc("glfwRestoreWindow", window)
+    fun glfwMaximizeWindow(window: GLFWWindow) = callVoidFunc("glfwMaximizeWindow", window)
+    fun glfwShowWindow(window: GLFWWindow) = callVoidFunc("glfwShowWindow", window)
+    fun glfwHideWindow(window: GLFWWindow) = callVoidFunc("glfwHideWindow", window)
+    fun glfwFocusWindow(window: GLFWWindow) = callVoidFunc("glfwFocusWindow", window)
+    fun glfwRequestWindowAttention(window: GLFWWindow) = callVoidFunc("glfwRequestWindowAttention", window)
+
+    fun glfwGetWindowMonitor(window: GLFWWindow): GLFWMonitor =
+        GLFWMonitor(callFunc("glfwGetWindowMonitor", MemorySegment::class, window))
 }
