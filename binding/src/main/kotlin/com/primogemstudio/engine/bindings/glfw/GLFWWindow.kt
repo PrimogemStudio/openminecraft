@@ -1,8 +1,10 @@
 package com.primogemstudio.engine.bindings.glfw
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.fetchCString
 import com.primogemstudio.engine.interfaces.genCString
+import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import java.lang.foreign.Arena
@@ -86,10 +88,10 @@ object GLFWWindowFuncs {
     const val GLFW_WIN32_SHOWDEFAULT = 0x00025002
     const val GLFW_WAYLAND_APP_ID = 0x00026001
 
-    fun glfwDefaultWindowHints() = callFunc("glfwDefaultWindowHints", Unit::class)
-    fun glfwWindowHint(hint: Int, value: Int) = callFunc("glfwWindowHint", Unit::class, hint, value)
+    fun glfwDefaultWindowHints() = callVoidFunc("glfwDefaultWindowHints")
+    fun glfwWindowHint(hint: Int, value: Int) = callVoidFunc("glfwWindowHint", hint, value)
     fun glfwWindowHintString(hint: Int, value: String) =
-        callFunc("glfwWindowHintString", Unit::class, hint, genCString(value))
+        callVoidFunc("glfwWindowHintString", hint, genCString(value))
 
     fun glfwCreateWindow(
         width: Int,
@@ -99,17 +101,38 @@ object GLFWWindowFuncs {
         share: MemorySegment
     ): GLFWWindow =
         GLFWWindow(callFunc("glfwCreateWindow", MemorySegment::class, width, height, genCString(title), monitor, share))
-    fun glfwDestroyWindow(window: GLFWWindow) = callFunc("glfwDestroyWindow", Unit::class, window)
+    fun glfwDestroyWindow(window: GLFWWindow) = callVoidFunc("glfwDestroyWindow", window)
     fun glfwWindowShouldClose(window: GLFWWindow): Int = callFunc("glfwWindowShouldClose", Int::class, window)
     fun glfwSetWindowShouldClose(window: GLFWWindow, value: Int) =
-        callFunc("glfwSetWindowShouldClose", Unit::class, window, value)
+        callVoidFunc("glfwSetWindowShouldClose", window, value)
 
     fun glfwGetWindowTitle(window: GLFWWindow): String =
         callFunc("glfwGetWindowTitle", MemorySegment::class, window).fetchCString()
 
     fun glfwSetWindowTitle(window: GLFWWindow, title: String) =
-        callFunc("glfwSetWindowTitle", Unit::class, window, genCString(title))
+        callVoidFunc("glfwSetWindowTitle", window, genCString(title))
 
     fun glfwSetWindowIcon(window: GLFWWindow, count: Int, vararg images: GLFWImage) =
-        callFunc("glfwSetWindowIcon", Unit::class, window, count, *images)
+        callVoidFunc("glfwSetWindowIcon", window, count, *images)
+
+    fun glfwGetWindowPos(window: GLFWWindow, xpos: HeapInt, ypos: HeapInt) =
+        callVoidFunc("glfwGetWindowPos", window, xpos, ypos)
+
+    fun glfwSetWindowPos(window: GLFWWindow, xpos: Int, ypos: Int) =
+        callVoidFunc("glfwSetWindowPos", window, xpos, ypos)
+
+    fun glfwGetWindowSize(window: GLFWWindow, width: HeapInt, height: HeapInt) =
+        callVoidFunc("glfwGetWindowSize", window, width, height)
+
+    fun glfwSetWindowSizeLimits(window: GLFWWindow, minwidth: Int, minheight: Int, maxwidth: Int, maxheight: Int) =
+        callVoidFunc("glfwSetWindowSizeLimits", window, minwidth, minheight, maxwidth, maxheight)
+
+    fun glfwSetWindowAspectRatio(window: GLFWWindow, numer: Int, denom: Int) =
+        callVoidFunc("glfwSetWindowAspectRatio", window, numer, denom)
+
+    fun glfwSetWindowSize(window: GLFWWindow, width: Int, height: Int) =
+        callVoidFunc("glfwSetWindowSize", window, width, height)
+
+    fun glfwGetFramebufferSize(window: GLFWWindow, width: HeapInt, height: HeapInt) =
+        callVoidFunc("glfwGetFramebufferSize", window, width, height)
 }

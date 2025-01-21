@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.bindings.glfw
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
 import com.primogemstudio.engine.interfaces.fetchCString
 import com.primogemstudio.engine.interfaces.heap.HeapInt
@@ -130,12 +131,12 @@ object GLFWBaseFuncs {
     const val GLFW_PLATFORM_NULL = 0x00060005
 
     fun glfwInit(): Boolean = callFunc("glfwInit", Boolean::class)
-    fun glfwTerminate() = callFunc("glfwTerminate", Unit::class)
-    fun glfwInitHint(hint: Int, value: Int) = callFunc("glfwInitHint", Unit::class, hint, value)
-    fun glfwInitAllocator(allocator: GLFWAllocator) = callFunc("glfwInitAllocator", Unit::class, allocator)
-    fun glfwInitVulkanLoader(proc: PFN_vkGetInstanceProcAddr) = callFunc("glfwInitVulkanLoader", Unit::class, proc)
+    fun glfwTerminate() = callVoidFunc("glfwTerminate")
+    fun glfwInitHint(hint: Int, value: Int) = callVoidFunc("glfwInitHint", hint, value)
+    fun glfwInitAllocator(allocator: GLFWAllocator) = callVoidFunc("glfwInitAllocator", allocator)
+    fun glfwInitVulkanLoader(proc: PFN_vkGetInstanceProcAddr) = callVoidFunc("glfwInitVulkanLoader", proc)
     fun glfwGetVersion(major: HeapInt, minor: HeapInt, rev: HeapInt) =
-        callFunc("glfwGetVersion", Unit::class, major, minor, rev)
+        callVoidFunc("glfwGetVersion", major, minor, rev)
     fun glfwGetVersionString(): String = callFunc("glfwGetVersionString", MemorySegment::class).fetchCString()
     fun glfwGetError(desc: HeapStringArray): Int = callFunc("glfwGetError", Int::class, desc)
     fun glfwSetErrorCallback(callback: GLFWErrorFun): MemorySegment =

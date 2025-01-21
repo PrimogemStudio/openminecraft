@@ -58,6 +58,10 @@ object NativeMethodCache {
         }
     }
 
+    fun callVoidFunc(name: String, vararg args: Any) {
+        callFunc(name, Unit::class, *args)
+    }
+
     @OptIn(ExperimentalStdlibApi::class)
     fun <T : Any> callFunc(name: String, rettype: KClass<T>?, vararg args: Any): T {
         val argListNew = args.map {
