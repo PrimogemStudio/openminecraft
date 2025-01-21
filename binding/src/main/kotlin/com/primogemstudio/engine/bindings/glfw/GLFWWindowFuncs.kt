@@ -22,11 +22,6 @@ class GLFWWindow(private val data: MemorySegment) : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = data
 }
 
-class GLFWMonitor(private val data: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = data
-    override fun value(): MemorySegment = data
-}
-
 class GLFWImage(
     private val width: Int,
     private val height: Int,

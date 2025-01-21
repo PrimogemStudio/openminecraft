@@ -134,30 +134,24 @@ object GLFWBaseFuncs {
 
     fun glfwInit(): Boolean =
         callFunc("glfwInit", Boolean::class)
-
     fun glfwTerminate() =
         callVoidFunc("glfwTerminate")
-
     fun glfwInitHint(hint: Int, value: Int) =
         callVoidFunc("glfwInitHint", hint, value)
-
     fun glfwInitAllocator(allocator: GLFWAllocator) =
         callVoidFunc("glfwInitAllocator", allocator)
-
     fun glfwInitVulkanLoader(proc: PFN_vkGetInstanceProcAddr) =
         callVoidFunc("glfwInitVulkanLoader", proc)
     fun glfwGetVersion(major: HeapInt, minor: HeapInt, rev: HeapInt) =
         callVoidFunc("glfwGetVersion", major, minor, rev)
     fun glfwGetVersionString(): String =
         callFunc("glfwGetVersionString", MemorySegment::class).fetchCString()
-
     fun glfwGetError(desc: HeapStringArray): Int =
         callFunc("glfwGetError", Int::class, desc)
     fun glfwSetErrorCallback(callback: GLFWErrorFun): MemorySegment =
         callFunc("glfwSetErrorCallback", MemorySegment::class, constructStub(GLFWErrorFun::class, callback))
     fun glfwGetPlatform(): Int =
         callFunc("glfwGetPlatform", Int::class)
-
     fun glfwPlatformSupported(platform: Int): Int =
         callFunc("glfwPlatformSupported", Int::class, platform)
 }

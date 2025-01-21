@@ -14,7 +14,6 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWaitEvents
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
 import com.primogemstudio.engine.loader.Platform
 import java.lang.foreign.MemorySegment
-import java.lang.foreign.ValueLayout
 
 fun main() {
     /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
@@ -38,7 +37,6 @@ fun main() {
 
     glfwShowWindow(window)
     glfwSetFramebufferSizeCallback(window) { _, width, height ->
-        println(MemorySegment.NULL.reinterpret(1L).get(ValueLayout.JAVA_BYTE, 0))
         println("$width $height")
     }
 
