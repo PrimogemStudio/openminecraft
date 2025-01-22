@@ -1,15 +1,16 @@
 package com.primogemstudio.engine.bindings.glfw
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
-import com.primogemstudio.engine.interfaces.fetchCString
-import com.primogemstudio.engine.interfaces.genCString
+import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.HeapFloat
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.stub.IStub
+import com.primogemstudio.engine.interfaces.toCString
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -226,7 +227,7 @@ object GLFWWindowFuncs {
     fun glfwWindowHint(hint: Int, value: Int) =
         callVoidFunc("glfwWindowHint", hint, value)
     fun glfwWindowHintString(hint: Int, value: String) =
-        callVoidFunc("glfwWindowHintString", hint, genCString(value))
+        callVoidFunc("glfwWindowHintString", hint, value.toCString())
     fun glfwCreateWindow(
         width: Int,
         height: Int,
@@ -234,7 +235,7 @@ object GLFWWindowFuncs {
         monitor: GLFWMonitor,
         share: GLFWWindow
     ): GLFWWindow =
-        GLFWWindow(callFunc("glfwCreateWindow", MemorySegment::class, width, height, genCString(title), monitor, share))
+        GLFWWindow(callPointerFunc("glfwCreateWindow", width, height, title.toCString(), monitor, share))
     fun glfwDestroyWindow(window: GLFWWindow) =
         callVoidFunc("glfwDestroyWindow", window)
 
@@ -243,9 +244,9 @@ object GLFWWindowFuncs {
     fun glfwSetWindowShouldClose(window: GLFWWindow, value: Int) =
         callVoidFunc("glfwSetWindowShouldClose", window, value)
     fun glfwGetWindowTitle(window: GLFWWindow): String =
-        callFunc("glfwGetWindowTitle", MemorySegment::class, window).fetchCString()
+        callPointerFunc("glfwGetWindowTitle", window).fetchString()
     fun glfwSetWindowTitle(window: GLFWWindow, title: String) =
-        callVoidFunc("glfwSetWindowTitle", window, genCString(title))
+        callVoidFunc("glfwSetWindowTitle", window, title.toCString())
     fun glfwSetWindowIcon(window: GLFWWindow, count: Int, vararg images: GLFWImage) =
         callVoidFunc("glfwSetWindowIcon", window, count, *images)
     fun glfwGetWindowPos(window: GLFWWindow, xpos: HeapInt, ypos: HeapInt) =
@@ -301,7 +302,7 @@ object GLFWWindowFuncs {
     fun glfwRequestWindowAttention(window: GLFWWindow) =
         callVoidFunc("glfwRequestWindowAttention", window)
     fun glfwGetWindowMonitor(window: GLFWWindow): GLFWMonitor =
-        GLFWMonitor(callFunc("glfwGetWindowMonitor", MemorySegment::class, window))
+        GLFWMonitor(callPointerFunc("glfwGetWindowMonitor", window))
     fun glfwSetWindowMonitor(
         window: GLFWWindow,
         monitor: GLFWMonitor,
@@ -323,60 +324,60 @@ object GLFWWindowFuncs {
         callVoidFunc("glfwSetWindowUserPointer", window, pointer)
 
     fun glfwGetWindowUserPointer(window: GLFWWindow): MemorySegment =
-        callFunc("glfwGetWindowUserPointer", MemorySegment::class, window)
+        callPointerFunc("glfwGetWindowUserPointer", window)
 
     fun glfwSetWindowPosCallback(window: GLFWWindow, callback: GLFWWindowPosFun): MemorySegment =
-        callFunc(
-            "glfwSetWindowPosCallback", MemorySegment::class,
+        callPointerFunc(
+            "glfwSetWindowPosCallback",
             window,
             constructStub(GLFWWindowPosFun::class, callback)
         )
 
     fun glfwSetWindowSizeCallback(window: GLFWWindow, callback: GLFWWindowSizeFun): MemorySegment =
-        callFunc(
-            "glfwSetWindowSizeCallback", MemorySegment::class,
+        callPointerFunc(
+            "glfwSetWindowSizeCallback",
             window,
             constructStub(GLFWWindowSizeFun::class, callback)
         )
 
     fun glfwSetWindowCloseCallback(window: GLFWWindow, callback: GLFWWindowCloseFun): MemorySegment =
-        callFunc(
-            "glfwSetWindowCloseCallback", MemorySegment::class,
+        callPointerFunc(
+            "glfwSetWindowCloseCallback",
             window,
             constructStub(GLFWWindowCloseFun::class, callback)
         )
 
     fun glfwSetWindowRefreshCallback(window: GLFWWindow, callback: GLFWWindowRefreshFun): MemorySegment =
-        callFunc(
-            "glfwSetWindowRefreshCallback", MemorySegment::class,
+        callPointerFunc(
+            "glfwSetWindowRefreshCallback",
             window,
             constructStub(GLFWWindowRefreshFun::class, callback)
         )
 
     fun glfwSetWindowFocusCallback(window: GLFWWindow, callback: GLFWWindowFocusFun): MemorySegment =
-        callFunc(
-            "glfwSetWindowFocusCallback", MemorySegment::class,
+        callPointerFunc(
+            "glfwSetWindowFocusCallback",
             window,
             constructStub(GLFWWindowFocusFun::class, callback)
         )
 
     fun glfwSetWindowIconifyCallback(window: GLFWWindow, callback: GLFWWindowIconifyFun): MemorySegment =
-        callFunc(
-            "glfwSetWindowIconifyCallback", MemorySegment::class,
+        callPointerFunc(
+            "glfwSetWindowIconifyCallback",
             window,
             constructStub(GLFWWindowIconifyFun::class, callback)
         )
 
     fun glfwSetFramebufferSizeCallback(window: GLFWWindow, callback: GLFWFrameBufferSizeFun): MemorySegment =
-        callFunc(
-            "glfwSetFramebufferSizeCallback", MemorySegment::class,
+        callPointerFunc(
+            "glfwSetFramebufferSizeCallback",
             window,
             constructStub(GLFWFrameBufferSizeFun::class, callback)
         )
 
     fun glfwSetWindowContentScaleCallback(window: GLFWWindow, callback: GLFWWindowContentScaleFun): MemorySegment =
-        callFunc(
-            "glfwSetWindowContentScaleCallback", MemorySegment::class,
+        callPointerFunc(
+            "glfwSetWindowContentScaleCallback",
             window,
             constructStub(GLFWWindowContentScaleFun::class, callback)
         )

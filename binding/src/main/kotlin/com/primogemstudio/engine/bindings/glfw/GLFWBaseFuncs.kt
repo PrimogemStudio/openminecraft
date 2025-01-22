@@ -1,9 +1,10 @@
 package com.primogemstudio.engine.bindings.glfw
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
-import com.primogemstudio.engine.interfaces.fetchCString
+import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.HeapStringArray
 import com.primogemstudio.engine.interfaces.struct.IStruct
@@ -59,7 +60,7 @@ fun interface GLFWDeallocateFun : IStub {
 
 fun interface GLFWErrorFun : IStub {
     fun call(errorCode: Int, desc: String)
-    fun call(errorCode: Int, desc: MemorySegment) = call(errorCode, desc.fetchCString())
+    fun call(errorCode: Int, desc: MemorySegment) = call(errorCode, desc.fetchString())
     override fun register(): Pair<String, MethodType> =
         Pair(
             "call",
@@ -74,7 +75,7 @@ fun interface GLFWErrorFun : IStub {
 // vkInstance -> VkInstance
 fun interface PFN_vkGetInstanceProcAddr : IStub {
     fun call(vkInstance: MemorySegment, funcname: String)
-    fun call(vkInstance: MemorySegment, funcname: MemorySegment) = call(vkInstance, funcname.fetchCString())
+    fun call(vkInstance: MemorySegment, funcname: MemorySegment) = call(vkInstance, funcname.fetchString())
     override fun register(): Pair<String, MethodType> =
         Pair(
             "call",
@@ -145,11 +146,11 @@ object GLFWBaseFuncs {
     fun glfwGetVersion(major: HeapInt, minor: HeapInt, rev: HeapInt) =
         callVoidFunc("glfwGetVersion", major, minor, rev)
     fun glfwGetVersionString(): String =
-        callFunc("glfwGetVersionString", MemorySegment::class).fetchCString()
+        callPointerFunc("glfwGetVersionString").fetchString()
     fun glfwGetError(desc: HeapStringArray): Int =
         callFunc("glfwGetError", Int::class, desc)
     fun glfwSetErrorCallback(callback: GLFWErrorFun): MemorySegment =
-        callFunc("glfwSetErrorCallback", MemorySegment::class, constructStub(GLFWErrorFun::class, callback))
+        callPointerFunc("glfwSetErrorCallback", constructStub(GLFWErrorFun::class, callback))
     fun glfwGetPlatform(): Int =
         callFunc("glfwGetPlatform", Int::class)
     fun glfwPlatformSupported(platform: Int): Int =

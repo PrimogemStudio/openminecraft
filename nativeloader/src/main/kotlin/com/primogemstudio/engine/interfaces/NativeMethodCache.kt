@@ -62,6 +62,9 @@ object NativeMethodCache {
         callFunc(name, Unit::class, *args)
     }
 
+    fun callPointerFunc(name: String, vararg args: Any): MemorySegment =
+        callFunc(name, MemorySegment::class, *args)
+
     @OptIn(ExperimentalStdlibApi::class)
     fun <T : Any> callFunc(name: String, rettype: KClass<T>?, vararg args: Any): T {
         val argListNew = args.map {
@@ -72,24 +75,21 @@ object NativeMethodCache {
             }
         }
 
-        if (funcCache.containsKey(name)) {
-            return if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(
-                argListNew
-            ) as T
+        if (!funcCache.containsKey(name)) {
+            val rettypeDesc: MemoryLayout? = klassToLayout(rettype)
+            val argDesc = args.map { klassToLayout(it::class) }.toTypedArray()
+
+            val funcP = symbolLookup.find(name).get()
+            funcCache[name] = linker.downcallHandle(
+                funcP,
+                if (rettypeDesc == null) FunctionDescriptor.ofVoid(*argDesc) else FunctionDescriptor.of(
+                    rettypeDesc,
+                    *argDesc
+                )
+            )
+            logger.info(tr("engine.nativeloader.func", name, funcP.address().toHexString()))
         }
 
-        val rettypeDesc: MemoryLayout? = klassToLayout(rettype)
-        val argDesc = args.map { klassToLayout(it::class) }.toTypedArray()
-
-        val funcP = symbolLookup.find(name).get()
-        funcCache[name] = linker.downcallHandle(
-            funcP,
-            if (rettypeDesc == null) FunctionDescriptor.ofVoid(*argDesc) else FunctionDescriptor.of(
-                rettypeDesc,
-                *argDesc
-            )
-        )
-        logger.info(tr("engine.nativeloader.func", name, funcP.address().toHexString()))
         return if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(argListNew) as T
     }
 }

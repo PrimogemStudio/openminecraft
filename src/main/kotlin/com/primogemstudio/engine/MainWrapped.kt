@@ -3,6 +3,7 @@ package com.primogemstudio.engine
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwInit
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwSetErrorCallback
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwTerminate
+import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetClipboardString
 import com.primogemstudio.engine.bindings.glfw.GLFWMonitor
 import com.primogemstudio.engine.bindings.glfw.GLFWWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwCreateWindow
@@ -39,6 +40,7 @@ fun main() {
     glfwSetFramebufferSizeCallback(window) { _, width, height ->
         println("$width $height")
     }
+    glfwSetClipboardString(window, "test!")
 
     while (glfwWindowShouldClose(window) != 1) {
         glfwSwapBuffers(window)

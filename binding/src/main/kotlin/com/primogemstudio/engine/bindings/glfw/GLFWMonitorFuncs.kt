@@ -1,8 +1,9 @@
 package com.primogemstudio.engine.bindings.glfw
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.fetchCString
+import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.HeapFloat
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.HeapMutRefArray
@@ -60,12 +61,12 @@ fun interface GLFWMonitorFun : IStub {
 object GLFWMonitorFuncs {
     fun glfwGetMonitors(count: HeapInt): Array<GLFWMonitor> =
         HeapMutRefArray(
-            callFunc("glfwGetMonitors", MemorySegment::class, count),
+            callPointerFunc("glfwGetMonitors", count),
             count.value()
         ).value().map { GLFWMonitor(it) }.toTypedArray()
 
     fun glfwGetPrimaryMonitor(): GLFWMonitor =
-        GLFWMonitor(callFunc("glfwGetPrimaryMonitor", MemorySegment::class))
+        GLFWMonitor(callPointerFunc("glfwGetPrimaryMonitor"))
 
     fun glfwGetMonitorPos(monitor: GLFWMonitor, xpos: HeapInt, ypos: HeapInt) =
         callVoidFunc("glfwGetMonitorPos", monitor, xpos, ypos)
@@ -80,20 +81,20 @@ object GLFWMonitorFuncs {
         callVoidFunc("glfwGetMonitorContentScale", monitor, xscale, yscale)
 
     fun glfwGetMonitorName(monitor: GLFWMonitor): String =
-        callFunc("glfwGetMonitorName", MemorySegment::class, monitor).fetchCString()
+        callPointerFunc("glfwGetMonitorName", monitor).fetchString()
 
     fun glfwSetMonitorUserPointer(monitor: GLFWMonitor, pointer: MemorySegment) =
         callVoidFunc("glfwSetMonitorUserPointer", monitor, pointer)
 
     fun glfwGetMonitorUserPointer(monitor: GLFWMonitor): MemorySegment =
-        callFunc("glfwGetMonitorUserPointer", MemorySegment::class, monitor)
+        callPointerFunc("glfwGetMonitorUserPointer", monitor)
 
     fun glfwSetMonitorCallback(callback: GLFWMonitorFun): MemorySegment =
-        callFunc("glfwSetMonitorCallback", MemorySegment::class, callback)
+        callPointerFunc("glfwSetMonitorCallback", callback)
 
     fun glfwGetVideoModes(monitor: GLFWMonitor, count: HeapInt): Array<GLFWVidMode> =
         HeapMutRefArray(
-            callFunc("glfwGetVideoModes", MemorySegment::class, monitor, count),
+            callPointerFunc("glfwGetVideoModes", monitor, count),
             count.value()
         ).value().map { GLFWVidMode(it) }.toTypedArray()
 
