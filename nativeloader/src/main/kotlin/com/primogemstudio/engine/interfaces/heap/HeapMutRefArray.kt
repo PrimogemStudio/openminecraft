@@ -10,12 +10,12 @@ class HeapMutRefArray(
     private val seg: MemorySegment,
     private val length: Int
 ) : IHeapVar<Array<MemorySegment>> {
-    override fun ref(): MemorySegment = seg
+    override fun ref(): MemorySegment = seg.reinterpret(sizetLength() * length * 1L)
 
     override fun value(): Array<MemorySegment> {
         return (0..<length).toList().map {
-            if (is32bits()) seg.get(JAVA_INT, sizetLength() * 4L * it).toLong()
-            else seg.get(JAVA_LONG, sizetLength() * 8L * it)
+            if (is32bits()) ref().get(JAVA_INT, sizetLength() * it * 1L).toLong()
+            else ref().get(JAVA_LONG, sizetLength() * it * 1L)
         }.map { MemorySegment.ofAddress(it) }.toTypedArray()
     }
 }
