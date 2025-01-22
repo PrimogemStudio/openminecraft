@@ -29,7 +29,7 @@ object VulkanLibLoader {
                     push(
                         NativeLibInfo(
                             tr("engine.nativeloader.libname.system", "vulkan"),
-                            extName = "vulkan-1",
+                            extName = "vulkan-1.dll",
                             isEmbedded = false,
                             isSystem = true
                         )

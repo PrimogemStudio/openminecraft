@@ -9,6 +9,7 @@
   ],
   "optional": [
     "glfw",
+    "glfw3",
     "meshoptimizer",
     "xxhash"
   ]
