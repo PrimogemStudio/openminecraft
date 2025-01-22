@@ -3,15 +3,21 @@ package com.primogemstudio.engine
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwInit
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwSetErrorCallback
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwTerminate
+import com.primogemstudio.engine.bindings.glfw.GLFWContextFuncs.glfwMakeContextCurrent
+import com.primogemstudio.engine.bindings.glfw.GLFWContextFuncs.glfwSwapInterval
 import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetClipboardString
 import com.primogemstudio.engine.bindings.glfw.GLFWMonitor
 import com.primogemstudio.engine.bindings.glfw.GLFWWindow
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_VERSION_MAJOR
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_VERSION_MINOR
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_OPENGL_CORE_PROFILE
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_OPENGL_PROFILE
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwCreateWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwDestroyWindow
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwPollEvents
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebufferSizeCallback
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwShowWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSwapBuffers
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWaitEvents
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
 import com.primogemstudio.engine.loader.Platform
 import java.lang.foreign.MemorySegment
@@ -28,6 +34,9 @@ fun main() {
         println("$err $desc")
     }
 
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3)
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3)
     val window = glfwCreateWindow(
         640,
         480,
@@ -35,16 +44,19 @@ fun main() {
         GLFWMonitor(MemorySegment.NULL),
         GLFWWindow(MemorySegment.NULL)
     )
+    println(window.value())
+    glfwMakeContextCurrent(window)
 
-    glfwShowWindow(window)
+    // glfwShowWindow(window)
     glfwSetFramebufferSizeCallback(window) { _, width, height ->
         println("$width $height")
     }
     glfwSetClipboardString(window, "test!")
+    glfwSwapInterval(0)
 
     while (glfwWindowShouldClose(window) != 1) {
         glfwSwapBuffers(window)
-        glfwWaitEvents()
+        glfwPollEvents()
     }
 
     glfwDestroyWindow(window)

@@ -6,9 +6,9 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.toCString
 import java.lang.foreign.MemorySegment
 
-class GLFWContextFuncs {
+object GLFWContextFuncs {
     fun glfwMakeContextCurrent(window: GLFWWindow) =
-        callVoidFunc("glfwMakeContextCurren", window)
+        callVoidFunc("glfwMakeContextCurrent", window)
 
     fun glfwGetCurrentContext(): GLFWWindow =
         GLFWWindow(callPointerFunc("glfwGetCurrentContext"))
