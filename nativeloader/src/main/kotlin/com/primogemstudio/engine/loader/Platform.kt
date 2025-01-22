@@ -3,6 +3,10 @@ package com.primogemstudio.engine.loader
 import com.primogemstudio.engine.exceptions.PlatformLibInitException
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.json.GsonObjects
+import com.primogemstudio.engine.loader.sys.OSMesaLibLoader
+import com.primogemstudio.engine.loader.sys.OpenGLESLibLoader
+import com.primogemstudio.engine.loader.sys.OpenGLLibLoader
+import com.primogemstudio.engine.loader.sys.VulkanLibLoader
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.ResourceManager
 import java.nio.file.Files
@@ -96,11 +100,7 @@ object Platform {
             push(
                 NativeLibInfo(
                     tr("engine.nativeloader.libname.system", name),
-                    try {
-                        Files.newInputStream(Path.of(system.syslib, "${system.prefix}$name${system.suffix}"))
-                    } catch (_: Exception) {
-                        null
-                    },
+                    extName = "${system.prefix}$name${system.suffix}",
                     isEmbedded = false,
                     isSystem = true
                 )
@@ -110,21 +110,23 @@ object Platform {
 
     fun load(source: INativeLibSource): Boolean {
         logger.info(tr("engine.nativeloader.load", source.name()))
+        val extName = source.fetchName()
+        val path = if (extName == null) {
+            val sourcefile = source.fetch()
+            if (sourcefile == null) {
+                logger.warn(tr("engine.nativeloader.load.nofile", source.name()))
+                return false
+            }
 
-        val sourcefile = source.fetch()
-        if (sourcefile == null) {
-            logger.warn(tr("engine.nativeloader.load.nofile", source.name()))
-            return false
-        }
-
-        val path = Files.createTempFile("openminecraftlib", system.suffix)
-        path.toFile().deleteOnExit()
-        Files.copy(sourcefile, path, StandardCopyOption.REPLACE_EXISTING)
-
-        logger.info(tr("engine.nativeloader.load.copy", source.name(), path))
+            val pathr = Files.createTempFile("openminecraftlib", system.suffix)
+            pathr.toFile().deleteOnExit()
+            Files.copy(sourcefile, pathr, StandardCopyOption.REPLACE_EXISTING)
+            logger.info(tr("engine.nativeloader.load.copy", source.name(), pathr))
+            pathr.toString()
+        } else extName
 
         try {
-            System.load(path.toString())
+            if (extName == null) System.load(path) else System.loadLibrary(path)
         } catch (e: Throwable) {
             logger.error(tr("engine.nativeloader.load.fail", source.name()), e)
             return false
@@ -149,6 +151,10 @@ object Platform {
         libst.optional?.forEach {
             libStatus[it] = load(libProvider(it))
         }
+        libStatus["vulkan"] = load(VulkanLibLoader.source())
+        libStatus["opengl"] = load(OpenGLLibLoader.source())
+        libStatus["opengles"] = load(OpenGLESLibLoader.source())
+        libStatus["osmesa"] = load(OSMesaLibLoader.source())
         return true
     }
 
