@@ -6,6 +6,8 @@ import com.primogemstudio.engine.loader.NativeLibInfo
 import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.loader.PlatformSystem
 import com.primogemstudio.engine.resource.ResourceManager
+import java.nio.file.Files
+import java.nio.file.Path
 
 object VulkanLibLoader {
     fun source() {
@@ -21,7 +23,25 @@ object VulkanLibLoader {
                         )
                     )
                 }
-
+                PlatformSystem.Windows -> {
+                    push(
+                        NativeLibInfo(
+                            tr("engine.nativeloader.libname.external", "vulkan"),
+                            try {
+                                Files.newInputStream(
+                                    Path.of(
+                                        Platform.system.syslib,
+                                        "${Platform.system.prefix}vulkan-1${Platform.system.suffix}"
+                                    )
+                                )
+                            } catch (_: Exception) {
+                                null
+                            },
+                            isEmbedded = false,
+                            isSystem = true
+                        )
+                    )
+                }
                 else -> {}
             }
         }
