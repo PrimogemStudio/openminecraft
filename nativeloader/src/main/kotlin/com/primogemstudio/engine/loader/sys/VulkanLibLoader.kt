@@ -3,6 +3,9 @@ package com.primogemstudio.engine.loader.sys
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.loader.*
 import com.primogemstudio.engine.resource.ResourceManager
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.exists
 
 object VulkanLibLoader {
     fun source(): INativeLibSource = DefaultNativeLibSource(tr("engine.nativeloader.libname", "vulkan")).apply {
@@ -26,10 +29,16 @@ object VulkanLibLoader {
                     )
                 }
                 PlatformSystem.Windows -> {
+                    val path = Path.of(Platform.system.syslib, "vulkan-1.dll")
+                    if (!path.exists()) {
+                        val thr =
+                            ResourceManager.getResource("jar:assets/openmc_nativeloader/lib/${Platform.system.id}/${Platform.arch.id}/${Platform.system.prefix}vulkan${Platform.system.suffix}")
+                        if (thr != null) Files.copy(thr, path)
+                    }
                     push(
                         NativeLibInfo(
                             tr("engine.nativeloader.libname.system", "vulkan"),
-                            extName = "vulkan-1.dll",
+                            extName = "vulkan-1",
                             isEmbedded = false,
                             isSystem = true
                         )

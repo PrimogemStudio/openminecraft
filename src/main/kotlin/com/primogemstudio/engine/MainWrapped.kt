@@ -7,6 +7,7 @@ import com.primogemstudio.engine.bindings.glfw.GLFWContextFuncs.glfwMakeContextC
 import com.primogemstudio.engine.bindings.glfw.GLFWContextFuncs.glfwSwapInterval
 import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetClipboardString
 import com.primogemstudio.engine.bindings.glfw.GLFWMonitor
+import com.primogemstudio.engine.bindings.glfw.GLFWVulkanFuncs.glfwVulkanSupported
 import com.primogemstudio.engine.bindings.glfw.GLFWWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_VERSION_MAJOR
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_VERSION_MINOR
@@ -46,6 +47,7 @@ fun main() {
     )
     println(window.value())
     glfwMakeContextCurrent(window)
+    println(glfwVulkanSupported())
 
     // glfwShowWindow(window)
     glfwSetFramebufferSizeCallback(window) { _, width, height ->
