@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.interfaces
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
@@ -29,6 +30,8 @@ fun String.toCString(): MemorySegment {
     seg.set(ValueLayout.JAVA_BYTE, barr.size.toLong(), 0)
     return seg
 }
+
+fun IStruct?.allocate(): MemorySegment = this?.allocateLocal() ?: MemorySegment.NULL
 
 inline fun <T : Any> time(func: () -> T): T {
     val s = System.currentTimeMillis()

@@ -5,9 +5,11 @@ import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwSetErrorCallbac
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwTerminate
 import com.primogemstudio.engine.bindings.glfw.GLFWContextFuncs.glfwMakeContextCurrent
 import com.primogemstudio.engine.bindings.glfw.GLFWContextFuncs.glfwSwapInterval
+import com.primogemstudio.engine.bindings.glfw.GLFWImage
+import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwCreateCursor
 import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetClipboardString
+import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetCursor
 import com.primogemstudio.engine.bindings.glfw.GLFWMonitor
-import com.primogemstudio.engine.bindings.glfw.GLFWVulkanFuncs.glfwVulkanSupported
 import com.primogemstudio.engine.bindings.glfw.GLFWWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_VERSION_MAJOR
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_VERSION_MINOR
@@ -20,6 +22,12 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebuffe
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSwapBuffers
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_API_VERSION
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_VERSION
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
+import com.primogemstudio.engine.bindings.vulkan.VkApplicationInfo
+import com.primogemstudio.engine.bindings.vulkan.VkInstance
+import com.primogemstudio.engine.bindings.vulkan.VkInstanceCreateInfo
 import com.primogemstudio.engine.loader.Platform
 import java.lang.foreign.MemorySegment
 
@@ -45,9 +53,32 @@ fun main() {
         GLFWMonitor(MemorySegment.NULL),
         GLFWWindow(MemorySegment.NULL)
     )
-    println(window.value())
     glfwMakeContextCurrent(window)
-    println(glfwVulkanSupported())
+
+    val vkInstance = VkInstance()
+    println(
+        vkCreateInstance(
+            VkInstanceCreateInfo(
+                appInfo = VkApplicationInfo(
+                    appName = "test",
+                    appVersion = VK_MAKE_VERSION(0, 0, 1),
+                    engineName = "test",
+                    engineVersion = VK_MAKE_VERSION(0, 0, 1),
+                    apiVersion = VK_MAKE_API_VERSION(1, 0, 0, 0)
+                ),
+                layers = listOf("test"),
+                extensions = listOf("test")
+            ),
+            allocator = null,
+            instance = vkInstance
+        )
+    )
+    println(vkInstance.ref())
+
+    glfwSetCursor(
+        window,
+        glfwCreateCursor(GLFWImage(32, 32, (0..<32 * 32 * 4).map { 0xcc.toByte() }.toByteArray()), 0, 0)
+    )
 
     // glfwShowWindow(window)
     glfwSetFramebufferSizeCallback(window) { _, width, height ->

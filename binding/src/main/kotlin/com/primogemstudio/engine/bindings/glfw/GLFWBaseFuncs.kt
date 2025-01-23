@@ -87,7 +87,7 @@ fun interface PFN_vkGetInstanceProcAddr : IStub {
         )
 }
 
-class GLFWAllocator(
+data class GLFWAllocator(
     private val allocator: GLFWAllocateFun,
     private val reallocator: GLFWReallocateFun,
     private val deallocator: GLFWDeallocateFun

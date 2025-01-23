@@ -153,8 +153,13 @@ object Platform {
         }
         libStatus["vulkan"] = load(VulkanLibLoader.source())
         libStatus["opengl"] = load(OpenGLLibLoader.source())
-        libStatus["opengles"] = load(OpenGLESLibLoader.source())
-        libStatus["osmesa"] = load(OSMesaLibLoader.source())
+        if (!libStatus["opengl"]!!) {
+            libStatus["osmesa"] = load(OSMesaLibLoader.source())
+            if (!libStatus["osmesa"]!!) {
+                libStatus["opengles"] = load(OpenGLESLibLoader.source())
+            }
+        }
+
         return true
     }
 

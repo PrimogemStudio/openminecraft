@@ -16,6 +16,7 @@ object NativeMethodCache {
     private val logger = LoggerFactory.getLogger()
     private val funcCache = mutableMapOf<String, MethodHandle>()
     private val stubCache = mutableMapOf<Any, MemorySegment>()
+    private val structCache = mutableMapOf<Any, Pair<MemorySegment, Int>>()
     private val linker = Linker.nativeLinker()
     private val symbolLookup = SymbolLookup.loaderLookup()
 
@@ -70,7 +71,25 @@ object NativeMethodCache {
         val argListNew = args.map {
             return@map when (it) {
                 is IHeapVar<*> -> it.ref()
-                is IStruct -> Arena.ofConfined().allocate(it.layout()).apply { it.construct(this) }
+                is IStruct -> {
+                    val h = it.hashCode()
+                    if (structCache.containsKey(it) && structCache[it]!!.second == h) {
+                        structCache[it]!!.first
+                    } else {
+                        Arena.ofConfined().allocate(it.layout()).apply {
+                            it.construct(this)
+                            structCache[it] = Pair(this, h)
+                            logger.info(
+                                tr(
+                                    "engine.nativeloader.struct",
+                                    it::class.qualifiedName,
+                                    this.address().toHexString(),
+                                    h.toHexString()
+                                )
+                            )
+                        }
+                    }
+                }
                 else -> it
             }
         }

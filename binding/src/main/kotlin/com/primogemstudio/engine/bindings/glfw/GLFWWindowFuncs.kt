@@ -23,7 +23,7 @@ class GLFWWindow(private val data: MemorySegment) : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = data
 }
 
-class GLFWImage(
+data class GLFWImage(
     private val width: Int,
     private val height: Int,
     private val pixels: ByteArray
@@ -35,6 +35,26 @@ class GLFWImage(
         seg.set(JAVA_INT, 0, width)
         seg.set(JAVA_INT, 4, height)
         seg.set(ADDRESS, 8, parr)
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as GLFWImage
+
+        if (width != other.width) return false
+        if (height != other.height) return false
+        if (!pixels.contentEquals(other.pixels)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = width
+        result = 31 * result + height
+        result = 31 * result + pixels.contentHashCode()
+        return result
     }
 }
 
