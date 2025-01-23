@@ -3,6 +3,7 @@ package com.primogemstudio.engine.bindings.vulkan
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_APPLICATION_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.allocate
 import com.primogemstudio.engine.interfaces.heap.HeapMutStringArray
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
@@ -756,4 +757,7 @@ object Vk10Funcs {
         instance: VkInstance
     ): Int =
         callFunc("vkCreateInstance", Int::class, createInfo, allocator.allocate(), instance)
+
+    fun vkDestroyInstance(instance: VkInstance, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyInstance", instance, allocator.allocate())
 }
