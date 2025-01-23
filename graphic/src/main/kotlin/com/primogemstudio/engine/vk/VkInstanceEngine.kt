@@ -13,11 +13,6 @@ import org.lwjgl.vulkan.VkInstance
 import org.lwjgl.vulkan.VkInstanceCreateInfo
 import java.io.Closeable
 
-fun test() {
-    println(VkInstanceCreateInfo.SIZEOF)
-    println(VkInstanceCreateInfo.ALIGNOF)
-}
-
 class VkInstanceEngine(
     val appName: String,
     appVer: String,

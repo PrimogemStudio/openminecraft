@@ -30,6 +30,7 @@ import com.primogemstudio.engine.bindings.vulkan.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.VkInstanceCreateInfo
 import com.primogemstudio.engine.loader.Platform
 import java.lang.foreign.MemorySegment
+import java.lang.foreign.ValueLayout.JAVA_LONG
 
 fun main() {
     /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
@@ -65,15 +66,13 @@ fun main() {
                     engineName = "test",
                     engineVersion = VK_MAKE_VERSION(0, 0, 1),
                     apiVersion = VK_MAKE_API_VERSION(1, 0, 0, 0)
-                ),
-                layers = listOf("test"),
-                extensions = listOf("test")
+                )
             ),
             allocator = null,
             instance = vkInstance
         )
     )
-    println(vkInstance.ref())
+    println(vkInstance.ref().get(JAVA_LONG, 0))
 
     glfwSetCursor(
         window,

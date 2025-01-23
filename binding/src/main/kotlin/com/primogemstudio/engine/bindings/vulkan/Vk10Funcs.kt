@@ -23,23 +23,23 @@ data class VkApplicationInfo(
     private val apiVersion: Int
 ) : IStruct {
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_INT,
+        JAVA_LONG,
         ADDRESS_UNALIGNED,
         ADDRESS_UNALIGNED,
-        JAVA_INT,
+        JAVA_LONG,
         ADDRESS_UNALIGNED,
-        JAVA_INT,
-        JAVA_INT
+        JAVA_LONG,
+        JAVA_LONG
     )
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_APPLICATION_INFO)
-        seg.set(ADDRESS_UNALIGNED, 4 * 1, next.allocate())
-        seg.set(ADDRESS_UNALIGNED, 4 * 1 + sizetLength() * 1L, appName.toCString())
-        seg.set(JAVA_INT, 4 * 1 + sizetLength() * 2L, appVersion)
-        seg.set(ADDRESS_UNALIGNED, 4 * 2 + sizetLength() * 2L, engineName.toCString())
-        seg.set(JAVA_INT, 4 * 2 + sizetLength() * 3L, engineVersion)
-        seg.set(JAVA_INT, 4 * 3 + sizetLength() * 3L, apiVersion)
+        seg.set(ADDRESS, 8 * 1, next.allocate())
+        seg.set(ADDRESS, 8 * 1 + sizetLength() * 1L, appName.toCString())
+        seg.set(JAVA_INT, 8 * 1 + sizetLength() * 2L, appVersion)
+        seg.set(ADDRESS, 8 * 2 + sizetLength() * 2L, engineName.toCString())
+        seg.set(JAVA_INT, 8 * 2 + sizetLength() * 3L, engineVersion)
+        seg.set(JAVA_INT, 8 * 3 + sizetLength() * 3L, apiVersion)
     }
 }
 
@@ -62,6 +62,7 @@ data class VkInstanceCreateInfo(
     )
 
     override fun construct(seg: MemorySegment) {
+        println(layout().byteAlignment())
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
         seg.set(ADDRESS, 8 * 1, next?.allocateLocal() ?: MemorySegment.NULL)
         seg.set(JAVA_INT, 8 * 1 + sizetLength() * 1L, flag)
