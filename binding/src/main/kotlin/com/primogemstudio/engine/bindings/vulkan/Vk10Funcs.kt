@@ -5,6 +5,8 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INS
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.allocate
+import com.primogemstudio.engine.interfaces.heap.HeapInt
+import com.primogemstudio.engine.interfaces.heap.HeapMutRefArray
 import com.primogemstudio.engine.interfaces.heap.HeapMutStringArray
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.IStruct
@@ -76,7 +78,15 @@ data class VkInstanceCreateInfo(
 }
 
 class VkInstance : IHeapVar<MemorySegment> {
-    private val seg = Arena.ofConfined().allocate(ADDRESS)
+    private val seg = Arena.ofConfined().allocate(ADDRESS).apply {
+        set(ADDRESS, 0, this)
+    }
+
+    override fun ref(): MemorySegment = seg.get(ADDRESS, 0).reinterpret(8)
+    override fun value(): MemorySegment = seg
+}
+
+class VkPhysicalDevice(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun ref(): MemorySegment = seg
     override fun value(): MemorySegment = seg
 }
@@ -760,4 +770,16 @@ object Vk10Funcs {
 
     fun vkDestroyInstance(instance: VkInstance, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyInstance", instance, allocator.allocate())
+
+    fun vkEnumeratePhysicalDevices(instance: VkInstance, count: HeapInt, devices: MutableList<VkPhysicalDevice>): Int {
+        callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, MemorySegment.NULL).apply {
+            if (this != VK_SUCCESS) return this
+        }
+        val seg = Arena.ofConfined().allocate(sizetLength() * count.value() * 1L)
+        callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, seg).apply {
+            if (this != VK_SUCCESS) return this
+        }
+        HeapMutRefArray(seg, count.value()).value().forEach { devices.add(VkPhysicalDevice(it)) }
+        return VK_SUCCESS
+    }
 }

@@ -25,12 +25,15 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldC
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.VkApplicationInfo
 import com.primogemstudio.engine.bindings.vulkan.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.VkInstanceCreateInfo
+import com.primogemstudio.engine.bindings.vulkan.VkPhysicalDevice
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.loader.Platform
 import java.lang.foreign.MemorySegment
-import java.lang.foreign.ValueLayout.JAVA_LONG
 
 fun main() {
     /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
@@ -57,22 +60,22 @@ fun main() {
     glfwMakeContextCurrent(window)
 
     val vkInstance = VkInstance()
-    println(
-        vkCreateInstance(
-            VkInstanceCreateInfo(
-                appInfo = VkApplicationInfo(
-                    appName = "test",
-                    appVersion = VK_MAKE_VERSION(0, 0, 1),
-                    engineName = "test",
-                    engineVersion = VK_MAKE_VERSION(0, 0, 1),
-                    apiVersion = VK_MAKE_API_VERSION(1, 0, 0, 0)
-                )
-            ),
-            allocator = null,
-            instance = vkInstance
-        )
+    vkCreateInstance(
+        VkInstanceCreateInfo(
+            appInfo = VkApplicationInfo(
+                appName = "test",
+                appVersion = VK_MAKE_VERSION(0, 0, 1),
+                engineName = "test",
+                engineVersion = VK_MAKE_VERSION(0, 0, 1),
+                apiVersion = VK_MAKE_API_VERSION(1, 0, 0, 0)
+            )
+        ),
+        allocator = null,
+        instance = vkInstance
     )
-    println(vkInstance.ref().get(JAVA_LONG, 0))
+    val lst = mutableListOf<VkPhysicalDevice>()
+    println(vkEnumeratePhysicalDevices(vkInstance, HeapInt(), lst))
+    println(callFunc("vkGetPhysicalDeviceQueueFamilyProperties", Int::class, lst[0], HeapInt(), MemorySegment.NULL))
 
     glfwSetCursor(
         window,

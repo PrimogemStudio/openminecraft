@@ -1,7 +1,11 @@
 package com.primogemstudio.engine.bindings.glfw
 
+import com.primogemstudio.engine.bindings.vulkan.VkAllocationCallbacks
+import com.primogemstudio.engine.bindings.vulkan.VkInstance
+import com.primogemstudio.engine.bindings.vulkan.VkPhysicalDevice
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
+import com.primogemstudio.engine.interfaces.allocate
 import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.HeapMutRefArray
@@ -17,28 +21,22 @@ object GLFWVulkanFuncs {
             .map { it.fetchString() }
             .toTypedArray()
 
-    // instance -> VkInstance
-    fun glfwGetInstanceProcAddress(instance: MemorySegment, procname: String): MemorySegment =
+    fun glfwGetInstanceProcAddress(instance: VkInstance, procname: String): MemorySegment =
         callPointerFunc("glfwGetInstanceProcAddress", instance, procname)
 
-    // instance -> VkInstance
-    // device -> VkPhysicalDevice
     fun glfwGetPhysicalDevicePresentationSupport(
-        instance: MemorySegment,
-        device: MemorySegment,
+        instance: VkInstance,
+        device: VkPhysicalDevice,
         queueFamily: Int
     ): Int =
         callFunc("glfwGetPhysicalDevicePresentationSupport", Int::class, instance, device, queueFamily)
 
-    // instance -> VkInstance
-    // allocator -> VkAllocationCallbacks
     // surface -> VkSurfaceKHR
-    // @return -> VkResult
     fun glfwCreateWindowSurface(
-        instance: MemorySegment,
+        instance: VkInstance,
         window: GLFWWindow,
-        allocator: MemorySegment,
+        allocator: VkAllocationCallbacks,
         surface: MemorySegment
     ): Int =
-        callFunc("glfwCreateWindowSurface", Int::class, instance, window, allocator, surface)
+        callFunc("glfwCreateWindowSurface", Int::class, instance, window, allocator.allocate(), surface)
 }
