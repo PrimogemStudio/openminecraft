@@ -12,6 +12,7 @@ import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.loader.Platform.sizetLength
+import org.joml.Vector3f
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -65,7 +66,6 @@ data class VkInstanceCreateInfo(
     )
 
     override fun construct(seg: MemorySegment) {
-        println(layout().byteAlignment())
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
         seg.set(ADDRESS, 8 * 1, next?.allocateLocal() ?: MemorySegment.NULL)
         seg.set(JAVA_INT, 8 * 1 + sizetLength() * 1L, flag)
@@ -77,18 +77,103 @@ data class VkInstanceCreateInfo(
     }
 }
 
-class VkInstance : IHeapVar<MemorySegment> {
-    private val seg = Arena.ofConfined().allocate(ADDRESS).apply {
-        set(ADDRESS, 0, this)
-    }
-
-    override fun ref(): MemorySegment = seg.get(ADDRESS, 0).reinterpret(8)
+class VkInstance(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
     override fun value(): MemorySegment = seg
 }
 
 class VkPhysicalDevice(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun ref(): MemorySegment = seg
     override fun value(): MemorySegment = seg
+}
+
+class VkPhysicalDeviceFeatures : IHeapVar<MemorySegment> {
+    private val seg = Arena.ofConfined().allocate(MemoryLayout.structLayout(
+        *Array<MemoryLayout>(55) { _ -> JAVA_INT }
+    ))
+
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    fun featureAt(i: Int): Boolean = seg.get(JAVA_INT, 4L * i) == 1
+}
+
+class VkFormatProperties : IHeapVar<MemorySegment> {
+    private val seg = Arena.ofConfined().allocate(MemoryLayout.structLayout(
+        *Array<MemoryLayout>(3) { _ -> JAVA_INT }
+    ))
+
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val linearTilingFeatures: Int
+        get() = seg.get(JAVA_INT, 0)
+
+    val optimalTilingFeatures: Int
+        get() = seg.get(JAVA_INT, 4)
+
+    val bufferFeatures: Int
+        get() = seg.get(JAVA_INT, 8)
+}
+
+class VkImageFormatProperties : IHeapVar<MemorySegment> {
+    private val seg = Arena.ofConfined().allocate(
+        MemoryLayout.structLayout(
+            JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_LONG
+        )
+    )
+
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val maxExtent: Vector3f
+        get() = Vector3f(seg.get(JAVA_FLOAT, 0), seg.get(JAVA_FLOAT, 4), seg.get(JAVA_FLOAT, 8))
+    val maxMipLevels: UInt
+        get() = seg.get(JAVA_INT, 12).toUInt()
+    val maxArrayLayers: UInt
+        get() = seg.get(JAVA_INT, 16).toUInt()
+    val sampleCounts: Int
+        get() = seg.get(JAVA_INT, 20)
+    val maxResourceSize: Long
+        get() = seg.get(JAVA_LONG, 24)
+}
+
+// TODO: complete struct define
+class VkPhysicalDeviceProperties : IHeapVar<MemorySegment> {
+    private val seg = Arena.ofConfined().allocate(
+        MemoryLayout.structLayout(
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            MemoryLayout.paddingLayout(256),
+            MemoryLayout.paddingLayout(16 + 4),
+            MemoryLayout.paddingLayout(504),
+            MemoryLayout.paddingLayout(24),
+        )
+    )
+
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
+class VkQueueFamilyProperties(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val queueFlags: Int
+        get() = seg.get(JAVA_INT, 0)
+    val queueCount: Int
+        get() = seg.get(JAVA_INT, 4)
+    val timestampValidBits: Int
+        get() = seg.get(JAVA_INT, 8)
+    val minImageTransferGranularity: Vector3f
+        get() = Vector3f(seg.get(JAVA_FLOAT, 12), seg.get(JAVA_FLOAT, 16), seg.get(JAVA_FLOAT, 20))
 }
 
 object Vk10Funcs {
@@ -763,23 +848,71 @@ object Vk10Funcs {
 
     fun vkCreateInstance(
         createInfo: VkInstanceCreateInfo,
-        allocator: VkAllocationCallbacks?,
-        instance: VkInstance
-    ): Int =
-        callFunc("vkCreateInstance", Int::class, createInfo, allocator.allocate(), instance)
+        allocator: VkAllocationCallbacks?
+    ): Pair<VkInstance, Int> =
+        Arena.ofConfined().allocate(ADDRESS).run {
+            val retCode = callFunc("vkCreateInstance", Int::class, createInfo, allocator.allocate(), this)
+            Pair(VkInstance(get(ADDRESS, 0)), retCode)
+        }
 
     fun vkDestroyInstance(instance: VkInstance, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyInstance", instance, allocator.allocate())
 
-    fun vkEnumeratePhysicalDevices(instance: VkInstance, count: HeapInt, devices: MutableList<VkPhysicalDevice>): Int {
+    fun vkEnumeratePhysicalDevices(instance: VkInstance, count: HeapInt): Pair<List<VkPhysicalDevice>, Int> {
         callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, MemorySegment.NULL).apply {
-            if (this != VK_SUCCESS) return this
+            if (this != VK_SUCCESS) return Pair(listOf(), this)
         }
         val seg = Arena.ofConfined().allocate(sizetLength() * count.value() * 1L)
         callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, seg).apply {
-            if (this != VK_SUCCESS) return this
+            if (this != VK_SUCCESS) return Pair(listOf(), this)
         }
-        HeapMutRefArray(seg, count.value()).value().forEach { devices.add(VkPhysicalDevice(it)) }
-        return VK_SUCCESS
+
+        return Pair(HeapMutRefArray(seg, count.value()).value().map { VkPhysicalDevice(it) }, VK_SUCCESS)
+    }
+
+    fun vkGetPhysicalDeviceFeatures(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceFeatures =
+        VkPhysicalDeviceFeatures().apply { callVoidFunc("vkGetPhysicalDeviceFeatures", physicalDevice, this) }
+
+    fun vkGetPhysicalDeviceFormatProperties(physicalDevice: VkPhysicalDevice, format: Int): VkFormatProperties =
+        VkFormatProperties().apply { callVoidFunc("vkGetPhysicalDeviceFormatProperties", physicalDevice, format, this) }
+
+    fun vkGetPhysicalDeviceImageFormatProperties(
+        physicalDevice: VkPhysicalDevice,
+        format: Int,
+        type: Int,
+        tiling: Int,
+        usage: Int,
+        flags: Int
+    ): Pair<VkImageFormatProperties, Int> =
+        VkImageFormatProperties().let {
+            Pair(
+                it,
+                callFunc(
+                    "vkGetPhysicalDeviceImageFormatProperties",
+                    Int::class,
+                    physicalDevice,
+                    format,
+                    type,
+                    tiling,
+                    usage,
+                    flags,
+                    it
+                )
+            )
+        }
+
+    fun vkGetPhysicalDeviceProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceProperties =
+        VkPhysicalDeviceProperties().apply { callVoidFunc("vkGetPhysicalDeviceProperties", physicalDevice, this) }
+
+    fun vkGetPhysicalDeviceQueueFamilyProperties(
+        physicalDevice: VkPhysicalDevice,
+        count: HeapInt
+    ): List<VkQueueFamilyProperties> {
+        callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, MemorySegment.NULL)
+        // Memory alignment requirements of vulkan icd loader
+        val seg = Arena.ofConfined().allocate(sizetLength() * (count.value() + 1) * 1L)
+        callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, seg)
+
+        return HeapMutRefArray(seg, count.value()).value().map { VkQueueFamilyProperties(it) }
     }
 }

@@ -26,11 +26,9 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetPhysicalDeviceQueueFamilyProperties
 import com.primogemstudio.engine.bindings.vulkan.VkApplicationInfo
-import com.primogemstudio.engine.bindings.vulkan.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.VkInstanceCreateInfo
-import com.primogemstudio.engine.bindings.vulkan.VkPhysicalDevice
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.loader.Platform
 import java.lang.foreign.MemorySegment
@@ -59,8 +57,7 @@ fun main() {
     )
     glfwMakeContextCurrent(window)
 
-    val vkInstance = VkInstance()
-    vkCreateInstance(
+    val vkInstance = vkCreateInstance(
         VkInstanceCreateInfo(
             appInfo = VkApplicationInfo(
                 appName = "test",
@@ -70,12 +67,13 @@ fun main() {
                 apiVersion = VK_MAKE_API_VERSION(1, 0, 0, 0)
             )
         ),
-        allocator = null,
-        instance = vkInstance
+        allocator = null
     )
-    val lst = mutableListOf<VkPhysicalDevice>()
-    println(vkEnumeratePhysicalDevices(vkInstance, HeapInt(), lst))
-    println(callFunc("vkGetPhysicalDeviceQueueFamilyProperties", Int::class, lst[0], HeapInt(), MemorySegment.NULL))
+    val dev = vkEnumeratePhysicalDevices(vkInstance.first, HeapInt()).first[0]
+    println(vkGetPhysicalDeviceQueueFamilyProperties(dev, HeapInt()))
+    /*listOf(
+        "SIZEOF"
+    ).forEach { println(Class.forName("org.lwjgl.vulkan.VkQueueFamilyProperties").getField(it).get(null)) }*/
 
     glfwSetCursor(
         window,
