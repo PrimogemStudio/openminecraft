@@ -5,6 +5,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INS
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.allocate
+import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.HeapMutRefArray
 import com.primogemstudio.engine.interfaces.heap.HeapMutStringArray
@@ -143,6 +144,17 @@ class VkImageFormatProperties : IHeapVar<MemorySegment> {
 }
 
 // TODO: complete struct define
+class VkPhysicalDeviceLimits(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
+// TODO: complete struct define
+class VkPhysicalDeviceSparseProperties(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 class VkPhysicalDeviceProperties : IHeapVar<MemorySegment> {
     private val seg = Arena.ofConfined().allocate(
         MemoryLayout.structLayout(
@@ -160,6 +172,25 @@ class VkPhysicalDeviceProperties : IHeapVar<MemorySegment> {
 
     override fun ref(): MemorySegment = seg
     override fun value(): MemorySegment = seg
+
+    val apiVersion: Int
+        get() = seg.get(JAVA_INT, 0)
+    val driverVersion: Int
+        get() = seg.get(JAVA_INT, 4)
+    val vendorId: Int
+        get() = seg.get(JAVA_INT, 8)
+    val deviceID: Int
+        get() = seg.get(JAVA_INT, 12)
+    val deviceType: Int
+        get() = seg.get(JAVA_INT, 16)
+    val deviceName: String
+        get() = seg.asSlice(20, 256).fetchString()
+    val pipelineCacheUUID: ByteArray
+        get() = seg.asSlice(276, 16).toArray(JAVA_BYTE)
+    val limits: VkPhysicalDeviceLimits
+        get() = VkPhysicalDeviceLimits(seg.asSlice(296, 504))
+    val sparseProperties: VkPhysicalDeviceSparseProperties
+        get() = VkPhysicalDeviceSparseProperties(seg.asSlice(800, 20))
 }
 
 class VkQueueFamilyProperties(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
@@ -174,6 +205,50 @@ class VkQueueFamilyProperties(private val seg: MemorySegment) : IHeapVar<MemoryS
         get() = seg.get(JAVA_INT, 8)
     val minImageTransferGranularity: Vector3f
         get() = Vector3f(seg.get(JAVA_FLOAT, 12), seg.get(JAVA_FLOAT, 16), seg.get(JAVA_FLOAT, 20))
+}
+
+class VkMemoryType(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val propertyFlags: Int
+        get() = seg.get(JAVA_INT, 0)
+    val heapIndex: Int
+        get() = seg.get(JAVA_INT, 4)
+}
+
+class VkMemoryHeap(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val size: Long
+        get() = seg.get(JAVA_LONG, 0)
+    val flags: Int
+        get() = seg.get(JAVA_INT, 8)
+}
+
+class VkPhysicalDeviceMemoryProperties : IHeapVar<MemorySegment> {
+    private val seg: MemorySegment = Arena.ofConfined().allocate(
+        MemoryLayout.structLayout(
+            JAVA_INT,
+            MemoryLayout.paddingLayout(256),
+            JAVA_INT,
+            MemoryLayout.paddingLayout(256)
+        )
+    )
+
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val memoryTypeCount: UInt =
+        seg.get(JAVA_INT, 0).toUInt()
+
+    fun memoryType(idx: Int): VkMemoryType = VkMemoryType(seg.asSlice(4L + idx * 8L, 8))
+
+    val memoryHeapCount: UInt =
+        seg.get(JAVA_INT, 260).toUInt()
+
+    fun memoryHeap(idx: Int): VkMemoryHeap = VkMemoryHeap(seg.asSlice(264L + idx * 16L, 16))
 }
 
 object Vk10Funcs {
@@ -915,4 +990,7 @@ object Vk10Funcs {
 
         return HeapMutRefArray(seg, count.value()).value().map { VkQueueFamilyProperties(it) }
     }
+
+    fun vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceMemoryProperties =
+        VkPhysicalDeviceMemoryProperties().apply { callVoidFunc("vkGetPhysicalDeviceMemoryProperties", physicalDevice) }
 }

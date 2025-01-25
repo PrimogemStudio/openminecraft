@@ -71,9 +71,21 @@ fun main() {
     )
     val dev = vkEnumeratePhysicalDevices(vkInstance.first, HeapInt()).first[0]
     println(vkGetPhysicalDeviceQueueFamilyProperties(dev, HeapInt()))
-    /*listOf(
+    listOf(
+        "DRIVERVERSION",
+        "VENDORID",
+        "DEVICEID",
+        "DEVICETYPE",
+        "DEVICENAME",
+        "PIPELINECACHEUUID",
+        "LIMITS",
+        "SPARSEPROPERTIES",
         "SIZEOF"
-    ).forEach { println(Class.forName("org.lwjgl.vulkan.VkQueueFamilyProperties").getField(it).get(null)) }*/
+    ).forEach {
+        println(
+            it + " " + Class.forName("org.lwjgl.vulkan.VkPhysicalDeviceProperties").getField(it).get(null)
+        )
+    }
 
     glfwSetCursor(
         window,
