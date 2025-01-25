@@ -3,6 +3,7 @@ package com.primogemstudio.engine.bindings.vulkan
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_APPLICATION_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.allocate
 import com.primogemstudio.engine.interfaces.fetchString
@@ -993,4 +994,7 @@ object Vk10Funcs {
 
     fun vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceMemoryProperties =
         VkPhysicalDeviceMemoryProperties().apply { callVoidFunc("vkGetPhysicalDeviceMemoryProperties", physicalDevice) }
+
+    fun vkGetInstanceProcAddr(instance: VkInstance, name: String): MemorySegment =
+        callPointerFunc("vkGetInstanceProcAddr", instance, name.toCString())
 }
