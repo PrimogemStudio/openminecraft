@@ -32,6 +32,7 @@ import com.primogemstudio.engine.bindings.vulkan.VkInstanceCreateInfo
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.loader.Platform
 import java.lang.foreign.MemorySegment
+import java.util.*
 
 fun main() {
     /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
@@ -72,18 +73,11 @@ fun main() {
     val dev = vkEnumeratePhysicalDevices(vkInstance.first, HeapInt()).first[0]
     println(vkGetPhysicalDeviceQueueFamilyProperties(dev, HeapInt()))
     listOf(
-        "DRIVERVERSION",
-        "VENDORID",
-        "DEVICEID",
-        "DEVICETYPE",
-        "DEVICENAME",
-        "PIPELINECACHEUUID",
-        "LIMITS",
-        "SPARSEPROPERTIES",
         "SIZEOF"
     ).forEach {
         println(
-            it + " " + Class.forName("org.lwjgl.vulkan.VkPhysicalDeviceProperties").getField(it).get(null)
+            it + " " + Class.forName("org.lwjgl.vulkan.VkPhysicalDeviceLimits")
+                .getField(it.uppercase(Locale.getDefault())).get(null)
         )
     }
 
