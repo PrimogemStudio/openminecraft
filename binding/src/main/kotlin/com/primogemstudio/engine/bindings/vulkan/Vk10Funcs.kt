@@ -1191,13 +1191,25 @@ object Vk10Funcs {
     fun vkDestroyDevice(device: VkDevice, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyDevice", device, allocator.allocate())
 
-    fun vkEnumerateInstanceExtensionProperties(layerName: String): Pair<Array<VkExtensionProperties>, Int>? {
+    fun vkEnumerateInstanceExtensionProperties(layerName: String): Pair<Array<VkExtensionProperties>, Int> {
         val count = HeapInt()
         callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
         val seg = Arena.ofConfined().allocate(260L * count.value())
         callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, seg).apply {
+            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+        }
+        return Pair(seg.fromCStructArray(count.value(), 260, { VkExtensionProperties(it) }).toTypedArray(), VK_SUCCESS)
+    }
+
+    fun vkEnumerateDeviceExtensionProperties(physicalDevice: VkPhysicalDevice, layerName: String): Pair<Array<VkExtensionProperties>, Int> {
+        val count = HeapInt()
+        callFunc("vkEnumerateDeviceExtensionProperties", Int::class, physicalDevice, layerName, count, MemorySegment.NULL).apply {
+            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+        }
+        val seg = Arena.ofConfined().allocate(260L * count.value())
+        callFunc("vkEnumerateDeviceExtensionProperties", Int::class, physicalDevice, layerName, count, seg).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
         return Pair(seg.fromCStructArray(count.value(), 260, { VkExtensionProperties(it) }).toTypedArray(), VK_SUCCESS)
