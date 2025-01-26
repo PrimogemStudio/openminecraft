@@ -36,9 +36,9 @@ import java.lang.foreign.MemorySegment
 import java.util.*
 
 fun main() {
-    System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
+    /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
     val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
-    instance.vkWindow!!.mainLoop()
+    instance.vkWindow!!.mainLoop()*/
 
     Platform.init()
 
@@ -74,12 +74,6 @@ fun main() {
     val dev = vkEnumeratePhysicalDevices(vkInstance.first, HeapInt()).first[0]
     println(vkGetPhysicalDeviceQueueFamilyProperties(dev, HeapInt()))
     listOf(
-        "STYPE",
-        "PNEXT",
-        "FLAGS",
-        "queueFamilyIndex",
-        "QUEUECOUNT",
-        "PQUEUEPRIORITIES",
         "SIZEOF"
     ).forEach {
         println(

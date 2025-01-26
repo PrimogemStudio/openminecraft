@@ -1,8 +1,10 @@
 package com.primogemstudio.engine.interfaces
 
+import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.logging.LoggerFactory
+import java.lang.foreign.ValueLayout.ADDRESS
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout
@@ -33,9 +35,12 @@ fun String.toCString(): MemorySegment {
 
 fun IStruct?.allocate(): MemorySegment = this?.allocateLocal() ?: MemorySegment.NULL
 
-inline fun <T : Any> time(func: () -> T): T {
-    val s = System.currentTimeMillis()
-    return func().apply {
-        logger.info("${System.currentTimeMillis() - s} ms")
+fun Array<String>.toCStrArray(): MemorySegment {
+    return Arena.ofConfined().allocate(size * sizetLength() * 1L).apply {
+        var i = 0
+        forEach {
+            set(ADDRESS, i * sizetLength() * 1L, it.toCString())
+            i++
+        }
     }
 }

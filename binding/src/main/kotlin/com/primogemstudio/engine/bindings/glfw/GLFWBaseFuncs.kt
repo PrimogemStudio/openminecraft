@@ -1,12 +1,13 @@
 package com.primogemstudio.engine.bindings.glfw
 
+import com.primogemstudio.engine.bindings.vulkan.VkInstance
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
 import com.primogemstudio.engine.interfaces.fetchString
+import com.primogemstudio.engine.interfaces.toCStrArray
 import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.HeapStringArray
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.loader.Platform.sizetLength
@@ -72,10 +73,9 @@ fun interface GLFWErrorFun : IStub {
         )
 }
 
-// vkInstance -> VkInstance
 fun interface PFN_vkGetInstanceProcAddr : IStub {
-    fun call(vkInstance: MemorySegment, funcname: String)
-    fun call(vkInstance: MemorySegment, funcname: MemorySegment) = call(vkInstance, funcname.fetchString())
+    fun call(vkInstance: VkInstance, funcname: String)
+    fun call(vkInstance: VkInstance, funcname: MemorySegment) = call(vkInstance, funcname.fetchString())
     override fun register(): Pair<String, MethodType> =
         Pair(
             "call",
@@ -147,8 +147,8 @@ object GLFWBaseFuncs {
         callVoidFunc("glfwGetVersion", major, minor, rev)
     fun glfwGetVersionString(): String =
         callPointerFunc("glfwGetVersionString").fetchString()
-    fun glfwGetError(desc: HeapStringArray): Int =
-        callFunc("glfwGetError", Int::class, desc)
+    fun glfwGetError(desc: Array<String>): Int =
+        callFunc("glfwGetError", Int::class, desc.toCStrArray())
     fun glfwSetErrorCallback(callback: GLFWErrorFun): MemorySegment =
         callPointerFunc("glfwSetErrorCallback", constructStub(GLFWErrorFun::class, callback))
     fun glfwGetPlatform(): Int =

@@ -12,6 +12,7 @@ import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.*
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.toCString
+import com.primogemstudio.engine.interfaces.toCStrArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import org.joml.Vector3f
 import java.lang.foreign.Arena
@@ -408,13 +409,9 @@ data class VkDeviceCreateInfo(
             }
         })
         seg.set(JAVA_INT, sizetLength() * 2 + 16L, enabledLayers.size)
-        seg.set(ADDRESS, sizetLength() * 2 + 24L, HeapRefArray(enabledLayers.size).apply {
-            set(enabledLayers.map { it.toCString() }.toTypedArray())
-        }.ref())
+        seg.set(ADDRESS, sizetLength() * 2 + 24L, enabledLayers.toTypedArray().toCStrArray())
         seg.set(JAVA_INT, sizetLength() * 3 + 24L, enabledExtensions.size)
-        seg.set(ADDRESS, sizetLength() * 3 + 32L, HeapRefArray(enabledExtensions.size).apply {
-            set(enabledExtensions.map { it.toCString() }.toTypedArray())
-        }.ref())
+        seg.set(ADDRESS, sizetLength() * 3 + 32L, enabledExtensions.toTypedArray().toCStrArray())
         seg.set(ADDRESS, sizetLength() * 4 + 32L, features.ref())
     }
 }
