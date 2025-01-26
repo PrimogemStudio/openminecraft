@@ -406,7 +406,7 @@ data class VkDeviceCreateInfo(
         seg.set(JAVA_INT, sizetLength() + 12L, queueCreateInfos.size)
         seg.set(ADDRESS, sizetLength() + 16L, Arena.ofConfined().allocate(40L * queueCreateInfos.size).apply {
             for (i in queueCreateInfos.indices) {
-                queueCreateInfos[i].construct(asSlice(40L * i))
+                queueCreateInfos[i].construct(asSlice(40L * i, 40L))
             }
         })
         seg.set(JAVA_INT, sizetLength() * 2 + 16L, enabledLayers.size)
@@ -1175,6 +1175,6 @@ object Vk10Funcs {
     ): Pair<VkDevice, Int> {
         val seg = Arena.ofConfined().allocate(ADDRESS)
         val retCode = callFunc("vkCreateDevice", Int::class, physicalDevice, createInfo, allocator.allocate(), seg)
-        return Pair(VkDevice(seg), retCode)
+        return Pair(VkDevice(seg.get(ADDRESS, 0)), retCode)
     }
 }

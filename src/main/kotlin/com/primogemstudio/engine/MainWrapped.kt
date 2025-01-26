@@ -102,7 +102,7 @@ fun main() {
                 VkPhysicalDeviceFeatures()
             ),
             null
-        )
+        ).first.ref()
     )
 
     glfwSetCursor(
