@@ -81,7 +81,7 @@ fun main() {
         "SIZEOF"
     ).forEach {
         println(
-            "$it " + Class.forName("org.lwjgl.vulkan.VkDeviceQueueCreateInfo")
+            "$it " + Class.forName("org.lwjgl.vulkan.VkExtensionProperties")
                 .getField(it.uppercase(Locale.getDefault())).get(null)
         )
     }

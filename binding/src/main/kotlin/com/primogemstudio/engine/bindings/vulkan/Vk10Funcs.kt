@@ -420,6 +420,14 @@ class VkDevice(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = seg
 }
 
+class VkExtensionProperties(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val extensionName: String get() = seg.get(ADDRESS, 0).fetchString()
+    val version: Int get() = seg.get(JAVA_INT, 256)
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -1102,17 +1110,17 @@ object Vk10Funcs {
     fun vkDestroyInstance(instance: VkInstance, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyInstance", instance, allocator.allocate())
 
-    fun vkEnumeratePhysicalDevices(instance: VkInstance): Pair<List<VkPhysicalDevice>, Int> {
+    fun vkEnumeratePhysicalDevices(instance: VkInstance): Pair<Array<VkPhysicalDevice>, Int> {
         val count = HeapInt()
         callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, MemorySegment.NULL).apply {
-            if (this != VK_SUCCESS) return Pair(listOf(), this)
+            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
         val seg = Arena.ofConfined().allocate(sizetLength() * count.value() * 1L)
         callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, seg).apply {
-            if (this != VK_SUCCESS) return Pair(listOf(), this)
+            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
 
-        return Pair(seg.toCPointerArray(count.value()).map { VkPhysicalDevice(it) }, VK_SUCCESS)
+        return Pair(seg.toCPointerArray(count.value()).map { VkPhysicalDevice(it) }.toTypedArray(), VK_SUCCESS)
     }
 
     fun vkGetPhysicalDeviceFeatures(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceFeatures =
@@ -1167,6 +1175,9 @@ object Vk10Funcs {
     fun vkGetInstanceProcAddr(instance: VkInstance, name: String): MemorySegment =
         callPointerFunc("vkGetInstanceProcAddr", instance, name.toCString())
 
+    fun vkGetDeviceProcAddr(device: VkDevice, name: String): MemorySegment =
+        callPointerFunc("vkGetDeviceProcAddr", device, name.toCString())
+
     fun vkCreateDevice(
         physicalDevice: VkPhysicalDevice,
         createInfo: VkDeviceCreateInfo,
@@ -1175,5 +1186,20 @@ object Vk10Funcs {
         val seg = Arena.ofConfined().allocate(ADDRESS)
         val retCode = callFunc("vkCreateDevice", Int::class, physicalDevice, createInfo, allocator.allocate(), seg)
         return Pair(VkDevice(seg.get(ADDRESS, 0)), retCode)
+    }
+
+    fun vkDestroyDevice(device: VkDevice, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyDevice", device, allocator.allocate())
+
+    fun vkEnumerateInstanceExtensionProperties(layerName: String): Pair<Array<VkExtensionProperties>, Int>? {
+        val count = HeapInt()
+        callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, MemorySegment.NULL).apply {
+            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+        }
+        val seg = Arena.ofConfined().allocate(260L * count.value())
+        callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, seg).apply {
+            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+        }
+        return Pair(seg.fromCStructArray(count.value(), 260, { VkExtensionProperties(it) }).toTypedArray(), VK_SUCCESS)
     }
 }
