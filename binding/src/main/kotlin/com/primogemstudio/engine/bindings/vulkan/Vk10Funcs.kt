@@ -15,6 +15,7 @@ import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.interfaces.toCStrArray
 import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.interfaces.toCStructArray
+import com.primogemstudio.engine.interfaces.fromCStructArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import org.joml.Vector3f
 import java.lang.foreign.Arena
@@ -1150,13 +1151,13 @@ object Vk10Funcs {
     fun vkGetPhysicalDeviceQueueFamilyProperties(
         physicalDevice: VkPhysicalDevice,
         count: HeapInt
-    ): List<VkQueueFamilyProperties> {
+    ): Array<VkQueueFamilyProperties> {
         callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, MemorySegment.NULL)
-        // Memory alignment requirements of vulkan icd loader
-        val seg = Arena.ofConfined().allocate(sizetLength() * count.value() * 4L)
+
+        val seg = Arena.ofConfined().allocate(24L * count.value())
         callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, seg)
-        
-        return seg.toCPointerArray(count.value()).map { VkQueueFamilyProperties(it) }
+
+        return seg.fromCStructArray(count.value(), 24, { VkQueueFamilyProperties(it) }).toTypedArray()
     }
 
     fun vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceMemoryProperties =

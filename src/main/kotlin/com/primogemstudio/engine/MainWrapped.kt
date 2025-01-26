@@ -74,7 +74,9 @@ fun main() {
     )
     val dev = vkEnumeratePhysicalDevices(vkInstance.first, HeapInt()).first[0]
     println(glfwGetRequiredInstanceExtensions(HeapInt()).toList())
-    println(vkGetPhysicalDeviceQueueFamilyProperties(dev, HeapInt()))
+    vkGetPhysicalDeviceQueueFamilyProperties(dev, HeapInt()).forEach {
+        println(it.queueCount)
+    }
     listOf(
         "SIZEOF"
     ).forEach {

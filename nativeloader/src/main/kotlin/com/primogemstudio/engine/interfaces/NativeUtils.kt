@@ -60,6 +60,7 @@ fun <T: IStruct> Array<T>.toCStructArray(): MemorySegment {
     }
     return seg
 }
+inline fun <T> MemorySegment.fromCStructArray(length: Int, structLength: Int, constructor: (MemorySegment) -> T): List<T> = (0 ..< length).map { this.asSlice(it * structLength * 1L, structLength * 1L) }.map { constructor(it) }
 
 fun MemorySegment.toCPointerArray(length: Int): Array<MemorySegment> = (0 ..< length).map { this.reinterpret(length * sizetLength() * 1L).get(ADDRESS, it * sizetLength() * 1L) }.toTypedArray()
 fun MemorySegment.toCFloatArray(length: Int): FloatArray = (0 ..< length).map { this.reinterpret(length * 4L).get(JAVA_FLOAT, it * 4L) }.toFloatArray()
