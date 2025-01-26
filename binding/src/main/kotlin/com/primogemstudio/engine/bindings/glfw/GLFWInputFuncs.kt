@@ -446,11 +446,20 @@ object GLFWInputFuncs {
     fun glfwJoystickPresent(jid: Int): Int =
         callFunc("glfwJoystickPresent", Int::class, jid)
 
-    fun glfwGetJoystickAxes(jid: Int, count: HeapInt): FloatArray = callPointerFunc("glfwGetJoystickAxes", jid, count).toCFloatArray(count.value())
+    fun glfwGetJoystickAxes(jid: Int): FloatArray {
+        val count = HeapInt()
+        return callPointerFunc("glfwGetJoystickAxes", jid, count).toCFloatArray(count.value())
+    }
 
-    fun glfwGetJoystickButtons(jid: Int, count: HeapInt): ByteArray = callPointerFunc("glfwGetJoystickButtons", jid, count).toCByteArray(count.value())
+    fun glfwGetJoystickButtons(jid: Int): ByteArray {
+        val count = HeapInt()
+        return callPointerFunc("glfwGetJoystickButtons", jid, count).toCByteArray(count.value())
+    }
 
-    fun glfwGetJoystickHats(jid: Int, count: HeapInt): ByteArray = callPointerFunc("glfwGetJoystickHats", jid, count).toCByteArray(count.value())
+    fun glfwGetJoystickHats(jid: Int): ByteArray {
+        val count = HeapInt()
+        return callPointerFunc("glfwGetJoystickHats", jid, count).toCByteArray(count.value())
+    }
 
     fun glfwGetJoystickName(jid: Int): String =
         callPointerFunc("glfwGetJoystickName", jid).fetchString()

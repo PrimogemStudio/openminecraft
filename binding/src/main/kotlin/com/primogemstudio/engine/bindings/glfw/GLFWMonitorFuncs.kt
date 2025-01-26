@@ -59,10 +59,12 @@ fun interface GLFWMonitorFun : IStub {
 }
 
 object GLFWMonitorFuncs {
-    fun glfwGetMonitors(count: HeapInt): Array<GLFWMonitor> =
-        callPointerFunc("glfwGetMonitors", count).toCPointerArray(count.value())
+    fun glfwGetMonitors(): Array<GLFWMonitor> {
+        val count = HeapInt()
+        return callPointerFunc("glfwGetMonitors", count).toCPointerArray(count.value())
             .map { GLFWMonitor(it) }
             .toTypedArray()
+    }
 
     fun glfwGetPrimaryMonitor(): GLFWMonitor =
         GLFWMonitor(callPointerFunc("glfwGetPrimaryMonitor"))
@@ -91,10 +93,12 @@ object GLFWMonitorFuncs {
     fun glfwSetMonitorCallback(callback: GLFWMonitorFun): MemorySegment =
         callPointerFunc("glfwSetMonitorCallback", callback)
 
-    fun glfwGetVideoModes(monitor: GLFWMonitor, count: HeapInt): Array<GLFWVidMode> =
-        callPointerFunc("glfwGetVideoModes", monitor, count).toCPointerArray(count.value())
+    fun glfwGetVideoModes(monitor: GLFWMonitor): Array<GLFWVidMode> {
+        val count = HeapInt()
+        return callPointerFunc("glfwGetVideoModes", monitor, count).toCPointerArray(count.value())
             .map { GLFWVidMode(it) }
             .toTypedArray()
+    }
 
     fun glfwGetVideoMode(monitor: GLFWMonitor): GLFWVidMode =
         callFunc("glfwGetVideoMode", GLFWVidMode::class, monitor)

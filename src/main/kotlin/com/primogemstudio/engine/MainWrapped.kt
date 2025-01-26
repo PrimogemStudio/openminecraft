@@ -72,9 +72,9 @@ fun main() {
         ),
         allocator = null
     )
-    val dev = vkEnumeratePhysicalDevices(vkInstance.first, HeapInt()).first[0]
-    println(glfwGetRequiredInstanceExtensions(HeapInt()).toList())
-    vkGetPhysicalDeviceQueueFamilyProperties(dev, HeapInt()).forEach {
+    val dev = vkEnumeratePhysicalDevices(vkInstance.first).first[0]
+    println(glfwGetRequiredInstanceExtensions().toList())
+    vkGetPhysicalDeviceQueueFamilyProperties(dev).forEach {
         println(it.queueCount)
     }
     listOf(

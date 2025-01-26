@@ -1102,7 +1102,8 @@ object Vk10Funcs {
     fun vkDestroyInstance(instance: VkInstance, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyInstance", instance, allocator.allocate())
 
-    fun vkEnumeratePhysicalDevices(instance: VkInstance, count: HeapInt): Pair<List<VkPhysicalDevice>, Int> {
+    fun vkEnumeratePhysicalDevices(instance: VkInstance): Pair<List<VkPhysicalDevice>, Int> {
+        val count = HeapInt()
         callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Pair(listOf(), this)
         }
@@ -1149,9 +1150,9 @@ object Vk10Funcs {
         VkPhysicalDeviceProperties().apply { callVoidFunc("vkGetPhysicalDeviceProperties", physicalDevice, this) }
 
     fun vkGetPhysicalDeviceQueueFamilyProperties(
-        physicalDevice: VkPhysicalDevice,
-        count: HeapInt
+        physicalDevice: VkPhysicalDevice
     ): Array<VkQueueFamilyProperties> {
+        val count = HeapInt()
         callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, MemorySegment.NULL)
 
         val seg = Arena.ofConfined().allocate(24L * count.value())

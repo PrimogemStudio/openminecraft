@@ -15,10 +15,12 @@ object GLFWVulkanFuncs {
     fun glfwVulkanSupported(): Int =
         callFunc("glfwVulkanSupported", Int::class)
 
-    fun glfwGetRequiredInstanceExtensions(count: HeapInt): Array<String> =
-        callPointerFunc("glfwGetRequiredInstanceExtensions", count).toCPointerArray(count.value())
+    fun glfwGetRequiredInstanceExtensions(): Array<String> {
+        val count = HeapInt()
+        return callPointerFunc("glfwGetRequiredInstanceExtensions", count).toCPointerArray(count.value())
             .map { it.fetchString() }
             .toTypedArray()
+    }
 
     fun glfwGetInstanceProcAddress(instance: VkInstance, procname: String): MemorySegment =
         callPointerFunc("glfwGetInstanceProcAddress", instance, procname)
