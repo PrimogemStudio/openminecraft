@@ -28,6 +28,7 @@ tasks.jar {
 
     manifest {
         attributes["Main-Class"] = "com.primogemstudio.engine.MainWrappedKt"
+        attributes["Enable-Native-Access"] = "ALL-UNNAMED"
     }
 }
 

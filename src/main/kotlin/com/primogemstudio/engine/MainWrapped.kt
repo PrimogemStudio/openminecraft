@@ -22,22 +22,23 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebuffe
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSwapBuffers
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
+import com.primogemstudio.engine.bindings.vulkan.*
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_VERSION
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateDevice
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetPhysicalDeviceQueueFamilyProperties
-import com.primogemstudio.engine.bindings.vulkan.VkApplicationInfo
-import com.primogemstudio.engine.bindings.vulkan.VkInstanceCreateInfo
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.loader.Platform
+import com.primogemstudio.engine.vk.VkInstanceEngine
 import java.lang.foreign.MemorySegment
 import java.util.*
 
 fun main() {
-    /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
+    System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
     val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
-    instance.vkWindow!!.mainLoop()*/
+    instance.vkWindow!!.mainLoop()
 
     Platform.init()
 
@@ -73,13 +74,40 @@ fun main() {
     val dev = vkEnumeratePhysicalDevices(vkInstance.first, HeapInt()).first[0]
     println(vkGetPhysicalDeviceQueueFamilyProperties(dev, HeapInt()))
     listOf(
+        "STYPE",
+        "PNEXT",
+        "FLAGS",
+        "queueFamilyIndex",
+        "QUEUECOUNT",
+        "PQUEUEPRIORITIES",
         "SIZEOF"
     ).forEach {
         println(
-            it + " " + Class.forName("org.lwjgl.vulkan.VkPhysicalDeviceLimits")
+            "$it " + Class.forName("org.lwjgl.vulkan.VkDeviceQueueCreateInfo")
                 .getField(it.uppercase(Locale.getDefault())).get(null)
         )
     }
+    println(
+        vkCreateDevice(
+            dev,
+            VkDeviceCreateInfo(
+                null,
+                0,
+                listOf(
+                    VkDeviceQueueCreateInfo(
+                        null,
+                        0,
+                        0,
+                        listOf(1f)
+                    )
+                ),
+                listOf(),
+                listOf(),
+                VkPhysicalDeviceFeatures()
+            ),
+            null
+        )
+    )
 
     glfwSetCursor(
         window,

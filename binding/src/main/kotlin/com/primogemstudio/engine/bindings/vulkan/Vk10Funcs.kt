@@ -1,16 +1,15 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_APPLICATION_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.allocate
 import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.HeapMutRefArray
-import com.primogemstudio.engine.interfaces.heap.HeapMutStringArray
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.interfaces.heap.*
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.loader.Platform.sizetLength
@@ -98,6 +97,7 @@ class VkPhysicalDeviceFeatures : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = seg
 
     fun featureAt(i: Int): Boolean = seg.get(JAVA_INT, 4L * i) == 1
+    fun setFeature(i: Int, enabled: Boolean) = seg.set(JAVA_INT, 4L * i, if (enabled) 1 else 0)
 }
 
 class VkFormatProperties : IHeapVar<MemorySegment> {
@@ -345,6 +345,78 @@ class VkPhysicalDeviceMemoryProperties : IHeapVar<MemorySegment> {
         seg.get(JAVA_INT, 260).toUInt()
 
     fun memoryHeap(idx: Int): VkMemoryHeap = VkMemoryHeap(seg.asSlice(264L + idx * 16L, 16))
+}
+
+data class VkDeviceQueueCreateInfo(
+    private val next: IStruct?,
+    private val flags: Int,
+    private val queueFamilyIndex: Int,
+    private val queuePriorities: List<Float>
+) : IStruct {
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_LONG,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, queueFamilyIndex)
+        seg.set(JAVA_INT, sizetLength() + 16L, queuePriorities.size)
+        seg.set(
+            ADDRESS,
+            sizetLength() + 24L,
+            Arena.ofConfined().allocateArray(JAVA_FLOAT, *queuePriorities.toFloatArray())
+        )
+    }
+}
+
+data class VkDeviceCreateInfo(
+    private val next: IStruct?,
+    private val flags: Int,
+    private val queueCreateInfos: List<VkDeviceQueueCreateInfo>,
+    private val enabledLayers: List<String>,
+    private val enabledExtensions: List<String>,
+    private val features: VkPhysicalDeviceFeatures
+) : IStruct {
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, queueCreateInfos.size)
+        seg.set(ADDRESS, sizetLength() + 16L, Arena.ofConfined().allocate(40L * queueCreateInfos.size).apply {
+            for (i in queueCreateInfos.indices) {
+                queueCreateInfos[i].construct(asSlice(40L * i))
+            }
+        })
+        seg.set(JAVA_INT, sizetLength() * 2 + 16L, enabledLayers.size)
+        seg.set(ADDRESS, sizetLength() * 2 + 24L, HeapRefArray(enabledLayers.size).apply {
+            set(enabledLayers.map { it.toCString() }.toTypedArray())
+        }.ref())
+        seg.set(JAVA_INT, sizetLength() * 3 + 24L, enabledExtensions.size)
+        seg.set(ADDRESS, sizetLength() * 3 + 32L, HeapRefArray(enabledExtensions.size).apply {
+            set(enabledExtensions.map { it.toCString() }.toTypedArray())
+        }.ref())
+        seg.set(ADDRESS, sizetLength() * 4 + 32L, features.ref())
+    }
 }
 
 class VkDevice(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
@@ -1097,4 +1169,14 @@ object Vk10Funcs {
 
     fun vkGetInstanceProcAddr(instance: VkInstance, name: String): MemorySegment =
         callPointerFunc("vkGetInstanceProcAddr", instance, name.toCString())
+
+    fun vkCreateDevice(
+        physicalDevice: VkPhysicalDevice,
+        createInfo: VkDeviceCreateInfo,
+        allocator: VkAllocationCallbacks?
+    ): Pair<VkDevice, Int> {
+        val seg = Arena.ofConfined().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateDevice", Int::class, physicalDevice, createInfo, allocator.allocate(), seg)
+        return Pair(VkDevice(seg), retCode)
+    }
 }
