@@ -22,6 +22,7 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebuffe
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSwapBuffers
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
+import com.primogemstudio.engine.bindings.glfw.GLFWVulkanFuncs.glfwGetRequiredInstanceExtensions
 import com.primogemstudio.engine.bindings.vulkan.*
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_VERSION
@@ -72,6 +73,7 @@ fun main() {
         allocator = null
     )
     val dev = vkEnumeratePhysicalDevices(vkInstance.first, HeapInt()).first[0]
+    println(glfwGetRequiredInstanceExtensions(HeapInt()).toList())
     println(vkGetPhysicalDeviceQueueFamilyProperties(dev, HeapInt()))
     listOf(
         "SIZEOF"

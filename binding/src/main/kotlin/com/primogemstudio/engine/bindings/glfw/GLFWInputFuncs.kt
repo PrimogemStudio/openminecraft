@@ -6,10 +6,12 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.HeapDouble
 import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.HeapMutRefArray
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.interfaces.toCString
+import com.primogemstudio.engine.interfaces.toCPointerArray
+import com.primogemstudio.engine.interfaces.toCFloatArray
+import com.primogemstudio.engine.interfaces.toCByteArray
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.JAVA_BYTE
 import java.lang.foreign.ValueLayout.JAVA_FLOAT
@@ -129,7 +131,7 @@ fun interface GLFWDropFun : IStub {
         call(
             GLFWWindow(window),
             path_count,
-            HeapMutRefArray(paths, path_count).value().map { it.fetchString() }.toTypedArray()
+            paths.toCPointerArray(path_count).map { it.fetchString() }.toTypedArray()
         )
 
     override fun register(): Pair<String, MethodType> =
@@ -444,23 +446,11 @@ object GLFWInputFuncs {
     fun glfwJoystickPresent(jid: Int): Int =
         callFunc("glfwJoystickPresent", Int::class, jid)
 
-    fun glfwGetJoystickAxes(jid: Int, count: HeapInt): FloatArray =
-        HeapMutRefArray(callPointerFunc("glfwGetJoystickAxes", jid, count), count.value())
-            .value()
-            .map { it.get(JAVA_FLOAT, 0) }
-            .toFloatArray()
+    fun glfwGetJoystickAxes(jid: Int, count: HeapInt): FloatArray = callPointerFunc("glfwGetJoystickAxes", jid, count).toCFloatArray(count.value())
 
-    fun glfwGetJoystickButtons(jid: Int, count: HeapInt): ByteArray =
-        HeapMutRefArray(callPointerFunc("glfwGetJoystickButtons", jid, count), count.value())
-            .value()
-            .map { it.get(JAVA_BYTE, 0) }
-            .toByteArray()
+    fun glfwGetJoystickButtons(jid: Int, count: HeapInt): ByteArray = callPointerFunc("glfwGetJoystickButtons", jid, count).toCByteArray(count.value())
 
-    fun glfwGetJoystickHats(jid: Int, count: HeapInt): ByteArray =
-        HeapMutRefArray(callPointerFunc("glfwGetJoystickHats", jid, count), count.value())
-            .value()
-            .map { it.get(JAVA_BYTE, 0) }
-            .toByteArray()
+    fun glfwGetJoystickHats(jid: Int, count: HeapInt): ByteArray = callPointerFunc("glfwGetJoystickHats", jid, count).toCByteArray(count.value())
 
     fun glfwGetJoystickName(jid: Int): String =
         callPointerFunc("glfwGetJoystickName", jid).fetchString()

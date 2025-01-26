@@ -7,8 +7,8 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.allocate
 import com.primogemstudio.engine.interfaces.fetchString
+import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.HeapMutRefArray
 import java.lang.foreign.MemorySegment
 
 object GLFWVulkanFuncs {
@@ -16,8 +16,7 @@ object GLFWVulkanFuncs {
         callFunc("glfwVulkanSupported", Int::class)
 
     fun glfwGetRequiredInstanceExtensions(count: HeapInt): Array<String> =
-        HeapMutRefArray(callPointerFunc("glfwGetRequiredInstanceExtensions", count), count.value())
-            .value()
+        callPointerFunc("glfwGetRequiredInstanceExtensions", count).toCPointerArray(count.value())
             .map { it.fetchString() }
             .toTypedArray()
 

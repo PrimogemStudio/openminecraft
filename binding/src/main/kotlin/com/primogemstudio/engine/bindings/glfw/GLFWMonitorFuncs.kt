@@ -4,9 +4,9 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.fetchString
+import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.interfaces.heap.HeapFloat
 import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.HeapMutRefArray
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.stub.IStub
 import java.lang.foreign.Arena
@@ -60,10 +60,9 @@ fun interface GLFWMonitorFun : IStub {
 
 object GLFWMonitorFuncs {
     fun glfwGetMonitors(count: HeapInt): Array<GLFWMonitor> =
-        HeapMutRefArray(
-            callPointerFunc("glfwGetMonitors", count),
-            count.value()
-        ).value().map { GLFWMonitor(it) }.toTypedArray()
+        callPointerFunc("glfwGetMonitors", count).toCPointerArray(count.value())
+            .map { GLFWMonitor(it) }
+            .toTypedArray()
 
     fun glfwGetPrimaryMonitor(): GLFWMonitor =
         GLFWMonitor(callPointerFunc("glfwGetPrimaryMonitor"))
@@ -93,10 +92,9 @@ object GLFWMonitorFuncs {
         callPointerFunc("glfwSetMonitorCallback", callback)
 
     fun glfwGetVideoModes(monitor: GLFWMonitor, count: HeapInt): Array<GLFWVidMode> =
-        HeapMutRefArray(
-            callPointerFunc("glfwGetVideoModes", monitor, count),
-            count.value()
-        ).value().map { GLFWVidMode(it) }.toTypedArray()
+        callPointerFunc("glfwGetVideoModes", monitor, count).toCPointerArray(count.value())
+            .map { GLFWVidMode(it) }
+            .toTypedArray()
 
     fun glfwGetVideoMode(monitor: GLFWMonitor): GLFWVidMode =
         callFunc("glfwGetVideoMode", GLFWVidMode::class, monitor)

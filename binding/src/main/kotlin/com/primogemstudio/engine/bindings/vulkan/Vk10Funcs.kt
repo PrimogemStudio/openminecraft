@@ -13,6 +13,7 @@ import com.primogemstudio.engine.interfaces.heap.*
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.interfaces.toCStrArray
+import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import org.joml.Vector3f
 import java.lang.foreign.Arena
@@ -73,9 +74,9 @@ data class VkInstanceCreateInfo(
         seg.set(JAVA_INT, 8 * 1 + sizetLength() * 1L, flag)
         seg.set(ADDRESS, 8 * 2 + sizetLength() * 1L, appInfo.allocate())
         seg.set(JAVA_INT, 8 * 2 + sizetLength() * 2L, layers.size)
-        seg.set(ADDRESS, 8 * 3 + sizetLength() * 2L, HeapMutStringArray(layers.toTypedArray()).ref())
+        seg.set(ADDRESS, 8 * 3 + sizetLength() * 2L, layers.toTypedArray().toCStrArray())
         seg.set(JAVA_INT, 8 * 3 + sizetLength() * 3L, extensions.size)
-        seg.set(ADDRESS, 8 * 4 + sizetLength() * 3L, HeapMutStringArray(extensions.toTypedArray()).ref())
+        seg.set(ADDRESS, 8 * 4 + sizetLength() * 3L, extensions.toTypedArray().toCStrArray())
     }
 }
 
@@ -1112,7 +1113,7 @@ object Vk10Funcs {
             if (this != VK_SUCCESS) return Pair(listOf(), this)
         }
 
-        return Pair(HeapMutRefArray(seg, count.value()).value().map { VkPhysicalDevice(it) }, VK_SUCCESS)
+        return Pair(seg.toCPointerArray(count.value()).map { VkPhysicalDevice(it) }, VK_SUCCESS)
     }
 
     fun vkGetPhysicalDeviceFeatures(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceFeatures =
@@ -1157,8 +1158,8 @@ object Vk10Funcs {
         // Memory alignment requirements of vulkan icd loader
         val seg = Arena.ofConfined().allocate(sizetLength() * count.value() * 4L)
         callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, seg)
-
-        return HeapMutRefArray(seg, count.value()).value().map { VkQueueFamilyProperties(it) }
+        
+        return seg.toCPointerArray(count.value()).map { VkQueueFamilyProperties(it) }
     }
 
     fun vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceMemoryProperties =
