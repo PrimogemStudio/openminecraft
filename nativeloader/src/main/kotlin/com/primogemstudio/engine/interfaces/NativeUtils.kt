@@ -47,6 +47,20 @@ fun Array<String>.toCStrArray(): MemorySegment {
     }
 }
 
+fun <T: IStruct> Array<T>.toCStructArray(): MemorySegment {
+    val sizeArr = this.map { it.layout().byteSize() }
+    val seg = Arena.ofConfined().allocate(sizeArr.sum())
+    var currentOffset = 0L
+    var idx = 0
+    forEach {
+        val segPart = seg.asSlice(currentOffset, sizeArr[idx])
+        it.construct(segPart)
+        currentOffset += sizeArr[idx]
+        idx++
+    }
+    return seg
+}
+
 fun MemorySegment.toCPointerArray(length: Int): Array<MemorySegment> = (0 ..< length).map { this.reinterpret(length * sizetLength() * 1L).get(ADDRESS, it * sizetLength() * 1L) }.toTypedArray()
 fun MemorySegment.toCFloatArray(length: Int): FloatArray = (0 ..< length).map { this.reinterpret(length * 4L).get(JAVA_FLOAT, it * 4L) }.toFloatArray()
 fun MemorySegment.toCByteArray(length: Int): ByteArray = (0 ..< length).map { this.reinterpret(length * 1L).get(JAVA_BYTE, it * 1L) }.toByteArray()

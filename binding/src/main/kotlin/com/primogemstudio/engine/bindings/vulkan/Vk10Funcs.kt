@@ -14,6 +14,7 @@ import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.interfaces.toCStrArray
 import com.primogemstudio.engine.interfaces.toCPointerArray
+import com.primogemstudio.engine.interfaces.toCStructArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import org.joml.Vector3f
 import java.lang.foreign.Arena
@@ -404,11 +405,7 @@ data class VkDeviceCreateInfo(
         seg.set(ADDRESS, 8, next.allocate())
         seg.set(JAVA_INT, sizetLength() + 8L, flags)
         seg.set(JAVA_INT, sizetLength() + 12L, queueCreateInfos.size)
-        seg.set(ADDRESS, sizetLength() + 16L, Arena.ofConfined().allocate(40L * queueCreateInfos.size).apply {
-            for (i in queueCreateInfos.indices) {
-                queueCreateInfos[i].construct(asSlice(40L * i, 40L))
-            }
-        })
+        seg.set(ADDRESS, sizetLength() + 16L, queueCreateInfos.toTypedArray().toCStructArray())
         seg.set(JAVA_INT, sizetLength() * 2 + 16L, enabledLayers.size)
         seg.set(ADDRESS, sizetLength() * 2 + 24L, enabledLayers.toTypedArray().toCStrArray())
         seg.set(JAVA_INT, sizetLength() * 3 + 24L, enabledExtensions.size)
