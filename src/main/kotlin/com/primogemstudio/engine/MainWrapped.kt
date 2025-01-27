@@ -30,6 +30,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateDevice
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetPhysicalDeviceQueueFamilyProperties
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetDeviceQueue
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.vk.VkInstanceEngine
@@ -81,12 +82,11 @@ fun main() {
         "SIZEOF"
     ).forEach {
         println(
-            "$it " + Class.forName("org.lwjgl.vulkan.VkExtensionProperties")
+            "$it " + Class.forName("org.lwjgl.vulkan.VkLayerProperties")
                 .getField(it.uppercase(Locale.getDefault())).get(null)
         )
     }
-    println(
-        vkCreateDevice(
+    val devi = vkCreateDevice(
             dev,
             VkDeviceCreateInfo(
                 null,
@@ -104,8 +104,8 @@ fun main() {
                 VkPhysicalDeviceFeatures()
             ),
             null
-        ).first.ref()
-    )
+        ).first
+    println(vkGetDeviceQueue(devi, 0, 0).first.ref())
 
     glfwSetCursor(
         window,

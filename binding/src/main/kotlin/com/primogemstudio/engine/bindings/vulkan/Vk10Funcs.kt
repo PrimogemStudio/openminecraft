@@ -428,6 +428,21 @@ class VkExtensionProperties(private val seg: MemorySegment) : IHeapVar<MemorySeg
     val version: Int get() = seg.get(JAVA_INT, 256)
 }
 
+class VkLayerProperties(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val layerName: String get() = seg.get(ADDRESS, 0).fetchString()
+    val specVersion: Int get() = seg.get(JAVA_INT, 256)
+    val implementationVersion: Int get() = seg.get(JAVA_INT, 260)
+    val description: String get() = seg.get(ADDRESS, 264).fetchString()
+}
+
+class VkQueue(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -1213,5 +1228,35 @@ object Vk10Funcs {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
         return Pair(seg.fromCStructArray(count.value(), 260, { VkExtensionProperties(it) }).toTypedArray(), VK_SUCCESS)
+    }
+
+    fun vkEnumerateInstanceLayerProperties(): Pair<Array<VkLayerProperties>, Int> {
+        val count = HeapInt()
+        callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, MemorySegment.NULL).apply {
+            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+        }
+        val seg = Arena.ofConfined().allocate(520L * count.value())
+        callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, seg).apply {
+            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+        }
+        return Pair(seg.fromCStructArray(count.value(), 520, { VkLayerProperties(it) }).toTypedArray(), VK_SUCCESS)
+    }
+
+    fun vkEnumerateDeviceLayerProperties(physicalDevice: VkPhysicalDevice): Pair<Array<VkLayerProperties>, Int> {
+        val count = HeapInt()
+        callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, MemorySegment.NULL).apply {
+            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+        }
+        val seg = Arena.ofConfined().allocate(520L * count.value())
+        callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, seg).apply {
+            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+        }
+        return Pair(seg.fromCStructArray(count.value(), 520, { VkLayerProperties(it) }).toTypedArray(), VK_SUCCESS)
+    }
+
+    fun vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: Int, queueIndex: Int): Pair<VkQueue, Int> {
+        val seg = Arena.ofConfined().allocate(ADDRESS)
+        val retCode = callFunc("vkGetDeviceQueue", Int::class, device, queueFamilyIndex, queueIndex, seg)
+        return Pair(VkQueue(seg.get(ADDRESS, 0)), retCode)
     }
 }
