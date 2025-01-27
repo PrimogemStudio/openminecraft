@@ -84,7 +84,7 @@ fun main() {
         "SIZEOF"
     ).forEach {
         logger.info(
-            "$it " + Class.forName("org.lwjgl.vulkan.VkMemoryAllocateInfo")
+            "$it " + Class.forName("org.lwjgl.vulkan.VkSparseImageMemoryRequirements")
                 .getField(it.uppercase(Locale.getDefault())).get(null)
         )
     }

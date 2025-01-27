@@ -568,6 +568,26 @@ class VkMemoryRequirements: IHeapVar<MemorySegment> {
     val type: UInt get() = seg.get(JAVA_INT, 16).toUInt()
 }
 
+class VkSparseImageFormatProperties(private val seg: MemorySegment): IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val aspectMask: Int get() = seg.get(JAVA_INT, 0)
+    val imageGranularity: Vector3f get() = Vector3f(seg.get(JAVA_FLOAT, 4), seg.get(JAVA_FLOAT, 8), seg.get(JAVA_FLOAT, 12))
+    val flags: Int get() = seg.get(JAVA_INT, 16)
+}
+
+class VkSparseImageMemoryRequirements(private val seg: MemorySegment): IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val formatProperties: VkSparseImageFormatProperties get() = VkSparseImageFormatProperties(seg.asSlice(0, 20))
+    val imageMipTailFirstLod: UInt get() = seg.get(JAVA_INT, 20).toUInt()
+    val imageMipTailSize: Long get() = seg.get(JAVA_LONG, 24)
+    val imageMipTailOffset: Long get() = seg.get(JAVA_LONG, 32)
+    val imageMipTailStride: Long get() = seg.get(JAVA_LONG, 40)
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -1426,4 +1446,12 @@ object Vk10Funcs {
 
     fun vkGetImageMemoryRequirements(device: VkDevice, image: VkImage): VkMemoryRequirements =
         VkMemoryRequirements().apply { callVoidFunc("vkGetImageMemoryRequirements", device, image, this) }
+
+    fun vkGetImageSparseMemoryRequirements(device: VkDevice, image: VkImage): Array<VkSparseImageMemoryRequirements> {
+        val count = HeapInt()
+        callVoidFunc("vkGetImageSparseMemoryRequirements", device, image, count, MemorySegment.NULL)
+        val seg = Arena.ofConfined().allocate(48L * count.value())
+        callVoidFunc("vkGetImageSparseMemoryRequirements", device, image, count, seg)
+        return seg.fromCStructArray(count.value(), 48, { VkSparseImageMemoryRequirements(it) }).toTypedArray()
+    }
 }
