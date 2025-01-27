@@ -4,6 +4,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_APP
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SUBMIT_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -441,6 +442,53 @@ class VkLayerProperties(private val seg: MemorySegment) : IHeapVar<MemorySegment
 class VkQueue(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun ref(): MemorySegment = seg
     override fun value(): MemorySegment = seg
+}
+
+class VkFence(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
+class VkSemaphore(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
+class VkCommandBuffer(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
+data class VkSubmitInfo(
+    private val next: IStruct?, 
+    private val waitSemaphores: List<VkSemaphore>, 
+    private val waitDstStageMask: List<Int>, 
+    private val commandBuffers: List<VkCommandBuffer>, 
+    private val signalSemaphores: List<VkSemaphore>
+): IStruct {
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_SUBMIT_INFO)
+        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.size)
+        seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.toTypedArray().toCStructArray())
+        seg.set(ADDRESS, sizetLength() * 2 + 16L, Arena.ofConfined().allocateArray(JAVA_INT, *waitDstStageMask.toIntArray()))
+        seg.set(JAVA_INT, sizetLength() * 3 + 16L, commandBuffers.size)
+        seg.set(ADDRESS, sizetLength() * 3 + 24L, commandBuffers.toTypedArray().toCStructArray())
+        seg.set(JAVA_INT, sizetLength() * 4 + 24L, signalSemaphores.size)
+        seg.set(ADDRESS, sizetLength() * 4 + 32L, signalSemaphores.toTypedArray().toCStructArray())
+    }
 }
 
 object Vk10Funcs {
@@ -1259,4 +1307,7 @@ object Vk10Funcs {
         val retCode = callFunc("vkGetDeviceQueue", Int::class, device, queueFamilyIndex, queueIndex, seg)
         return Pair(VkQueue(seg.get(ADDRESS, 0)), retCode)
     }
+
+    fun vkQueueSubmit(queue: VkQueue, submits: Array<VkSubmitInfo>, fence: VkFence): Int = 
+        callFunc("vkQueueSubmit", Int::class, queue, submits.toCStructArray(), fence)
 }

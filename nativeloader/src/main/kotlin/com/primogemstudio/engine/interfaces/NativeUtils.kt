@@ -3,6 +3,7 @@ package com.primogemstudio.engine.interfaces
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.struct.IStruct
+import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.ValueLayout.ADDRESS
 import java.lang.foreign.ValueLayout.JAVA_FLOAT
@@ -57,6 +58,15 @@ fun <T: IStruct> Array<T>.toCStructArray(): MemorySegment {
         it.construct(segPart)
         currentOffset += sizeArr[idx]
         idx++
+    }
+    return seg
+}
+fun <T: IHeapVar<MemorySegment>> Array<T>.toCStructArray(): MemorySegment {
+    val seg = Arena.ofConfined().allocate(this.size * sizetLength() * 1L)
+    var i = 0
+    forEach {
+        seg.set(ADDRESS, i * sizetLength() * 1L, it.ref())
+        i++
     }
     return seg
 }

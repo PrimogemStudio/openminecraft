@@ -34,6 +34,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetDeviceQueue
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.vk.VkInstanceEngine
+import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.MemorySegment
 import java.util.*
 
@@ -41,6 +42,8 @@ fun main() {
     /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
     val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
     instance.vkWindow!!.mainLoop()*/
+
+    val logger = LoggerFactory.getLogger()
 
     Platform.init()
 
@@ -74,15 +77,11 @@ fun main() {
         allocator = null
     )
     val dev = vkEnumeratePhysicalDevices(vkInstance.first).first[0]
-    println(glfwGetRequiredInstanceExtensions().toList())
-    vkGetPhysicalDeviceQueueFamilyProperties(dev).forEach {
-        println(it.queueCount)
-    }
     listOf(
         "SIZEOF"
     ).forEach {
-        println(
-            "$it " + Class.forName("org.lwjgl.vulkan.VkLayerProperties")
+        logger.info(
+            "$it " + Class.forName("org.lwjgl.vulkan.VkSubmitInfo")
                 .getField(it.uppercase(Locale.getDefault())).get(null)
         )
     }
@@ -106,6 +105,14 @@ fun main() {
             null
         ).first
     println(vkGetDeviceQueue(devi, 0, 0).first.ref())
+
+    val t = System.currentTimeMillis()
+    var i = 0
+    while (System.currentTimeMillis() - t < 1000) {
+        VkSubmitInfo(null, listOf(VkSemaphore(MemorySegment.NULL)), listOf(11), listOf(VkCommandBuffer(MemorySegment.NULL)), listOf(VkSemaphore(MemorySegment.NULL))).allocateLocal()
+        i++
+    }
+    logger.info("$i")
 
     glfwSetCursor(
         window,
