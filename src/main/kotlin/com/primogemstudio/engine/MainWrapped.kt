@@ -32,12 +32,14 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDe
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetPhysicalDeviceQueueFamilyProperties
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkAllocateMemory
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkFreeMemory
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkMapMemory
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.vk.VkInstanceEngine
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.MemorySegment
 import java.util.*
+import java.lang.foreign.Arena
 
 fun main() {
     /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
@@ -86,6 +88,29 @@ fun main() {
                 .getField(it.uppercase(Locale.getDefault())).get(null)
         )
     }
+    val devi = vkCreateDevice(
+            dev,
+            VkDeviceCreateInfo(
+                null,
+                0,
+                listOf(
+                    VkDeviceQueueCreateInfo(
+                        null,
+                        0,
+                        0,
+                        listOf(1f)
+                    )
+                ),
+                listOf(),
+                listOf(),
+                VkPhysicalDeviceFeatures()
+            ),
+            null
+        ).first
+    val mem = vkAllocateMemory(devi, VkMemoryAllocateInfo(null, 128L, 0), null)
+    val seg = Arena.ofConfined().allocate(128L)
+    vkMapMemory(devi, mem.first, 0, 128, 0, seg)
+    println(vkFreeMemory(devi, mem.first, null))
 
     val t = System.currentTimeMillis()
     var i = 0

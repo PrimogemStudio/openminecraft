@@ -6,6 +6,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_DEV
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SUBMIT_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -515,6 +516,34 @@ data class VkMemoryAllocateInfo(
         seg.set(JAVA_LONG, sizetLength() + 8L, allocationSize)
         seg.set(JAVA_INT, sizetLength() + 16L, typeIndex)
     }
+}
+
+data class VkMappedMemoryRange(
+    private val next: IStruct?, 
+    private val memory: VkDeviceMemory, 
+    private val offset: Long, 
+    private val length: Long
+): IStruct {
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        ADDRESS,
+        JAVA_LONG,
+        JAVA_LONG
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE)
+        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(ADDRESS, sizetLength() + 8L, memory.ref())
+        seg.set(JAVA_LONG, sizetLength() * 2 + 8L, offset)
+        seg.set(JAVA_LONG, sizetLength() * 2 + 16L, length)
+    }
+}
+
+class VkBuffer(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
 }
 
 object Vk10Funcs {
@@ -1351,4 +1380,24 @@ object Vk10Funcs {
 
     fun vkFreeMemory(device: VkDevice, memory: VkDeviceMemory, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkFreeMemory", device, memory, allocator.allocate())
+
+    fun vkMapMemory(device: VkDevice, memory: VkDeviceMemory, offset: Long, size: Long, flags: Int, data: MemorySegment): Int {
+        val seg = Arena.ofConfined().allocate(ADDRESS)
+        seg.set(ADDRESS, 0, data)
+        return callFunc("vkMapMemory", Int::class, device, memory, offset, size, flags, seg)
+    }
+
+    fun vkFlushMappedMemoryRanges(device: VkDevice, ranges: Array<VkMappedMemoryRange>): Int =
+        callFunc("vkFlushMappedMemoryRanges", Int::class, device, ranges.toCStructArray())
+
+    fun vkInvalidateMappedMemoryRanges(device: VkDevice, ranges: Array<VkMappedMemoryRange>): Int =
+        callFunc("vkInvalidateMappedMemoryRanges", Int::class, device, ranges.toCStructArray())
+
+    fun vkGetDeviceMemoryCommitment(device: VkDevice, memory: VkDeviceMemory, committedMemoryInBytes: HeapLong) =
+        callVoidFunc("vkGetDeviceMemoryCommitment", device, memory, committedMemoryInBytes)
+
+    fun vkBindBufferMemory(device: VkDevice, buffer: VkBuffer, memory: VkDeviceMemory, offset: Long): Int =
+        callFunc("vkBindBufferMemory", Int::class, device, buffer, memory, offset)
+
+    
 }
