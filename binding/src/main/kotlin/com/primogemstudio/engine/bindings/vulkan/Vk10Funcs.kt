@@ -551,6 +551,23 @@ class VkImage(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = seg
 }
 
+class VkMemoryRequirements: IHeapVar<MemorySegment> {
+    private val seg: MemorySegment = Arena.ofConfined().allocate(
+        MemoryLayout.structLayout(
+            JAVA_LONG, 
+            JAVA_LONG, 
+            JAVA_INT
+        )
+    )
+
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val size: Long get() = seg.get(JAVA_LONG, 0)
+    val alignment: Long get() = seg.get(JAVA_LONG, 8)
+    val type: UInt get() = seg.get(JAVA_INT, 16).toUInt()
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -1406,4 +1423,7 @@ object Vk10Funcs {
 
     fun vkBindImageMemory(device: VkDevice, image: VkImage, memory: VkDeviceMemory, offset: Long): Int =
         callFunc("vkBindImageMemory", Int::class, device, image, memory, offset)
+
+    fun vkGetImageMemoryRequirements(device: VkDevice, image: VkImage): VkMemoryRequirements =
+        VkMemoryRequirements().apply { callVoidFunc("vkGetImageMemoryRequirements", device, image, this) }
 }
