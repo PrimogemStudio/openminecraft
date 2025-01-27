@@ -30,7 +30,8 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateDevice
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetPhysicalDeviceQueueFamilyProperties
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetDeviceQueue
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkAllocateMemory
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkFreeMemory
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.vk.VkInstanceEngine
@@ -81,30 +82,10 @@ fun main() {
         "SIZEOF"
     ).forEach {
         logger.info(
-            "$it " + Class.forName("org.lwjgl.vulkan.VkSubmitInfo")
+            "$it " + Class.forName("org.lwjgl.vulkan.VkMemoryAllocateInfo")
                 .getField(it.uppercase(Locale.getDefault())).get(null)
         )
     }
-    val devi = vkCreateDevice(
-            dev,
-            VkDeviceCreateInfo(
-                null,
-                0,
-                listOf(
-                    VkDeviceQueueCreateInfo(
-                        null,
-                        0,
-                        0,
-                        listOf(1f)
-                    )
-                ),
-                listOf(),
-                listOf(),
-                VkPhysicalDeviceFeatures()
-            ),
-            null
-        ).first
-    println(vkGetDeviceQueue(devi, 0, 0).first.ref())
 
     val t = System.currentTimeMillis()
     var i = 0
