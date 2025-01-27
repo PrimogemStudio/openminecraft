@@ -546,6 +546,11 @@ class VkBuffer(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = seg
 }
 
+class VkImage(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -1399,5 +1404,6 @@ object Vk10Funcs {
     fun vkBindBufferMemory(device: VkDevice, buffer: VkBuffer, memory: VkDeviceMemory, offset: Long): Int =
         callFunc("vkBindBufferMemory", Int::class, device, buffer, memory, offset)
 
-    
+    fun vkBindImageMemory(device: VkDevice, image: VkImage, memory: VkDeviceMemory, offset: Long): Int =
+        callFunc("vkBindImageMemory", Int::class, device, image, memory, offset)
 }
