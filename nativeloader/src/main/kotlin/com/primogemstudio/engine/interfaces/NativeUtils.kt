@@ -36,8 +36,6 @@ fun String.toCString(): MemorySegment {
     return seg
 }
 
-fun IStruct?.allocate(): MemorySegment = this?.allocateLocal() ?: MemorySegment.NULL
-
 fun Array<String>.toCStrArray(): MemorySegment {
     return Arena.ofAuto().allocate(size * sizetLength() * 1L).apply {
         var i = 0
@@ -48,7 +46,7 @@ fun Array<String>.toCStrArray(): MemorySegment {
     }
 }
 
-fun <T: IStruct> Array<T>.toCStructArray(): MemorySegment {
+/*fun <T: IStruct> Array<T>.toCStructArray(): MemorySegment {
     val sizeArr = this.map { it.layout().byteSize() }
     val seg = Arena.ofAuto().allocate(sizeArr.sum())
     var currentOffset = 0L
@@ -60,7 +58,7 @@ fun <T: IStruct> Array<T>.toCStructArray(): MemorySegment {
         idx++
     }
     return seg
-}
+}*/
 fun <T: IHeapVar<MemorySegment>> Array<T>.toCStructArray(): MemorySegment {
     val seg = Arena.ofAuto().allocate(this.size * sizetLength() * 1L)
     var i = 0

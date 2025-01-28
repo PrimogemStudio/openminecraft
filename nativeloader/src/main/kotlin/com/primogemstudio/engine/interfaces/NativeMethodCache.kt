@@ -16,7 +16,6 @@ object NativeMethodCache {
     private val logger = LoggerFactory.getLogger()
     private val funcCache = mutableMapOf<String, MethodHandle>()
     private val stubCache = mutableMapOf<Any, MemorySegment>()
-    private val structCache = mutableMapOf<Any, Pair<MemorySegment, Int>>()
     private val linker = Linker.nativeLinker()
     private val symbolLookup = SymbolLookup.loaderLookup()
 
@@ -71,25 +70,7 @@ object NativeMethodCache {
         val argListNew = args.map {
             return@map when (it) {
                 is IHeapVar<*> -> it.ref()
-                is IStruct -> {
-                    val h = it.hashCode()
-                    if (structCache.containsKey(it) && structCache[it]!!.second == h) {
-                        structCache[it]!!.first
-                    } else {
-                        Arena.ofAuto().allocate(it.layout()).apply {
-                            it.construct(this)
-                            structCache[it] = Pair(this, h)
-                            logger.info(
-                                tr(
-                                    "engine.nativeloader.struct",
-                                    it::class.qualifiedName,
-                                    this.address().toHexString(),
-                                    h.toHexString()
-                                )
-                            )
-                        }
-                    }
-                }
+                is IStruct -> it.pointer()
                 else -> it
             }
         }
@@ -98,15 +79,18 @@ object NativeMethodCache {
             val rettypeDesc: MemoryLayout? = klassToLayout(rettype)
             val argDesc = args.map { klassToLayout(it::class) }.toTypedArray()
 
-            val funcP = symbolLookup.find(name).get()
+            val funcP = symbolLookup.find(name)
+            if (!funcP.isPresent) {
+                throw NullPointerException(tr("engine.nativeloader.func.fail", name))
+            }
             funcCache[name] = linker.downcallHandle(
-                funcP,
+                funcP.get(),
                 if (rettypeDesc == null) FunctionDescriptor.ofVoid(*argDesc) else FunctionDescriptor.of(
                     rettypeDesc,
                     *argDesc
                 )
             )
-            logger.info(tr("engine.nativeloader.func", name, funcP.address().toHexString()))
+            logger.info(tr("engine.nativeloader.func", name, funcP.get().address().toHexString()))
         }
 
         return if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(argListNew) as T

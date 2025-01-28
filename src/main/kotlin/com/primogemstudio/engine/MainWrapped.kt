@@ -34,7 +34,9 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkAllocateMemory
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkFreeMemory
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkMapMemory
 import com.primogemstudio.engine.interfaces.heap.HeapInt
+import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.interfaces.toCStructArray
 import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.vk.VkInstanceEngine
 import com.primogemstudio.engine.logging.LoggerFactory
@@ -94,32 +96,21 @@ fun main() {
             VkDeviceCreateInfo(
                 null,
                 0,
-                listOf(
+                ArrayStruct(arrayOf(
                     VkDeviceQueueCreateInfo(
                         null,
                         0,
                         0,
                         listOf(1f)
                     )
-                ),
+                )),
                 listOf(),
                 listOf(),
                 VkPhysicalDeviceFeatures()
             ),
             null
         ).first
-    val mem = vkAllocateMemory(devi, VkMemoryAllocateInfo(null, 128L, 0), null)
-    val seg = Arena.ofAuto().allocate(128L)
-    vkMapMemory(devi, mem.first, 0, 128, 0, seg)
-    println(vkFreeMemory(devi, mem.first, null))
-
-    val t = System.currentTimeMillis()
-    var i = 0
-    while (System.currentTimeMillis() - t < 1000) {
-        VkSubmitInfo(null, listOf(VkSemaphore(MemorySegment.NULL)), listOf(11), listOf(VkCommandBuffer(MemorySegment.NULL)), listOf(VkSemaphore(MemorySegment.NULL))).allocateLocal()
-        i++
-    }
-    logger.info("$i")
+    println(devi)
 
     glfwSetCursor(
         window,

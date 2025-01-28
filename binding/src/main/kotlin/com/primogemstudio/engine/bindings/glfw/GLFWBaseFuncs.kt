@@ -91,7 +91,11 @@ data class GLFWAllocator(
     private val allocator: GLFWAllocateFun,
     private val reallocator: GLFWReallocateFun,
     private val deallocator: GLFWDeallocateFun
-) : IStruct {
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(ADDRESS, ADDRESS, ADDRESS)
     override fun construct(seg: MemorySegment) {
         seg.set(ADDRESS, 0, constructStub(GLFWAllocateFun::class, allocator))

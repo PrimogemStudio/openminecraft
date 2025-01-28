@@ -100,7 +100,11 @@ data class VkAllocationCallbacks(
     private val freeFunc: VkFreeFunc,
     private val internalAllocationFunc: VkInternalMemNotificationFunc,
     private val internalFreeFunc: VkInternalMemNotificationFunc
-): IStruct {
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         ADDRESS,
         ADDRESS,

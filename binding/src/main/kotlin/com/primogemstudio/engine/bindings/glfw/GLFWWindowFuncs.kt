@@ -27,7 +27,11 @@ data class GLFWImage(
     private val width: Int,
     private val height: Int,
     private val pixels: ByteArray
-) : IStruct {
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(JAVA_INT, JAVA_INT, ADDRESS)
     override fun construct(seg: MemorySegment) {
         val parr = Arena.ofAuto().allocate(pixels.size.toLong())

@@ -11,10 +11,9 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BIN
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.allocate
 import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.*
-import com.primogemstudio.engine.interfaces.struct.IStruct
+import com.primogemstudio.engine.interfaces.struct.*
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.interfaces.toCStrArray
 import com.primogemstudio.engine.interfaces.toCPointerArray
@@ -34,7 +33,11 @@ data class VkApplicationInfo(
     private val engineName: String,
     private val engineVersion: Int,
     private val apiVersion: Int
-) : IStruct {
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS_UNALIGNED,
@@ -47,7 +50,7 @@ data class VkApplicationInfo(
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_APPLICATION_INFO)
-        seg.set(ADDRESS, 8 * 1, next.allocate())
+        seg.set(ADDRESS, 8 * 1, next?.pointer()?: MemorySegment.NULL)
         seg.set(ADDRESS, 8 * 1 + sizetLength() * 1L, appName.toCString())
         seg.set(JAVA_INT, 8 * 1 + sizetLength() * 2L, appVersion)
         seg.set(ADDRESS, 8 * 2 + sizetLength() * 2L, engineName.toCString())
@@ -62,7 +65,11 @@ data class VkInstanceCreateInfo(
     private val appInfo: VkApplicationInfo,
     private val layers: List<String> = listOf(),
     private val extensions: List<String> = listOf(),
-) : IStruct {
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS,
@@ -76,9 +83,9 @@ data class VkInstanceCreateInfo(
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
-        seg.set(ADDRESS, 8 * 1, next?.allocateLocal() ?: MemorySegment.NULL)
+        seg.set(ADDRESS, 8 * 1, next?.pointer() ?: MemorySegment.NULL)
         seg.set(JAVA_INT, 8 * 1 + sizetLength() * 1L, flag)
-        seg.set(ADDRESS, 8 * 2 + sizetLength() * 1L, appInfo.allocate())
+        seg.set(ADDRESS, 8 * 2 + sizetLength() * 1L, appInfo.pointer())
         seg.set(JAVA_INT, 8 * 2 + sizetLength() * 2L, layers.size)
         seg.set(ADDRESS, 8 * 3 + sizetLength() * 2L, layers.toTypedArray().toCStrArray())
         seg.set(JAVA_INT, 8 * 3 + sizetLength() * 3L, extensions.size)
@@ -360,7 +367,11 @@ data class VkDeviceQueueCreateInfo(
     private val flags: Int = 0,
     private val queueFamilyIndex: Int,
     private val queuePriorities: List<Float>
-) : IStruct {
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS,
@@ -372,7 +383,7 @@ data class VkDeviceQueueCreateInfo(
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO)
-        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
         seg.set(JAVA_INT, sizetLength() + 8L, flags)
         seg.set(JAVA_INT, sizetLength() + 12L, queueFamilyIndex)
         seg.set(JAVA_INT, sizetLength() + 16L, queuePriorities.size)
@@ -387,11 +398,15 @@ data class VkDeviceQueueCreateInfo(
 data class VkDeviceCreateInfo(
     private val next: IStruct? = null,
     private val flags: Int = 0,
-    private val queueCreateInfos: List<VkDeviceQueueCreateInfo>,
+    private val queueCreateInfos: ArrayStruct<VkDeviceQueueCreateInfo>,
     private val enabledLayers: List<String> = listOf(),
     private val enabledExtensions: List<String> = listOf(),
     private val features: VkPhysicalDeviceFeatures = VkPhysicalDeviceFeatures()
-) : IStruct {
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS,
@@ -407,10 +422,10 @@ data class VkDeviceCreateInfo(
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO)
-        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
         seg.set(JAVA_INT, sizetLength() + 8L, flags)
-        seg.set(JAVA_INT, sizetLength() + 12L, queueCreateInfos.size)
-        seg.set(ADDRESS, sizetLength() + 16L, queueCreateInfos.toTypedArray().toCStructArray())
+        seg.set(JAVA_INT, sizetLength() + 12L, queueCreateInfos.arr.size)
+        seg.set(ADDRESS, sizetLength() + 16L, queueCreateInfos.pointer())
         seg.set(JAVA_INT, sizetLength() * 2 + 16L, enabledLayers.size)
         seg.set(ADDRESS, sizetLength() * 2 + 24L, enabledLayers.toTypedArray().toCStrArray())
         seg.set(JAVA_INT, sizetLength() * 3 + 24L, enabledExtensions.size)
@@ -468,7 +483,11 @@ data class VkSubmitInfo(
     private val waitDstStageMask: List<Int>, 
     private val commandBuffers: List<VkCommandBuffer>, 
     private val signalSemaphores: List<VkSemaphore>
-): IStruct {
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS,
@@ -483,7 +502,7 @@ data class VkSubmitInfo(
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_SUBMIT_INFO)
-        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
         seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.size)
         seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.toTypedArray().toCStructArray())
         seg.set(ADDRESS, sizetLength() * 2 + 16L, Arena.ofAuto().allocateArray(JAVA_INT, *waitDstStageMask.toIntArray()))
@@ -503,7 +522,11 @@ data class VkMemoryAllocateInfo(
     private val next: IStruct? = null, 
     private val allocationSize: Long, 
     private val typeIndex: Int
-): IStruct {
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS,
@@ -513,7 +536,7 @@ data class VkMemoryAllocateInfo(
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO)
-        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
         seg.set(JAVA_LONG, sizetLength() + 8L, allocationSize)
         seg.set(JAVA_INT, sizetLength() + 16L, typeIndex)
     }
@@ -524,7 +547,11 @@ data class VkMappedMemoryRange(
     private val memory: VkDeviceMemory, 
     private val offset: Long, 
     private val length: Long
-): IStruct {
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS,
@@ -535,7 +562,7 @@ data class VkMappedMemoryRange(
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE)
-        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
         seg.set(ADDRESS, sizetLength() + 8L, memory.ref())
         seg.set(JAVA_LONG, sizetLength() * 2 + 8L, offset)
         seg.set(JAVA_LONG, sizetLength() * 2 + 16L, length)
@@ -592,7 +619,11 @@ class VkSparseImageMemoryRequirements(private val seg: MemorySegment): IHeapVar<
 data class VkBindSparseInfo(
     private val next: IStruct? = null, 
     private val waitSemaphores: List<VkSemaphore>, 
-): IStruct {
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS,
@@ -610,7 +641,7 @@ data class VkBindSparseInfo(
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_BIND_SPARSE_INFO)
-        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
         seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.size)
         seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.toTypedArray().toCStructArray())
     }
@@ -1291,12 +1322,12 @@ object Vk10Funcs {
         allocator: VkAllocationCallbacks?
     ): Pair<VkInstance, Int> =
         Arena.ofAuto().allocate(ADDRESS).run {
-            val retCode = callFunc("vkCreateInstance", Int::class, createInfo, allocator.allocate(), this)
+            val retCode = callFunc("vkCreateInstance", Int::class, createInfo, allocator?.pointer()?: MemorySegment.NULL, this)
             Pair(VkInstance(get(ADDRESS, 0)), retCode)
         }
 
     fun vkDestroyInstance(instance: VkInstance, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyInstance", instance, allocator.allocate())
+        callVoidFunc("vkDestroyInstance", instance, allocator?.pointer()?: MemorySegment.NULL)
 
     fun vkEnumeratePhysicalDevices(instance: VkInstance): Pair<Array<VkPhysicalDevice>, Int> {
         val count = HeapInt()
@@ -1372,12 +1403,12 @@ object Vk10Funcs {
         allocator: VkAllocationCallbacks?
     ): Pair<VkDevice, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateDevice", Int::class, physicalDevice, createInfo, allocator.allocate(), seg)
+        val retCode = callFunc("vkCreateDevice", Int::class, physicalDevice, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
         return Pair(VkDevice(seg.get(ADDRESS, 0)), retCode)
     }
 
     fun vkDestroyDevice(device: VkDevice, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyDevice", device, allocator.allocate())
+        callVoidFunc("vkDestroyDevice", device, allocator?.pointer()?: MemorySegment.NULL)
 
     fun vkEnumerateInstanceExtensionProperties(layerName: String): Pair<Array<VkExtensionProperties>, Int> {
         val count = HeapInt()
@@ -1433,8 +1464,8 @@ object Vk10Funcs {
         return Pair(VkQueue(seg.get(ADDRESS, 0)), retCode)
     }
 
-    fun vkQueueSubmit(queue: VkQueue, submits: Array<VkSubmitInfo>, fence: VkFence): Int = 
-        callFunc("vkQueueSubmit", Int::class, queue, submits.toCStructArray(), fence)
+    fun vkQueueSubmit(queue: VkQueue, submits: ArrayStruct<VkSubmitInfo>, fence: VkFence): Int = 
+        callFunc("vkQueueSubmit", Int::class, queue, submits.arr.size, submits.pointer(), fence)
 
     fun vkQueueWaitIdle(queue: VkQueue): Int =
         callFunc("vkQueueWaitIdle", Int::class, queue)
@@ -1444,12 +1475,12 @@ object Vk10Funcs {
 
     fun vkAllocateMemory(device: VkDevice, allocateInfo: VkMemoryAllocateInfo, allocator: VkAllocationCallbacks?): Pair<VkDeviceMemory, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkAllocateMemory", Int::class, device, allocateInfo, allocator.allocate(), seg)
+        val retCode = callFunc("vkAllocateMemory", Int::class, device, allocateInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
         return Pair(VkDeviceMemory(seg.get(ADDRESS, 0)), retCode)
     }
 
     fun vkFreeMemory(device: VkDevice, memory: VkDeviceMemory, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkFreeMemory", device, memory, allocator.allocate())
+        callVoidFunc("vkFreeMemory", device, memory, allocator?.pointer()?: MemorySegment.NULL)
 
     fun vkMapMemory(device: VkDevice, memory: VkDeviceMemory, offset: Long, size: Long, flags: Int, data: MemorySegment): Int {
         val seg = Arena.ofAuto().allocate(ADDRESS)
@@ -1457,11 +1488,11 @@ object Vk10Funcs {
         return callFunc("vkMapMemory", Int::class, device, memory, offset, size, flags, seg)
     }
 
-    fun vkFlushMappedMemoryRanges(device: VkDevice, ranges: Array<VkMappedMemoryRange>): Int =
-        callFunc("vkFlushMappedMemoryRanges", Int::class, device, ranges.toCStructArray())
+    fun vkFlushMappedMemoryRanges(device: VkDevice, ranges: ArrayStruct<VkMappedMemoryRange>): Int =
+        callFunc("vkFlushMappedMemoryRanges", Int::class, device, ranges.arr.size, ranges.pointer())
 
-    fun vkInvalidateMappedMemoryRanges(device: VkDevice, ranges: Array<VkMappedMemoryRange>): Int =
-        callFunc("vkInvalidateMappedMemoryRanges", Int::class, device, ranges.toCStructArray())
+    fun vkInvalidateMappedMemoryRanges(device: VkDevice, ranges: ArrayStruct<VkMappedMemoryRange>): Int =
+        callFunc("vkInvalidateMappedMemoryRanges", Int::class, device, ranges.arr.size, ranges.pointer())
 
     fun vkGetDeviceMemoryCommitment(device: VkDevice, memory: VkDeviceMemory, committedMemoryInBytes: HeapLong) =
         callVoidFunc("vkGetDeviceMemoryCommitment", device, memory, committedMemoryInBytes)

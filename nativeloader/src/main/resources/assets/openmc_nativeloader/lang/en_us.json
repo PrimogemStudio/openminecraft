@@ -10,6 +10,6 @@
   "engine.nativeloader.load.fail": "%s loading failed",
   "engine.nativeloader.load.requiredfail": "Required lib loading failed",
   "engine.nativeloader.func": "Symbol %s linked (0x%s)",
-  "engine.nativeloader.stub": "Stub function constructed with type %s (0x%s)",
-  "engine.nativeloader.struct": "Struct cached with type %s (0x%s, hash: 0x%s)"
+  "engine.nativeloader.stub": "Stub function constructed with type %s (0x%s)", 
+  "engine.nativeloader.func.fail": "Unable to find symbol %s"
 }
