@@ -38,6 +38,11 @@ data class VkApplicationInfo(
         construct(seg)
     }
 
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS_UNALIGNED,
@@ -68,6 +73,12 @@ data class VkInstanceCreateInfo(
 ) : IStruct() {
     init {
         construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        appInfo.close()
+        super.close()
     }
 
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
@@ -372,6 +383,11 @@ data class VkDeviceQueueCreateInfo(
         construct(seg)
     }
 
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS,
@@ -405,6 +421,12 @@ data class VkDeviceCreateInfo(
 ) : IStruct() {
     init {
         construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        queueCreateInfos.close()
+        super.close()
     }
 
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
@@ -488,6 +510,14 @@ data class VkSubmitInfo(
         construct(seg)
     }
 
+    override fun close() {
+        next?.close()
+        waitSemaphores.close()
+        commandBuffers.close()
+        signalSemaphores.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS,
@@ -527,6 +557,11 @@ data class VkMemoryAllocateInfo(
         construct(seg)
     }
 
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG,
         ADDRESS,
@@ -550,6 +585,11 @@ data class VkMappedMemoryRange(
 ): IStruct() {
     init {
         construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
     }
 
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
@@ -678,6 +718,11 @@ data class VkSparseImageMemoryBind(
         construct(seg)
     }
 
+    override fun close() {
+        subresource.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         MemoryLayout.paddingLayout(12),
         MemoryLayout.paddingLayout(12),
@@ -709,6 +754,11 @@ data class VkSparseBufferMemoryBindInfo(
         construct(seg)
     }
 
+    override fun close() {
+        binds.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         ADDRESS,
         JAVA_LONG,
@@ -730,6 +780,11 @@ data class VkSparseImageOpaqueMemoryBindInfo(
         construct(seg)
     }
 
+    override fun close() {
+        binds.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         ADDRESS,
         JAVA_LONG,
@@ -745,10 +800,15 @@ data class VkSparseImageOpaqueMemoryBindInfo(
 
 data class VkSparseImageMemoryBindInfo(
     private val buffer: VkBuffer,
-        private val binds: ArrayStruct<VkSparseImageMemoryBind>
+    private val binds: ArrayStruct<VkSparseImageMemoryBind>
 ): IStruct() {
     init {
         construct(seg)
+    }
+
+    override fun close() {
+        binds.close()
+        super.close()
     }
 
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
@@ -774,6 +834,15 @@ data class VkBindSparseInfo(
 ): IStruct() {
     init {
         construct(seg)
+    }
+
+    override fun close() {
+        waitSemaphores.close()
+        bufferBinds.close()
+        imageOpaqueBinds.close()
+        imageBinds.close()
+        signalSemaphores.close()
+        super.close()
     }
 
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
@@ -813,6 +882,11 @@ data class VkFenceCreateInfo(
 ): IStruct() {
     init {
         construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
     }
 
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
