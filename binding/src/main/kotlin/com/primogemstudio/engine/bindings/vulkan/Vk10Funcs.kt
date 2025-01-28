@@ -1719,4 +1719,13 @@ object Vk10Funcs {
         val retCode = callFunc("vkCreateFence", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
         return Pair(VkFence(seg.get(ADDRESS, 0)), retCode)
     }
+
+    fun vkDestroyFence(device: VkDevice, fence: VkFence, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyFence", device, fence, allocator?.pointer()?: MemorySegment.NULL)
+
+    fun vkResetFences(device: VkDevice, fence: VkFence): Int =
+        callFunc("vkResetFences", Int::class, device, 1, fence)
+
+    fun vkResetFences(device: VkDevice, fences: List<VkFence>): Int =
+        callFunc("vkResetFences", Int::class, device, fences.size, fences.toTypedArray().toCStructArray())
 }

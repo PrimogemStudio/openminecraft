@@ -28,6 +28,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateDevice
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateFence
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkResetFences
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetPhysicalDeviceQueueFamilyProperties
@@ -111,7 +112,8 @@ fun main() {
             ),
             null
         ).first
-    println(vkCreateFence(devi, VkFenceCreateInfo(), null))
+    val fence = vkCreateFence(devi, VkFenceCreateInfo(), null).first
+    println(vkResetFences(devi, listOf(fence)))
 
     glfwSetCursor(
         window,

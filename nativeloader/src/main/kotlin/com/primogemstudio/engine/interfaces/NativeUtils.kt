@@ -46,19 +46,6 @@ fun Array<String>.toCStrArray(): MemorySegment {
     }
 }
 
-/*fun <T: IStruct> Array<T>.toCStructArray(): MemorySegment {
-    val sizeArr = this.map { it.layout().byteSize() }
-    val seg = Arena.ofAuto().allocate(sizeArr.sum())
-    var currentOffset = 0L
-    var idx = 0
-    forEach {
-        val segPart = seg.asSlice(currentOffset, sizeArr[idx])
-        it.construct(segPart)
-        currentOffset += sizeArr[idx]
-        idx++
-    }
-    return seg
-}*/
 fun <T: IHeapVar<MemorySegment>> Array<T>.toCStructArray(): MemorySegment {
     val seg = Arena.ofAuto().allocate(this.size * sizetLength() * 1L)
     var i = 0
