@@ -27,6 +27,7 @@ import com.primogemstudio.engine.bindings.vulkan.*
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateDevice
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateFence
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetPhysicalDeviceQueueFamilyProperties
@@ -87,7 +88,7 @@ fun main() {
         "SIZEOF"
     ).forEach {
         logger.info(
-            "$it " + Class.forName("org.lwjgl.vulkan.VkBindSparseInfo")
+            "$it " + Class.forName("org.lwjgl.vulkan.VkFenceCreateInfo")
                 .getField(it.uppercase(Locale.getDefault())).get(null)
         )
     }
@@ -110,7 +111,7 @@ fun main() {
             ),
             null
         ).first
-    println(devi)
+    println(vkCreateFence(devi, VkFenceCreateInfo(), null))
 
     glfwSetCursor(
         window,

@@ -8,6 +8,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SUB
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BIND_SPARSE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -804,6 +805,27 @@ data class VkBindSparseInfo(
         seg.set(ADDRESS, sizetLength() * 4 + 38L, imageBinds.pointer())
         seg.set(JAVA_INT, sizetLength() * 5 + 38L, signalSemaphores.size)
         seg.set(ADDRESS, sizetLength() * 5 + 46L, signalSemaphores.toTypedArray().toCStructArray())
+    }
+}
+
+data class VkFenceCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_FENCE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
+        seg.set(JAVA_INT, 16, flags)
     }
 }
 
@@ -1691,4 +1713,10 @@ object Vk10Funcs {
 
     fun vkQueueBindSparse(queue: VkQueue, bindInfo: ArrayStruct<VkBindSparseInfo>, fence: VkFence): Int =
         callFunc("vkQueueBindSparse", Int::class, queue, bindInfo.arr.size, bindInfo.pointer(), fence)
+
+    fun vkCreateFence(device: VkDevice, createInfo: VkFenceCreateInfo, allocator: VkAllocationCallbacks?): Pair<VkFence, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateFence", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        return Pair(VkFence(seg.get(ADDRESS, 0)), retCode)
+    }
 }
