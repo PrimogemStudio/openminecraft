@@ -36,10 +36,9 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetPhysicalDeviceQu
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkAllocateMemory
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkFreeMemory
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkMapMemory
-import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.struct.ArrayStruct
+import com.primogemstudio.engine.interfaces.heap.*
+import com.primogemstudio.engine.interfaces.struct.*
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.toCStructArray
 import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.vk.VkInstanceEngine
 import com.primogemstudio.engine.logging.LoggerFactory
@@ -114,14 +113,15 @@ fun main() {
             null
         ).first
     val fence = vkCreateFence(devi, VkFenceCreateInfo(), null).first
-    println(vkResetFences(devi, listOf(fence)))
+    val arr = PointerArrayStruct(arrayOf(fence))
+    println(vkResetFences(devi, arr))
+    arr.close()
 
     glfwSetCursor(
         window,
         glfwCreateCursor(GLFWImage(32, 32, (0 ..< 32 * 32 * 4).map { 0xcc.toByte() }.toByteArray()), 0, 0)
     )
 
-    // glfwShowWindow(window)
     glfwSetFramebufferSizeCallback(window) { _, width, height ->
         println("$width $height")
     }

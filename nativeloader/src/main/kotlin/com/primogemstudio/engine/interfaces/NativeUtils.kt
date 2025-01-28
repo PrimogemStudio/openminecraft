@@ -46,15 +46,6 @@ fun Array<String>.toCStrArray(): MemorySegment {
     }
 }
 
-fun <T: IHeapVar<MemorySegment>> Array<T>.toCStructArray(): MemorySegment {
-    val seg = Arena.ofAuto().allocate(this.size * sizetLength() * 1L)
-    var i = 0
-    forEach {
-        seg.set(ADDRESS, i * sizetLength() * 1L, it.ref())
-        i++
-    }
-    return seg
-}
 inline fun <T> MemorySegment.fromCStructArray(length: Int, structLength: Int, constructor: (MemorySegment) -> T): List<T> = (0 ..< length).map { this.asSlice(it * structLength * 1L, structLength * 1L) }.map { constructor(it) }
 
 fun MemorySegment.toCPointerArray(length: Int): Array<MemorySegment> = (0 ..< length).map { this.reinterpret(length * sizetLength() * 1L).get(ADDRESS, it * sizetLength() * 1L) }.toTypedArray()

@@ -18,7 +18,6 @@ import com.primogemstudio.engine.interfaces.struct.*
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.interfaces.toCStrArray
 import com.primogemstudio.engine.interfaces.toCPointerArray
-import com.primogemstudio.engine.interfaces.toCStructArray
 import com.primogemstudio.engine.interfaces.fromCStructArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import org.joml.Vector3i
@@ -480,10 +479,10 @@ class VkCommandBuffer(private val seg: MemorySegment) : IHeapVar<MemorySegment> 
 
 data class VkSubmitInfo(
     private val next: IStruct? = null, 
-    private val waitSemaphores: List<VkSemaphore>, 
+    private val waitSemaphores: PointerArrayStruct<VkSemaphore>,
     private val waitDstStageMask: List<Int>, 
-    private val commandBuffers: List<VkCommandBuffer>, 
-    private val signalSemaphores: List<VkSemaphore>
+    private val commandBuffers: PointerArrayStruct<VkCommandBuffer>,
+    private val signalSemaphores: PointerArrayStruct<VkSemaphore>
 ): IStruct() {
     init {
         construct(seg)
@@ -504,13 +503,13 @@ data class VkSubmitInfo(
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_SUBMIT_INFO)
         seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
-        seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.size)
-        seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.toTypedArray().toCStructArray())
+        seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.arr.size)
+        seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.pointer())
         seg.set(ADDRESS, sizetLength() * 2 + 16L, Arena.ofAuto().allocateArray(JAVA_INT, *waitDstStageMask.toIntArray()))
-        seg.set(JAVA_INT, sizetLength() * 3 + 16L, commandBuffers.size)
-        seg.set(ADDRESS, sizetLength() * 3 + 24L, commandBuffers.toTypedArray().toCStructArray())
-        seg.set(JAVA_INT, sizetLength() * 4 + 24L, signalSemaphores.size)
-        seg.set(ADDRESS, sizetLength() * 4 + 32L, signalSemaphores.toTypedArray().toCStructArray())
+        seg.set(JAVA_INT, sizetLength() * 3 + 16L, commandBuffers.arr.size)
+        seg.set(ADDRESS, sizetLength() * 3 + 24L, commandBuffers.pointer())
+        seg.set(JAVA_INT, sizetLength() * 4 + 24L, signalSemaphores.arr.size)
+        seg.set(ADDRESS, sizetLength() * 4 + 32L, signalSemaphores.pointer())
     }
 }
 
@@ -767,11 +766,11 @@ data class VkSparseImageMemoryBindInfo(
 
 data class VkBindSparseInfo(
     private val next: IStruct? = null, 
-    private val waitSemaphores: List<VkSemaphore>, 
+    private val waitSemaphores: PointerArrayStruct<VkSemaphore>,
     private val bufferBinds: ArrayStruct<VkSparseBufferMemoryBindInfo>, 
     private val imageOpaqueBinds: ArrayStruct<VkSparseImageOpaqueMemoryBindInfo>,
     private val imageBinds: ArrayStruct<VkSparseImageMemoryBindInfo>,
-    private val signalSemaphores: List<VkSemaphore>
+    private val signalSemaphores: PointerArrayStruct<VkSemaphore>
 ): IStruct() {
     init {
         construct(seg)
@@ -795,16 +794,16 @@ data class VkBindSparseInfo(
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_BIND_SPARSE_INFO)
         seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
-        seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.size)
-        seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.toTypedArray().toCStructArray())
+        seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.arr.size)
+        seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.pointer())
         seg.set(JAVA_INT, sizetLength() * 2 + 16L, bufferBinds.arr.size)
         seg.set(ADDRESS, sizetLength() * 2 + 24L, bufferBinds.pointer())
         seg.set(JAVA_INT, sizetLength() * 3 + 24L, imageOpaqueBinds.arr.size)
         seg.set(ADDRESS, sizetLength() * 3 + 30L, imageOpaqueBinds.pointer())
         seg.set(JAVA_INT, sizetLength() * 4 + 30L, imageBinds.arr.size)
         seg.set(ADDRESS, sizetLength() * 4 + 38L, imageBinds.pointer())
-        seg.set(JAVA_INT, sizetLength() * 5 + 38L, signalSemaphores.size)
-        seg.set(ADDRESS, sizetLength() * 5 + 46L, signalSemaphores.toTypedArray().toCStructArray())
+        seg.set(JAVA_INT, sizetLength() * 5 + 38L, signalSemaphores.arr.size)
+        seg.set(ADDRESS, sizetLength() * 5 + 46L, signalSemaphores.pointer())
     }
 }
 
@@ -1726,9 +1725,11 @@ object Vk10Funcs {
     fun vkResetFences(device: VkDevice, fence: VkFence): Int =
         callFunc("vkResetFences", Int::class, device, 1, fence)
 
-    fun vkResetFences(device: VkDevice, fences: List<VkFence>): Int =
-        callFunc("vkResetFences", Int::class, device, fences.size, fences.toTypedArray().toCStructArray())
+    fun vkResetFences(device: VkDevice, fences: PointerArrayStruct<VkFence>): Int =
+        callFunc("vkResetFences", Int::class, device, fences.arr.size, fences)
 
     fun vkGetFenceStatus(device: VkDevice, fence: VkFence): Int =
         callFunc("vkGetFenceStatus", Int::class, device, fence)
+
+    // fun vkWaitForFences(device: VkDevice, )
 }
