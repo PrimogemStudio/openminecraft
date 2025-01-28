@@ -1454,4 +1454,19 @@ object Vk10Funcs {
         callVoidFunc("vkGetImageSparseMemoryRequirements", device, image, count, seg)
         return seg.fromCStructArray(count.value(), 48, { VkSparseImageMemoryRequirements(it) }).toTypedArray()
     }
+
+    fun vkGetPhysicalDeviceSparseImageFormatProperties(
+        physicalDevice: VkPhysicalDevice, 
+        format: Int, 
+        type: Int, 
+        samples: Int, 
+        usage: Int, 
+        tiling: Int
+    ): Array<VkSparseImageMemoryRequirements> {
+        val count = HeapInt()
+        callVoidFunc("vkGetPhysicalDeviceSparseImageFormatProperties", physicalDevice, format, type, samples, usage, tiling, count, MemorySegment.NULL)
+        val seg = Arena.ofConfined().allocate(48L * count.value())
+        callVoidFunc("vkGetPhysicalDeviceSparseImageFormatProperties", physicalDevice, format, type, samples, usage, tiling, count, seg)
+        return seg.fromCStructArray(count.value(), 48, { VkSparseImageMemoryRequirements(it) }).toTypedArray()
+    }
 }
