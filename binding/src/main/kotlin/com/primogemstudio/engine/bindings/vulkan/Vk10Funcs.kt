@@ -20,7 +20,7 @@ import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.interfaces.toCStructArray
 import com.primogemstudio.engine.interfaces.fromCStructArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
-import org.joml.Vector3f
+import org.joml.Vector3i
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -142,7 +142,7 @@ class VkImageFormatProperties : IHeapVar<MemorySegment> {
     override fun ref(): MemorySegment = seg
     override fun value(): MemorySegment = seg
 
-    val maxExtent: Vector3f get() = Vector3f(seg.get(JAVA_FLOAT, 0), seg.get(JAVA_FLOAT, 4), seg.get(JAVA_FLOAT, 8))
+    val maxExtent: Vector3i get() = Vector3i(seg.get(JAVA_INT, 0), seg.get(JAVA_INT, 4), seg.get(JAVA_INT, 8))
     val maxMipLevels: UInt get() = seg.get(JAVA_INT, 12).toUInt()
     val maxArrayLayers: UInt get() = seg.get(JAVA_INT, 16).toUInt()
     val sampleCounts: Int get() = seg.get(JAVA_INT, 20)
@@ -314,11 +314,11 @@ class VkQueueFamilyProperties(private val seg: MemorySegment) : IHeapVar<MemoryS
     val queueFlags: Int get() = seg.get(JAVA_INT, 0)
     val queueCount: Int get() = seg.get(JAVA_INT, 4)
     val timestampValidBits: Int get() = seg.get(JAVA_INT, 8)
-    val minImageTransferGranularity: Vector3f
-        get() = Vector3f(
-            seg.get(JAVA_FLOAT, 12),
-            seg.get(JAVA_FLOAT, 16),
-            seg.get(JAVA_FLOAT, 20)
+    val minImageTransferGranularity: Vector3i
+        get() = Vector3i(
+            seg.get(JAVA_INT, 12),
+            seg.get(JAVA_INT, 16),
+            seg.get(JAVA_INT, 20)
         )
 }
 
@@ -601,7 +601,7 @@ class VkSparseImageFormatProperties(private val seg: MemorySegment): IHeapVar<Me
     override fun value(): MemorySegment = seg
 
     val aspectMask: Int get() = seg.get(JAVA_INT, 0)
-    val imageGranularity: Vector3f get() = Vector3f(seg.get(JAVA_FLOAT, 4), seg.get(JAVA_FLOAT, 8), seg.get(JAVA_FLOAT, 12))
+    val imageGranularity: Vector3i get() = Vector3i(seg.get(JAVA_INT, 4), seg.get(JAVA_INT, 8), seg.get(JAVA_INT, 12))
     val flags: Int get() = seg.get(JAVA_INT, 16)
 }
 
@@ -616,9 +616,161 @@ class VkSparseImageMemoryRequirements(private val seg: MemorySegment): IHeapVar<
     val imageMipTailStride: Long get() = seg.get(JAVA_LONG, 40)
 }
 
+data class VkSparseMemoryBind(
+    private val resourceOffset: Long, 
+    private val size: Long, 
+    private val memory: VkDeviceMemory, 
+    private val memoryOffset: Long, 
+    private val flags: Int
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG, 
+        JAVA_INT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_LONG, 0, resourceOffset)
+        seg.set(JAVA_LONG, 8, size)
+        seg.set(ADDRESS, 16, memory.ref())
+        seg.set(JAVA_LONG, sizetLength() + 16L, memoryOffset)
+        seg.set(JAVA_INT, sizetLength() + 24L, flags)
+    }
+}
+
+data class VkImageSubresource(
+    private val aspectMask: Int,
+    private val mipmap: Int,
+    private val arrayLayer: Int
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, aspectMask)
+        seg.set(JAVA_INT, 4, mipmap)
+        seg.set(JAVA_INT, 8, arrayLayer)
+    }
+}
+
+data class VkSparseImageMemoryBind(
+    private val subresource: VkImageSubresource,
+    private val offset: Vector3i,
+    private val extent: Vector3i,
+    private val memory: VkDeviceMemory,
+    private val memoryOffset: Long,
+    private val flags: Int
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        MemoryLayout.paddingLayout(12),
+        MemoryLayout.paddingLayout(12),
+        MemoryLayout.paddingLayout(12 + 4),
+        ADDRESS,
+        JAVA_LONG,
+        JAVA_LONG
+    )
+
+    override fun construct(seg: MemorySegment) {
+        subresource.construct(seg.asSlice(0, 12))
+        seg.set(JAVA_INT, 12, offset.x)
+        seg.set(JAVA_INT, 16, offset.y)
+        seg.set(JAVA_INT, 20, offset.z)
+        seg.set(JAVA_INT, 24, extent.x)
+        seg.set(JAVA_INT, 28, extent.y)
+        seg.set(JAVA_INT, 32, extent.z)
+        seg.set(ADDRESS, 40, memory.ref())
+        seg.set(JAVA_LONG, 48, memoryOffset)
+        seg.set(JAVA_INT, 56, flags)
+    }
+}
+
+data class VkSparseBufferMemoryBindInfo(
+    private val buffer: VkBuffer, 
+    private val binds: ArrayStruct<VkSparseMemoryBind>
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(ADDRESS, 0, buffer.ref())
+        seg.set(JAVA_INT, 8, binds.arr.size)
+        seg.set(ADDRESS, 16, binds.pointer())
+    }
+}
+
+data class VkSparseImageOpaqueMemoryBindInfo(
+    private val buffer: VkBuffer, 
+    private val binds: ArrayStruct<VkSparseImageMemoryBind>
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(ADDRESS, 0, buffer.ref())
+        seg.set(JAVA_INT, 8, binds.arr.size)
+        seg.set(ADDRESS, 16, binds.pointer())
+    }
+}
+
+data class VkSparseImageMemoryBindInfo(
+    private val buffer: VkBuffer,
+        private val binds: ArrayStruct<VkSparseImageMemoryBind>
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(ADDRESS, 0, buffer.ref())
+        seg.set(JAVA_INT, 8, binds.arr.size)
+        seg.set(ADDRESS, 16, binds.pointer())
+    }
+}
+
 data class VkBindSparseInfo(
     private val next: IStruct? = null, 
     private val waitSemaphores: List<VkSemaphore>, 
+    private val bufferBinds: ArrayStruct<VkSparseBufferMemoryBindInfo>, 
+    private val imageOpaqueBinds: ArrayStruct<VkSparseImageOpaqueMemoryBindInfo>,
+    private val imageBinds: ArrayStruct<VkSparseImageMemoryBindInfo>,
+    private val signalSemaphores: List<VkSemaphore>
 ): IStruct() {
     init {
         construct(seg)
@@ -644,6 +796,14 @@ data class VkBindSparseInfo(
         seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
         seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.size)
         seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.toTypedArray().toCStructArray())
+        seg.set(JAVA_INT, sizetLength() * 2 + 16L, bufferBinds.arr.size)
+        seg.set(ADDRESS, sizetLength() * 2 + 24L, bufferBinds.pointer())
+        seg.set(JAVA_INT, sizetLength() * 3 + 24L, imageOpaqueBinds.arr.size)
+        seg.set(ADDRESS, sizetLength() * 3 + 30L, imageOpaqueBinds.pointer())
+        seg.set(JAVA_INT, sizetLength() * 4 + 30L, imageBinds.arr.size)
+        seg.set(ADDRESS, sizetLength() * 4 + 38L, imageBinds.pointer())
+        seg.set(JAVA_INT, sizetLength() * 5 + 38L, signalSemaphores.size)
+        seg.set(ADDRESS, sizetLength() * 5 + 46L, signalSemaphores.toTypedArray().toCStructArray())
     }
 }
 
@@ -1528,4 +1688,7 @@ object Vk10Funcs {
         callVoidFunc("vkGetPhysicalDeviceSparseImageFormatProperties", physicalDevice, format, type, samples, usage, tiling, count, seg)
         return seg.fromCStructArray(count.value(), 48, { VkSparseImageMemoryRequirements(it) }).toTypedArray()
     }
+
+    fun vkQueueBindSparse(queue: VkQueue, bindInfo: ArrayStruct<VkBindSparseInfo>, fence: VkFence): Int =
+        callFunc("vkQueueBindSparse", Int::class, queue, bindInfo.arr.size, bindInfo.pointer(), fence)
 }
