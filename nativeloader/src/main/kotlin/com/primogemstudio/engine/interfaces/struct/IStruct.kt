@@ -7,5 +7,5 @@ import java.lang.foreign.MemorySegment
 interface IStruct {
     fun layout(): MemoryLayout
     fun construct(seg: MemorySegment)
-    fun allocateLocal(): MemorySegment = Arena.ofConfined().allocate(layout()).apply { construct(this) }
+    fun allocateLocal(): MemorySegment = Arena.ofAuto().allocate(layout()).apply { construct(this) }
 }

@@ -7,6 +7,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INS
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SUBMIT_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BIND_SPARSE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -96,7 +97,7 @@ class VkPhysicalDevice(private val seg: MemorySegment) : IHeapVar<MemorySegment>
 }
 
 class VkPhysicalDeviceFeatures : IHeapVar<MemorySegment> {
-    private val seg = Arena.ofConfined().allocate(MemoryLayout.structLayout(
+    private val seg = Arena.ofAuto().allocate(MemoryLayout.structLayout(
         *Array<MemoryLayout>(55) { _ -> JAVA_INT }
     ))
 
@@ -108,7 +109,7 @@ class VkPhysicalDeviceFeatures : IHeapVar<MemorySegment> {
 }
 
 class VkFormatProperties : IHeapVar<MemorySegment> {
-    private val seg = Arena.ofConfined().allocate(MemoryLayout.structLayout(
+    private val seg = Arena.ofAuto().allocate(MemoryLayout.structLayout(
         *Array<MemoryLayout>(3) { _ -> JAVA_INT }
     ))
 
@@ -121,7 +122,7 @@ class VkFormatProperties : IHeapVar<MemorySegment> {
 }
 
 class VkImageFormatProperties : IHeapVar<MemorySegment> {
-    private val seg = Arena.ofConfined().allocate(
+    private val seg = Arena.ofAuto().allocate(
         MemoryLayout.structLayout(
             JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT,
             JAVA_INT,
@@ -265,7 +266,7 @@ class VkPhysicalDeviceSparseProperties(private val seg: MemorySegment) : IHeapVa
 }
 
 class VkPhysicalDeviceProperties : IHeapVar<MemorySegment> {
-    private val seg = Arena.ofConfined().allocate(
+    private val seg = Arena.ofAuto().allocate(
         MemoryLayout.structLayout(
             JAVA_INT,
             JAVA_INT,
@@ -331,7 +332,7 @@ class VkMemoryHeap(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
 }
 
 class VkPhysicalDeviceMemoryProperties : IHeapVar<MemorySegment> {
-    private val seg: MemorySegment = Arena.ofConfined().allocate(
+    private val seg: MemorySegment = Arena.ofAuto().allocate(
         MemoryLayout.structLayout(
             JAVA_INT,
             MemoryLayout.paddingLayout(256),
@@ -355,7 +356,7 @@ class VkPhysicalDeviceMemoryProperties : IHeapVar<MemorySegment> {
 }
 
 data class VkDeviceQueueCreateInfo(
-    private val next: IStruct?,
+    private val next: IStruct? = null,
     private val flags: Int = 0,
     private val queueFamilyIndex: Int,
     private val queuePriorities: List<Float>
@@ -378,13 +379,13 @@ data class VkDeviceQueueCreateInfo(
         seg.set(
             ADDRESS,
             sizetLength() + 24L,
-            Arena.ofConfined().allocateArray(JAVA_FLOAT, *queuePriorities.toFloatArray())
+            Arena.ofAuto().allocateArray(JAVA_FLOAT, *queuePriorities.toFloatArray())
         )
     }
 }
 
 data class VkDeviceCreateInfo(
-    private val next: IStruct?,
+    private val next: IStruct? = null,
     private val flags: Int = 0,
     private val queueCreateInfos: List<VkDeviceQueueCreateInfo>,
     private val enabledLayers: List<String> = listOf(),
@@ -462,7 +463,7 @@ class VkCommandBuffer(private val seg: MemorySegment) : IHeapVar<MemorySegment> 
 }
 
 data class VkSubmitInfo(
-    private val next: IStruct?, 
+    private val next: IStruct? = null, 
     private val waitSemaphores: List<VkSemaphore>, 
     private val waitDstStageMask: List<Int>, 
     private val commandBuffers: List<VkCommandBuffer>, 
@@ -485,7 +486,7 @@ data class VkSubmitInfo(
         seg.set(ADDRESS, 8, next.allocate())
         seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.size)
         seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.toTypedArray().toCStructArray())
-        seg.set(ADDRESS, sizetLength() * 2 + 16L, Arena.ofConfined().allocateArray(JAVA_INT, *waitDstStageMask.toIntArray()))
+        seg.set(ADDRESS, sizetLength() * 2 + 16L, Arena.ofAuto().allocateArray(JAVA_INT, *waitDstStageMask.toIntArray()))
         seg.set(JAVA_INT, sizetLength() * 3 + 16L, commandBuffers.size)
         seg.set(ADDRESS, sizetLength() * 3 + 24L, commandBuffers.toTypedArray().toCStructArray())
         seg.set(JAVA_INT, sizetLength() * 4 + 24L, signalSemaphores.size)
@@ -499,7 +500,7 @@ class VkDeviceMemory(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
 }
 
 data class VkMemoryAllocateInfo(
-    private val next: IStruct?, 
+    private val next: IStruct? = null, 
     private val allocationSize: Long, 
     private val typeIndex: Int
 ): IStruct {
@@ -519,7 +520,7 @@ data class VkMemoryAllocateInfo(
 }
 
 data class VkMappedMemoryRange(
-    private val next: IStruct?, 
+    private val next: IStruct? = null, 
     private val memory: VkDeviceMemory, 
     private val offset: Long, 
     private val length: Long
@@ -552,7 +553,7 @@ class VkImage(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
 }
 
 class VkMemoryRequirements: IHeapVar<MemorySegment> {
-    private val seg: MemorySegment = Arena.ofConfined().allocate(
+    private val seg: MemorySegment = Arena.ofAuto().allocate(
         MemoryLayout.structLayout(
             JAVA_LONG, 
             JAVA_LONG, 
@@ -586,6 +587,33 @@ class VkSparseImageMemoryRequirements(private val seg: MemorySegment): IHeapVar<
     val imageMipTailSize: Long get() = seg.get(JAVA_LONG, 24)
     val imageMipTailOffset: Long get() = seg.get(JAVA_LONG, 32)
     val imageMipTailStride: Long get() = seg.get(JAVA_LONG, 40)
+}
+
+data class VkBindSparseInfo(
+    private val next: IStruct? = null, 
+    private val waitSemaphores: List<VkSemaphore>, 
+): IStruct {
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_BIND_SPARSE_INFO)
+        seg.set(ADDRESS, 8, next.allocate())
+        seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.size)
+        seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.toTypedArray().toCStructArray())
+    }
 }
 
 object Vk10Funcs {
@@ -1262,7 +1290,7 @@ object Vk10Funcs {
         createInfo: VkInstanceCreateInfo,
         allocator: VkAllocationCallbacks?
     ): Pair<VkInstance, Int> =
-        Arena.ofConfined().allocate(ADDRESS).run {
+        Arena.ofAuto().allocate(ADDRESS).run {
             val retCode = callFunc("vkCreateInstance", Int::class, createInfo, allocator.allocate(), this)
             Pair(VkInstance(get(ADDRESS, 0)), retCode)
         }
@@ -1275,7 +1303,7 @@ object Vk10Funcs {
         callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
-        val seg = Arena.ofConfined().allocate(sizetLength() * count.value() * 1L)
+        val seg = Arena.ofAuto().allocate(sizetLength() * count.value() * 1L)
         callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, seg).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
@@ -1323,7 +1351,7 @@ object Vk10Funcs {
         val count = HeapInt()
         callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, MemorySegment.NULL)
 
-        val seg = Arena.ofConfined().allocate(24L * count.value())
+        val seg = Arena.ofAuto().allocate(24L * count.value())
         callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, seg)
 
         return seg.fromCStructArray(count.value(), 24, { VkQueueFamilyProperties(it) }).toTypedArray()
@@ -1343,7 +1371,7 @@ object Vk10Funcs {
         createInfo: VkDeviceCreateInfo,
         allocator: VkAllocationCallbacks?
     ): Pair<VkDevice, Int> {
-        val seg = Arena.ofConfined().allocate(ADDRESS)
+        val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkCreateDevice", Int::class, physicalDevice, createInfo, allocator.allocate(), seg)
         return Pair(VkDevice(seg.get(ADDRESS, 0)), retCode)
     }
@@ -1356,7 +1384,7 @@ object Vk10Funcs {
         callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
-        val seg = Arena.ofConfined().allocate(260L * count.value())
+        val seg = Arena.ofAuto().allocate(260L * count.value())
         callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, seg).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
@@ -1368,7 +1396,7 @@ object Vk10Funcs {
         callFunc("vkEnumerateDeviceExtensionProperties", Int::class, physicalDevice, layerName, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
-        val seg = Arena.ofConfined().allocate(260L * count.value())
+        val seg = Arena.ofAuto().allocate(260L * count.value())
         callFunc("vkEnumerateDeviceExtensionProperties", Int::class, physicalDevice, layerName, count, seg).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
@@ -1380,7 +1408,7 @@ object Vk10Funcs {
         callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
-        val seg = Arena.ofConfined().allocate(520L * count.value())
+        val seg = Arena.ofAuto().allocate(520L * count.value())
         callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, seg).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
@@ -1392,7 +1420,7 @@ object Vk10Funcs {
         callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
-        val seg = Arena.ofConfined().allocate(520L * count.value())
+        val seg = Arena.ofAuto().allocate(520L * count.value())
         callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, seg).apply {
             if (this != VK_SUCCESS) return Pair(arrayOf(), this)
         }
@@ -1400,7 +1428,7 @@ object Vk10Funcs {
     }
 
     fun vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: Int, queueIndex: Int): Pair<VkQueue, Int> {
-        val seg = Arena.ofConfined().allocate(ADDRESS)
+        val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkGetDeviceQueue", Int::class, device, queueFamilyIndex, queueIndex, seg)
         return Pair(VkQueue(seg.get(ADDRESS, 0)), retCode)
     }
@@ -1415,7 +1443,7 @@ object Vk10Funcs {
         callFunc("vkDeviceWaitIdle", Int::class, device)
 
     fun vkAllocateMemory(device: VkDevice, allocateInfo: VkMemoryAllocateInfo, allocator: VkAllocationCallbacks?): Pair<VkDeviceMemory, Int> {
-        val seg = Arena.ofConfined().allocate(ADDRESS)
+        val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkAllocateMemory", Int::class, device, allocateInfo, allocator.allocate(), seg)
         return Pair(VkDeviceMemory(seg.get(ADDRESS, 0)), retCode)
     }
@@ -1424,7 +1452,7 @@ object Vk10Funcs {
         callVoidFunc("vkFreeMemory", device, memory, allocator.allocate())
 
     fun vkMapMemory(device: VkDevice, memory: VkDeviceMemory, offset: Long, size: Long, flags: Int, data: MemorySegment): Int {
-        val seg = Arena.ofConfined().allocate(ADDRESS)
+        val seg = Arena.ofAuto().allocate(ADDRESS)
         seg.set(ADDRESS, 0, data)
         return callFunc("vkMapMemory", Int::class, device, memory, offset, size, flags, seg)
     }
@@ -1450,7 +1478,7 @@ object Vk10Funcs {
     fun vkGetImageSparseMemoryRequirements(device: VkDevice, image: VkImage): Array<VkSparseImageMemoryRequirements> {
         val count = HeapInt()
         callVoidFunc("vkGetImageSparseMemoryRequirements", device, image, count, MemorySegment.NULL)
-        val seg = Arena.ofConfined().allocate(48L * count.value())
+        val seg = Arena.ofAuto().allocate(48L * count.value())
         callVoidFunc("vkGetImageSparseMemoryRequirements", device, image, count, seg)
         return seg.fromCStructArray(count.value(), 48, { VkSparseImageMemoryRequirements(it) }).toTypedArray()
     }
@@ -1465,7 +1493,7 @@ object Vk10Funcs {
     ): Array<VkSparseImageMemoryRequirements> {
         val count = HeapInt()
         callVoidFunc("vkGetPhysicalDeviceSparseImageFormatProperties", physicalDevice, format, type, samples, usage, tiling, count, MemorySegment.NULL)
-        val seg = Arena.ofConfined().allocate(48L * count.value())
+        val seg = Arena.ofAuto().allocate(48L * count.value())
         callVoidFunc("vkGetPhysicalDeviceSparseImageFormatProperties", physicalDevice, format, type, samples, usage, tiling, count, seg)
         return seg.fromCStructArray(count.value(), 48, { VkSparseImageMemoryRequirements(it) }).toTypedArray()
     }

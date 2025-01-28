@@ -30,7 +30,7 @@ data class GLFWImage(
 ) : IStruct {
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(JAVA_INT, JAVA_INT, ADDRESS)
     override fun construct(seg: MemorySegment) {
-        val parr = Arena.ofConfined().allocate(pixels.size.toLong())
+        val parr = Arena.ofAuto().allocate(pixels.size.toLong())
         parr.asByteBuffer().put(pixels)
         seg.set(JAVA_INT, 0, width)
         seg.set(JAVA_INT, 4, height)

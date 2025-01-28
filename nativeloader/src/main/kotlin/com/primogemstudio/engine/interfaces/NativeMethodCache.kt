@@ -52,7 +52,7 @@ object NativeMethodCache {
                 MethodHandles.constant(klass.java, callback)
             ),
             fd,
-            Arena.ofConfined()
+            Arena.ofAuto()
         ).apply {
             stubCache[callback] = this
             logger.info(tr("engine.nativeloader.stub", klass.qualifiedName, this.address().toHexString()))
@@ -76,7 +76,7 @@ object NativeMethodCache {
                     if (structCache.containsKey(it) && structCache[it]!!.second == h) {
                         structCache[it]!!.first
                     } else {
-                        Arena.ofConfined().allocate(it.layout()).apply {
+                        Arena.ofAuto().allocate(it.layout()).apply {
                             it.construct(this)
                             structCache[it] = Pair(this, h)
                             logger.info(

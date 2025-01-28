@@ -28,7 +28,7 @@ class GLFWVidMode(private val data: MemorySegment) : IHeapVar<MemorySegment> {
 
 class GLFWGammaRamp(private val data: MemorySegment) : IHeapVar<MemorySegment> {
     constructor(red: Short, green: Short, blue: Short, size: Int) : this(
-        Arena.ofConfined().allocate(
+        Arena.ofAuto().allocate(
             MemoryLayout.structLayout(
                 JAVA_SHORT, JAVA_SHORT, JAVA_SHORT, JAVA_INT
             )
