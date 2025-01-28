@@ -10,6 +10,7 @@ import java.lang.foreign.ValueLayout.*
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
 import kotlin.reflect.KClass
+import java.io.Closeable
 
 @Suppress("UNCHECKED_CAST")
 object NativeMethodCache {
@@ -67,10 +68,11 @@ object NativeMethodCache {
 
     @OptIn(ExperimentalStdlibApi::class)
     fun <T : Any> callFunc(name: String, rettype: KClass<T>?, vararg args: Any): T {
+        val descList = mutableListOf<Closeable>()
         val argListNew = args.map {
             return@map when (it) {
                 is IHeapVar<*> -> it.ref()
-                is IStruct -> it.pointer()
+                is IStruct -> it.apply { descList.add(this@apply) }.pointer()
                 else -> it
             }
         }
@@ -93,6 +95,8 @@ object NativeMethodCache {
             logger.info(tr("engine.nativeloader.func", name, funcP.get().address().toHexString()))
         }
 
-        return if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(argListNew) as T
+        return (if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(argListNew) as T).apply {
+            descList.forEach { it.close() }
+        }
     }
 }

@@ -115,7 +115,6 @@ fun main() {
     val fence = vkCreateFence(devi, VkFenceCreateInfo(), null).first
     val arr = PointerArrayStruct(arrayOf(fence))
     println(vkResetFences(devi, arr))
-    arr.close()
 
     glfwSetCursor(
         window,
