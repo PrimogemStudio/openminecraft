@@ -1728,4 +1728,7 @@ object Vk10Funcs {
 
     fun vkResetFences(device: VkDevice, fences: List<VkFence>): Int =
         callFunc("vkResetFences", Int::class, device, fences.size, fences.toTypedArray().toCStructArray())
+
+    fun vkGetFenceStatus(device: VkDevice, fence: VkFence): Int =
+        callFunc("vkGetFenceStatus", Int::class, device, fence)
 }

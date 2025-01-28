@@ -29,6 +29,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateDevice
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateFence
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkResetFences
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetFenceStatus
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetPhysicalDeviceQueueFamilyProperties
