@@ -79,7 +79,7 @@ jobs:
 
       - name: Build native image
         run: |
-          native-image --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=G1 -jar openminecraft*.jar
+          native-image --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=G1 -jar openminecraft-${{ env.VERSION }}.jar
 
       - name: Upload native image
         uses: actions/upload-artifact@v4
