@@ -100,7 +100,7 @@ jobs:
       - name: Build native image
         run: |
           ls openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
-          native-image --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=G1 -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
+          native-image --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
 
       - name: Upload native image
         uses: actions/upload-artifact@v4
