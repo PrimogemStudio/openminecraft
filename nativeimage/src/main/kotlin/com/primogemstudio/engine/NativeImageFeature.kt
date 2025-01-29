@@ -14,7 +14,8 @@ class NativeImageFeature: Feature {
 			FunctionDescriptor.of(ADDRESS, ADDRESS),
 			FunctionDescriptor.of(ADDRESS, ADDRESS, ADDRESS),
 			FunctionDescriptor.of(ADDRESS, JAVA_INT, JAVA_INT),
-			FunctionDescriptor.of(ADDRESS, JAVA_INT, JAVA_INT, ADDRESS, ADDRESS, ADDRESS)
+			FunctionDescriptor.of(ADDRESS, JAVA_INT, JAVA_INT, ADDRESS, ADDRESS, ADDRESS),
+			FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, ADDRESS),
 		).forEach {
 			rfaClass.getMethod("registerForDowncall", Any::class.java, Array<Any>::class.java).invoke(null, it, arrayOf<Any>())
 		}
