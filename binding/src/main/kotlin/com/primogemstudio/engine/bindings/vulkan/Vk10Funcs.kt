@@ -377,7 +377,7 @@ data class VkDeviceQueueCreateInfo(
     private val next: IStruct? = null,
     private val flags: Int = 0,
     private val queueFamilyIndex: Int,
-    private val queuePriorities: List<Float>
+    private val queuePriorities: FloatArrayStruct
 ) : IStruct() {
     init {
         construct(seg)
@@ -402,12 +402,8 @@ data class VkDeviceQueueCreateInfo(
         seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
         seg.set(JAVA_INT, sizetLength() + 8L, flags)
         seg.set(JAVA_INT, sizetLength() + 12L, queueFamilyIndex)
-        seg.set(JAVA_INT, sizetLength() + 16L, queuePriorities.size)
-        seg.set(
-            ADDRESS,
-            sizetLength() + 24L,
-            Arena.ofAuto().allocateArray(JAVA_FLOAT, *queuePriorities.toFloatArray())
-        )
+        seg.set(JAVA_INT, sizetLength() + 16L, queuePriorities.arr.size)
+        seg.set(ADDRESS, sizetLength() + 24L, queuePriorities.pointer())
     }
 }
 
@@ -502,7 +498,7 @@ class VkCommandBuffer(private val seg: MemorySegment) : IHeapVar<MemorySegment> 
 data class VkSubmitInfo(
     private val next: IStruct? = null, 
     private val waitSemaphores: PointerArrayStruct<VkSemaphore>,
-    private val waitDstStageMask: List<Int>, 
+    private val waitDstStageMask: IntArrayStruct,
     private val commandBuffers: PointerArrayStruct<VkCommandBuffer>,
     private val signalSemaphores: PointerArrayStruct<VkSemaphore>
 ): IStruct() {
@@ -535,7 +531,7 @@ data class VkSubmitInfo(
         seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
         seg.set(JAVA_INT, sizetLength() + 8L, waitSemaphores.arr.size)
         seg.set(ADDRESS, sizetLength() + 16L, waitSemaphores.pointer())
-        seg.set(ADDRESS, sizetLength() * 2 + 16L, Arena.ofAuto().allocateArray(JAVA_INT, *waitDstStageMask.toIntArray()))
+        seg.set(ADDRESS, sizetLength() * 2 + 16L, waitDstStageMask.pointer())
         seg.set(JAVA_INT, sizetLength() * 3 + 16L, commandBuffers.arr.size)
         seg.set(ADDRESS, sizetLength() * 3 + 24L, commandBuffers.pointer())
         seg.set(JAVA_INT, sizetLength() * 4 + 24L, signalSemaphores.arr.size)

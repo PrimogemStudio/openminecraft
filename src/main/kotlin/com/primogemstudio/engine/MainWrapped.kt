@@ -103,7 +103,7 @@ fun main() {
                         null,
                         0,
                         0,
-                        listOf(1f)
+                        FloatArrayStruct(floatArrayOf(1f))
                     )
                 )),
                 listOf(),

@@ -1,0 +1,262 @@
+{
+  "reflection": [
+    {
+      "type": "com.primogemstudio.engine.bindings.glfw.GLFWErrorFun",
+      "methods": [
+        {
+          "name": "call",
+          "parameterTypes": [
+            "int",
+            "java.lang.foreign.MemorySegment"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.primogemstudio.engine.bindings.glfw.GLFWFrameBufferSizeFun",
+      "methods": [
+        {
+          "name": "call",
+          "parameterTypes": [
+            "java.lang.foreign.MemorySegment",
+            "int",
+            "int"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.primogemstudio.engine.loader.NativeLibConfigModel",
+      "allDeclaredFields": true,
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.lang.Class",
+      "methods": [
+        {
+          "name": "isRecord",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "java.lang.ClassValue"
+    },
+    {
+      "type": "java.lang.reflect.RecordComponent"
+    },
+    {
+      "type": "java.nio.Buffer",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "java.nio.ByteBuffer",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "java.nio.DirectByteBuffer",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "java.nio.DirectCharBufferU",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "java.nio.DirectDoubleBufferU",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "java.nio.DirectFloatBufferU",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "java.nio.DirectIntBufferU",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "java.nio.DirectLongBufferU",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "java.nio.DirectShortBufferU",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "java.nio.MappedByteBuffer",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "java.sql.Date"
+    },
+    {
+      "type": "kotlin.SafePublicationLazyImpl",
+      "fields": [
+        {
+          "name": "_value"
+        }
+      ]
+    },
+    {
+      "type": "kotlin.jvm.internal.DefaultConstructorMarker"
+    },
+    {
+      "type": "kotlin.reflect.jvm.internal.ReflectionFactoryImpl",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    },
+    {
+      "type": "org.lwjgl.system.CustomBuffer",
+      "fields": [
+        {
+          "name": "capacity"
+        },
+        {
+          "name": "container"
+        },
+        {
+          "name": "limit"
+        },
+        {
+          "name": "mark"
+        },
+        {
+          "name": "position"
+        }
+      ]
+    },
+    {
+      "type": "org.lwjgl.system.Pointer$Default",
+      "fields": [
+        {
+          "name": "address"
+        }
+      ]
+    },
+    {
+      "type": "org.lwjgl.vulkan.VkFenceCreateInfo",
+      "fields": [
+        {
+          "name": "SIZEOF"
+        }
+      ]
+    },
+    {
+      "type": "sun.misc.Unsafe",
+      "allDeclaredFields": true
+    },
+    {
+      "type": "sun.security.provider.NativePRNG",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": [
+            "java.security.SecureRandomParameters"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.SHA",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "glob": "META-INF/MANIFEST.MF"
+    },
+    {
+      "glob": "META-INF/linux/x64/org/lwjgl/liblwjgl.so.sha1"
+    },
+    {
+      "glob": "assets/openmc/lang/en_us.json"
+    },
+    {
+      "glob": "assets/openmc/lang/zh_cn.json"
+    },
+    {
+      "glob": "assets/openmc/locale.json"
+    },
+    {
+      "glob": "assets/openmc_graphic/lang/en_us.json"
+    },
+    {
+      "glob": "assets/openmc_graphic/lang/zh_cn.json"
+    },
+    {
+      "glob": "assets/openmc_graphic/locale.json"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lang/en_us.json"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lang/zh_cn.json"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib.json"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/linux/x64/libfreetype.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/linux/x64/libglfw.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/linux/x64/libmeshoptimizer.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/linux/x64/libmmd.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/linux/x64/libopenal.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/linux/x64/libshaderc.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/linux/x64/libstb.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/linux/x64/libxxhash.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/linux/x64/libyoga.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/locale.json"
+    },
+    {
+      "glob": "linux/x64/org/lwjgl/liblwjgl.so"
+    },
+    {
+      "glob": "org/lwjgl/Version.class"
+    }
+  ],
+  "bundles": [],
+  "jni": [
+    {
+      "type": "java.lang.Boolean",
+      "methods": [
+        {
+          "name": "getBoolean",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
+    }
+  ]
+}

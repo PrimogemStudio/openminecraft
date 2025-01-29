@@ -17,6 +17,7 @@ dependencies {
     implementation(rootProject.project(":openminecraft-nativeloader"))
     implementation(rootProject.project(":openminecraft-base"))
     implementation(rootProject.project(":openminecraft-binding"))
+    if (System.getProperty("openminecraft.graalvm.env") == "1") implementation(rootProject.project(":openminecraft-nativeimage"))
 }
 
 tasks.jar {
