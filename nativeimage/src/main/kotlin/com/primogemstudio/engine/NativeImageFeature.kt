@@ -15,14 +15,21 @@ class NativeImageFeature: Feature {
 			FunctionDescriptor.of(ADDRESS, ADDRESS, ADDRESS),
 			FunctionDescriptor.of(ADDRESS, JAVA_INT, JAVA_INT),
 			FunctionDescriptor.of(ADDRESS, JAVA_INT, JAVA_INT, ADDRESS, ADDRESS, ADDRESS),
+			FunctionDescriptor.of(JAVA_INT, ADDRESS, JAVA_INT, ADDRESS),
 			FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, ADDRESS),
-			FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, ADDRESS, ADDRESS)
+			FunctionDescriptor.of(JAVA_INT, ADDRESS, ADDRESS, ADDRESS, ADDRESS),
+			FunctionDescriptor.of(ADDRESS, ADDRESS, JAVA_INT, JAVA_INT),
+			FunctionDescriptor.of(ADDRESS, ADDRESS, ADDRESS),
+			FunctionDescriptor.of(ADDRESS, JAVA_INT),
+			FunctionDescriptor.of(JAVA_INT, ADDRESS),
+			FunctionDescriptor.of(ADDRESS)
 		).forEach {
 			rfaClass.getMethod("registerForDowncall", Any::class.java, Array<Any>::class.java).invoke(null, it, arrayOf<Any>())
 		}
 
 		listOf(
-            FunctionDescriptor.ofVoid(JAVA_INT, ADDRESS)
+            FunctionDescriptor.ofVoid(JAVA_INT, ADDRESS),
+			FunctionDescriptor.ofVoid(ADDRESS, JAVA_INT, JAVA_INT)
 		).forEach { rfaClass.getMethod("registerForUpcall", Any::class.java, Array<Any>::class.java).invoke(null, it, arrayOf<Any>()) }
     }
 }

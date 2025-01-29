@@ -124,7 +124,6 @@ fun main() {
     glfwSetFramebufferSizeCallback(window) { _, width, height ->
         println("$width $height")
     }
-    glfwSetClipboardString(window, "test!")
     glfwSwapInterval(0)
 
     while (glfwWindowShouldClose(window) != 1) {
