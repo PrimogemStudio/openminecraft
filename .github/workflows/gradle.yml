@@ -44,7 +44,7 @@ jobs:
       - name: GraalVM Setup
         uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '23'
+          java-version: '21'
           distribution: 'graalvm'
 
       - name: Setup Gradle
