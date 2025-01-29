@@ -235,6 +235,91 @@
     {
       "glob": "assets/openmc_nativeloader/lib/linux/x64/libyoga.so"
     },
+
+    {
+      "glob": "assets/openmc_nativeloader/lib/windows/x64/freetype.dll"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/windows/x64/glfw.dll"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/windows/x64/meshoptimizer.dll"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/windows/x64/mmd.dll"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/windows/x64/openal.dll"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/windows/x64/shaderc.dll"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/windows/x64/stb.dll"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/windows/x64/xxhash.dll"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/windows/x64/yoga.dll"
+    },
+
+    
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/x64/libfreetype.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/x64/libglfw.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/x64/libmeshoptimizer.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/x64/libmmd.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/x64/libopenal.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/x64/libshaderc.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/x64/libstb.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/x64/libxxhash.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/x64/libyoga.so"
+    },
+    
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/arm64/libfreetype.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/arm64/libglfw.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/arm64/libmeshoptimizer.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/arm64/libmmd.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/arm64/libopenal.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/arm64/libshaderc.dylib"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/arm64/libstb.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/arm64/libxxhash.so"
+    },
+    {
+      "glob": "assets/openmc_nativeloader/lib/macos/arm64/libyoga.so"
+    },
     {
       "glob": "assets/openmc_nativeloader/locale.json"
     },
