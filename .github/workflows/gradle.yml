@@ -86,7 +86,7 @@ jobs:
             osname: darwin
             gc: serial
 
-    name: ${{ matrix.name }}
+    name: Native Image for ${{ matrix.name }}
     needs: build
     runs-on: ${{ matrix.os }}
     steps:
