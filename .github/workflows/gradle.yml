@@ -55,7 +55,7 @@ jobs:
       - name: Upload JAR file
         uses: actions/upload-artifact@v4
         with:
-          name: OpenMinecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
+          name: openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
           path: |
             build/libs/*.jar
             !build/libs/*-sources.jar
@@ -99,8 +99,8 @@ jobs:
 
       - name: Build native image
         run: |
-          ls
-          native-image --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=G1 -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}.jar
+          ls openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
+          native-image --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=G1 -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
 
       - name: Upload native image
         uses: actions/upload-artifact@v4
