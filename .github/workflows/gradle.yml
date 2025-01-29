@@ -61,6 +61,8 @@ jobs:
             !build/libs/*-sources.jar
 
   build-nativeimage:
+    name: Build Native Image
+    needs: build
     runs-on: ubuntu-22.04
     steps:
       - name: Download JAR file
