@@ -81,10 +81,6 @@ jobs:
             name: MacOS (x64)
             osname: darwin
             gc: serial
-          - os: macos-latest
-            name: MacOS (arm64)
-            osname: darwin
-            gc: serial
 
     name: Native Image for ${{ matrix.name }}
     needs: build
