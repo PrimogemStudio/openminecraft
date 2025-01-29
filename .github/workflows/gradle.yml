@@ -125,6 +125,6 @@ jobs:
       - name: Upload native image
         uses: actions/upload-artifact@v4
         with:
-          name: OpenMinecraft-nativeimage-${{ matrix.osname }}-${{ matrix.gc }}-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
+          name: openminecraft-nativeimage-${{ matrix.osname }}-${{ matrix.gc }}-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
           path: |
             ./openminecraft*
