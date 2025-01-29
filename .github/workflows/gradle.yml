@@ -83,8 +83,7 @@ jobs:
       - name: Build native image
         run: |
           version=$(cat gradle.properties | grep openminecraft.version= | sed s/openminecraft.version=//g)
-          echo "VERSION=$version" >> ${GITHUB_ENV}
-          native-image --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=G1 -jar openminecraft-${{ env.VERSION }}.jar
+          native-image --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=G1 -jar openminecraft-$version.jar
 
       - name: Upload native image
         uses: actions/upload-artifact@v4
