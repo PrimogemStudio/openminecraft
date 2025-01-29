@@ -67,15 +67,23 @@ jobs:
         include:
           - os: windows-latest
             name: Windows (x64)
+            osname: windows
             gc: serial
           - os: ubuntu-22.04
-            name: Linux (x64)
+            name: Linux (x64, g1)
+            osname: linux
             gc: G1
+          - os: ubuntu-22.04
+            name: Linux (x64, serial)
+            osname: linux
+            gc: serial
           - os: macos-13
             name: MacOS (x64)
+            osname: darwin
             gc: serial
           - os: macos-latest
             name: MacOS (arm64)
+            osname: darwin
             gc: serial
 
     name: ${{ matrix.name }}
@@ -121,6 +129,6 @@ jobs:
       - name: Upload native image
         uses: actions/upload-artifact@v4
         with:
-          name: OpenMinecraft-nativeimage-linux-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
+          name: OpenMinecraft-nativeimage-${{ matrix.osname }}-${{ matrix.gc }}-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
           path: |
             ./openminecraft*
