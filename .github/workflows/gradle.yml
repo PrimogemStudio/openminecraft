@@ -61,9 +61,26 @@ jobs:
             !build/libs/*-sources.jar
 
   build-nativeimage:
-    name: Build Native Image
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            name: Windows (x64)
+            gc: serial
+          - os: ubuntu-22.04
+            name: Linux (x64)
+            gc: G1
+          - os: macos-13
+            name: MacOS (x64)
+            gc: serial
+          - os: macos-latest
+            name: MacOS (arm64)
+            gc: serial
+
+    name: ${{ matrix.name }}
     needs: build
-    runs-on: windows-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -99,7 +116,7 @@ jobs:
 
       - name: Build native image
         run: |
-          native-image --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
+          native-image --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=${{ matrix.gc }} -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
 
       - name: Upload native image
         uses: actions/upload-artifact@v4
