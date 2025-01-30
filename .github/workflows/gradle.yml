@@ -67,57 +67,47 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            name: Windows (x64)
             osname: windows
             gc: serial
             march: x86-64-v3
           - os: ubuntu-22.04
-            name: Linux (x64, g1)
             osname: linux
             gc: G1
             march: x86-64-v1
           - os: ubuntu-22.04
-            name: Linux (x64, g1)
             osname: linux
             gc: G1
             march: x86-64-v2
           - os: ubuntu-22.04
-            name: Linux (x64, g1)
             osname: linux
             gc: G1
             march: x86-64-v3
           - os: ubuntu-22.04
-            name: Linux (x64, serial)
             osname: linux
             gc: serial
             march: x86-64-v1
           - os: ubuntu-22.04
-            name: Linux (x64, serial)
             osname: linux
             gc: serial
             march: x86-64-v2
           - os: ubuntu-22.04
-            name: Linux (x64, g1)
             osname: linux
-            gc: G1
+            gc: serial
             march: x86-64-v3
           - os: macos-13
-            name: MacOS (x64)
             osname: darwin
             gc: serial
             march: x86-64-v1
           - os: macos-13
-            name: MacOS (x64)
             osname: darwin
             gc: serial
             march: x86-64-v2
           - os: macos-13
-            name: MacOS (x64)
             osname: darwin
             gc: serial
             march: x86-64-v3
 
-    name: Native Image for ${{ matrix.name }}
+    name: Native Image for ${{ matrix.osname }} (${{ matrix.march }}, ${{ matrix.gc }})
     needs: build
     runs-on: ${{ matrix.os }}
     steps:
