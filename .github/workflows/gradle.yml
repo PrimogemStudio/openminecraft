@@ -73,6 +73,10 @@ jobs:
           - os: ubuntu-22.04
             osname: linux
             gc: G1
+            march: x86-64
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
             march: x86-64-v1
           - os: ubuntu-22.04
             osname: linux
@@ -85,6 +89,10 @@ jobs:
           - os: ubuntu-22.04
             osname: linux
             gc: serial
+            march: x86-64
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
             march: x86-64-v1
           - os: ubuntu-22.04
             osname: linux
@@ -94,6 +102,10 @@ jobs:
             osname: linux
             gc: serial
             march: x86-64-v3
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64
           - os: macos-13
             osname: darwin
             gc: serial
