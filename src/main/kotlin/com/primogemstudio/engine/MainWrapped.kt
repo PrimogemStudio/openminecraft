@@ -85,14 +85,6 @@ fun main() {
         allocator = null
     )
     val dev = vkEnumeratePhysicalDevices(vkInstance.first).first[0]
-    listOf(
-        "SIZEOF"
-    ).forEach {
-        logger.info(
-            "$it " + Class.forName("org.lwjgl.vulkan.VkFenceCreateInfo")
-                .getField(it.uppercase(Locale.getDefault())).get(null)
-        )
-    }
     val devi = vkCreateDevice(
             dev,
             VkDeviceCreateInfo(
