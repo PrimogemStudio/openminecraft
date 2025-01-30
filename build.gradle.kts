@@ -23,10 +23,11 @@ dependencies {
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-    from (configurations.runtimeClasspath.get().map {
+    from (configurations.runtimeClasspath.get().flatMap {
         if (!it.toString().contains("lwjgl")) {
-            if (it.isDirectory) it else zipTree(it)
+            if (it.isDirectory) listOf(it) else listOf(zipTree(it))
         }
+        else listOf()
     })
 
     manifest {
