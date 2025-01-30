@@ -51,6 +51,7 @@ jobs:
         uses: gradle/gradle-build-action@v3
         with:
           arguments: build --scan
+          cache-disabled: true
 
       - name: Upload JAR file
         uses: actions/upload-artifact@v4
