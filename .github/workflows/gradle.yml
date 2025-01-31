@@ -69,6 +69,24 @@ jobs:
           - os: windows-latest
             osname: windows
             gc: serial
+            march: x86-64
+            opti: O3
+
+          - os: windows-latest
+            osname: windows
+            gc: serial
+            march: x86-64-v1
+            opti: O3
+
+          - os: windows-latest
+            osname: windows
+            gc: serial
+            march: x86-64-v2
+            opti: O3
+
+          - os: windows-latest
+            osname: windows
+            gc: serial
             march: x86-64-v3
             opti: Os
           - os: windows-latest
