@@ -169,7 +169,7 @@ jobs:
 
       - name: Build native image
         run: |
-          native-image -march=${{ matrix.march }} --enable-http --enable-https --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=${{ matrix.gc }} -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
+          native-image -O3 -march=${{ matrix.march }} --enable-http --enable-https --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=${{ matrix.gc }} -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
           rm -r openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
 
       - name: Upload native image
