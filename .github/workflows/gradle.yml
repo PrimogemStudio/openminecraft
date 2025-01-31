@@ -69,69 +69,342 @@ jobs:
           - os: windows-latest
             osname: windows
             gc: serial
-            march: x86-64
-          - os: windows-latest
-            osname: windows
-            gc: serial
-            march: x86-64-v1
-          - os: windows-latest
-            osname: windows
-            gc: serial
-            march: x86-64-v2
+            march: x86-64-v3
+            opti: Os
           - os: windows-latest
             osname: windows
             gc: serial
             march: x86-64-v3
-          - os: ubuntu-22.04
-            osname: linux
-            gc: G1
-            march: x86-64
-          - os: ubuntu-22.04
-            osname: linux
-            gc: G1
-            march: x86-64-v1
-          - os: ubuntu-22.04
-            osname: linux
-            gc: G1
-            march: x86-64-v2
-          - os: ubuntu-22.04
-            osname: linux
-            gc: G1
-            march: x86-64-v3
-          - os: ubuntu-22.04
-            osname: linux
-            gc: serial
-            march: x86-64
-          - os: ubuntu-22.04
-            osname: linux
-            gc: serial
-            march: x86-64-v1
-          - os: ubuntu-22.04
-            osname: linux
-            gc: serial
-            march: x86-64-v2
-          - os: ubuntu-22.04
-            osname: linux
+            opti: O0
+          - os: windows-latest
+            osname: windows
             gc: serial
             march: x86-64-v3
-          - os: macos-13
-            osname: darwin
-            gc: serial
-            march: x86-64
-          - os: macos-13
-            osname: darwin
-            gc: serial
-            march: x86-64-v1
-          - os: macos-13
-            osname: darwin
-            gc: serial
-            march: x86-64-v2
-          - os: macos-13
-            osname: darwin
+            opti: O1
+          - os: windows-latest
+            osname: windows
             gc: serial
             march: x86-64-v3
+            opti: O2
+          - os: windows-latest
+            osname: windows
+            gc: serial
+            march: x86-64-v3
+            opti: O3
 
-    name: Native Image for ${{ matrix.osname }} (${{ matrix.march }}, ${{ matrix.gc }})
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64
+            opti: Os
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64
+            opti: O0
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64
+            opti: O1
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64
+            opti: O2
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64
+            opti: O3
+
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v1
+            opti: Os
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v1
+            opti: O0
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v1
+            opti: O1
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v1
+            opti: O2
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v1
+            opti: O3
+
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v2
+            opti: Os
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v2
+            opti: O0
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v2
+            opti: O1
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v2
+            opti: O2
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v2
+            opti: O3
+
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v3
+            opti: Os
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v3
+            opti: O0
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v3
+            opti: O1
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v3
+            opti: O2
+          - os: ubuntu-22.04
+            osname: linux
+            gc: G1
+            march: x86-64-v3
+            opti: O3
+
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64
+            opti: Os
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64
+            opti: O0
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64
+            opti: O1
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64
+            opti: O2
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64
+            opti: O3
+
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v1
+            opti: Os
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v1
+            opti: O0
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v1
+            opti: O1
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v1
+            opti: O2
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v1
+            opti: O3
+
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v2
+            opti: Os
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v2
+            opti: O0
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v2
+            opti: O1
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v2
+            opti: O2
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v2
+            opti: O3
+
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v3
+            opti: Os
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v3
+            opti: O0
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v3
+            opti: O1
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v3
+            opti: O2
+          - os: ubuntu-22.04
+            osname: linux
+            gc: serial
+            march: x86-64-v3
+            opti: O3
+
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64
+            opti: Os
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64
+            opti: O0
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64
+            opti: O1
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64
+            opti: O2
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64
+            opti: O3
+
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v1
+            opti: Os
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v1
+            opti: O0
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v1
+            opti: O1
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v1
+            opti: O2
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v1
+            opti: O3
+
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v2
+            opti: Os
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v2
+            opti: O0
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v2
+            opti: O1
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v2
+            opti: O2
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v2
+            opti: O3
+
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v3
+            opti: Os
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v3
+            opti: O0
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v3
+            opti: O1
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v3
+            opti: O2
+          - os: macos-13
+            osname: darwin
+            gc: serial
+            march: x86-64-v3
+            opti: O3
+
+    name: Native Image for ${{ matrix.osname }} (${{ matrix.march }}, ${{ matrix.gc }}, ${{ matrix.opti }})
     needs: build
     runs-on: ${{ matrix.os }}
     steps:
@@ -169,12 +442,12 @@ jobs:
 
       - name: Build native image
         run: |
-          native-image -O3 -march=${{ matrix.march }} --enable-http --enable-https --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=${{ matrix.gc }} -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
+          native-image -${{ matrix.opti }} -march=${{ matrix.march }} --enable-http --enable-https --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=${{ matrix.gc }} -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
           rm -r openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
 
       - name: Upload native image
         uses: actions/upload-artifact@v4
         with:
-          name: openminecraft-nativeimage-${{ matrix.osname }}-${{ matrix.march }}-${{ matrix.gc }}-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
+          name: openminecraft-nativeimage-${{ matrix.osname }}-${{ matrix.march }}-${{ matrix.gc }}-${{ matrix.opti }}-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
           path: |
             ./openminecraft*
