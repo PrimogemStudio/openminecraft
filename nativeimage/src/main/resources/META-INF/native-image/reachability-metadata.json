@@ -114,42 +114,6 @@
       ]
     },
     {
-      "type": "org.lwjgl.system.CustomBuffer",
-      "fields": [
-        {
-          "name": "capacity"
-        },
-        {
-          "name": "container"
-        },
-        {
-          "name": "limit"
-        },
-        {
-          "name": "mark"
-        },
-        {
-          "name": "position"
-        }
-      ]
-    },
-    {
-      "type": "org.lwjgl.system.Pointer$Default",
-      "fields": [
-        {
-          "name": "address"
-        }
-      ]
-    },
-    {
-      "type": "org.lwjgl.vulkan.VkFenceCreateInfo",
-      "fields": [
-        {
-          "name": "SIZEOF"
-        }
-      ]
-    },
-    {
       "type": "sun.misc.Unsafe",
       "allDeclaredFields": true
     },
@@ -177,9 +141,6 @@
   "resources": [
     {
       "glob": "META-INF/MANIFEST.MF"
-    },
-    {
-      "glob": "META-INF/linux/x64/org/lwjgl/liblwjgl.so.sha1"
     },
     {
       "glob": "assets/openmc/lang/en_us.json"
@@ -322,12 +283,6 @@
     },
     {
       "glob": "assets/openmc_nativeloader/locale.json"
-    },
-    {
-      "glob": "linux/x64/org/lwjgl/liblwjgl.so"
-    },
-    {
-      "glob": "org/lwjgl/Version.class"
     }
   ],
   "bundles": [],
