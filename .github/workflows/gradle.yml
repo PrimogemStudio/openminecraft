@@ -449,7 +449,7 @@ jobs:
       - name: Download JAR file
         uses: actions/download-artifact@v4
         with:
-          pattern: "*"
+          pattern: "openminecraft-${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}"
           path: .
 
       - name: GraalVM Setup
