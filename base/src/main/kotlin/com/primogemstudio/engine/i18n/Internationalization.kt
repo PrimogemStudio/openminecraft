@@ -35,6 +35,7 @@ object Internationalization {
                 } else logger.warn("Translation file not found: $v")
             }
         }
+        logger.info("Current locale: ${Locale.getDefault()}")
     }
 
     fun append(path: String) {
