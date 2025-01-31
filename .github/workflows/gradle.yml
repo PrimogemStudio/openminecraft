@@ -69,6 +69,18 @@ jobs:
           - os: windows-latest
             osname: windows
             gc: serial
+            march: x86-64
+          - os: windows-latest
+            osname: windows
+            gc: serial
+            march: x86-64-v1
+          - os: windows-latest
+            osname: windows
+            gc: serial
+            march: x86-64-v2
+          - os: windows-latest
+            osname: windows
+            gc: serial
             march: x86-64-v3
           - os: ubuntu-22.04
             osname: linux
@@ -157,7 +169,7 @@ jobs:
 
       - name: Build native image
         run: |
-          native-image -march=${{ matrix.march }} --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=${{ matrix.gc }} -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
+          native-image -march=${{ matrix.march }} --enable-http --enable-https --enable-native-access=ALL-UNNAMED -H:+UnlockExperimentalVMOptions -H:+ForeignAPISupport --features=com.primogemstudio.engine.NativeImageFeature --gc=${{ matrix.gc }} -jar openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}/openminecraft-${{ env.VERSION }}.jar
           rm -r openminecraft-v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
 
       - name: Upload native image
