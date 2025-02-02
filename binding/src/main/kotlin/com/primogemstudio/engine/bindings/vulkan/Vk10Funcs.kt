@@ -9,6 +9,8 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MEM
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BIND_SPARSE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_EVENT_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -896,6 +898,63 @@ data class VkFenceCreateInfo(
         seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
         seg.set(JAVA_INT, 16, flags)
     }
+}
+
+data class VkSemaphoreCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
+        seg.set(JAVA_INT, 16, flags)
+    }
+}
+
+data class VkEventCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_LONG
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_EVENT_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
+        seg.set(JAVA_INT, 16, flags)
+    }
+}
+
+class VkEvent(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
 }
 
 object Vk10Funcs {
@@ -1801,5 +1860,30 @@ object Vk10Funcs {
     fun vkGetFenceStatus(device: VkDevice, fence: VkFence): Int =
         callFunc("vkGetFenceStatus", Int::class, device, fence)
 
-    // fun vkWaitForFences(device: VkDevice, )
+    fun vkWaitForFences(device: VkDevice, fences: PointerArrayStruct<VkFence>, waitAll: Boolean, timeout: Long): Int =
+        callFunc("vkWaitForFences", Int::class, device, fences.arr.size, fences.pointer(), if (waitAll) 1 else 0, timeout)
+
+    fun vkCreateSemaphore(device: VkDevice, createInfo: VkSemaphoreCreateInfo, allocator: VkAllocationCallbacks?): Pair<VkSemaphore, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateSemaphore", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        return Pair(VkSemaphore(seg.get(ADDRESS, 0)), retCode)
+    }
+
+    fun vkDestroySemaphore(device: VkDevice, semaphore: VkSemaphore, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroySemaphore", device, semaphore, allocator?.pointer()?: MemorySegment.NULL)
+
+    fun vkCreateEvent(device: VkDevice, createInfo: VkEventCreateInfo, allocator: VkAllocationCallbacks?): Pair<VkEvent, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateEvent", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        return Pair(VkEvent(seg.get(ADDRESS, 0)), retCode)
+    }
+
+    fun vkDestroyEvent(device: VkDevice, event: VkEvent, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyEvent", device, event, allocator?.pointer()?: MemorySegment.NULL)
+
+    fun vkGetEventStatus(device: VkDevice, event: VkEvent): Int =
+        callFunc("vkGetEventStatus", Int::class, device, event)
+
+    fun vkSetEvent(device: VkDevice, event: VkEvent): Int =
+        callFunc("vkSetEvent", Int::class, device, event)
 }
