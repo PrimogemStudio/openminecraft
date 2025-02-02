@@ -11,5 +11,5 @@ class HeapInt : IHeapVar<Int> {
     override fun value(): Int = seg.get(JAVA_INT, 0)
 
     override fun toString(): String = "${value()}"
-    override fun close() = arena.close()
+    fun close() = arena.close()
 }

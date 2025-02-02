@@ -12,5 +12,5 @@ class HeapArray(private val length: Int) : IHeapVar<Array<MemorySegment>> {
     override fun value(): Array<MemorySegment> = (0 ..< length).map { seg.get(ADDRESS, sizetLength() * it * 1L) }.toTypedArray()
 
     override fun toString(): String = "${value()}"
-    override fun close() = arena.close()
+    fun close() = arena.close()
 }

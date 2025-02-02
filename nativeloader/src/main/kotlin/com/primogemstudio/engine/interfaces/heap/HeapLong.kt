@@ -11,5 +11,5 @@ class HeapLong : IHeapVar<Long> {
     override fun value(): Long = seg.get(JAVA_LONG, 0)
 
     override fun toString(): String = "${value()}"
-    override fun close() = arena.close()
+    fun close() = arena.close()
 }

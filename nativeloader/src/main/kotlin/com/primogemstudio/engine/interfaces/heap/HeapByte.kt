@@ -11,5 +11,5 @@ class HeapByte : IHeapVar<Byte> {
     override fun value(): Byte = seg.get(JAVA_BYTE, 0)
 
     override fun toString(): String = "${value()}"
-    override fun close() = arena.close()
+    fun close() = arena.close()
 }

@@ -11,5 +11,5 @@ class HeapFloat : IHeapVar<Float> {
     override fun value(): Float = seg.get(JAVA_FLOAT, 0)
 
     override fun toString(): String = "${value()}"
-    override fun close() = arena.close()
+    fun close() = arena.close()
 }

@@ -11,5 +11,5 @@ class HeapDouble : IHeapVar<Double> {
     override fun value(): Double = seg.get(JAVA_DOUBLE, 0)
 
     override fun toString(): String = "${value()}"
-    override fun close() = arena.close()
+    fun close() = arena.close()
 }

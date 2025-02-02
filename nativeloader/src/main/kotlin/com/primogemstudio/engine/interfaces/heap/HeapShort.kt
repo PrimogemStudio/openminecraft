@@ -11,5 +11,5 @@ class HeapShort : IHeapVar<Short> {
     override fun value(): Short = seg.get(JAVA_SHORT, 0)
 
     override fun toString(): String = "${value()}"
-    override fun close() = arena.close()
+    fun close() = arena.close()
 }
