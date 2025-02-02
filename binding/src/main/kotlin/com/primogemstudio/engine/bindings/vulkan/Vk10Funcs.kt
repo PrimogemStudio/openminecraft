@@ -11,6 +11,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BIN
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_EVENT_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -957,6 +958,46 @@ class VkEvent(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = seg
 }
 
+class VkQueryPool(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
+data class VkQueryPoolCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0, 
+    private val queryType: Int, 
+    private val queryCount: UInt, 
+    private val pipelineStatistics: Int
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG, 
+        ADDRESS,
+        JAVA_INT, 
+        JAVA_INT,
+        JAVA_INT, 
+        JAVA_INT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 16L, queryType)
+        seg.set(JAVA_INT, sizetLength() + 24L, queryCount.toInt())
+        seg.set(JAVA_INT, sizetLength() + 32L, pipelineStatistics)
+    }
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -1886,4 +1927,21 @@ object Vk10Funcs {
 
     fun vkSetEvent(device: VkDevice, event: VkEvent): Int =
         callFunc("vkSetEvent", Int::class, device, event)
+
+    fun vkResetEvent(device: VkDevice, event: VkEvent): Int =
+        callFunc("vkResetEvent", Int::class, device, event)
+
+    fun vkCreateQueryPool(device: VkDevice, createInfo: VkQueryPoolCreateInfo, allocator: VkAllocationCallbacks?): Pair<VkQueryPool, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateQueryPool", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL)
+        return Pair(VkQueryPool(seg.get(ADDRESS, 0)), retCode)
+    }
+
+    fun vkDestroyQueryPool(device: VkDevice, queryPool: VkQueryPool, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyQueryPool", device, queryPool, allocator?.pointer()?: MemorySegment.NULL)
+
+    fun <T> vkGetQueryPoolResults(device: VkDevice, queryPool: VkQueryPool, firstQuery: Int, queryCount: Int, data: IHeapVar<T>, stride: Long, flags: Int): Int =
+        callFunc("vkGetQueryPoolResults", Int::class, device, queryPool, firstQuery, queryCount, data, stride, flags)
+
+    
 }
