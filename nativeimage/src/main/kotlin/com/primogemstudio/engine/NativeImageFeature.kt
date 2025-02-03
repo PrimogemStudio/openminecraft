@@ -46,17 +46,13 @@ class NativeImageFeature: Feature {
 						upcallTypes.add(FunctionDescriptor.ofVoid(arg1, arg2, arg3, arg4))
 						for (arg5 in basicTypes) {
 							upcallTypes.add(FunctionDescriptor.ofVoid(arg1, arg2, arg3, arg4, arg5))
-							for (arg6 in basicTypes) {
-								for (arg7 in basicTypes) {
-									upcallTypes.add(FunctionDescriptor.ofVoid(arg1, arg2, arg3, arg4, arg5, arg6, arg7))
-								}
-							}
 						}
 					}
 				}
 			}
 		}
 		// For harfbuzz paint api
+		upcallTypes.add(FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, ADDRESS))
 		upcallTypes.add(FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, ADDRESS))
 		upcallTypes.add(FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, ADDRESS))
 		upcallTypes.add(FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, JAVA_INT, JAVA_INT, JAVA_INT, JAVA_FLOAT, ADDRESS, ADDRESS))
