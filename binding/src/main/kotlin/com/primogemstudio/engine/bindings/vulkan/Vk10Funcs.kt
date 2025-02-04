@@ -24,6 +24,7 @@ import com.primogemstudio.engine.interfaces.toCStrArray
 import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.interfaces.fromCStructArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
+import com.primogemstudio.engine.types.Result
 import org.joml.Vector3i
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
@@ -1712,26 +1713,26 @@ object Vk10Funcs {
     fun vkCreateInstance(
         createInfo: VkInstanceCreateInfo,
         allocator: VkAllocationCallbacks?
-    ): Pair<VkInstance, Int> =
-        Arena.ofAuto().allocate(ADDRESS).run {
-            val retCode = callFunc("vkCreateInstance", Int::class, createInfo, allocator?.pointer()?: MemorySegment.NULL, this)
-            Pair(VkInstance(get(ADDRESS, 0)), retCode)
-        }
+    ): Result<VkInstance, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateInstance", Int::class, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        return if (retCode == 0) Result.success(VkInstance(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
 
     fun vkDestroyInstance(instance: VkInstance, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyInstance", instance, allocator?.pointer()?: MemorySegment.NULL)
 
-    fun vkEnumeratePhysicalDevices(instance: VkInstance): Pair<Array<VkPhysicalDevice>, Int> {
+    fun vkEnumeratePhysicalDevices(instance: VkInstance): Result<Array<VkPhysicalDevice>, Int> {
         val count = HeapInt()
         callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, MemorySegment.NULL).apply {
-            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+            if (this != VK_SUCCESS) return Result.fail(this)
         }
         val seg = Arena.ofAuto().allocate(sizetLength() * count.value() * 1L)
         callFunc("vkEnumeratePhysicalDevices", Int::class, instance, count, seg).apply {
-            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+            if (this != VK_SUCCESS) return Result.fail(this)
         }
 
-        return Pair(seg.toCPointerArray(count.value()).map { VkPhysicalDevice(it) }.toTypedArray(), VK_SUCCESS)
+        return Result.success(seg.toCPointerArray(count.value()).map { VkPhysicalDevice(it) }.toTypedArray())
     }
 
     fun vkGetPhysicalDeviceFeatures(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceFeatures =
@@ -1747,23 +1748,22 @@ object Vk10Funcs {
         tiling: Int,
         usage: Int,
         flags: Int
-    ): Pair<VkImageFormatProperties, Int> =
-        VkImageFormatProperties().let {
-            Pair(
-                it,
-                callFunc(
-                    "vkGetPhysicalDeviceImageFormatProperties",
-                    Int::class,
-                    physicalDevice,
-                    format,
-                    type,
-                    tiling,
-                    usage,
-                    flags,
-                    it
-                )
-            )
-        }
+    ): Result<VkImageFormatProperties, Int> {
+        val prop = VkImageFormatProperties()
+        val retCode = callFunc(
+            "vkGetPhysicalDeviceImageFormatProperties",
+            Int::class,
+            physicalDevice,
+            format,
+            type,
+            tiling,
+            usage,
+            flags,
+            prop
+        )
+
+        return if (retCode == VK_SUCCESS) Result.success(prop) else Result.fail(retCode)
+    }
 
     fun vkGetPhysicalDeviceProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceProperties =
         VkPhysicalDeviceProperties().apply { callVoidFunc("vkGetPhysicalDeviceProperties", physicalDevice, this) }
@@ -1793,67 +1793,67 @@ object Vk10Funcs {
         physicalDevice: VkPhysicalDevice,
         createInfo: VkDeviceCreateInfo,
         allocator: VkAllocationCallbacks?
-    ): Pair<VkDevice, Int> {
+    ): Result<VkDevice, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkCreateDevice", Int::class, physicalDevice, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
-        return Pair(VkDevice(seg.get(ADDRESS, 0)), retCode)
+        return if (retCode == VK_SUCCESS) Result.success(VkDevice(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyDevice(device: VkDevice, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyDevice", device, allocator?.pointer()?: MemorySegment.NULL)
 
-    fun vkEnumerateInstanceExtensionProperties(layerName: String): Pair<Array<VkExtensionProperties>, Int> {
+    fun vkEnumerateInstanceExtensionProperties(layerName: String): Result<Array<VkExtensionProperties>, Int> {
         val count = HeapInt()
         callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, MemorySegment.NULL).apply {
-            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+            if (this != VK_SUCCESS) return Result.fail(this)
         }
         val seg = Arena.ofAuto().allocate(260L * count.value())
         callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, seg).apply {
-            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+            if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Pair(seg.fromCStructArray(count.value(), 260, { VkExtensionProperties(it) }).toTypedArray(), VK_SUCCESS)
+        return Result.success(seg.fromCStructArray(count.value(), 260, { VkExtensionProperties(it) }).toTypedArray())
     }
 
-    fun vkEnumerateDeviceExtensionProperties(physicalDevice: VkPhysicalDevice, layerName: String): Pair<Array<VkExtensionProperties>, Int> {
+    fun vkEnumerateDeviceExtensionProperties(physicalDevice: VkPhysicalDevice, layerName: String): Result<Array<VkExtensionProperties>, Int> {
         val count = HeapInt()
         callFunc("vkEnumerateDeviceExtensionProperties", Int::class, physicalDevice, layerName, count, MemorySegment.NULL).apply {
-            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+            if (this != VK_SUCCESS) return Result.fail(this)
         }
         val seg = Arena.ofAuto().allocate(260L * count.value())
         callFunc("vkEnumerateDeviceExtensionProperties", Int::class, physicalDevice, layerName, count, seg).apply {
-            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+            if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Pair(seg.fromCStructArray(count.value(), 260, { VkExtensionProperties(it) }).toTypedArray(), VK_SUCCESS)
+        return Result.success(seg.fromCStructArray(count.value(), 260, { VkExtensionProperties(it) }).toTypedArray())
     }
 
-    fun vkEnumerateInstanceLayerProperties(): Pair<Array<VkLayerProperties>, Int> {
+    fun vkEnumerateInstanceLayerProperties(): Result<Array<VkLayerProperties>, Int> {
         val count = HeapInt()
         callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, MemorySegment.NULL).apply {
-            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+            if (this != VK_SUCCESS) return Result.fail(this)
         }
         val seg = Arena.ofAuto().allocate(520L * count.value())
         callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, seg).apply {
-            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+            if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Pair(seg.fromCStructArray(count.value(), 520, { VkLayerProperties(it) }).toTypedArray(), VK_SUCCESS)
+        return Result.success(seg.fromCStructArray(count.value(), 520, { VkLayerProperties(it) }).toTypedArray())
     }
 
-    fun vkEnumerateDeviceLayerProperties(physicalDevice: VkPhysicalDevice): Pair<Array<VkLayerProperties>, Int> {
+    fun vkEnumerateDeviceLayerProperties(physicalDevice: VkPhysicalDevice): Result<Array<VkLayerProperties>, Int> {
         val count = HeapInt()
         callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, MemorySegment.NULL).apply {
-            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+            if (this != VK_SUCCESS) return Result.fail(this)
         }
         val seg = Arena.ofAuto().allocate(520L * count.value())
         callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, seg).apply {
-            if (this != VK_SUCCESS) return Pair(arrayOf(), this)
+            if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Pair(seg.fromCStructArray(count.value(), 520, { VkLayerProperties(it) }).toTypedArray(), VK_SUCCESS)
+        return Result.success(seg.fromCStructArray(count.value(), 520, { VkLayerProperties(it) }).toTypedArray())
     }
 
-    fun vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: Int, queueIndex: Int): Pair<VkQueue, Int> {
+    fun vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: Int, queueIndex: Int): Result<VkQueue, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkGetDeviceQueue", Int::class, device, queueFamilyIndex, queueIndex, seg)
-        return Pair(VkQueue(seg.get(ADDRESS, 0)), retCode)
+        return if (retCode == VK_SUCCESS) Result.success(VkQueue(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkQueueSubmit(queue: VkQueue, submits: ArrayStruct<VkSubmitInfo>, fence: VkFence): Int = 
@@ -1865,10 +1865,10 @@ object Vk10Funcs {
     fun vkDeviceWaitIdle(device: VkDevice): Int =
         callFunc("vkDeviceWaitIdle", Int::class, device)
 
-    fun vkAllocateMemory(device: VkDevice, allocateInfo: VkMemoryAllocateInfo, allocator: VkAllocationCallbacks?): Pair<VkDeviceMemory, Int> {
+    fun vkAllocateMemory(device: VkDevice, allocateInfo: VkMemoryAllocateInfo, allocator: VkAllocationCallbacks?): Result<VkDeviceMemory, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkAllocateMemory", Int::class, device, allocateInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
-        return Pair(VkDeviceMemory(seg.get(ADDRESS, 0)), retCode)
+        return if (retCode == VK_SUCCESS) Result.success(VkDeviceMemory(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkFreeMemory(device: VkDevice, memory: VkDeviceMemory, allocator: VkAllocationCallbacks?) =
@@ -1924,10 +1924,10 @@ object Vk10Funcs {
     fun vkQueueBindSparse(queue: VkQueue, bindInfo: ArrayStruct<VkBindSparseInfo>, fence: VkFence): Int =
         callFunc("vkQueueBindSparse", Int::class, queue, bindInfo.arr.size, bindInfo.pointer(), fence)
 
-    fun vkCreateFence(device: VkDevice, createInfo: VkFenceCreateInfo, allocator: VkAllocationCallbacks?): Pair<VkFence, Int> {
+    fun vkCreateFence(device: VkDevice, createInfo: VkFenceCreateInfo, allocator: VkAllocationCallbacks?): Result<VkFence, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkCreateFence", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
-        return Pair(VkFence(seg.get(ADDRESS, 0)), retCode)
+        return if (retCode == VK_SUCCESS) Result.success(VkFence(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyFence(device: VkDevice, fence: VkFence, allocator: VkAllocationCallbacks?) =
@@ -1945,19 +1945,19 @@ object Vk10Funcs {
     fun vkWaitForFences(device: VkDevice, fences: PointerArrayStruct<VkFence>, waitAll: Boolean, timeout: Long): Int =
         callFunc("vkWaitForFences", Int::class, device, fences.arr.size, fences.pointer(), if (waitAll) 1 else 0, timeout)
 
-    fun vkCreateSemaphore(device: VkDevice, createInfo: VkSemaphoreCreateInfo, allocator: VkAllocationCallbacks?): Pair<VkSemaphore, Int> {
+    fun vkCreateSemaphore(device: VkDevice, createInfo: VkSemaphoreCreateInfo, allocator: VkAllocationCallbacks?): Result<VkSemaphore, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkCreateSemaphore", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
-        return Pair(VkSemaphore(seg.get(ADDRESS, 0)), retCode)
+        return if (retCode == VK_SUCCESS) Result.success(VkSemaphore(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroySemaphore(device: VkDevice, semaphore: VkSemaphore, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroySemaphore", device, semaphore, allocator?.pointer()?: MemorySegment.NULL)
 
-    fun vkCreateEvent(device: VkDevice, createInfo: VkEventCreateInfo, allocator: VkAllocationCallbacks?): Pair<VkEvent, Int> {
+    fun vkCreateEvent(device: VkDevice, createInfo: VkEventCreateInfo, allocator: VkAllocationCallbacks?): Result<VkEvent, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkCreateEvent", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
-        return Pair(VkEvent(seg.get(ADDRESS, 0)), retCode)
+        return if (retCode == VK_SUCCESS) Result.success(VkEvent(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyEvent(device: VkDevice, event: VkEvent, allocator: VkAllocationCallbacks?) =
@@ -1972,10 +1972,10 @@ object Vk10Funcs {
     fun vkResetEvent(device: VkDevice, event: VkEvent): Int =
         callFunc("vkResetEvent", Int::class, device, event)
 
-    fun vkCreateQueryPool(device: VkDevice, createInfo: VkQueryPoolCreateInfo, allocator: VkAllocationCallbacks?): Pair<VkQueryPool, Int> {
+    fun vkCreateQueryPool(device: VkDevice, createInfo: VkQueryPoolCreateInfo, allocator: VkAllocationCallbacks?): Result<VkQueryPool, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkCreateQueryPool", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL)
-        return Pair(VkQueryPool(seg.get(ADDRESS, 0)), retCode)
+        return if (retCode == VK_SUCCESS) Result.success(VkQueryPool(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyQueryPool(device: VkDevice, queryPool: VkQueryPool, allocator: VkAllocationCallbacks?) =
@@ -1984,10 +1984,10 @@ object Vk10Funcs {
     fun <T> vkGetQueryPoolResults(device: VkDevice, queryPool: VkQueryPool, firstQuery: Int, queryCount: Int, data: IHeapVar<T>, stride: Long, flags: Int): Int =
         callFunc("vkGetQueryPoolResults", Int::class, device, queryPool, firstQuery, queryCount, data, stride, flags)
 
-    fun vkCreateBuffer(device: VkDevice, createInfo: VkBufferCreateInfo, allocator: VkAllocationCallbacks?): Pair<VkBuffer, Int> {
+    fun vkCreateBuffer(device: VkDevice, createInfo: VkBufferCreateInfo, allocator: VkAllocationCallbacks?): Result<VkBuffer, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("vkCreateBuffer", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
-        return Pair(VkBuffer(seg.get(ADDRESS, 0)), retCode)
+        return if (retCode == VK_SUCCESS) Result.success(VkBuffer(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyBuffer(device: VkDevice, buffer: VkBuffer, allocator: VkAllocationCallbacks?) =

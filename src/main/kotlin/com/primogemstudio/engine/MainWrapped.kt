@@ -72,7 +72,7 @@ fun main() {
     )
     glfwMakeContextCurrent(window)
 
-    val vkInstance = vkCreateInstance(
+    vkCreateInstance(
         VkInstanceCreateInfo(
             appInfo = VkApplicationInfo(
                 appName = "test",
@@ -83,30 +83,34 @@ fun main() {
             )
         ),
         allocator = null
-    )
-    val dev = vkEnumeratePhysicalDevices(vkInstance.first).first[0]
-    val devi = vkCreateDevice(
-            dev,
-            VkDeviceCreateInfo(
-                null,
-                0,
-                ArrayStruct(arrayOf(
-                    VkDeviceQueueCreateInfo(
-                        null,
-                        0,
-                        0,
-                        FloatArrayStruct(floatArrayOf(1f))
-                    )
-                )),
-                listOf(),
-                listOf(),
-                VkPhysicalDeviceFeatures()
-            ),
-            null
-        ).first
-    val fence = vkCreateFence(devi, VkFenceCreateInfo(), null).first
-    val arr = PointerArrayStruct(arrayOf(fence))
-    println(vkResetFences(devi, arr))
+    ).match({ instance -> 
+        vkEnumeratePhysicalDevices(instance).match({ phyDevice -> 
+            vkCreateDevice(
+                phyDevice[0],
+                VkDeviceCreateInfo(
+                    null,
+                    0,
+                    ArrayStruct(arrayOf(
+                        VkDeviceQueueCreateInfo(
+                            null,
+                            0,
+                            0,
+                            FloatArrayStruct(floatArrayOf(1f))
+                        )
+                    )),
+                    listOf(),
+                    listOf(),
+                    VkPhysicalDeviceFeatures()
+                ),
+                null
+            ).match({ dev -> 
+                vkCreateFence(dev, VkFenceCreateInfo(), null).match({ fence -> 
+                    val arr = PointerArrayStruct(arrayOf(fence))
+                    logger.info("${vkResetFences(dev, arr)}")
+                }, { logger.error("vulkan error: $it") })
+            }, { logger.error("vulkan error: $it") })
+        }, { logger.error("vulkan error: $it") })
+     }, { logger.error("vulkan error: $it") })
 
     glfwSetCursor(
         window,
