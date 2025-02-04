@@ -15,6 +15,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_QUE
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -28,6 +29,7 @@ import com.primogemstudio.engine.interfaces.fromCStructArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.types.Result
 import org.joml.Vector3i
+import org.joml.Vector4i
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -1158,6 +1160,78 @@ class VkSubresourceLayout(private val seg: MemorySegment) : IHeapVar<MemorySegme
     val depthPitch: Long get() = seg.get(JAVA_LONG, 32)
 }
 
+class VkImageSubresourceRange(
+    private val aspectMask: Int, 
+    private val baseMipLevel: Int, 
+    private val levelCount: Int, 
+    private val baseArrayLayer: Int, 
+    private val layerCount: Int
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_INT, 
+        JAVA_INT, 
+        JAVA_INT, 
+        JAVA_INT, 
+        JAVA_INT
+    )
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, aspectMask)
+        seg.set(JAVA_INT, 4, baseMipLevel)
+        seg.set(JAVA_INT, 8, levelCount)
+        seg.set(JAVA_INT, 12, baseArrayLayer)
+        seg.set(JAVA_INT, 16, layerCount)
+    }
+}
+
+class VkImageViewCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0, 
+    private val image: VkImage, 
+    private val viewType: Int,
+    private val format: Int, 
+    private val components: Vector4i, 
+    private val range: VkImageSubresourceRange
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG, 
+        ADDRESS,
+        JAVA_LONG, 
+        JAVA_LONG, 
+        JAVA_INT, 
+        JAVA_INT,
+        JAVA_INT, JAVA_INT, JAVA_INT, JAVA_INT, 
+        MemoryLayout.paddingLayout(20 + 4)
+    )
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(ADDRESS, sizetLength() + 16L, image.ref())
+        seg.set(JAVA_INT, sizetLength() + 24L, viewType)
+        seg.set(JAVA_INT, sizetLength() + 28L, format)
+
+        seg.set(JAVA_INT, sizetLength() + 32L, components.x)
+        seg.set(JAVA_INT, sizetLength() + 36L, components.y)
+        seg.set(JAVA_INT, sizetLength() + 40L, components.z)
+        seg.set(JAVA_INT, sizetLength() + 44L, components.w)
+
+        range.construct(seg.asSlice(sizetLength() + 48L, 16L))
+    }
+}
+
+class VkImageView(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -2134,4 +2208,13 @@ object Vk10Funcs {
         callVoidFunc("vkGetImageSubresourceLayout", device, image, subresource, seg)
         return VkSubresourceLayout(seg)
     }
+
+    fun vkCreateImageView(device: VkDevice, createInfo: VkImageViewCreateInfo, allocator: VkAllocationCallbacks?): Result<VkImageView, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateImageView", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        return if (retCode == VK_SUCCESS) Result.success(VkImageView(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
+
+    fun vkDestroyImageView(device: VkDevice, imageView: VkImageView, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyImageView", device, imageView, allocator?.pointer()?: MemorySegment.NULL)
 }
