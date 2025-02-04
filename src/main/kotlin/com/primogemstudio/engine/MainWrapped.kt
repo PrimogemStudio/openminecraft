@@ -36,7 +36,6 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetPhysicalDeviceQu
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkAllocateMemory
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkFreeMemory
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkMapMemory
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateBuffer
 import com.primogemstudio.engine.interfaces.heap.*
 import com.primogemstudio.engine.interfaces.struct.*
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -108,15 +107,6 @@ fun main() {
     val fence = vkCreateFence(devi, VkFenceCreateInfo(), null).first
     val arr = PointerArrayStruct(arrayOf(fence))
     println(vkResetFences(devi, arr))
-    println(
-        vkCreateBuffer(
-            devi, 
-            VkBufferCreateInfo(
-                size = 8L, usage = 0, sharingMode = 0, queueFamilyIndices = IntArrayStruct(intArrayOf(0))
-            ), 
-            null
-        )
-    )
 
     glfwSetCursor(
         window,

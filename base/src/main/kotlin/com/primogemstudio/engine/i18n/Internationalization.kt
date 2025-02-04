@@ -36,6 +36,9 @@ object Internationalization {
             }
         }
         logger.info("Current locale: ${Locale.getDefault()}")
+        System.getProperties().forEach { k, v -> 
+            logger.info("$k = $v")
+        }
     }
 
     fun append(path: String) {
