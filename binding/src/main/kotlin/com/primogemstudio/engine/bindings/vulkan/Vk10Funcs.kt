@@ -2043,5 +2043,5 @@ object Vk10Funcs {
     }
 
     fun vkDestroyBufferView(device: VkDevice, bufferView: VkBufferView, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyBufferView", device, bufferView, allocator)
+        callVoidFunc("vkDestroyBufferView", device, bufferView, allocator?.pointer()?: MemorySegment.NULL)
 }
