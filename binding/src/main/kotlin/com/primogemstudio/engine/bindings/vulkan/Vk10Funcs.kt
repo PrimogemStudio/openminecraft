@@ -1989,4 +1989,7 @@ object Vk10Funcs {
         val retCode = callFunc("vkCreateBuffer", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
         return Pair(VkBuffer(seg.get(ADDRESS, 0)), retCode)
     }
+
+    fun vkDestroyBuffer(device: VkDevice, buffer: VkBuffer, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyBuffer", device, buffer, allocator?.pointer()?: MemorySegment.NULL)
 }
