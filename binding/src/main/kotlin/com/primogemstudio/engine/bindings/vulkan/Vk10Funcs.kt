@@ -14,6 +14,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_EVE
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -1083,6 +1084,69 @@ class VkBufferViewCreateInfo(
     }
 }
 
+class VkImageCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0, 
+    private val imageType: Int, 
+    private val format: Int, 
+    private val extent: Vector3i, 
+    private val mipLevels: Int, 
+    private val arrayLayers: Int, 
+    private val samples: Int, 
+    private val tiling: Int, 
+    private val usage: Int, 
+    private val sharingMode: Int, 
+    private val queueFamilyIndices: IntArrayStruct, 
+    private val initialLayout: Int
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG, 
+        ADDRESS,
+        JAVA_INT, 
+        JAVA_INT, 
+        JAVA_LONG, 
+        JAVA_INT, JAVA_INT, JAVA_INT, 
+        JAVA_INT, 
+        JAVA_INT, 
+        JAVA_INT, 
+        JAVA_INT, 
+        JAVA_INT, 
+        JAVA_INT, 
+        JAVA_LONG, 
+        ADDRESS, 
+        JAVA_LONG
+    )
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, imageType)
+        seg.set(JAVA_INT, sizetLength() + 16L, format)
+        seg.set(JAVA_INT, sizetLength() + 20L, extent.x)
+        seg.set(JAVA_INT, sizetLength() + 24L, extent.y)
+        seg.set(JAVA_INT, sizetLength() + 28L, extent.z)
+
+        seg.set(JAVA_INT, sizetLength() + 32L, mipLevels)
+        seg.set(JAVA_INT, sizetLength() + 36L, arrayLayers)
+        seg.set(JAVA_INT, sizetLength() + 40L, samples)
+        seg.set(JAVA_INT, sizetLength() + 44L, tiling)
+        seg.set(JAVA_INT, sizetLength() + 48L, usage)
+        seg.set(JAVA_INT, sizetLength() + 52L, sharingMode)
+        seg.set(JAVA_INT, sizetLength() + 56L, queueFamilyIndices.arr.size)
+        seg.set(ADDRESS, sizetLength() + 64L, queueFamilyIndices.pointer())
+        seg.set(JAVA_INT, sizetLength() * 2 + 64L, initialLayout)
+    }
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -2044,4 +2108,13 @@ object Vk10Funcs {
 
     fun vkDestroyBufferView(device: VkDevice, bufferView: VkBufferView, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyBufferView", device, bufferView, allocator?.pointer()?: MemorySegment.NULL)
+
+    fun vkCreateImage(device: VkDevice, createInfo: VkImageCreateInfo, allocator: VkAllocationCallbacks?): Result<VkImage, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateImage", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        return if (retCode == VK_SUCCESS) Result.success(VkImage(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
+
+    fun vkDestroyImage(device: VkDevice, image: VkImage, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyImage", device, image, allocator?.pointer()?: MemorySegment.NULL)
 }
