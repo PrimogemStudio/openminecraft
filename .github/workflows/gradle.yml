@@ -102,7 +102,7 @@ jobs:
             gc: serial
             march: native
 
-    name: Native Image for ${{ matrix.osname }} (${{ matrix.march }}, ${{ matrix.gc }}, ${{ matrix.opti }})
+    name: Native Image for ${{ matrix.osname }} (${{ matrix.march }}, ${{ matrix.gc }})
     needs: build
     runs-on: ${{ matrix.os }}
     steps:
