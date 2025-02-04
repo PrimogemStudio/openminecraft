@@ -13,6 +13,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SEM
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_EVENT_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -1040,6 +1041,48 @@ data class VkBufferCreateInfo(
     }
 }
 
+class VkBufferView(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
+class VkBufferViewCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0, 
+    private val buffer: VkBuffer, 
+    private val format: Int, 
+    private val offset: Long, 
+    private val range: Long
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG, 
+        ADDRESS,
+        JAVA_LONG, 
+        JAVA_LONG, 
+        JAVA_LONG, 
+        JAVA_LONG, 
+        JAVA_LONG
+    )
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(ADDRESS, sizetLength() + 16L, buffer.ref())
+        seg.set(JAVA_INT, sizetLength() + 24L, format)
+        seg.set(JAVA_LONG, sizetLength() + 32L, offset)
+        seg.set(JAVA_LONG, sizetLength() + 40L, range)
+    }
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -1992,4 +2035,13 @@ object Vk10Funcs {
 
     fun vkDestroyBuffer(device: VkDevice, buffer: VkBuffer, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyBuffer", device, buffer, allocator?.pointer()?: MemorySegment.NULL)
+
+    fun vkCreateBufferView(device: VkDevice, createInfo: VkBufferViewCreateInfo, allocator: VkAllocationCallbacks?): Result<VkBufferView, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateBufferView", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        return if (retCode == VK_SUCCESS) Result.success(VkBufferView(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
+
+    fun vkDestroyBufferView(device: VkDevice, bufferView: VkBufferView, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyBufferView", device, bufferView, allocator)
 }
