@@ -69,70 +69,38 @@ jobs:
           - os: windows-latest
             osname: windows
             gc: serial
-            march: x86-64
+            march: compatibility
           - os: windows-latest
             osname: windows
             gc: serial
-            march: x86-64-v1
-          - os: windows-latest
-            osname: windows
-            gc: serial
-            march: x86-64-v2
-          - os: windows-latest
-            osname: windows
-            gc: serial
-            march: x86-64-v3
+            march: native
 
           - os: ubuntu-22.04
             osname: linux
             gc: G1
-            march: x86-64
+            march: compatibility
           - os: ubuntu-22.04
             osname: linux
             gc: G1
-            march: x86-64-v1
-          - os: ubuntu-22.04
-            osname: linux
-            gc: G1
-            march: x86-64-v2
-          - os: ubuntu-22.04
-            osname: linux
-            gc: G1
-            march: x86-64-v3
+            march: native
 
           - os: ubuntu-22.04
             osname: linux
             gc: serial
-            march: x86-64
+            march: compatibility
           - os: ubuntu-22.04
             osname: linux
             gc: serial
-            march: x86-64-v1
-          - os: ubuntu-22.04
-            osname: linux
-            gc: serial
-            march: x86-64-v2
-          - os: ubuntu-22.04
-            osname: linux
-            gc: serial
-            march: x86-64-v3
+            march: native
 
           - os: macos-13
             osname: darwin
             gc: serial
-            march: x86-64
+            march: compatibility
           - os: macos-13
             osname: darwin
             gc: serial
-            march: x86-64-v1
-          - os: macos-13
-            osname: darwin
-            gc: serial
-            march: x86-64-v2
-          - os: macos-13
-            osname: darwin
-            gc: serial
-            march: x86-64-v3
+            march: native
 
     name: Native Image for ${{ matrix.osname }} (${{ matrix.march }}, ${{ matrix.gc }}, ${{ matrix.opti }})
     needs: build
