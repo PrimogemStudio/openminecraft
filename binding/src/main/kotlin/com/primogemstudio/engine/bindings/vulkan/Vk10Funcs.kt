@@ -12,6 +12,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_FEN
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_EVENT_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -998,6 +999,46 @@ data class VkQueryPoolCreateInfo(
     }
 }
 
+data class VkBufferCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0, 
+    private val size: Long, 
+    private val usage: Int, 
+    private val sharingMode: Int, 
+    private val queueFamilyIndices: IntArrayStruct
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG, 
+        ADDRESS, 
+        JAVA_LONG, 
+        JAVA_LONG, 
+        JAVA_INT, 
+        JAVA_INT, 
+        JAVA_LONG, 
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_LONG, sizetLength() + 16L, size)
+        seg.set(JAVA_INT, sizetLength() + 24L, usage)
+        seg.set(JAVA_INT, sizetLength() + 28L, sharingMode)
+        seg.set(JAVA_INT, sizetLength() + 32L, queueFamilyIndices.arr.size)
+        seg.set(ADDRESS, sizetLength() + 40L, queueFamilyIndices.pointer())
+    }
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -1943,5 +1984,9 @@ object Vk10Funcs {
     fun <T> vkGetQueryPoolResults(device: VkDevice, queryPool: VkQueryPool, firstQuery: Int, queryCount: Int, data: IHeapVar<T>, stride: Long, flags: Int): Int =
         callFunc("vkGetQueryPoolResults", Int::class, device, queryPool, firstQuery, queryCount, data, stride, flags)
 
-    
+    fun vkCreateBuffer(device: VkDevice, createInfo: VkBufferCreateInfo, allocator: VkAllocationCallbacks?): Pair<VkBuffer, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateBuffer", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        return Pair(VkBuffer(seg.get(ADDRESS, 0)), retCode)
+    }
 }
