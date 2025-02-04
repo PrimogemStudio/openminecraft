@@ -1147,6 +1147,17 @@ class VkImageCreateInfo(
     }
 }
 
+class VkSubresourceLayout(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+
+    val offset: Long get() = seg.get(JAVA_LONG, 0)
+    val size: Long get() = seg.get(JAVA_LONG, 8)
+    val rowPitch: Long get() = seg.get(JAVA_LONG, 16)
+    val arrayPitch: Long get() = seg.get(JAVA_LONG, 24)
+    val depthPitch: Long get() = seg.get(JAVA_LONG, 32)
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -2117,4 +2128,10 @@ object Vk10Funcs {
 
     fun vkDestroyImage(device: VkDevice, image: VkImage, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyImage", device, image, allocator?.pointer()?: MemorySegment.NULL)
+
+    fun vkGetImageSubresourceLayout(device: VkDevice, image: VkImage, subresource: VkImageSubresource): VkSubresourceLayout {
+        val seg = Arena.ofAuto().allocate(40L)
+        callVoidFunc("vkGetImageSubresourceLayout", device, image, subresource, seg)
+        return VkSubresourceLayout(seg)
+    }
 }
