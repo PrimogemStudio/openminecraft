@@ -3071,4 +3071,25 @@ object Vk10Funcs {
 
     fun vkMergePipelineCaches(device: VkDevice, dstCache: VkPipelineCache, srcCaches: PointerArrayStruct<VkPipelineCache>): Int =
         callFunc("vkMergePipelineCaches", Int::class, device, dstCache, srcCaches.arr.size, srcCaches.pointer())
+
+    fun vkCreateGraphicsPipelines(
+        device: VkDevice,
+        pipelineCache: VkPipelineCache,
+        createInfo: ArrayStruct<VkGraphicsPipelineCreateInfo>,
+        allocator: VkAllocationCallbacks?
+    ): Result<Array<VkPipeline>, Int> {
+        val seg = Arena.ofAuto().allocate(createInfo.arr.size * sizetLength() * 1L)
+        val retCode = callFunc(
+            "vkCreateGraphicsPipelines",
+            Int::class,
+            device,
+            pipelineCache,
+            createInfo.arr.size,
+            createInfo.pointer(),
+            allocator?.pointer() ?: MemorySegment.NULL,
+            seg
+        )
+        return if (retCode == VK_SUCCESS) Result.success(seg.toCPointerArray(createInfo.arr.size).map { VkPipeline(it) }
+            .toTypedArray()) else Result.fail(retCode)
+    }
 }
