@@ -1,6 +1,6 @@
 package com.primogemstudio.engine.bindings.vulkan
 
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.loader.Platform.sizetLength
@@ -36,7 +36,7 @@ class VkPipelineViewportStateCreateInfo(
     )
 
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO)
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO)
         seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
         seg.set(JAVA_INT, sizetLength() + 8L, flags)
         seg.set(JAVA_INT, sizetLength() + 12L, viewports.arr.size)
