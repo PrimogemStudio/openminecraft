@@ -101,7 +101,7 @@ fun main() {
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
     }, { logger.error("vulkan error: $it") })
-    println(Class.forName("org.lwjgl.vulkan.VkPipelineDepthStencilStateCreateInfo").getField("SIZEOF").get(null))
+    println(Class.forName("org.lwjgl.vulkan.VkGraphicsPipelineCreateInfo").getField("SIZEOF").get(null))
 
     glfwSetCursor(
         window,

@@ -37,6 +37,7 @@ import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.types.Result
 import org.joml.Vector2i
 import org.joml.Vector3i
+import org.joml.Vector4f
 import org.joml.Vector4i
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
@@ -1823,7 +1824,6 @@ class VkPipelineDepthStencilStateCreateInfo(
         JAVA_FLOAT,
         JAVA_FLOAT
     )
-
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO)
         seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
@@ -1840,7 +1840,136 @@ class VkPipelineDepthStencilStateCreateInfo(
     }
 }
 
-// TODO: Complete struct define
+class VkPipelineColorBlendAttachmentState(
+    private val blendEnable: Boolean,
+    private val srcColorBlendFactor: Int,
+    private val dstColorBlendFactor: Int,
+    private val colorBlendOp: Int,
+    private val srcAlphaBlendFactor: Int,
+    private val dstAlphaBlendFactor: Int,
+    private val alphaBlendOp: Int,
+    private val colorWriteMask: Int
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, if (blendEnable) 1 else 0)
+        seg.set(JAVA_INT, 4, srcColorBlendFactor)
+        seg.set(JAVA_INT, 8, dstColorBlendFactor)
+        seg.set(JAVA_INT, 12, colorBlendOp)
+        seg.set(JAVA_INT, 16, srcAlphaBlendFactor)
+        seg.set(JAVA_INT, 20, dstAlphaBlendFactor)
+        seg.set(JAVA_INT, 24, alphaBlendOp)
+        seg.set(JAVA_INT, 28, colorWriteMask)
+    }
+}
+
+class VkPipelineColorBlendStateCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0,
+    private val logicOpEnable: Boolean,
+    private val logicOp: Int,
+    private val attachments: ArrayStruct<VkPipelineColorBlendAttachmentState>,
+    private val blendConstants: Vector4f
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        attachments.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        ADDRESS,
+        JAVA_FLOAT,
+        JAVA_FLOAT,
+        JAVA_FLOAT,
+        JAVA_FLOAT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, if (logicOpEnable) 1 else 0)
+        seg.set(JAVA_INT, sizetLength() + 16L, logicOp)
+        seg.set(JAVA_INT, sizetLength() + 20L, attachments.arr.size)
+        seg.set(ADDRESS, sizetLength() + 24L, attachments.pointer())
+        seg.set(JAVA_FLOAT, sizetLength() * 2 + 24L, blendConstants.x)
+        seg.set(JAVA_FLOAT, sizetLength() * 2 + 28L, blendConstants.y)
+        seg.set(JAVA_FLOAT, sizetLength() * 2 + 32L, blendConstants.z)
+        seg.set(JAVA_FLOAT, sizetLength() * 2 + 36L, blendConstants.w)
+    }
+}
+
+class VkPipelineDynamicStateCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0,
+    private val dynamicStates: IntArrayStruct
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, dynamicStates.arr.size)
+        seg.set(ADDRESS, sizetLength() + 16L, dynamicStates.pointer())
+    }
+}
+
+class VkPipeline(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
+class VkPipelineLayout(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
+class VkRenderPass(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 class VkGraphicsPipelineCreateInfo(
     private val next: IStruct? = null,
     private val flags: Int = 0,
@@ -1851,7 +1980,14 @@ class VkGraphicsPipelineCreateInfo(
     private val viewport: VkPipelineViewportStateCreateInfo,
     private val rasterization: VkPipelineRasterizationStateCreateInfo,
     private val multisample: VkPipelineMultisampleStateCreateInfo,
-    private val depthStencil: VkPipelineDepthStencilStateCreateInfo
+    private val depthStencil: VkPipelineDepthStencilStateCreateInfo,
+    private val colorBlend: VkPipelineColorBlendStateCreateInfo,
+    private val dynamic: VkPipelineDynamicStateCreateInfo,
+    private val layout: VkPipelineLayout,
+    private val renderPass: VkRenderPass,
+    private val subpass: Int,
+    private val basePipeline: VkPipeline,
+    private val basePipelineIndex: Int
 ) : IStruct() {
     init {
         construct(seg)
@@ -1867,6 +2003,8 @@ class VkGraphicsPipelineCreateInfo(
         rasterization.close()
         multisample.close()
         depthStencil.close()
+        colorBlend.close()
+        dynamic.close()
         super.close()
     }
 
@@ -1905,7 +2043,13 @@ class VkGraphicsPipelineCreateInfo(
         seg.set(ADDRESS, sizetLength() * 6 + 16L, rasterization.pointer())
         seg.set(ADDRESS, sizetLength() * 7 + 16L, multisample.pointer())
         seg.set(ADDRESS, sizetLength() * 8 + 16L, depthStencil.pointer())
-
+        seg.set(ADDRESS, sizetLength() * 9 + 16L, colorBlend.pointer())
+        seg.set(ADDRESS, sizetLength() * 10 + 16L, dynamic.pointer())
+        seg.set(ADDRESS, sizetLength() * 11 + 16L, layout.ref())
+        seg.set(ADDRESS, sizetLength() * 11 + 24L, renderPass.ref())
+        seg.set(JAVA_INT, sizetLength() * 11 + 32L, subpass)
+        seg.set(ADDRESS, sizetLength() * 11 + 40L, basePipeline.ref())
+        seg.set(JAVA_INT, sizetLength() * 11 + 48L, basePipelineIndex)
     }
 }
 
