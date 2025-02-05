@@ -3153,4 +3153,7 @@ object Vk10Funcs {
         return if (retCode == VK_SUCCESS) Result.success(seg.toCPointerArray(createInfo.arr.size).map { VkPipeline(it) }
             .toTypedArray()) else Result.fail(retCode)
     }
+
+    fun vkDestroyPipeline(device: VkDevice, pipeline: VkPipeline, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyPipeline", device, pipeline, allocator?.pointer() ?: MemorySegment.NULL)
 }
