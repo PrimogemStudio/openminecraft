@@ -16,6 +16,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUF
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -1232,6 +1233,36 @@ class VkImageView(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = seg
 }
 
+class VkShaderModuleCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0, 
+    private val code: ByteArrayStruct
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG, 
+        ADDRESS,
+        JAVA_LONG, 
+        ADDRESS, 
+        ADDRESS
+    )
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 16L, code.arr.size)
+        seg.set(ADDRESS, sizetLength() * 2 + 16L, code.pointer())
+    }
+}
+
+class VkShaderModule(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -2217,4 +2248,13 @@ object Vk10Funcs {
 
     fun vkDestroyImageView(device: VkDevice, imageView: VkImageView, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyImageView", device, imageView, allocator?.pointer()?: MemorySegment.NULL)
+
+    fun vkCreateShaderModule(device: VkDevice, createInfo: VkShaderModuleCreateInfo, allocator: VkAllocationCallbacks?): Result<VkShaderModule, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreateShaderModule", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        return if (retCode == VK_SUCCESS) Result.success(VkShaderModule(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
+
+    fun vkDestroyShaderModule(device: VkDevice, shaderModule: VkShaderModule, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyShaderModule", device, shaderModule, allocator?.pointer()?: MemorySegment.NULL)
 }
