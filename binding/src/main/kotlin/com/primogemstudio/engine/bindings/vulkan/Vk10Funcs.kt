@@ -1,33 +1,33 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_APPLICATION_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SUBMIT_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BIND_SPARSE_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_EVENT_CREATE_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_EVENT_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_FENCE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SUBMIT_INFO
+import com.primogemstudio.engine.interfaces.*
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.heap.*
+import com.primogemstudio.engine.interfaces.heap.HeapInt
+import com.primogemstudio.engine.interfaces.heap.HeapLong
+import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.*
-import com.primogemstudio.engine.interfaces.toCString
-import com.primogemstudio.engine.interfaces.toCStrArray
-import com.primogemstudio.engine.interfaces.toCPointerArray
-import com.primogemstudio.engine.interfaces.fromCStructArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.types.Result
 import org.joml.Vector3i
@@ -1021,6 +1021,7 @@ data class VkBufferCreateInfo(
 
     override fun close() {
         next?.close()
+        queueFamilyIndices.close()
         super.close()
     }
 
@@ -1110,6 +1111,7 @@ class VkImageCreateInfo(
 
     override fun close() {
         next?.close()
+        queueFamilyIndices.close()
         super.close()
     }
 
@@ -1203,6 +1205,12 @@ class VkImageViewCreateInfo(
         construct(seg)
     }
 
+    override fun close() {
+        next?.close()
+        range.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG, 
         ADDRESS,
@@ -1244,6 +1252,12 @@ class VkShaderModuleCreateInfo(
         construct(seg)
     }
 
+    override fun close() {
+        next?.close()
+        code.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG, 
         ADDRESS,
@@ -1274,6 +1288,12 @@ class VkPipelineCacheCreateInfo(
         construct(seg)
     }
 
+    override fun close() {
+        next?.close()
+        initialData.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = MemoryLayout.structLayout(
         JAVA_LONG, 
         ADDRESS,
@@ -1293,6 +1313,232 @@ class VkPipelineCacheCreateInfo(
 class VkPipelineCache(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun ref(): MemorySegment = seg
     override fun value(): MemorySegment = seg
+}
+
+class VkSpecializationMapEntry(
+    private val constantId: Int,
+    private val offset: Int,
+    private val size: Long
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_LONG
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, constantId)
+        seg.set(JAVA_INT, 4, offset)
+        seg.set(JAVA_LONG, 8, size)
+    }
+}
+
+class VkSpecializationInfo(
+    private val mapEntries: ArrayStruct<VkSpecializationMapEntry>,
+    private val data: ByteArrayStruct
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        mapEntries.close()
+        data.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        ADDRESS,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, mapEntries.arr.size)
+        seg.set(ADDRESS, 8, mapEntries.pointer())
+        seg.set(JAVA_INT, sizetLength() + 8L, data.arr.size)
+        seg.set(ADDRESS, sizetLength() * 2 + 8L, data.pointer())
+    }
+}
+
+class VkPipelineShaderStageCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0,
+    private val stage: Int,
+    private val module: VkShaderModule,
+    private val name: String,
+    private val specializationInfo: VkSpecializationInfo
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        specializationInfo.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_LONG,
+        ADDRESS,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, stage)
+        seg.set(ADDRESS, sizetLength() + 16L, module.ref())
+        seg.set(ADDRESS, sizetLength() + 24L, name.toCString())
+        seg.set(ADDRESS, sizetLength() * 2 + 24L, specializationInfo.pointer())
+    }
+}
+
+class VkVertexInputBindingDescription(
+    private val binding: Int,
+    private val stride: Int,
+    private val inputRate: Int
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, binding)
+        seg.set(JAVA_INT, 4, stride)
+        seg.set(JAVA_INT, 8, inputRate)
+    }
+}
+
+class VkVertexInputAttributeDescription(
+    private val location: Int,
+    private val binding: Int,
+    private val format: Int,
+    private val position: Int
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, location)
+        seg.set(JAVA_INT, 4, binding)
+        seg.set(JAVA_INT, 8, format)
+        seg.set(JAVA_INT, 12, position)
+    }
+}
+
+class VkPipelineVertexInputStateCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0,
+    private val bindings: ArrayStruct<VkVertexInputBindingDescription>,
+    private val attributes: ArrayStruct<VkVertexInputAttributeDescription>
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        bindings.close()
+        attributes.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, bindings.arr.size)
+        seg.set(ADDRESS, sizetLength() + 16L, bindings.pointer())
+        seg.set(JAVA_INT, sizetLength() * 2 + 16L, attributes.arr.size)
+        seg.set(ADDRESS, sizetLength() * 2 + 24L, attributes.pointer())
+    }
+}
+
+// TODO: Complete struct define
+class VkGraphicsPipelineCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0,
+    private val stages: ArrayStruct<VkPipelineShaderStageCreateInfo>,
+    private val vertex: VkPipelineVertexInputStateCreateInfo
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        stages.close()
+        vertex.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        ADDRESS,
+        ADDRESS,
+        ADDRESS,
+        ADDRESS,
+        ADDRESS,
+        ADDRESS,
+        ADDRESS,
+        ADDRESS,
+        ADDRESS,
+        ADDRESS,
+        JAVA_LONG,
+        JAVA_LONG,
+        JAVA_LONG,
+        JAVA_LONG,
+        JAVA_LONG
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, stages.arr.size)
+        seg.set(ADDRESS, sizetLength() + 16L, stages.pointer())
+        seg.set(ADDRESS, sizetLength() * 2 + 16L, vertex.pointer())
+
+    }
 }
 
 object Vk10Funcs {
