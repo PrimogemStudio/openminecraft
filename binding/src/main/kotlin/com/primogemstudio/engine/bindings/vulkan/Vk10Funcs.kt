@@ -1187,4 +1187,7 @@ object Vk10Funcs {
         val retCode = callFunc("vkCreatePipelineLayout", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL)
         return if (retCode == VK_SUCCESS) Result.success(VkPipelineLayout(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
+
+    fun vkDestroyPipelineLayout(device: VkDevice, pipelineLayout: VkPipelineLayout, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyPipelineLayout", device, pipelineLayout, allocator?.pointer() ?: MemorySegment.NULL)
 }

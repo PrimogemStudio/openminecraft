@@ -10,7 +10,7 @@ import java.lang.foreign.ValueLayout.*
 class VkComputePipelineCreateInfo(
     private val next: IStruct? = null,
     private val flags: Int = 0,
-    private val stage: VkPipelineShaderStageCreateInfo,
+    private val stage: VkPipelineShaderStageCreateInfo? = null,
     private val layout: VkPipelineLayout,
     private val basePipelineHandle: VkPipeline,
     private val basePipelineIndex: Int
@@ -21,7 +21,7 @@ class VkComputePipelineCreateInfo(
 
     override fun close() {
         next?.close()
-        stage.close()
+        stage?.close()
         super.close()
     }
 
@@ -39,7 +39,7 @@ class VkComputePipelineCreateInfo(
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO)
         seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
         seg.set(JAVA_INT, sizetLength() + 8L, flags)
-        stage.construct(seg.asSlice(sizetLength() + 12L, 48))
+        stage?.construct(seg.asSlice(sizetLength() + 12L, 48))
         seg.set(ADDRESS, sizetLength() + 64L, layout.ref())
         seg.set(ADDRESS, sizetLength() * 2 + 64L, basePipelineHandle.ref())
         seg.set(JAVA_INT, sizetLength() * 3 + 64L, basePipelineIndex)

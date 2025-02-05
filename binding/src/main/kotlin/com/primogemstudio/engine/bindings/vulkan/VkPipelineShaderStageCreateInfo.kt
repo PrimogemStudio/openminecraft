@@ -14,7 +14,7 @@ class VkPipelineShaderStageCreateInfo(
     private val stage: Int,
     private val module: VkShaderModule,
     private val name: String,
-    private val specializationInfo: VkSpecializationInfo
+    private val specializationInfo: VkSpecializationInfo? = null
 ) : IStruct() {
     init {
         construct(seg)
@@ -22,7 +22,7 @@ class VkPipelineShaderStageCreateInfo(
 
     override fun close() {
         next?.close()
-        specializationInfo.close()
+        specializationInfo?.close()
         super.close()
     }
 
@@ -43,6 +43,6 @@ class VkPipelineShaderStageCreateInfo(
         seg.set(JAVA_INT, sizetLength() + 12L, stage)
         seg.set(ADDRESS, sizetLength() + 16L, module.ref())
         seg.set(ADDRESS, sizetLength() + 24L, name.toCString())
-        seg.set(ADDRESS, sizetLength() * 2 + 24L, specializationInfo.pointer())
+        seg.set(ADDRESS, sizetLength() * 2 + 24L, specializationInfo?.pointer() ?: MemorySegment.NULL)
     }
 }
