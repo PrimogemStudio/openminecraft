@@ -5,11 +5,10 @@ import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.JAVA_DOUBLE
 
 class HeapDouble : IHeapVar<Double> {
-    private val arena = Arena.ofConfined()
+    private val arena = Arena.ofAuto()
     private val seg = arena.allocate(JAVA_DOUBLE)
     override fun ref(): MemorySegment = seg
     override fun value(): Double = seg.get(JAVA_DOUBLE, 0)
 
     override fun toString(): String = "${value()}"
-    fun close() = arena.close()
 }

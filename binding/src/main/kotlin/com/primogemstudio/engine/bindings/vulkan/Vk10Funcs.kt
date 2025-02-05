@@ -17,6 +17,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUF
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -35,6 +36,7 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
+import java.nio.ByteBuffer
 
 data class VkApplicationInfo(
     private val next: IStruct? = null,
@@ -1263,6 +1265,36 @@ class VkShaderModule(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = seg
 }
 
+class VkPipelineCacheCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0, 
+    private val initialData: ByteArrayStruct
+): IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG, 
+        ADDRESS,
+        JAVA_LONG, 
+        ADDRESS, 
+        ADDRESS
+    )
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer()?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 16L, initialData.arr.size)
+        seg.set(ADDRESS, sizetLength() * 2 + 16L, initialData.pointer())
+    }
+}
+
+class VkPipelineCache(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -2257,4 +2289,28 @@ object Vk10Funcs {
 
     fun vkDestroyShaderModule(device: VkDevice, shaderModule: VkShaderModule, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyShaderModule", device, shaderModule, allocator?.pointer()?: MemorySegment.NULL)
+
+    fun vkCreatePipelineCache(device: VkDevice, createInfo: VkPipelineCacheCreateInfo, allocator: VkAllocationCallbacks?): Result<VkPipelineCache, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreatePipelineCache", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        return if (retCode == VK_SUCCESS) Result.success(VkPipelineCache(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
+
+    fun vkDestroyPipelineCache(device: VkDevice, pipelineCache: VkPipelineCache, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyPipelineCache", device, pipelineCache, allocator?.pointer()?: MemorySegment.NULL)
+
+    fun vkGetPipelineCacheData(device: VkDevice, pipelineCache: VkPipelineCache): Result<ByteBuffer, Int> {
+        val size = HeapInt()
+        callFunc("vkGetPipelineCacheData", Int::class, device, pipelineCache, size, MemorySegment.NULL).apply {
+            if (this != VK_SUCCESS) return Result.fail(this)
+        }
+        val seg = Arena.ofAuto().allocate(size.value().toLong())
+        callFunc("vkGetPipelineCacheData", Int::class, device, pipelineCache, size, seg).apply {
+            if (this != VK_SUCCESS) return Result.fail(this)
+        }
+        return Result.success(seg.asByteBuffer())
+    }
+
+    fun vkMergePipelineCaches(device: VkDevice, dstCache: VkPipelineCache, srcCaches: PointerArrayStruct<VkPipelineCache>): Int =
+        callFunc("vkMergePipelineCaches", Int::class, device, dstCache, srcCaches.arr.size, srcCaches.pointer())
 }
