@@ -118,6 +118,11 @@ class VkDescriptorSetLayout(private val seg: MemorySegment) : IHeapVar<MemorySeg
     override fun value(): MemorySegment = seg
 }
 
+class VkSampler(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -1190,4 +1195,18 @@ object Vk10Funcs {
 
     fun vkDestroyPipelineLayout(device: VkDevice, pipelineLayout: VkPipelineLayout, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyPipelineLayout", device, pipelineLayout, allocator?.pointer() ?: MemorySegment.NULL)
+
+    fun vkCreateSampler(
+        device: VkDevice,
+        createInfo: VkSamplerCreateInfo,
+        allocator: VkAllocationCallbacks?
+    ): Result<VkSampler, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode =
+            callFunc("vkCreateSampler", Int::class, device, createInfo, allocator?.pointer() ?: MemorySegment.NULL)
+        return if (retCode == VK_SUCCESS) Result.success(VkSampler(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
+
+    fun vkDestroySampler(device: VkDevice, sampler: VkSampler, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroySampler", device, sampler, allocator?.pointer() ?: MemorySegment.NULL)
 }
