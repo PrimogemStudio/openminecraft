@@ -113,6 +113,11 @@ class VkRenderPass(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = seg
 }
 
+class VkDescriptorSetLayout(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -1176,4 +1181,10 @@ object Vk10Funcs {
 
     fun vkDestroyPipeline(device: VkDevice, pipeline: VkPipeline, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyPipeline", device, pipeline, allocator?.pointer() ?: MemorySegment.NULL)
+
+    fun vkCreatePipelineLayout(device: VkDevice, createInfo: VkPipelineLayoutCreateInfo, allocator: VkAllocationCallbacks?): Result<VkPipelineLayout, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc("vkCreatePipelineLayout", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL)
+        return if (retCode == VK_SUCCESS) Result.success(VkPipelineLayout(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
 }

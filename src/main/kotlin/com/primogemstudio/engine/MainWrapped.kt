@@ -27,6 +27,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_VERSION
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateDevice
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateFence
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreatePipelineLayout
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkResetFences
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
@@ -97,6 +98,8 @@ fun main() {
                 vkCreateFence(dev, VkFenceCreateInfo(), null).match({ fence -> 
                     val arr = PointerArrayStruct(arrayOf(fence))
                     logger.info("${vkResetFences(dev, arr)}")
+
+                    println(vkCreatePipelineLayout(dev, VkPipelineLayoutCreateInfo(), null))
                 }, { logger.error("vulkan error: $it") })
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
