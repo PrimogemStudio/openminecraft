@@ -15,7 +15,12 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INS
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO
@@ -30,6 +35,7 @@ import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.*
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.types.Result
+import org.joml.Vector2i
 import org.joml.Vector3i
 import org.joml.Vector4i
 import java.lang.foreign.Arena
@@ -1480,7 +1486,7 @@ class VkPipelineVertexInputStateCreateInfo(
     )
 
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO)
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO)
         seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
         seg.set(JAVA_INT, sizetLength() + 8L, flags)
         seg.set(JAVA_INT, sizetLength() + 12L, bindings.arr.size)
@@ -1490,12 +1496,272 @@ class VkPipelineVertexInputStateCreateInfo(
     }
 }
 
+class VkPipelineInputAssemblyStateCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0,
+    private val topology: Int,
+    private val primitiveRestartEnable: Boolean
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_LONG
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, topology)
+        seg.set(JAVA_INT, sizetLength() + 16L, if (primitiveRestartEnable) 1 else 0)
+    }
+}
+
+class VkPipelineTessellationStateCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0,
+    private val patchControlPoints: Int,
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, patchControlPoints)
+    }
+}
+
+class VkRect2D(
+    private val offset: Vector2i,
+    private val extent: Vector2i
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, offset.x)
+        seg.set(JAVA_INT, 4, offset.y)
+        seg.set(JAVA_INT, 8, extent.x)
+        seg.set(JAVA_INT, 12, extent.y)
+    }
+}
+
+class VkViewport(
+    private val x: Float,
+    private val y: Float,
+    private val width: Float,
+    private val height: Float,
+    private val minDepth: Float,
+    private val maxDepth: Float
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_FLOAT,
+        JAVA_FLOAT,
+        JAVA_FLOAT,
+        JAVA_FLOAT,
+        JAVA_FLOAT,
+        JAVA_FLOAT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_FLOAT, 0, x)
+        seg.set(JAVA_FLOAT, 4, y)
+        seg.set(JAVA_FLOAT, 8, width)
+        seg.set(JAVA_FLOAT, 12, height)
+        seg.set(JAVA_FLOAT, 16, minDepth)
+        seg.set(JAVA_FLOAT, 20, maxDepth)
+    }
+}
+
+class VkPipelineViewportStateCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0,
+    private val viewports: ArrayStruct<VkViewport>,
+    private val scissors: ArrayStruct<VkRect2D>
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        viewports.close()
+        scissors.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        ADDRESS,
+        JAVA_LONG,
+        ADDRESS
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_TESSELLATION_STATE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, viewports.arr.size)
+        seg.set(ADDRESS, sizetLength() + 16L, viewports.pointer())
+        seg.set(JAVA_INT, sizetLength() * 2 + 16L, scissors.arr.size)
+        seg.set(ADDRESS, sizetLength() * 2 + 24L, scissors.pointer())
+    }
+}
+
+class VkPipelineRasterizationStateCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0,
+    private val depthClampEnable: Boolean,
+    private val rasterizerDiscardEnable: Boolean,
+    private val polygonMode: Int,
+    private val cullMode: Int,
+    private val frontFace: Int,
+    private val depthBiasEnable: Boolean,
+    private val depthBiasConstantFactor: Float,
+    private val depthBiasClamp: Float,
+    private val depthBiasSlopeFactor: Float,
+    private val lineWidth: Float
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_FLOAT,
+        JAVA_FLOAT,
+        JAVA_FLOAT,
+        JAVA_FLOAT,
+        MemoryLayout.paddingLayout(4)
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, if (depthClampEnable) 1 else 0)
+        seg.set(JAVA_INT, sizetLength() + 16L, if (rasterizerDiscardEnable) 1 else 0)
+        seg.set(JAVA_INT, sizetLength() + 20L, polygonMode)
+        seg.set(JAVA_INT, sizetLength() + 24L, cullMode)
+        seg.set(JAVA_INT, sizetLength() + 28L, frontFace)
+        seg.set(JAVA_INT, sizetLength() + 32L, if (depthBiasEnable) 1 else 0)
+        seg.set(JAVA_FLOAT, sizetLength() + 36L, depthBiasConstantFactor)
+        seg.set(JAVA_FLOAT, sizetLength() + 40L, depthBiasClamp)
+        seg.set(JAVA_FLOAT, sizetLength() + 44L, depthBiasSlopeFactor)
+        seg.set(JAVA_FLOAT, sizetLength() + 48L, lineWidth)
+    }
+}
+
+class VkPipelineMultisampleStateCreateInfo(
+    private val next: IStruct? = null,
+    private val flags: Int = 0,
+    private val rasterizationSamples: Int,
+    private val sampleShadingEnable: Boolean,
+    private val minSampleShading: Float,
+    private val sampleMask: IntArrayStruct,
+    private val alphaToCoverageEnable: Boolean,
+    private val alphaToOneEnable: Boolean
+) : IStruct() {
+    init {
+        construct(seg)
+    }
+
+    override fun close() {
+        next?.close()
+        sampleMask.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
+        JAVA_LONG,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_INT,
+        JAVA_FLOAT,
+        ADDRESS,
+        JAVA_INT,
+        JAVA_INT
+    )
+
+    override fun construct(seg: MemorySegment) {
+        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO)
+        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, sizetLength() + 8L, flags)
+        seg.set(JAVA_INT, sizetLength() + 12L, rasterizationSamples)
+        seg.set(JAVA_INT, sizetLength() + 16L, if (sampleShadingEnable) 1 else 0)
+        seg.set(JAVA_FLOAT, sizetLength() + 20L, minSampleShading)
+        seg.set(ADDRESS, sizetLength() + 24L, sampleMask.pointer())
+        seg.set(JAVA_INT, sizetLength() * 2 + 24L, if (alphaToCoverageEnable) 1 else 0)
+        seg.set(JAVA_INT, sizetLength() * 2 + 28L, if (alphaToOneEnable) 1 else 0)
+    }
+}
+
 // TODO: Complete struct define
 class VkGraphicsPipelineCreateInfo(
     private val next: IStruct? = null,
     private val flags: Int = 0,
     private val stages: ArrayStruct<VkPipelineShaderStageCreateInfo>,
-    private val vertex: VkPipelineVertexInputStateCreateInfo
+    private val vertex: VkPipelineVertexInputStateCreateInfo,
+    private val inputAssembly: VkPipelineInputAssemblyStateCreateInfo,
+    private val tessellation: VkPipelineTessellationStateCreateInfo,
+    private val viewport: VkPipelineViewportStateCreateInfo,
+    private val rasterization: VkPipelineRasterizationStateCreateInfo,
+    private val multisample: VkPipelineMultisampleStateCreateInfo
 ) : IStruct() {
     init {
         construct(seg)
@@ -1505,6 +1771,11 @@ class VkGraphicsPipelineCreateInfo(
         next?.close()
         stages.close()
         vertex.close()
+        inputAssembly.close()
+        tessellation.close()
+        viewport.close()
+        rasterization.close()
+        multisample.close()
         super.close()
     }
 
@@ -1537,6 +1808,11 @@ class VkGraphicsPipelineCreateInfo(
         seg.set(JAVA_INT, sizetLength() + 12L, stages.arr.size)
         seg.set(ADDRESS, sizetLength() + 16L, stages.pointer())
         seg.set(ADDRESS, sizetLength() * 2 + 16L, vertex.pointer())
+        seg.set(ADDRESS, sizetLength() * 3 + 16L, inputAssembly.pointer())
+        seg.set(ADDRESS, sizetLength() * 4 + 16L, tessellation.pointer())
+        seg.set(ADDRESS, sizetLength() * 5 + 16L, viewport.pointer())
+        seg.set(ADDRESS, sizetLength() * 6 + 16L, rasterization.pointer())
+        seg.set(ADDRESS, sizetLength() * 7 + 16L, multisample.pointer())
 
     }
 }
