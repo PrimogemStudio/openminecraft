@@ -1,8 +1,6 @@
 package com.primogemstudio.engine.interfaces.struct
 
-import com.primogemstudio.engine.interfaces.struct.IStruct
 import java.lang.foreign.MemoryLayout
-import java.lang.foreign.ValueLayout.*
 import java.lang.foreign.MemorySegment
 
 class ArrayStruct<T: IStruct>(val arr: Array<T>): IStruct(MemoryLayout.paddingLayout(arr.map { it.layout().byteSize() }.stream().mapToLong { it }.sum())) {
