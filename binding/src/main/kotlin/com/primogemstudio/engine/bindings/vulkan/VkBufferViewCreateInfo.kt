@@ -21,7 +21,7 @@ class VkBufferViewCreateInfo(
             JAVA_INT_UNALIGNED,
             ADDRESS_UNALIGNED,
             JAVA_INT_UNALIGNED,
-            ADDRESS_UNALIGNED,
+            JAVA_LONG_UNALIGNED,
             JAVA_INT_UNALIGNED,
             JAVA_LONG_UNALIGNED,
             JAVA_LONG_UNALIGNED

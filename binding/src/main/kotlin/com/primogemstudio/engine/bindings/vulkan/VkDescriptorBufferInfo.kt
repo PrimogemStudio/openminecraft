@@ -14,7 +14,7 @@ class VkDescriptorBufferInfo(
 ) : IStruct() {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
-            ADDRESS_UNALIGNED,
+            JAVA_LONG_UNALIGNED,
             JAVA_LONG_UNALIGNED,
             JAVA_LONG_UNALIGNED
         ).align()

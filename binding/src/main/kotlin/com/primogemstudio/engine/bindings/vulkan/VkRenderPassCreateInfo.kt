@@ -1,9 +1,10 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.loader.Platform.sizetLength
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -15,6 +16,22 @@ class VkRenderPassCreateInfo(
     private val subpasses: ArrayStruct<VkSubpassDescription>? = null,
     private val dependencies: ArrayStruct<VkSubpassDependency>? = null
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED
+        ).align()
+
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
@@ -27,27 +44,17 @@ class VkRenderPassCreateInfo(
         super.close()
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_INT,
-        JAVA_INT,
-        ADDRESS,
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_LONG,
-        ADDRESS
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO)
-        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
-        seg.set(JAVA_INT, sizetLength() + 8L, flags)
-        seg.set(JAVA_INT, sizetLength() + 12L, attachments?.arr?.size ?: 0)
-        seg.set(ADDRESS, sizetLength() + 16L, attachments?.pointer() ?: MemorySegment.NULL)
-        seg.set(JAVA_INT, sizetLength() * 2 + 16L, subpasses?.arr?.size ?: 0)
-        seg.set(ADDRESS, sizetLength() * 2 + 24L, subpasses?.pointer() ?: MemorySegment.NULL)
-        seg.set(JAVA_INT, sizetLength() * 3 + 24L, dependencies?.arr?.size ?: 0)
-        seg.set(ADDRESS, sizetLength() * 3 + 32L, dependencies?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO)
+        seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, OFFSETS[2], flags)
+        seg.set(JAVA_INT, OFFSETS[3], attachments?.arr?.size ?: 0)
+        seg.set(ADDRESS, OFFSETS[4], attachments?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, OFFSETS[5], subpasses?.arr?.size ?: 0)
+        seg.set(ADDRESS, OFFSETS[5], subpasses?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, OFFSETS[6], dependencies?.arr?.size ?: 0)
+        seg.set(ADDRESS, OFFSETS[7], dependencies?.pointer() ?: MemorySegment.NULL)
     }
 }

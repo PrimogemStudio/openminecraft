@@ -1,5 +1,7 @@
 package com.primogemstudio.engine.bindings.vulkan
 
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import org.joml.Vector3i
 import java.lang.foreign.MemoryLayout
@@ -14,6 +16,23 @@ data class VkSparseImageMemoryBind(
     private val memoryOffset: Long,
     private val flags: Int
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            VkImageSubresource.LAYOUT,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_LONG_UNALIGNED,
+            JAVA_LONG_UNALIGNED
+        ).align()
+
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
@@ -23,25 +42,18 @@ data class VkSparseImageMemoryBind(
         super.close()
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        MemoryLayout.paddingLayout(12),
-        MemoryLayout.paddingLayout(12),
-        MemoryLayout.paddingLayout(12 + 4),
-        ADDRESS,
-        JAVA_LONG,
-        JAVA_LONG
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
-        subresource.construct(seg.asSlice(0, 12))
-        seg.set(JAVA_INT, 12, offset.x)
-        seg.set(JAVA_INT, 16, offset.y)
-        seg.set(JAVA_INT, 20, offset.z)
-        seg.set(JAVA_INT, 24, extent.x)
-        seg.set(JAVA_INT, 28, extent.y)
-        seg.set(JAVA_INT, 32, extent.z)
-        seg.set(ADDRESS, 40, memory.ref())
-        seg.set(JAVA_LONG, 48, memoryOffset)
-        seg.set(JAVA_INT, 56, flags)
+        subresource.construct(seg.asSlice(OFFSETS[0], VkImageSubresource.LAYOUT.byteSize()))
+        seg.set(JAVA_INT, OFFSETS[1], offset.x)
+        seg.set(JAVA_INT, OFFSETS[2], offset.y)
+        seg.set(JAVA_INT, OFFSETS[3], offset.z)
+        seg.set(JAVA_INT, OFFSETS[4], extent.x)
+        seg.set(JAVA_INT, OFFSETS[5], extent.y)
+        seg.set(JAVA_INT, OFFSETS[6], extent.z)
+        seg.set(ADDRESS, OFFSETS[7], memory.ref())
+        seg.set(JAVA_LONG, OFFSETS[8], memoryOffset)
+        seg.set(JAVA_INT, OFFSETS[9], flags)
     }
 }

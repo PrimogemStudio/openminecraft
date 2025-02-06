@@ -1,5 +1,6 @@
 package com.primogemstudio.engine.bindings.vulkan
 
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import org.joml.Vector2i
 import java.lang.foreign.MemoryLayout
@@ -10,21 +11,27 @@ class VkRect2D(
     private val offset: Vector2i,
     private val extent: Vector2i
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT
+        )
+
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, offset.x)
-        seg.set(JAVA_INT, 4, offset.y)
-        seg.set(JAVA_INT, 8, extent.x)
-        seg.set(JAVA_INT, 12, extent.y)
+        seg.set(JAVA_INT, OFFSETS[0], offset.x)
+        seg.set(JAVA_INT, OFFSETS[1], offset.y)
+        seg.set(JAVA_INT, OFFSETS[2], extent.x)
+        seg.set(JAVA_INT, OFFSETS[3], extent.y)
     }
 }
