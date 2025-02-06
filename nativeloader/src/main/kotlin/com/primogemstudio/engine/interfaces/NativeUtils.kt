@@ -1,16 +1,10 @@
 package com.primogemstudio.engine.interfaces
 
-import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
-import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.logging.LoggerFactory
-import java.lang.foreign.ValueLayout.ADDRESS
-import java.lang.foreign.ValueLayout.JAVA_FLOAT
-import java.lang.foreign.ValueLayout.JAVA_BYTE
-import java.lang.foreign.Arena
-import java.lang.foreign.MemorySegment
-import java.lang.foreign.ValueLayout
+import java.lang.foreign.*
+import java.lang.foreign.ValueLayout.*
 
 val logger = LoggerFactory.getLogger()
 fun MemorySegment.fetchString(): String {
@@ -51,3 +45,31 @@ inline fun <T> MemorySegment.fromCStructArray(length: Int, structLength: Int, co
 fun MemorySegment.toCPointerArray(length: Int): Array<MemorySegment> = (0 ..< length).map { this.reinterpret(length * sizetLength() * 1L).get(ADDRESS, it * sizetLength() * 1L) }.toTypedArray()
 fun MemorySegment.toCFloatArray(length: Int): FloatArray = (0 ..< length).map { this.reinterpret(length * 4L).get(JAVA_FLOAT, it * 4L) }.toFloatArray()
 fun MemorySegment.toCByteArray(length: Int): ByteArray = (0 ..< length).map { this.reinterpret(length * 1L).get(JAVA_BYTE, it * 1L) }.toByteArray()
+
+fun StructLayout.cacheOffsets(): LongArray =
+    (0..<this.memberLayouts().size).map { this.byteOffset(MemoryLayout.PathElement.groupElement(it.toLong())) }
+        .toLongArray()
+
+fun StructLayout.align(): StructLayout {
+    val elements = mutableListOf<Long>()
+    var size = 0L
+    for (e in this.memberLayouts()) {
+        if (size % e.byteSize() != 0L) {
+            elements[elements.size - 1] += e.byteSize() - size % e.byteSize()
+            elements.add(e.byteSize())
+            size += e.byteSize() + e.byteSize() - size % e.byteSize()
+        } else {
+            elements.add(e.byteSize())
+            size += e.byteSize()
+        }
+    }
+
+    val lastElement = this.memberLayouts()[memberLayouts().size - 1]
+    if (size % lastElement.byteSize() != 0L) {
+        elements[elements.size - 1] += lastElement.byteSize() - size % lastElement.byteSize()
+    }
+
+    return MemoryLayout.structLayout(
+        *elements.map { MemoryLayout.paddingLayout(it) }.toTypedArray()
+    )
+}

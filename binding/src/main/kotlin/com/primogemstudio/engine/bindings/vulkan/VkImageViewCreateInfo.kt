@@ -51,6 +51,6 @@ class VkImageViewCreateInfo(
         seg.set(JAVA_INT, sizetLength() + 40L, components.z)
         seg.set(JAVA_INT, sizetLength() + 44L, components.w)
 
-        range.construct(seg.asSlice(sizetLength() + 48L, 16L))
+        range.construct(seg.asSlice(sizetLength() + 48L, 20L))
     }
 }

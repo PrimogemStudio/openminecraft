@@ -1,9 +1,10 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.toCStrArray
-import com.primogemstudio.engine.loader.Platform.sizetLength
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -15,6 +16,20 @@ data class VkInstanceCreateInfo(
     private val layers: List<String> = listOf(),
     private val extensions: List<String> = listOf(),
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED
+        ).align()
+        val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
@@ -25,25 +40,15 @@ data class VkInstanceCreateInfo(
         super.close()
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_LONG,
-        ADDRESS
-    )
-
+    override fun layout(): MemoryLayout = LAYOUT
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
-        seg.set(ADDRESS, 8 * 1, next?.pointer() ?: MemorySegment.NULL)
-        seg.set(JAVA_INT, 8 * 1 + sizetLength() * 1L, flag)
-        seg.set(ADDRESS, 8 * 2 + sizetLength() * 1L, appInfo.pointer())
-        seg.set(JAVA_INT, 8 * 2 + sizetLength() * 2L, layers.size)
-        seg.set(ADDRESS, 8 * 3 + sizetLength() * 2L, layers.toTypedArray().toCStrArray())
-        seg.set(JAVA_INT, 8 * 3 + sizetLength() * 3L, extensions.size)
-        seg.set(ADDRESS, 8 * 4 + sizetLength() * 3L, extensions.toTypedArray().toCStrArray())
+        seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
+        seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, OFFSETS[2], flag)
+        seg.set(ADDRESS, OFFSETS[3], appInfo.pointer())
+        seg.set(JAVA_INT, OFFSETS[4], layers.size)
+        seg.set(ADDRESS, OFFSETS[5], layers.toTypedArray().toCStrArray())
+        seg.set(JAVA_INT, OFFSETS[6], extensions.size)
+        seg.set(ADDRESS, OFFSETS[7], extensions.toTypedArray().toCStrArray())
     }
 }
