@@ -1,9 +1,10 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_APPLICATION_INFO
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.toCString
-import com.primogemstudio.engine.loader.Platform.sizetLength
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -16,6 +17,19 @@ data class VkApplicationInfo(
     private val engineVersion: Int,
     private val apiVersion: Int
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED
+        ).align()
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
@@ -25,23 +39,15 @@ data class VkApplicationInfo(
         super.close()
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_LONG,
-        ADDRESS_UNALIGNED,
-        ADDRESS_UNALIGNED,
-        JAVA_LONG,
-        ADDRESS_UNALIGNED,
-        JAVA_LONG,
-        JAVA_LONG
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_APPLICATION_INFO)
-        seg.set(ADDRESS, 8 * 1, next?.pointer() ?: MemorySegment.NULL)
-        seg.set(ADDRESS, 8 * 1 + sizetLength() * 1L, appName.toCString())
-        seg.set(JAVA_INT, 8 * 1 + sizetLength() * 2L, appVersion)
-        seg.set(ADDRESS, 8 * 2 + sizetLength() * 2L, engineName.toCString())
-        seg.set(JAVA_INT, 8 * 2 + sizetLength() * 3L, engineVersion)
-        seg.set(JAVA_INT, 8 * 3 + sizetLength() * 3L, apiVersion)
+        seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_APPLICATION_INFO)
+        seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
+        seg.set(ADDRESS, OFFSETS[2], appName.toCString())
+        seg.set(JAVA_INT, OFFSETS[3], appVersion)
+        seg.set(ADDRESS, OFFSETS[4], engineName.toCString())
+        seg.set(JAVA_INT, OFFSETS[5], engineVersion)
+        seg.set(JAVA_INT, OFFSETS[6], apiVersion)
     }
 }

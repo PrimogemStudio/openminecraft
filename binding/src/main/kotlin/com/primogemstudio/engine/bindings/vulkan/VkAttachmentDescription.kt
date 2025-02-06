@@ -1,5 +1,7 @@
 package com.primogemstudio.engine.bindings.vulkan
 
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -16,31 +18,36 @@ class VkAttachmentDescription(
     private val initialLayout: Int,
     private val finalLayout: Int,
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT
+        ).align()
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, flags)
-        seg.set(JAVA_INT, 4, format)
-        seg.set(JAVA_INT, 8, samples)
-        seg.set(JAVA_INT, 12, loadOp)
-        seg.set(JAVA_INT, 16, storeOp)
-        seg.set(JAVA_INT, 20, stencilLoadOp)
-        seg.set(JAVA_INT, 24, stencilStoreOp)
-        seg.set(JAVA_INT, 28, initialLayout)
-        seg.set(JAVA_INT, 32, finalLayout)
+        seg.set(JAVA_INT, OFFSETS[0], flags)
+        seg.set(JAVA_INT, OFFSETS[1], format)
+        seg.set(JAVA_INT, OFFSETS[2], samples)
+        seg.set(JAVA_INT, OFFSETS[3], loadOp)
+        seg.set(JAVA_INT, OFFSETS[4], storeOp)
+        seg.set(JAVA_INT, OFFSETS[5], stencilLoadOp)
+        seg.set(JAVA_INT, OFFSETS[6], stencilStoreOp)
+        seg.set(JAVA_INT, OFFSETS[7], initialLayout)
+        seg.set(JAVA_INT, OFFSETS[8], finalLayout)
     }
 }
