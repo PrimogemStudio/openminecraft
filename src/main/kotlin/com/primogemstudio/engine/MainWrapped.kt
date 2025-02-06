@@ -104,7 +104,6 @@ fun main() {
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
     }, { logger.error("vulkan error: $it") })
-    println(Class.forName("org.lwjgl.vulkan.VkImageViewCreateInfo").getField("SIZEOF").get(null))
 
     glfwSetCursor(
         window,
