@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO
+import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.struct.IntArrayStruct
 import com.primogemstudio.engine.loader.Platform.sizetLength
@@ -18,6 +19,20 @@ class VkPipelineMultisampleStateCreateInfo(
     private val alphaToCoverageEnable: Boolean,
     private val alphaToOneEnable: Boolean
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_LONG,
+            ADDRESS,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_FLOAT,
+            ADDRESS,
+            JAVA_INT,
+            JAVA_INT
+        ).align()
+    }
+
     init {
         construct(seg)
     }
@@ -28,17 +43,7 @@ class VkPipelineMultisampleStateCreateInfo(
         super.close()
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_FLOAT,
-        ADDRESS,
-        JAVA_INT,
-        JAVA_INT
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO)

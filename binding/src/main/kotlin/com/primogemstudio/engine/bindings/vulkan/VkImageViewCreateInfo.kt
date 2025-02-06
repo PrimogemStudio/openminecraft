@@ -27,7 +27,7 @@ class VkImageViewCreateInfo(
             JAVA_INT_UNALIGNED,
             JAVA_INT_UNALIGNED,
             JAVA_INT_UNALIGNED, JAVA_INT_UNALIGNED, JAVA_INT_UNALIGNED, JAVA_INT_UNALIGNED,
-            MemoryLayout.paddingLayout(VkImageSubresourceRange.LAYOUT.byteSize())
+            VkImageSubresourceRange.LAYOUT
         ).align()
         private val OFFSETS = LAYOUT.cacheOffsets()
     }

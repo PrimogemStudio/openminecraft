@@ -105,6 +105,7 @@ fun main() {
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
     }, { logger.error("vulkan error: $it") })
+    println(Class.forName("org.lwjgl.vulkan.VkPipelineRasterizationStateCreateInfo").getField("SIZEOF").get(null))
 
     glfwSetCursor(
         window,

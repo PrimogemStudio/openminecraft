@@ -21,7 +21,7 @@ class VkComputePipelineCreateInfo(
             JAVA_INT_UNALIGNED,
             ADDRESS_UNALIGNED,
             JAVA_INT_UNALIGNED,
-            MemoryLayout.paddingLayout(VkPipelineShaderStageCreateInfo.LAYOUT.byteSize()),
+            VkPipelineShaderStageCreateInfo.LAYOUT,
             ADDRESS_UNALIGNED,
             ADDRESS_UNALIGNED,
             JAVA_INT_UNALIGNED

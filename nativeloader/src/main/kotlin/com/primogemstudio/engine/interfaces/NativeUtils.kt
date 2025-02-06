@@ -5,7 +5,7 @@ import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.*
-import kotlin.math.min
+import kotlin.math.max
 
 val logger = LoggerFactory.getLogger()
 fun MemorySegment.fetchString(): String {
@@ -51,11 +51,24 @@ fun StructLayout.cacheOffsets(): LongArray =
     (0..<this.memberLayouts().size).map { this.byteOffset(MemoryLayout.PathElement.groupElement(it.toLong())) }
         .toLongArray()
 
+private fun checkLayoutAlign(e: StructLayout): Long = e.memberLayouts().maxOfOrNull {
+    if (it is StructLayout) checkLayoutAlign(it) else it.byteSize()
+} ?: 1
+
 fun StructLayout.align(): StructLayout {
     val elements = mutableListOf<Long>()
     var size = 0L
+    var alignment = 1L
+
     for (e in this.memberLayouts()) {
-        val ali = min(e.byteSize(), 8)
+        var ali = e.byteSize()
+
+        if (e is StructLayout) {
+            ali = checkLayoutAlign(e)
+        }
+
+        alignment = max(ali, alignment)
+
         if (size % ali != 0L) {
             elements[elements.size - 1] += ali - size % ali
             elements.add(e.byteSize())
@@ -66,10 +79,8 @@ fun StructLayout.align(): StructLayout {
         }
     }
 
-    val lastElement = this.memberLayouts()[memberLayouts().size - 1]
-    val ali = min(lastElement.byteSize(), 8)
-    if (size % ali != 0L) {
-        elements[elements.size - 1] += ali - size % ali
+    if (size % alignment != 0L) {
+        elements[elements.size - 1] += alignment - size % alignment
     }
 
     return MemoryLayout.structLayout(
