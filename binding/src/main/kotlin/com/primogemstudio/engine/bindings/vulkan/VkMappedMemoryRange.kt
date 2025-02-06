@@ -1,8 +1,9 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.loader.Platform.sizetLength
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -13,6 +14,17 @@ data class VkMappedMemoryRange(
     private val offset: Long,
     private val length: Long
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_LONG_UNALIGNED,
+            JAVA_LONG_UNALIGNED
+        ).align()
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
@@ -22,19 +34,13 @@ data class VkMappedMemoryRange(
         super.close()
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_LONG,
-        ADDRESS,
-        ADDRESS,
-        JAVA_LONG,
-        JAVA_LONG
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE)
-        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
-        seg.set(ADDRESS, sizetLength() + 8L, memory.ref())
-        seg.set(JAVA_LONG, sizetLength() * 2 + 8L, offset)
-        seg.set(JAVA_LONG, sizetLength() * 2 + 16L, length)
+        seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_MAPPED_MEMORY_RANGE)
+        seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
+        seg.set(ADDRESS, OFFSETS[2], memory.ref())
+        seg.set(JAVA_LONG, OFFSETS[3], offset)
+        seg.set(JAVA_LONG, OFFSETS[4], length)
     }
 }
