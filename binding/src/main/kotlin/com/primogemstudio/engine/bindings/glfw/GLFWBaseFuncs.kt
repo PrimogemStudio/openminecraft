@@ -5,12 +5,12 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.toCStrArray
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.stub.IStub
-import com.primogemstudio.engine.loader.Platform.sizetLength
+import com.primogemstudio.engine.interfaces.toCStrArray
 import com.primogemstudio.engine.loader.Platform.sizetMap
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -92,15 +92,20 @@ data class GLFWAllocator(
     private val reallocator: GLFWReallocateFun,
     private val deallocator: GLFWDeallocateFun
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(ADDRESS, ADDRESS, ADDRESS)
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(ADDRESS, ADDRESS, ADDRESS)
+    override fun layout(): MemoryLayout = LAYOUT
     override fun construct(seg: MemorySegment) {
-        seg.set(ADDRESS, 0, constructStub(GLFWAllocateFun::class, allocator))
-        seg.set(ADDRESS, sizetLength() * 1L, constructStub(GLFWReallocateFun::class, reallocator))
-        seg.set(ADDRESS, sizetLength() * 2L, constructStub(GLFWDeallocateFun::class, deallocator))
+        seg.set(ADDRESS, OFFSETS[0], constructStub(GLFWAllocateFun::class, allocator))
+        seg.set(ADDRESS, OFFSETS[1], constructStub(GLFWReallocateFun::class, reallocator))
+        seg.set(ADDRESS, OFFSETS[2], constructStub(GLFWDeallocateFun::class, deallocator))
     }
 }
 

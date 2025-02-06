@@ -4,14 +4,15 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.HeapFloat
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.interfaces.struct.ByteArrayStruct
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.interfaces.toCString
-import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
@@ -26,39 +27,27 @@ class GLFWWindow(private val data: MemorySegment) : IHeapVar<MemorySegment> {
 data class GLFWImage(
     private val width: Int,
     private val height: Int,
-    private val pixels: ByteArray
+    private val pixels: ByteArrayStruct
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(JAVA_INT, JAVA_INT, ADDRESS)
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(JAVA_INT, JAVA_INT, ADDRESS)
+    override fun close() {
+        pixels.close()
+        super.close()
+    }
+
+    override fun layout(): MemoryLayout = LAYOUT
     override fun construct(seg: MemorySegment) {
-        val parr = Arena.ofAuto().allocate(pixels.size.toLong())
-        parr.asByteBuffer().put(pixels)
-        seg.set(JAVA_INT, 0, width)
-        seg.set(JAVA_INT, 4, height)
-        seg.set(ADDRESS, 8, parr)
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as GLFWImage
-
-        if (width != other.width) return false
-        if (height != other.height) return false
-        if (!pixels.contentEquals(other.pixels)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = width
-        result = 31 * result + height
-        result = 31 * result + pixels.contentHashCode()
-        return result
+        seg.set(JAVA_INT, OFFSETS[0], width)
+        seg.set(JAVA_INT, OFFSETS[1], height)
+        seg.set(ADDRESS, OFFSETS[2], pixels.pointer())
     }
 }
 

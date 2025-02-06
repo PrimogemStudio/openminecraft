@@ -1,6 +1,8 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.loader.Platform.sizetLength
@@ -13,6 +15,17 @@ data class VkDescriptorSetLayoutCreateInfo(
     private val flag: Int = 0,
     private val bindings: ArrayStruct<VkDescriptorSetLayoutBinding>
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED
+        ).align()
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
@@ -22,13 +35,7 @@ data class VkDescriptorSetLayoutCreateInfo(
         super.close()
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_INT,
-        JAVA_INT,
-        ADDRESS
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO)

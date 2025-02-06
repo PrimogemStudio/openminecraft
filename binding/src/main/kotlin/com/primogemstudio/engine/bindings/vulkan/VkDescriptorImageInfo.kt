@@ -1,7 +1,8 @@
 package com.primogemstudio.engine.bindings.vulkan
 
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.loader.Platform.sizetLength
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -11,19 +12,24 @@ class VkDescriptorImageInfo(
     private val imageView: VkImageView,
     private val imageLayout: Int
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            ADDRESS_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED
+        ).align()
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        ADDRESS,
-        ADDRESS,
-        JAVA_LONG
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
-        seg.set(ADDRESS, 0, sampler.ref())
-        seg.set(ADDRESS, sizetLength() * 1L, imageView.ref())
-        seg.set(JAVA_INT, sizetLength() * 2L, imageLayout)
+        seg.set(ADDRESS, OFFSETS[0], sampler.ref())
+        seg.set(ADDRESS, OFFSETS[1], imageView.ref())
+        seg.set(JAVA_INT, OFFSETS[2], imageLayout)
     }
 }

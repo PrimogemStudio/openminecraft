@@ -1,9 +1,10 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.struct.PointerArrayStruct
-import com.primogemstudio.engine.loader.Platform.sizetLength
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -17,6 +18,21 @@ class VkFramebufferCreateInfo(
     private val height: Int,
     private val layers: Int
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED
+        ).align()
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
@@ -26,27 +42,17 @@ class VkFramebufferCreateInfo(
         super.close()
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_LONG
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO)
-        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
-        seg.set(JAVA_INT, sizetLength() + 8L, flags)
-        seg.set(ADDRESS, sizetLength() + 16L, renderPass.ref())
-        seg.set(JAVA_INT, sizetLength() * 2 + 16L, attachments?.arr?.size ?: 0)
-        seg.set(ADDRESS, sizetLength() * 2 + 24L, attachments?.pointer() ?: MemorySegment.NULL)
-        seg.set(JAVA_INT, sizetLength() * 3 + 24L, width)
-        seg.set(JAVA_INT, sizetLength() * 3 + 28L, height)
-        seg.set(JAVA_INT, sizetLength() * 3 + 32L, layers)
+        seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO)
+        seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, OFFSETS[2], flags)
+        seg.set(ADDRESS, OFFSETS[3], renderPass.ref())
+        seg.set(JAVA_INT, OFFSETS[4], attachments?.arr?.size ?: 0)
+        seg.set(ADDRESS, OFFSETS[5], attachments?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, OFFSETS[6], width)
+        seg.set(JAVA_INT, OFFSETS[7], height)
+        seg.set(JAVA_INT, OFFSETS[8], layers)
     }
 }

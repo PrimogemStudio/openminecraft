@@ -1,8 +1,9 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.loader.Platform.sizetLength
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -17,6 +18,21 @@ class VkCopyDescriptorSet(
     private val dstArrayElement: Int,
     private val descriptorCount: Int
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED
+        ).align()
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
@@ -26,27 +42,17 @@ class VkCopyDescriptorSet(
         super.close()
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_LONG,
-        ADDRESS,
-        ADDRESS,
-        JAVA_INT,
-        JAVA_INT,
-        ADDRESS,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_LONG
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET)
-        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
-        seg.set(ADDRESS, sizetLength() + 8L, srcSet.ref())
-        seg.set(JAVA_INT, sizetLength() * 2 + 8L, srcBinding)
-        seg.set(JAVA_INT, sizetLength() * 2 + 12L, srcArrayElement)
-        seg.set(ADDRESS, sizetLength() * 2 + 16L, dstSet.ref())
-        seg.set(JAVA_INT, sizetLength() * 3 + 16L, dstBinding)
-        seg.set(JAVA_INT, sizetLength() * 3 + 20L, dstArrayElement)
-        seg.set(JAVA_INT, sizetLength() * 3 + 24L, descriptorCount)
+        seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_COPY_DESCRIPTOR_SET)
+        seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
+        seg.set(ADDRESS, OFFSETS[2], srcSet.ref())
+        seg.set(JAVA_INT, OFFSETS[3], srcBinding)
+        seg.set(JAVA_INT, OFFSETS[4], srcArrayElement)
+        seg.set(ADDRESS, OFFSETS[5], dstSet.ref())
+        seg.set(JAVA_INT, OFFSETS[6], dstBinding)
+        seg.set(JAVA_INT, OFFSETS[7], dstArrayElement)
+        seg.set(JAVA_INT, OFFSETS[8], descriptorCount)
     }
 }

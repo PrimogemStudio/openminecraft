@@ -1,9 +1,10 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.struct.IntArrayStruct
-import com.primogemstudio.engine.loader.Platform.sizetLength
 import org.joml.Vector3i
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -24,6 +25,27 @@ class VkImageCreateInfo(
     private val queueFamilyIndices: IntArrayStruct,
     private val initialLayout: Int
 ) : IStruct() {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED, JAVA_INT_UNALIGNED, JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED
+        ).align()
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
     init {
         construct(seg)
     }
@@ -34,42 +56,25 @@ class VkImageCreateInfo(
         super.close()
     }
 
-    override fun layout(): MemoryLayout = MemoryLayout.structLayout(
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_LONG,
-        JAVA_INT, JAVA_INT, JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_INT,
-        JAVA_LONG,
-        ADDRESS,
-        JAVA_LONG
-    )
+    override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, 0, VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO)
-        seg.set(ADDRESS, 8, next?.pointer() ?: MemorySegment.NULL)
-        seg.set(JAVA_INT, sizetLength() + 8L, flags)
-        seg.set(JAVA_INT, sizetLength() + 12L, imageType)
-        seg.set(JAVA_INT, sizetLength() + 16L, format)
-        seg.set(JAVA_INT, sizetLength() + 20L, extent.x)
-        seg.set(JAVA_INT, sizetLength() + 24L, extent.y)
-        seg.set(JAVA_INT, sizetLength() + 28L, extent.z)
-
-        seg.set(JAVA_INT, sizetLength() + 32L, mipLevels)
-        seg.set(JAVA_INT, sizetLength() + 36L, arrayLayers)
-        seg.set(JAVA_INT, sizetLength() + 40L, samples)
-        seg.set(JAVA_INT, sizetLength() + 44L, tiling)
-        seg.set(JAVA_INT, sizetLength() + 48L, usage)
-        seg.set(JAVA_INT, sizetLength() + 52L, sharingMode)
-        seg.set(JAVA_INT, sizetLength() + 56L, queueFamilyIndices.arr.size)
-        seg.set(ADDRESS, sizetLength() + 64L, queueFamilyIndices.pointer())
-        seg.set(JAVA_INT, sizetLength() * 2 + 64L, initialLayout)
+        seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO)
+        seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, OFFSETS[2], flags)
+        seg.set(JAVA_INT, OFFSETS[3], imageType)
+        seg.set(JAVA_INT, OFFSETS[4], format)
+        seg.set(JAVA_INT, OFFSETS[5], extent.x)
+        seg.set(JAVA_INT, OFFSETS[6], extent.y)
+        seg.set(JAVA_INT, OFFSETS[7], extent.z)
+        seg.set(JAVA_INT, OFFSETS[8], mipLevels)
+        seg.set(JAVA_INT, OFFSETS[9], arrayLayers)
+        seg.set(JAVA_INT, OFFSETS[10], samples)
+        seg.set(JAVA_INT, OFFSETS[11], tiling)
+        seg.set(JAVA_INT, OFFSETS[12], usage)
+        seg.set(JAVA_INT, OFFSETS[13], sharingMode)
+        seg.set(JAVA_INT, OFFSETS[14], queueFamilyIndices.arr.size)
+        seg.set(ADDRESS, OFFSETS[15], queueFamilyIndices.pointer())
+        seg.set(JAVA_INT, OFFSETS[16], initialLayout)
     }
 }

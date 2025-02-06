@@ -31,6 +31,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreatePipelineLayou
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkResetFences
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
+import com.primogemstudio.engine.interfaces.struct.ByteArrayStruct
 import com.primogemstudio.engine.interfaces.struct.FloatArrayStruct
 import com.primogemstudio.engine.interfaces.struct.PointerArrayStruct
 import com.primogemstudio.engine.loader.Platform
@@ -107,7 +108,11 @@ fun main() {
 
     glfwSetCursor(
         window,
-        glfwCreateCursor(GLFWImage(32, 32, (0 ..< 32 * 32 * 4).map { 0xcc.toByte() }.toByteArray()), 0, 0)
+        glfwCreateCursor(
+            GLFWImage(32, 32, ByteArrayStruct((0..<32 * 32 * 4).map { 0xcc.toByte() }.toByteArray())),
+            0,
+            0
+        )
     )
 
     glfwSetFramebufferSizeCallback(window) { _, width, height ->
