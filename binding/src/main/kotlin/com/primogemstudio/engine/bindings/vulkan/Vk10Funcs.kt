@@ -133,6 +133,11 @@ class VkDescriptorSet(private val seg: MemorySegment) : IHeapVar<MemorySegment> 
     override fun value(): MemorySegment = seg
 }
 
+class VkCommandPool(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
