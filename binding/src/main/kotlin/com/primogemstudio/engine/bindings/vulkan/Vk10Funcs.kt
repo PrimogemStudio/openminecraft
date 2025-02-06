@@ -123,6 +123,16 @@ class VkSampler(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun value(): MemorySegment = seg
 }
 
+class VkDescriptorPool(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
+class VkDescriptorSet(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+    override fun ref(): MemorySegment = seg
+    override fun value(): MemorySegment = seg
+}
+
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
     const val VK_NOT_READY: Int = 1
@@ -860,7 +870,7 @@ object Vk10Funcs {
         val seg = Arena.ofAuto().allocate(24L * count.value())
         callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, seg)
 
-        return seg.fromCStructArray(count.value(), 24, { VkQueueFamilyProperties(it) }).toTypedArray()
+        return seg.fromCStructArray(count.value(), 24) { VkQueueFamilyProperties(it) }.toTypedArray()
     }
 
     fun vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceMemoryProperties =
@@ -894,7 +904,7 @@ object Vk10Funcs {
         callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, seg).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Result.success(seg.fromCStructArray(count.value(), 260, { VkExtensionProperties(it) }).toTypedArray())
+        return Result.success(seg.fromCStructArray(count.value(), 260) { VkExtensionProperties(it) }.toTypedArray())
     }
 
     fun vkEnumerateDeviceExtensionProperties(physicalDevice: VkPhysicalDevice, layerName: String): Result<Array<VkExtensionProperties>, Int> {
@@ -906,7 +916,7 @@ object Vk10Funcs {
         callFunc("vkEnumerateDeviceExtensionProperties", Int::class, physicalDevice, layerName, count, seg).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Result.success(seg.fromCStructArray(count.value(), 260, { VkExtensionProperties(it) }).toTypedArray())
+        return Result.success(seg.fromCStructArray(count.value(), 260) { VkExtensionProperties(it) }.toTypedArray())
     }
 
     fun vkEnumerateInstanceLayerProperties(): Result<Array<VkLayerProperties>, Int> {
@@ -918,7 +928,7 @@ object Vk10Funcs {
         callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, seg).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Result.success(seg.fromCStructArray(count.value(), 520, { VkLayerProperties(it) }).toTypedArray())
+        return Result.success(seg.fromCStructArray(count.value(), 520) { VkLayerProperties(it) }.toTypedArray())
     }
 
     fun vkEnumerateDeviceLayerProperties(physicalDevice: VkPhysicalDevice): Result<Array<VkLayerProperties>, Int> {
@@ -930,7 +940,7 @@ object Vk10Funcs {
         callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, seg).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Result.success(seg.fromCStructArray(count.value(), 520, { VkLayerProperties(it) }).toTypedArray())
+        return Result.success(seg.fromCStructArray(count.value(), 520) { VkLayerProperties(it) }.toTypedArray())
     }
 
     fun vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: Int, queueIndex: Int): Result<VkQueue, Int> {
@@ -986,7 +996,7 @@ object Vk10Funcs {
         callVoidFunc("vkGetImageSparseMemoryRequirements", device, image, count, MemorySegment.NULL)
         val seg = Arena.ofAuto().allocate(48L * count.value())
         callVoidFunc("vkGetImageSparseMemoryRequirements", device, image, count, seg)
-        return seg.fromCStructArray(count.value(), 48, { VkSparseImageMemoryRequirements(it) }).toTypedArray()
+        return seg.fromCStructArray(count.value(), 48) { VkSparseImageMemoryRequirements(it) }.toTypedArray()
     }
 
     fun vkGetPhysicalDeviceSparseImageFormatProperties(
@@ -1001,7 +1011,7 @@ object Vk10Funcs {
         callVoidFunc("vkGetPhysicalDeviceSparseImageFormatProperties", physicalDevice, format, type, samples, usage, tiling, count, MemorySegment.NULL)
         val seg = Arena.ofAuto().allocate(48L * count.value())
         callVoidFunc("vkGetPhysicalDeviceSparseImageFormatProperties", physicalDevice, format, type, samples, usage, tiling, count, seg)
-        return seg.fromCStructArray(count.value(), 48, { VkSparseImageMemoryRequirements(it) }).toTypedArray()
+        return seg.fromCStructArray(count.value(), 48) { VkSparseImageMemoryRequirements(it) }.toTypedArray()
     }
 
     fun vkQueueBindSparse(queue: VkQueue, bindInfo: ArrayStruct<VkBindSparseInfo>, fence: VkFence): Int =
