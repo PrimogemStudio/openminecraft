@@ -1255,4 +1255,30 @@ object Vk10Funcs {
         allocator: VkAllocationCallbacks?
     ) =
         callVoidFunc("vkDestroyDescriptorSetLayout", device, layout, allocator?.pointer() ?: MemorySegment.NULL)
+
+    fun vkCreateDescriptorPool(
+        device: VkDevice,
+        createInfo: VkDescriptorPoolCreateInfo,
+        allocator: VkAllocationCallbacks?
+    ): Result<VkDescriptorPool, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc(
+            "vkCreateDescriptorPool",
+            Int::class,
+            device,
+            createInfo,
+            allocator?.pointer() ?: MemorySegment.NULL
+        )
+        return if (retCode == VK_SUCCESS) Result.success(
+            VkDescriptorPool(
+                seg.get(
+                    ADDRESS,
+                    0
+                )
+            )
+        ) else Result.fail(retCode)
+    }
+
+    fun vkDestroyDescriptorPool(device: VkDevice, pool: VkDescriptorPool, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyDescriptorPool", device, pool, allocator?.pointer() ?: MemorySegment.NULL)
 }
