@@ -1355,4 +1355,59 @@ object Vk10Funcs {
         callVoidFunc("vkGetRenderAreaGranularity", device, renderPass, seg)
         return Vector2i(seg.get(JAVA_INT, 0), seg.get(JAVA_INT, 4))
     }
+
+    fun vkCreateCommandPool(
+        device: VkDevice,
+        createInfo: VkCommandPoolCreateInfo,
+        allocator: VkAllocationCallbacks?
+    ): Result<VkCommandPool, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc(
+            "vkCreateCommandPool",
+            Int::class,
+            device,
+            createInfo,
+            allocator?.pointer() ?: MemorySegment.NULL,
+            seg
+        )
+        return if (retCode == VK_SUCCESS) Result.success(VkCommandPool(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
+
+    fun vkDestroyCommandPool(device: VkDevice, commandPool: VkCommandPool, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyCommandPool", device, commandPool, allocator?.pointer() ?: MemorySegment.NULL)
+
+    fun vkResetCommandPool(device: VkDevice, commandPool: VkCommandPool, flags: Int): Int =
+        callFunc("vkResetCommandPool", Int::class, device, commandPool, flags)
+
+    fun vkAllocateCommandBuffers(
+        device: VkDevice,
+        createInfo: VkCommandBufferAllocateInfo
+    ): Result<Array<VkCommandBuffer>, Int> {
+        val seg = Arena.ofAuto().allocate(createInfo.count() * sizetLength() * 1L)
+        val retCode = callFunc("vkAllocateCommandBuffers", Int::class, device, createInfo, seg)
+        return if (retCode == VK_SUCCESS) Result.success(
+            seg.toCPointerArray(createInfo.count()).map { VkCommandBuffer(it) }.toTypedArray()
+        ) else Result.fail(retCode)
+    }
+
+    fun vkFreeCommandBuffers(
+        device: VkDevice,
+        commandPool: VkCommandPool,
+        commandBuffer: PointerArrayStruct<VkCommandBuffer>
+    ) =
+        callVoidFunc("vkFreeCommandBuffers", device, commandPool, commandBuffer.arr.size, commandBuffer.pointer())
+
+    fun vkBeginCommandBuffer(commandBuffer: VkCommandBuffer, beginInfo: VkCommandBufferBeginInfo): Int =
+        callFunc("vkBeginCommandBuffer", Int::class, commandBuffer, beginInfo)
+
+    fun vkEndCommandBuffer(commandBuffer: VkCommandBuffer): Int =
+        callFunc("vkEndCommandBuffer", Int::class, commandBuffer)
+
+    fun vkResetCommandBuffer(commandBuffer: VkCommandBuffer, flags: Int): Int =
+        callFunc("vkResetCommandBuffer", Int::class, commandBuffer, flags)
+
+    fun vkCmdBindPipeline(commandBuffer: VkCommandBuffer, pipelineBindPoint: Int, pipeline: VkPipeline): Int =
+        callFunc("vkCmdBindPipeline", Int::class, commandBuffer, pipelineBindPoint, pipeline)
+
+
 }

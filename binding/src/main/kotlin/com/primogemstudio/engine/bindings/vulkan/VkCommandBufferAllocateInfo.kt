@@ -34,6 +34,8 @@ class VkCommandBufferAllocateInfo(
         super.close()
     }
 
+    fun count(): Int = commandBufferCount
+
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
