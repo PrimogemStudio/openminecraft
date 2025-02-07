@@ -105,8 +105,6 @@ fun main() {
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
     }, { logger.error("vulkan error: $it") })
-    println(Class.forName("org.lwjgl.vulkan.VkImageMemoryBarrier").getField("SIZEOF").get(null))
-    println(VkImageMemoryBarrier.LAYOUT.byteSize())
 
     glfwSetCursor(
         window,
