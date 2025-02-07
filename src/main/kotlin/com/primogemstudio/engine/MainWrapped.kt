@@ -28,6 +28,7 @@ import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateDevice
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateFence
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreatePipelineLayout
+import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkResetFences
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
@@ -105,7 +106,7 @@ fun main() {
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
     }, { logger.error("vulkan error: $it") })
-    println(VkImageCopy.LAYOUT.byteSize())
+    vkEnumerateInstanceLayerProperties().match({ println(it.map { it.layerName }) }, {})
 
     glfwSetCursor(
         window,

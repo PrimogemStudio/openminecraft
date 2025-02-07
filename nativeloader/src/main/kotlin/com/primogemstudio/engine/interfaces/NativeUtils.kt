@@ -2,12 +2,10 @@ package com.primogemstudio.engine.interfaces
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.loader.Platform.sizetLength
-import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.*
 import kotlin.math.max
 
-val logger = LoggerFactory.getLogger()
 fun MemorySegment.fetchString(): String {
     val buf = reinterpret(callFunc("strlen", Int::class, this).toLong() + 1).asByteBuffer()
     val bList = mutableListOf<Byte>()
