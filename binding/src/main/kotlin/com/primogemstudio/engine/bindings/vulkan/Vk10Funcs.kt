@@ -961,8 +961,8 @@ object Vk10Funcs {
         return if (retCode == VK_SUCCESS) Result.success(VkQueue(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
-    fun vkQueueSubmit(queue: VkQueue, submits: ArrayStruct<VkSubmitInfo>, fence: VkFence): Int = 
-        callFunc("vkQueueSubmit", Int::class, queue, submits.arr.size, submits.pointer(), fence)
+    fun vkQueueSubmit(queue: VkQueue, submits: ArrayStruct<VkSubmitInfo>, fence: VkFence): Int =
+        callFunc("vkQueueSubmit", Int::class, queue, submits.arr.size, submits, fence)
 
     fun vkQueueWaitIdle(queue: VkQueue): Int =
         callFunc("vkQueueWaitIdle", Int::class, queue)
@@ -986,10 +986,10 @@ object Vk10Funcs {
     }
 
     fun vkFlushMappedMemoryRanges(device: VkDevice, ranges: ArrayStruct<VkMappedMemoryRange>): Int =
-        callFunc("vkFlushMappedMemoryRanges", Int::class, device, ranges.arr.size, ranges.pointer())
+        callFunc("vkFlushMappedMemoryRanges", Int::class, device, ranges.arr.size, ranges)
 
     fun vkInvalidateMappedMemoryRanges(device: VkDevice, ranges: ArrayStruct<VkMappedMemoryRange>): Int =
-        callFunc("vkInvalidateMappedMemoryRanges", Int::class, device, ranges.arr.size, ranges.pointer())
+        callFunc("vkInvalidateMappedMemoryRanges", Int::class, device, ranges.arr.size, ranges)
 
     fun vkGetDeviceMemoryCommitment(device: VkDevice, memory: VkDeviceMemory, committedMemoryInBytes: HeapLong) =
         callVoidFunc("vkGetDeviceMemoryCommitment", device, memory, committedMemoryInBytes)
@@ -1027,7 +1027,7 @@ object Vk10Funcs {
     }
 
     fun vkQueueBindSparse(queue: VkQueue, bindInfo: ArrayStruct<VkBindSparseInfo>, fence: VkFence): Int =
-        callFunc("vkQueueBindSparse", Int::class, queue, bindInfo.arr.size, bindInfo.pointer(), fence)
+        callFunc("vkQueueBindSparse", Int::class, queue, bindInfo.arr.size, bindInfo, fence)
 
     fun vkCreateFence(device: VkDevice, createInfo: VkFenceCreateInfo, allocator: VkAllocationCallbacks?): Result<VkFence, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
@@ -1048,7 +1048,7 @@ object Vk10Funcs {
         callFunc("vkGetFenceStatus", Int::class, device, fence)
 
     fun vkWaitForFences(device: VkDevice, fences: PointerArrayStruct<VkFence>, waitAll: Boolean, timeout: Long): Int =
-        callFunc("vkWaitForFences", Int::class, device, fences.arr.size, fences.pointer(), if (waitAll) 1 else 0, timeout)
+        callFunc("vkWaitForFences", Int::class, device, fences.arr.size, fences, if (waitAll) 1 else 0, timeout)
 
     fun vkCreateSemaphore(device: VkDevice, createInfo: VkSemaphoreCreateInfo, allocator: VkAllocationCallbacks?): Result<VkSemaphore, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
@@ -1162,7 +1162,7 @@ object Vk10Funcs {
     }
 
     fun vkMergePipelineCaches(device: VkDevice, dstCache: VkPipelineCache, srcCaches: PointerArrayStruct<VkPipelineCache>): Int =
-        callFunc("vkMergePipelineCaches", Int::class, device, dstCache, srcCaches.arr.size, srcCaches.pointer())
+        callFunc("vkMergePipelineCaches", Int::class, device, dstCache, srcCaches.arr.size, srcCaches)
 
     fun vkCreateGraphicsPipelines(
         device: VkDevice,
@@ -1177,7 +1177,7 @@ object Vk10Funcs {
             device,
             pipelineCache,
             createInfo.arr.size,
-            createInfo.pointer(),
+            createInfo,
             allocator?.pointer() ?: MemorySegment.NULL,
             seg
         )
@@ -1198,7 +1198,7 @@ object Vk10Funcs {
             device,
             pipelineCache,
             createInfo.arr.size,
-            createInfo.pointer(),
+            createInfo,
             allocator?.pointer() ?: MemorySegment.NULL,
             seg
         )
@@ -1299,7 +1299,7 @@ object Vk10Funcs {
     }
 
     fun vkFreeDescriptorSets(device: VkDevice, sets: PointerArrayStruct<VkDescriptorSet>): Int =
-        callFunc("vkFreeDescriptorSets", Int::class, device, sets.arr.size, sets.pointer())
+        callFunc("vkFreeDescriptorSets", Int::class, device, sets.arr.size, sets)
 
     fun vkUpdateDescriptorSets(
         device: VkDevice,
@@ -1312,8 +1312,8 @@ object Vk10Funcs {
             device,
             writes.arr.size,
             copies.arr.size,
-            writes.pointer(),
-            copies.pointer()
+            writes,
+            copies
         )
 
     fun vkCreateFramebuffer(
@@ -1395,7 +1395,7 @@ object Vk10Funcs {
         commandPool: VkCommandPool,
         commandBuffer: PointerArrayStruct<VkCommandBuffer>
     ) =
-        callVoidFunc("vkFreeCommandBuffers", device, commandPool, commandBuffer.arr.size, commandBuffer.pointer())
+        callVoidFunc("vkFreeCommandBuffers", device, commandPool, commandBuffer.arr.size, commandBuffer)
 
     fun vkBeginCommandBuffer(commandBuffer: VkCommandBuffer, beginInfo: VkCommandBufferBeginInfo): Int =
         callFunc("vkBeginCommandBuffer", Int::class, commandBuffer, beginInfo)
@@ -1410,10 +1410,10 @@ object Vk10Funcs {
         callVoidFunc("vkCmdBindPipeline", commandBuffer, pipelineBindPoint, pipeline)
 
     fun vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: Int, viewports: ArrayStruct<VkViewport>) =
-        callVoidFunc("vkCmdSetViewport", commandBuffer, firstViewport, viewports.arr.size, viewports.pointer())
+        callVoidFunc("vkCmdSetViewport", commandBuffer, firstViewport, viewports.arr.size, viewports)
 
     fun vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: Int, scissors: ArrayStruct<VkRect2D>) =
-        callVoidFunc("vkCmdSetScissor", commandBuffer, firstScissor, scissors.arr.size, scissors.pointer())
+        callVoidFunc("vkCmdSetScissor", commandBuffer, firstScissor, scissors.arr.size, scissors)
 
     fun vkCmdSetLineWidth(commandBuffer: VkCommandBuffer, lineWidth: Int) =
         callVoidFunc("vkCmdSetLineWidth", commandBuffer, lineWidth)
@@ -1456,9 +1456,9 @@ object Vk10Funcs {
             layout,
             firstSet,
             sets.arr.size,
-            sets.pointer(),
+            sets,
             dynamicOffsets.arr.size,
-            dynamicOffsets.pointer()
+            dynamicOffsets
         )
 
     fun vkCmdBindIndexBuffer(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: Long, indexType: Int) =
@@ -1475,8 +1475,8 @@ object Vk10Funcs {
             commandBuffer,
             firstBinding,
             min(buffers.arr.size, offsets.arr.size),
-            buffers.pointer(),
-            offsets.pointer()
+            buffers,
+            offsets
         )
 
     fun vkCmdDraw(
@@ -1530,7 +1530,7 @@ object Vk10Funcs {
         dstBuffer: VkBuffer,
         regions: ArrayStruct<VkBufferCopy>
     ) =
-        callVoidFunc("vkCmdCopyBuffer", commandBuffer, srcBuffer, dstBuffer, regions.arr.size, regions.pointer())
+        callVoidFunc("vkCmdCopyBuffer", commandBuffer, srcBuffer, dstBuffer, regions.arr.size, regions)
 
     fun vkCmdCopyImage(
         commandBuffer: VkCommandBuffer,
@@ -1548,7 +1548,7 @@ object Vk10Funcs {
             dstImage,
             dstImageLayout,
             regions.arr.size,
-            regions.pointer()
+            regions
         )
 
     fun vkCmdBlitImage(
@@ -1568,7 +1568,7 @@ object Vk10Funcs {
             dstImage,
             dstImageLayout,
             regions.arr.size,
-            regions.pointer(),
+            regions,
             filter
         )
 
@@ -1586,7 +1586,7 @@ object Vk10Funcs {
             dstImage,
             dstImageLayout,
             regions.arr.size,
-            regions.pointer()
+            regions
         )
 
     fun vkCmdCopyImageToBuffer(
@@ -1603,7 +1603,7 @@ object Vk10Funcs {
             srcImageLayout,
             dstBuffer,
             regions.arr.size,
-            regions.pointer()
+            regions
         )
 
     fun vkCmdUpdateBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: Long, data: MemorySegment) =
@@ -1611,6 +1611,128 @@ object Vk10Funcs {
 
     fun vkCmdFillBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: Long, size: Long, data: Int) =
         callVoidFunc("vkCmdFillBuffer", commandBuffer, dstBuffer, dstOffset, size, data)
+
+    fun vkCmdClearColorImage(
+        commandBuffer: VkCommandBuffer,
+        image: VkImage,
+        imageLayout: Int,
+        color: VkClearColorValue,
+        ranges: ArrayStruct<VkImageSubresourceRange>
+    ) =
+        callVoidFunc("vkCmdClearColorImage", commandBuffer, image, imageLayout, color, ranges.arr.size, ranges)
+
+    fun vkCmdClearDepthStencilImage(
+        commandBuffer: VkCommandBuffer,
+        image: VkImage,
+        imageLayout: Int,
+        depthStencil: VkClearDepthStencilValue,
+        ranges: ArrayStruct<VkImageSubresourceRange>
+    ) =
+        callVoidFunc(
+            "vkCmdClearDepthStencilImage",
+            commandBuffer,
+            image,
+            imageLayout,
+            depthStencil,
+            ranges.arr.size,
+            ranges
+        )
+
+    fun vkCmdClearAttachments(
+        commandBuffer: VkCommandBuffer,
+        attachments: ArrayStruct<VkClearAttachment>,
+        rects: ArrayStruct<VkClearRect>
+    ) =
+        callVoidFunc(
+            "vkCmdClearAttachments",
+            commandBuffer,
+            attachments.arr.size,
+            attachments.pointer(),
+            rects.arr.size,
+            rects
+        )
+
+    fun vkCmdResolveImage(
+        commandBuffer: VkCommandBuffer,
+        srcImage: VkImage,
+        srcImageLayout: Int,
+        dstImage: VkImage,
+        dstImageLayout: Int,
+        regions: ArrayStruct<VkImageResolve>
+    ) =
+        callVoidFunc(
+            "vkCmdResolveImage",
+            commandBuffer,
+            srcImage,
+            srcImageLayout,
+            dstImage,
+            dstImageLayout,
+            regions.arr.size,
+            regions
+        )
+
+    fun vkCmdSetEvent(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: Int) =
+        callVoidFunc("vkCmdSetEvent", commandBuffer, event, stageMask)
+
+    fun vkCmdResetEvent(commandBuffer: VkCommandBuffer, event: VkEvent, stageMask: Int) =
+        callVoidFunc("vkCmdResetEvent", commandBuffer, event, stageMask)
+
+    fun vkCmdWaitEvents(
+        commandBuffer: VkCommandBuffer,
+        events: PointerArrayStruct<VkEvent>,
+        srcStageMask: Int,
+        dstStageMask: Int,
+        memoryBarriers: ArrayStruct<VkMemoryBarrier>,
+        bufferMemoryBarriers: ArrayStruct<VkBufferMemoryBarrier>,
+        imageMemoryBarriers: ArrayStruct<VkImageMemoryBarrier>
+    ) =
+        callVoidFunc(
+            "vkCmdWaitEvents",
+            commandBuffer,
+            events.arr.size,
+            events,
+            srcStageMask,
+            dstStageMask,
+            memoryBarriers.arr.size,
+            memoryBarriers,
+            bufferMemoryBarriers.arr.size,
+            bufferMemoryBarriers,
+            imageMemoryBarriers.arr.size,
+            imageMemoryBarriers
+        )
+
+    fun vkCmdPipelineBarrier(
+        commandBuffer: VkCommandBuffer,
+        srcStageMask: Int,
+        dstStageMask: Int,
+        memoryBarriers: ArrayStruct<VkMemoryBarrier>,
+        bufferMemoryBarriers: ArrayStruct<VkBufferMemoryBarrier>,
+        imageMemoryBarriers: ArrayStruct<VkImageMemoryBarrier>
+    ) =
+        callVoidFunc(
+            "vkCmdPipelineBarrier",
+            commandBuffer,
+            srcStageMask,
+            dstStageMask,
+            memoryBarriers.arr.size,
+            memoryBarriers,
+            bufferMemoryBarriers.arr.size,
+            bufferMemoryBarriers,
+            imageMemoryBarriers.arr.size,
+            imageMemoryBarriers
+        )
+
+    fun vkCmdBeginQuery(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: Int, flags: Int) =
+        callVoidFunc("vkCmdBeginQuery", commandBuffer, queryPool, query, flags)
+
+    fun vkCmdEndQuery(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, query: Int) =
+        callVoidFunc("vkCmdEndQuery", commandBuffer, queryPool, query)
+
+    fun vkCmdResetQueryPool(commandBuffer: VkCommandBuffer, queryPool: VkQueryPool, firstQuery: Int, queryCount: Int) =
+        callVoidFunc("vkCmdResetQueryPool", commandBuffer, queryPool, firstQuery, queryCount)
+
+    fun vkCmdWriteTimestamp(commandBuffer: VkCommandBuffer, pipelineStage: Int, queryPool: VkQueryPool, query: Int) =
+        callVoidFunc("vkCmdWriteTimestamp", commandBuffer, pipelineStage, queryPool, query)
 
 
 }

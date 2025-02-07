@@ -33,6 +33,11 @@ class VkBufferImageCopy(
         construct(seg)
     }
 
+    override fun close() {
+        imageSubresourceLayers.close()
+        super.close()
+    }
+
     override fun layout(): MemoryLayout = LAYOUT
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_LONG, OFFSETS[0], bufferOffset)
