@@ -1038,9 +1038,6 @@ object Vk10Funcs {
     fun vkDestroyFence(device: VkDevice, fence: VkFence, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyFence", device, fence, allocator?.pointer()?: MemorySegment.NULL)
 
-    fun vkResetFences(device: VkDevice, fence: VkFence): Int =
-        callFunc("vkResetFences", Int::class, device, 1, fence)
-
     fun vkResetFences(device: VkDevice, fences: PointerArrayStruct<VkFence>): Int =
         callFunc("vkResetFences", Int::class, device, fences.arr.size, fences)
 
@@ -1733,6 +1730,49 @@ object Vk10Funcs {
 
     fun vkCmdWriteTimestamp(commandBuffer: VkCommandBuffer, pipelineStage: Int, queryPool: VkQueryPool, query: Int) =
         callVoidFunc("vkCmdWriteTimestamp", commandBuffer, pipelineStage, queryPool, query)
+
+    fun vkCmdCopyQueryPoolResults(
+        commandBuffer: VkCommandBuffer,
+        queryPool: VkQueryPool,
+        firstQuery: Int,
+        queryCount: Int,
+        dstBuffer: VkBuffer,
+        dstOffset: Long,
+        stride: Long,
+        flags: Int
+    ) =
+        callVoidFunc(
+            "vkCmdCopyQueryPoolResults",
+            commandBuffer,
+            queryPool,
+            firstQuery,
+            queryCount,
+            dstBuffer,
+            dstOffset,
+            stride,
+            flags
+        )
+
+    fun vkCmdPushConstants(
+        commandBuffer: VkCommandBuffer,
+        layout: VkPipelineLayout,
+        stageFlags: Int,
+        offset: Int,
+        values: MemorySegment
+    ) =
+        callVoidFunc("vkCmdPushConstants", commandBuffer, layout, stageFlags, offset, values)
+
+    fun vkCmdBeginRenderPass(commandBuffer: VkCommandBuffer, renderPassBegin: VkRenderPassBeginInfo, contents: Int) =
+        callVoidFunc("vkCmdBeginRenderPass", commandBuffer, renderPassBegin, contents)
+
+    fun vkCmdNextSubpass(commandBuffer: VkCommandBuffer, contents: Int) =
+        callVoidFunc("vkCmdNextSubpass", commandBuffer, contents)
+
+    fun vkCmdEndRenderPass(commandBuffer: VkCommandBuffer) =
+        callVoidFunc("vkCmdEndRenderPass", commandBuffer)
+
+    fun vkCmdExecuteCommands(commandBuffer: VkCommandBuffer, commandBuffers: PointerArrayStruct<VkCommandBuffer>) =
+        callVoidFunc("vkCmdExecuteCommands", commandBuffer, commandBuffers.arr.size, commandBuffers)
 
 
 }
