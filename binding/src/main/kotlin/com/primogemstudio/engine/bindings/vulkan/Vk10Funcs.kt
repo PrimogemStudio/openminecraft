@@ -7,8 +7,7 @@ import com.primogemstudio.engine.interfaces.fromCStructArray
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.HeapLong
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
-import com.primogemstudio.engine.interfaces.struct.ArrayStruct
-import com.primogemstudio.engine.interfaces.struct.PointerArrayStruct
+import com.primogemstudio.engine.interfaces.struct.*
 import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.loader.Platform.sizetLength
@@ -19,6 +18,7 @@ import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
 import java.lang.foreign.ValueLayout.JAVA_INT
 import java.nio.ByteBuffer
+import kotlin.math.min
 
 class VkInstance(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
     override fun ref(): MemorySegment = seg
@@ -1406,8 +1406,129 @@ object Vk10Funcs {
     fun vkResetCommandBuffer(commandBuffer: VkCommandBuffer, flags: Int): Int =
         callFunc("vkResetCommandBuffer", Int::class, commandBuffer, flags)
 
-    fun vkCmdBindPipeline(commandBuffer: VkCommandBuffer, pipelineBindPoint: Int, pipeline: VkPipeline): Int =
-        callFunc("vkCmdBindPipeline", Int::class, commandBuffer, pipelineBindPoint, pipeline)
+    fun vkCmdBindPipeline(commandBuffer: VkCommandBuffer, pipelineBindPoint: Int, pipeline: VkPipeline) =
+        callVoidFunc("vkCmdBindPipeline", commandBuffer, pipelineBindPoint, pipeline)
 
+    fun vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: Int, viewports: ArrayStruct<VkViewport>) =
+        callVoidFunc("vkCmdSetViewport", commandBuffer, firstViewport, viewports.arr.size, viewports.pointer())
 
+    fun vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: Int, scissors: ArrayStruct<VkRect2D>) =
+        callVoidFunc("vkCmdSetScissor", commandBuffer, firstScissor, scissors.arr.size, scissors.pointer())
+
+    fun vkCmdSetLineWidth(commandBuffer: VkCommandBuffer, lineWidth: Int) =
+        callVoidFunc("vkCmdSetLineWidth", commandBuffer, lineWidth)
+
+    fun vkCmdSetDepthBias(
+        commandBuffer: VkCommandBuffer,
+        depthBiasConstantFactor: Float,
+        depthBiasClamp: Float,
+        depthBiasSlopeFactor: Float
+    ) =
+        callVoidFunc("vkCmdSetDepthBias", commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor)
+
+    fun vkCmdSetBlendConstants(commandBuffer: VkCommandBuffer, blendConstants: FloatArrayStruct) =
+        callVoidFunc("vkCmdSetBlendConstants", commandBuffer, blendConstants)
+
+    fun vkCmdSetDepthBounds(commandBuffer: VkCommandBuffer, minDepthBounds: Float, maxDepthBounds: Float) =
+        callVoidFunc("vkCmdSetDepthBounds", commandBuffer, minDepthBounds, maxDepthBounds)
+
+    fun vkCmdSetStencilCompareMask(commandBuffer: VkCommandBuffer, faceMask: Int, compareMask: Int) =
+        callVoidFunc("vkCmdSetStencilCompareMask", commandBuffer, faceMask, compareMask)
+
+    fun vkCmdSetStencilWriteMask(commandBuffer: VkCommandBuffer, faceMask: Int, writeMask: Int) =
+        callVoidFunc("vkCmdSetStencilWriteMask", commandBuffer, faceMask, writeMask)
+
+    fun vkCmdSetStencilReference(commandBuffer: VkCommandBuffer, faceMask: Int, reference: Int) =
+        callVoidFunc("vkCmdSetStencilReference", commandBuffer, faceMask, reference)
+
+    fun vkCmdBindDescriptorSets(
+        commandBuffer: VkCommandBuffer,
+        pipelineBindPoint: Int,
+        layout: VkPipelineLayout,
+        firstSet: Int,
+        sets: PointerArrayStruct<VkDescriptorSet>,
+        dynamicOffsets: IntArrayStruct
+    ) =
+        callVoidFunc(
+            "vkCmdBindDescriptorSets",
+            commandBuffer,
+            pipelineBindPoint,
+            layout,
+            firstSet,
+            sets.arr.size,
+            sets.pointer(),
+            dynamicOffsets.arr.size,
+            dynamicOffsets.pointer()
+        )
+
+    fun vkCmdBindIndexBuffer(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: Long, indexType: Int) =
+        callVoidFunc("vkCmdBindIndexBuffer", commandBuffer, buffer, offset, indexType)
+
+    fun vkCmdBindVertexBuffers(
+        commandBuffer: VkCommandBuffer,
+        firstBinding: Int,
+        buffers: PointerArrayStruct<VkBuffer>,
+        offsets: LongArrayStruct
+    ) =
+        callVoidFunc(
+            "vkCmdBindVertexBuffers",
+            commandBuffer,
+            firstBinding,
+            min(buffers.arr.size, offsets.arr.size),
+            buffers.pointer(),
+            offsets.pointer()
+        )
+
+    fun vkCmdDraw(
+        commandBuffer: VkCommandBuffer,
+        vertexCount: Int,
+        instanceCount: Int,
+        firstVertex: Int,
+        firstInstance: Int
+    ) =
+        callVoidFunc("vkCmdDraw", commandBuffer, vertexCount, instanceCount, firstVertex, firstInstance)
+
+    fun vkCmdDrawIndexed(
+        commandBuffer: VkCommandBuffer,
+        indexCount: Int,
+        instanceCount: Int,
+        firstIndex: Int,
+        vertexOffset: Int,
+        firstInstance: Int
+    ) =
+        callVoidFunc(
+            "vkCmdDrawIndexed",
+            commandBuffer,
+            indexCount,
+            instanceCount,
+            firstIndex,
+            vertexOffset,
+            firstInstance
+        )
+
+    fun vkCmdDrawIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: Long, drawCount: Int, stride: Int) =
+        callVoidFunc("vkCmdDrawIndirect", commandBuffer, buffer, offset, drawCount, stride)
+
+    fun vkCmdDrawIndexedIndirect(
+        commandBuffer: VkCommandBuffer,
+        buffer: VkBuffer,
+        offset: Long,
+        drawCount: Int,
+        stride: Int
+    ) =
+        callVoidFunc("vkCmdDrawIndexedIndirect", commandBuffer, buffer, offset, drawCount, stride)
+
+    fun vkCmdDispatch(commandBuffer: VkCommandBuffer, groupCountX: Int, groupCountY: Int, groupCountZ: Int) =
+        callVoidFunc("vkCmdDispatch", commandBuffer, groupCountX, groupCountY, groupCountZ)
+
+    fun vkCmdDispatchIndirect(commandBuffer: VkCommandBuffer, buffer: VkBuffer, offset: Long) =
+        callVoidFunc("vkCmdDispatchIndirect", commandBuffer, buffer, offset)
+
+    fun vkCmdCopyBuffer(
+        commandBuffer: VkCommandBuffer,
+        srcBuffer: VkBuffer,
+        dstBuffer: VkBuffer,
+        regions: ArrayStruct<VkBufferCopy>
+    ) =
+        callVoidFunc("vkCmdCopyBuffer", commandBuffer, srcBuffer, dstBuffer, regions.arr.size, regions.pointer())
 }
