@@ -105,6 +105,7 @@ fun main() {
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
     }, { logger.error("vulkan error: $it") })
+    println(VkImageCopy.LAYOUT.byteSize())
 
     glfwSetCursor(
         window,

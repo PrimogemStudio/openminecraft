@@ -1531,4 +1531,86 @@ object Vk10Funcs {
         regions: ArrayStruct<VkBufferCopy>
     ) =
         callVoidFunc("vkCmdCopyBuffer", commandBuffer, srcBuffer, dstBuffer, regions.arr.size, regions.pointer())
+
+    fun vkCmdCopyImage(
+        commandBuffer: VkCommandBuffer,
+        srcImage: VkImage,
+        srcImageLayout: Int,
+        dstImage: VkImage,
+        dstImageLayout: Int,
+        regions: ArrayStruct<VkImageCopy>
+    ) =
+        callVoidFunc(
+            "vkCmdCopyImage",
+            commandBuffer,
+            srcImage,
+            srcImageLayout,
+            dstImage,
+            dstImageLayout,
+            regions.arr.size,
+            regions.pointer()
+        )
+
+    fun vkCmdBlitImage(
+        commandBuffer: VkCommandBuffer,
+        srcImage: VkImage,
+        srcImageLayout: Int,
+        dstImage: VkImage,
+        dstImageLayout: Int,
+        regions: ArrayStruct<VkImageBlit>,
+        filter: Int
+    ) =
+        callVoidFunc(
+            "vkCmdBlitImage",
+            commandBuffer,
+            srcImage,
+            srcImageLayout,
+            dstImage,
+            dstImageLayout,
+            regions.arr.size,
+            regions.pointer(),
+            filter
+        )
+
+    fun vkCmdCopyBufferToImage(
+        commandBuffer: VkCommandBuffer,
+        srcBuffer: VkBuffer,
+        dstImage: VkImage,
+        dstImageLayout: Int,
+        regions: ArrayStruct<VkBufferImageCopy>
+    ) =
+        callVoidFunc(
+            "vkCmdCopyBufferToImage",
+            commandBuffer,
+            srcBuffer,
+            dstImage,
+            dstImageLayout,
+            regions.arr.size,
+            regions.pointer()
+        )
+
+    fun vkCmdCopyImageToBuffer(
+        commandBuffer: VkCommandBuffer,
+        srcImage: VkImage,
+        srcImageLayout: Int,
+        dstBuffer: VkBuffer,
+        regions: ArrayStruct<VkBufferImageCopy>
+    ) =
+        callVoidFunc(
+            "vkCmdCopyImageToBuffer",
+            commandBuffer,
+            srcImage,
+            srcImageLayout,
+            dstBuffer,
+            regions.arr.size,
+            regions.pointer()
+        )
+
+    fun vkCmdUpdateBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: Long, data: MemorySegment) =
+        callVoidFunc("vkCmdUpdateBuffer", commandBuffer, dstBuffer, dstOffset, data)
+
+    fun vkCmdFillBuffer(commandBuffer: VkCommandBuffer, dstBuffer: VkBuffer, dstOffset: Long, size: Long, data: Int) =
+        callVoidFunc("vkCmdFillBuffer", commandBuffer, dstBuffer, dstOffset, size, data)
+
+
 }
