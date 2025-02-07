@@ -17,4 +17,9 @@ class ArrayStruct<T: IStruct>(val arr: Array<T>): IStruct(MemoryLayout.paddingLa
             offset += it.layout().byteSize()
         }
     }
+
+    override fun close() {
+        arr.forEach { it.close() }
+        super.close()
+    }
 }

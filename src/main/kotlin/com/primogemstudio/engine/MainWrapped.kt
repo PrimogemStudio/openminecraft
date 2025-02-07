@@ -105,6 +105,8 @@ fun main() {
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
     }, { logger.error("vulkan error: $it") })
+    println(Class.forName("org.lwjgl.vulkan.VkRenderPassBeginInfo").getField("SIZEOF").get(null))
+    println(VkRenderPassBeginInfo.LAYOUT.byteSize())
 
     glfwSetCursor(
         window,
