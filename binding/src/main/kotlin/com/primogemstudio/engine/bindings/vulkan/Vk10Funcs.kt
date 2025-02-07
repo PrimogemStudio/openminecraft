@@ -13,9 +13,11 @@ import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.types.Result
+import org.joml.Vector2i
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
+import java.lang.foreign.ValueLayout.JAVA_INT
 import java.nio.ByteBuffer
 
 class VkInstance(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
@@ -1281,4 +1283,76 @@ object Vk10Funcs {
 
     fun vkDestroyDescriptorPool(device: VkDevice, pool: VkDescriptorPool, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyDescriptorPool", device, pool, allocator?.pointer() ?: MemorySegment.NULL)
+
+    fun vkResetDescriptorPool(device: VkDevice, pool: VkDescriptorPool, flags: Int): Int =
+        callFunc("vkResetDescriptorPool", Int::class, device, pool, flags)
+
+    fun vkAllocateDescriptorSets(
+        device: VkDevice,
+        createInfo: VkDescriptorSetAllocateInfo
+    ): Result<Array<VkDescriptorSet>, Int> {
+        val seg = Arena.ofAuto().allocate(createInfo.count() * sizetLength() * 1L)
+        val retCode = callFunc("vkAllocateDescriptorSets", Int::class, device, createInfo, seg)
+        return if (retCode == VK_SUCCESS) Result.success(
+            seg.toCPointerArray(createInfo.count()).map { VkDescriptorSet(it) }.toTypedArray()
+        ) else Result.fail(retCode)
+    }
+
+    fun vkFreeDescriptorSets(device: VkDevice, sets: PointerArrayStruct<VkDescriptorSet>): Int =
+        callFunc("vkFreeDescriptorSets", Int::class, device, sets.arr.size, sets.pointer())
+
+    fun vkUpdateDescriptorSets(
+        device: VkDevice,
+        writes: ArrayStruct<VkWriteDescriptorSet>,
+        copies: ArrayStruct<VkCopyDescriptorSet>
+    ): Int =
+        callFunc(
+            "vkUpdateDescriptorSets",
+            Int::class,
+            device,
+            writes.arr.size,
+            copies.arr.size,
+            writes.pointer(),
+            copies.pointer()
+        )
+
+    fun vkCreateFramebuffer(
+        device: VkDevice,
+        createInfo: VkFramebufferCreateInfo,
+        allocator: VkAllocationCallbacks?
+    ): Result<VkFramebuffer, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode = callFunc(
+            "vkCreateFramebuffer",
+            Int::class,
+            device,
+            createInfo,
+            allocator?.pointer() ?: MemorySegment.NULL,
+            seg
+        )
+        return if (retCode == VK_SUCCESS) Result.success(VkFramebuffer(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
+
+    fun vkDestroyFramebuffer(device: VkDevice, framebuffer: VkFramebuffer, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyFramebuffer", device, framebuffer, allocator?.pointer() ?: MemorySegment.NULL)
+
+    fun vkCreateRenderPass(
+        device: VkDevice,
+        createInfo: VkRenderPassCreateInfo,
+        allocator: VkAllocationCallbacks?
+    ): Result<VkRenderPass, Int> {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        val retCode =
+            callFunc("vkCreateRenderPass", Int::class, device, createInfo, allocator?.pointer() ?: MemorySegment.NULL)
+        return if (retCode == VK_SUCCESS) Result.success(VkRenderPass(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+    }
+
+    fun vkDestroyRenderPass(device: VkDevice, renderPass: VkRenderPass, allocator: VkAllocationCallbacks?) =
+        callVoidFunc("vkDestroyRenderPass", device, renderPass, allocator?.pointer() ?: MemorySegment.NULL)
+
+    fun vkGetRenderAreaGranularity(device: VkDevice, renderPass: VkRenderPass): Vector2i {
+        val seg = Arena.ofAuto().allocate(4 * 2)
+        callVoidFunc("vkGetRenderAreaGranularity", device, renderPass, seg)
+        return Vector2i(seg.get(JAVA_INT, 0), seg.get(JAVA_INT, 4))
+    }
 }
