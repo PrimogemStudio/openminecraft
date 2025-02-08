@@ -5,12 +5,13 @@ import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.logging.LoggerFactory
+import java.io.Closeable
 import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.*
 import java.lang.invoke.MethodHandle
 import java.lang.invoke.MethodHandles
+import java.util.*
 import kotlin.reflect.KClass
-import java.io.Closeable
 
 @Suppress("UNCHECKED_CAST")
 object NativeMethodCache {
@@ -59,20 +60,36 @@ object NativeMethodCache {
         }
     }
 
+    fun callVoidFunc(name: String, provider: (String) -> MemorySegment, vararg args: Any) {
+        callFunc(name, provider, Unit::class, *args)
+    }
+
     fun callVoidFunc(name: String, vararg args: Any) {
         callFunc(name, Unit::class, *args)
     }
 
+    fun callPointerFunc(name: String, provider: (String) -> MemorySegment, vararg args: Any): MemorySegment =
+        callFunc(name, provider, MemorySegment::class, *args)
+
     fun callPointerFunc(name: String, vararg args: Any): MemorySegment =
         callFunc(name, MemorySegment::class, *args)
 
-    @OptIn(ExperimentalStdlibApi::class)
     fun <T : Any> callFunc(name: String, rettype: KClass<T>?, vararg args: Any): T {
+        return callFunc(name, null, rettype, args)
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun <T : Any> callFunc(
+        name: String,
+        provider: ((String) -> MemorySegment)?,
+        rettype: KClass<T>?,
+        vararg args: Any
+    ): T {
         val descList = mutableListOf<Closeable>()
         val argListNew = args.map {
             return@map when (it) {
-                is IHeapVar<*> -> it.ref()
                 is IStruct -> it.apply { descList.add(this@apply) }.pointer()
+                is IHeapVar<*> -> it.apply { descList.add(this@apply) }.ref()
                 else -> it
             }
         }
@@ -81,7 +98,7 @@ object NativeMethodCache {
             val rettypeDesc: MemoryLayout? = klassToLayout(rettype)
             val argDesc = args.map { klassToLayout(it::class) }.toTypedArray()
 
-            val funcP = symbolLookup.find(name)
+            val funcP = if (provider == null) symbolLookup.find(name) else Optional.of(provider(name))
             if (!funcP.isPresent) {
                 throw NullPointerException(tr("engine.nativeloader.func.fail", name))
             }

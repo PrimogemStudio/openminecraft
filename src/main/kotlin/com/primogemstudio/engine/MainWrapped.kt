@@ -73,10 +73,12 @@ fun main() {
                 engineName = "test",
                 engineVersion = VK_MAKE_VERSION(0, 0, 1),
                 apiVersion = VK_MAKE_API_VERSION(1, 0, 0, 0)
-            )
+            ),
+            layers = listOf("VK_LAYER_KHRONOS_validation"),
+            extensions = listOf("VK_EXT_debug_utils")
         ),
         allocator = null
-    ).match({ instance -> 
+    ).match({ instance ->
         vkEnumeratePhysicalDevices(instance).match({ phyDevice -> 
             vkCreateDevice(
                 phyDevice[0],

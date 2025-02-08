@@ -2,7 +2,10 @@ package com.primogemstudio.engine.interfaces
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.loader.Platform.sizetLength
-import java.lang.foreign.*
+import java.lang.foreign.Arena
+import java.lang.foreign.MemoryLayout
+import java.lang.foreign.MemorySegment
+import java.lang.foreign.StructLayout
 import java.lang.foreign.ValueLayout.*
 import kotlin.math.max
 
@@ -25,7 +28,7 @@ fun String.toCString(): MemorySegment {
     val barr = toByteArray(Charsets.UTF_8)
     val seg = Arena.ofAuto().allocate(barr.size + 1L)
     seg.copyFrom(MemorySegment.ofArray(barr))
-    seg.set(ValueLayout.JAVA_BYTE, barr.size.toLong(), 0)
+    seg.set(JAVA_BYTE, barr.size.toLong(), 0)
     return seg
 }
 
