@@ -32,6 +32,7 @@ import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumerateInsta
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkResetFences
 import com.primogemstudio.engine.bindings.vulkan.core.VkApplicationInfo
+import com.primogemstudio.engine.bindings.vulkan.core.VkInstanceCreateInfo
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.struct.ByteArrayStruct
 import com.primogemstudio.engine.interfaces.struct.FloatArrayStruct
@@ -67,17 +68,17 @@ fun main() {
     glfwMakeContextCurrent(window)
 
     vkCreateInstance(
-        VkInstanceCreateInfo(
+        VkInstanceCreateInfo().apply {
             appInfo = VkApplicationInfo().apply {
                 appName = "test"
                 appVersion = VK_MAKE_VERSION(0, 0, 1)
                 engineName = "test"
                 engineVersion = VK_MAKE_VERSION(0, 0, 1)
                 apiVersion = VK_MAKE_API_VERSION(1, 0, 0, 0)
-            },
-            layers = listOf("VK_LAYER_KHRONOS_validation"),
-            extensions = listOf("VK_EXT_debug_utils")
-        ),
+            }
+            layers = arrayOf("VK_LAYER_KHRONOS_validation")
+            extensions = arrayOf("VK_EXT_debug_utils")
+        },
         allocator = null
     ).match({ instance ->
         vkEnumeratePhysicalDevices(instance).match({ phyDevice -> 
