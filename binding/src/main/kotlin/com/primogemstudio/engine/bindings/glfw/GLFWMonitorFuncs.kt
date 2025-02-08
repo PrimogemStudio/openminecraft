@@ -4,11 +4,12 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.interfaces.heap.HeapFloat
 import com.primogemstudio.engine.interfaces.heap.HeapInt
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.stub.IStub
+import com.primogemstudio.engine.interfaces.toCPointerArray
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -16,15 +17,8 @@ import java.lang.foreign.ValueLayout.JAVA_INT
 import java.lang.foreign.ValueLayout.JAVA_SHORT
 import java.lang.invoke.MethodType
 
-class GLFWMonitor(private val data: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = data
-    override fun value(): MemorySegment = data
-}
-
-class GLFWVidMode(private val data: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = data
-    override fun value(): MemorySegment = data
-}
+class GLFWMonitor(private val data: MemorySegment) : IHeapObject(data)
+class GLFWVidMode(private val data: MemorySegment) : IHeapObject(data)
 
 class GLFWGammaRamp(private val data: MemorySegment) : IHeapVar<MemorySegment> {
     constructor(red: Short, green: Short, blue: Short, size: Int) : this(

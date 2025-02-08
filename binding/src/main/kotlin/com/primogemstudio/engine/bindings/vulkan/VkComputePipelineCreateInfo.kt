@@ -1,6 +1,8 @@
 package com.primogemstudio.engine.bindings.vulkan
 
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.core.VkPipeline
+import com.primogemstudio.engine.bindings.vulkan.core.VkPipelineLayout
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct

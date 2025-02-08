@@ -8,7 +8,7 @@ import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.HeapFloat
 import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.struct.ByteArrayStruct
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.stub.IStub
@@ -19,10 +19,7 @@ import java.lang.foreign.ValueLayout.ADDRESS
 import java.lang.foreign.ValueLayout.JAVA_INT
 import java.lang.invoke.MethodType
 
-class GLFWWindow(private val data: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = data
-    override fun value(): MemorySegment = data
-}
+class GLFWWindow(data: MemorySegment) : IHeapObject(data)
 
 data class GLFWImage(
     private val width: Int,

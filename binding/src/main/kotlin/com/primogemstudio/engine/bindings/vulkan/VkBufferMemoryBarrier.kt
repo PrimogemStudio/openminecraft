@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.bindings.vulkan
 
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER
+import com.primogemstudio.engine.bindings.vulkan.core.VkBuffer
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct

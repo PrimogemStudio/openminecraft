@@ -1,13 +1,13 @@
 package com.primogemstudio.engine.bindings.glfw
 
 import com.primogemstudio.engine.bindings.vulkan.VkAllocationCallbacks
-import com.primogemstudio.engine.bindings.vulkan.VkInstance
-import com.primogemstudio.engine.bindings.vulkan.VkPhysicalDevice
+import com.primogemstudio.engine.bindings.vulkan.core.VkInstance
+import com.primogemstudio.engine.bindings.vulkan.core.VkPhysicalDevice
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.interfaces.heap.HeapInt
+import com.primogemstudio.engine.interfaces.toCPointerArray
 import java.lang.foreign.MemorySegment
 
 object GLFWVulkanFuncs {

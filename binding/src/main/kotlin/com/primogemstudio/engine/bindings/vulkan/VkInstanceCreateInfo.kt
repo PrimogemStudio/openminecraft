@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.bindings.vulkan
 
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.core.VkApplicationInfo
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
@@ -36,7 +37,6 @@ data class VkInstanceCreateInfo(
 
     override fun close() {
         next?.close()
-        appInfo.close()
         super.close()
     }
 
@@ -45,7 +45,7 @@ data class VkInstanceCreateInfo(
         seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
         seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
         seg.set(JAVA_INT, OFFSETS[2], flag)
-        seg.set(ADDRESS, OFFSETS[3], appInfo.pointer())
+        seg.set(ADDRESS, OFFSETS[3], appInfo.ref())
         seg.set(JAVA_INT, OFFSETS[4], layers.size)
         seg.set(ADDRESS, OFFSETS[5], layers.toTypedArray().toCStrArray())
         seg.set(JAVA_INT, OFFSETS[6], extensions.size)

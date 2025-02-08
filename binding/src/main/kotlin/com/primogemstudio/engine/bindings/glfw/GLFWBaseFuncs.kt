@@ -1,6 +1,6 @@
 package com.primogemstudio.engine.bindings.glfw
 
-import com.primogemstudio.engine.bindings.vulkan.VkInstance
+import com.primogemstudio.engine.bindings.vulkan.core.VkInstance
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc

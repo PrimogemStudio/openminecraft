@@ -1,21 +1,22 @@
 package com.primogemstudio.engine.bindings.vulkan.ext.debugutils
 
-import com.primogemstudio.engine.bindings.vulkan.*
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_SUCCESS
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetDeviceProcAddr
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkGetInstanceProcAddr
+import com.primogemstudio.engine.bindings.vulkan.VkAllocationCallbacks
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_SUCCESS
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkGetDeviceProcAddr
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkGetInstanceProcAddr
+import com.primogemstudio.engine.bindings.vulkan.core.VkCommandBuffer
+import com.primogemstudio.engine.bindings.vulkan.core.VkDevice
+import com.primogemstudio.engine.bindings.vulkan.core.VkInstance
+import com.primogemstudio.engine.bindings.vulkan.core.VkQueue
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.types.Result
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
 
-class VkDebugUtilsMessengerEXT(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
+class VkDebugUtilsMessengerEXT(seg: MemorySegment) : IHeapObject(seg)
 
 object VkEXTDebugUtils {
     const val VK_EXT_DEBUG_UTILS_SPEC_VERSION: Int = 2

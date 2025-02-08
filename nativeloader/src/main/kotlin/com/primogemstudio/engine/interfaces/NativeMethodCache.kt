@@ -75,7 +75,7 @@ object NativeMethodCache {
         callFunc(name, MemorySegment::class, *args)
 
     fun <T : Any> callFunc(name: String, rettype: KClass<T>?, vararg args: Any): T {
-        return callFunc(name, null, rettype, args)
+        return callFunc(name, null, rettype, *args)
     }
 
     @OptIn(ExperimentalStdlibApi::class)
@@ -89,7 +89,7 @@ object NativeMethodCache {
         val argListNew = args.map {
             return@map when (it) {
                 is IStruct -> it.apply { descList.add(this@apply) }.pointer()
-                is IHeapVar<*> -> it.apply { descList.add(this@apply) }.ref()
+                is IHeapVar<*> -> it.ref()
                 else -> it
             }
         }

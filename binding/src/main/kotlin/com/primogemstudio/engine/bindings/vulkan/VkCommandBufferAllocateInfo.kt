@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.bindings.vulkan
 
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.core.VkCommandPool
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct

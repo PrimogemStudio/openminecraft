@@ -22,15 +22,16 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSwapBuffers
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
 import com.primogemstudio.engine.bindings.vulkan.*
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_API_VERSION
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.VK_MAKE_VERSION
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateDevice
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateFence
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreateInstance
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkCreatePipelineLayout
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumerateInstanceLayerProperties
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkEnumeratePhysicalDevices
-import com.primogemstudio.engine.bindings.vulkan.Vk10Funcs.vkResetFences
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_MAKE_API_VERSION
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_MAKE_VERSION
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreateDevice
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreateFence
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreateInstance
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreatePipelineLayout
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumerateInstanceLayerProperties
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumeratePhysicalDevices
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkResetFences
+import com.primogemstudio.engine.bindings.vulkan.core.VkApplicationInfo
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.struct.ByteArrayStruct
 import com.primogemstudio.engine.interfaces.struct.FloatArrayStruct
@@ -67,13 +68,13 @@ fun main() {
 
     vkCreateInstance(
         VkInstanceCreateInfo(
-            appInfo = VkApplicationInfo(
-                appName = "test",
-                appVersion = VK_MAKE_VERSION(0, 0, 1),
-                engineName = "test",
-                engineVersion = VK_MAKE_VERSION(0, 0, 1),
+            appInfo = VkApplicationInfo().apply {
+                appName = "test"
+                appVersion = VK_MAKE_VERSION(0, 0, 1)
+                engineName = "test"
+                engineVersion = VK_MAKE_VERSION(0, 0, 1)
                 apiVersion = VK_MAKE_API_VERSION(1, 0, 0, 0)
-            ),
+            },
             layers = listOf("VK_LAYER_KHRONOS_validation"),
             extensions = listOf("VK_EXT_debug_utils")
         ),
@@ -108,7 +109,7 @@ fun main() {
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
     }, { logger.error("vulkan error: $it") })
-    vkEnumerateInstanceLayerProperties().match({ println(it.map { it.layerName }) }, {})
+    vkEnumerateInstanceLayerProperties().match({ r -> println(r.map { it.layerName }) }, {})
 
     glfwSetCursor(
         window,

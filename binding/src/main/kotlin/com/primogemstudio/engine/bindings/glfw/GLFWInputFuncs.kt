@@ -1,20 +1,14 @@
 package com.primogemstudio.engine.bindings.glfw
 
+import com.primogemstudio.engine.interfaces.*
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.HeapDouble
 import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.stub.IStub
-import com.primogemstudio.engine.interfaces.toCString
-import com.primogemstudio.engine.interfaces.toCPointerArray
-import com.primogemstudio.engine.interfaces.toCFloatArray
-import com.primogemstudio.engine.interfaces.toCByteArray
 import java.lang.foreign.MemorySegment
-import java.lang.foreign.ValueLayout.JAVA_BYTE
-import java.lang.foreign.ValueLayout.JAVA_FLOAT
 import java.lang.invoke.MethodType
 
 fun interface GLFWMouseButtonFun : IStub {
@@ -159,15 +153,8 @@ fun interface GLFWJoystickFun : IStub {
         )
 }
 
-class GLFWCursor(private val data: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = data
-    override fun value(): MemorySegment = data
-}
-
-class GLFWGamepadState(private val data: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = data
-    override fun value(): MemorySegment = data
-}
+class GLFWCursor(data: MemorySegment) : IHeapObject(data)
+class GLFWGamepadState(data: MemorySegment) : IHeapObject(data)
 
 object GLFWInputFuncs {
     const val GLFW_RELEASE = 0

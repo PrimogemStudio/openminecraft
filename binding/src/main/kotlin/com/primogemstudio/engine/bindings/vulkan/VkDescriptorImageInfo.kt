@@ -1,5 +1,7 @@
 package com.primogemstudio.engine.bindings.vulkan
 
+import com.primogemstudio.engine.bindings.vulkan.core.VkImageView
+import com.primogemstudio.engine.bindings.vulkan.core.VkSampler
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct

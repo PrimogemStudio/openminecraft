@@ -1,11 +1,13 @@
-package com.primogemstudio.engine.bindings.vulkan
+package com.primogemstudio.engine.bindings.vulkan.core
 
+import com.primogemstudio.engine.bindings.vulkan.*
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.fromCStructArray
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.HeapLong
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.*
 import com.primogemstudio.engine.interfaces.toCPointerArray
@@ -20,130 +22,31 @@ import java.lang.foreign.ValueLayout.JAVA_INT
 import java.nio.ByteBuffer
 import kotlin.math.min
 
-class VkInstance(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkPhysicalDevice(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkDevice(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkQueue(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkFence(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkSemaphore(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkCommandBuffer(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkDeviceMemory(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkBuffer(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkImage(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkEvent(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkQueryPool(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkBufferView(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkImageView(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkShaderModule(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkPipelineCache(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkPipeline(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkPipelineLayout(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkRenderPass(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkDescriptorSetLayout(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkSampler(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkDescriptorPool(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkDescriptorSet(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkCommandPool(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
-
-class VkFramebuffer(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
-}
+class VkInstance(seg: MemorySegment) : IHeapObject(seg)
+class VkPhysicalDevice(seg: MemorySegment) : IHeapObject(seg)
+class VkDevice(seg: MemorySegment) : IHeapObject(seg)
+class VkQueue(seg: MemorySegment) : IHeapObject(seg)
+class VkFence(seg: MemorySegment) : IHeapObject(seg)
+class VkSemaphore(seg: MemorySegment) : IHeapObject(seg)
+class VkCommandBuffer(seg: MemorySegment) : IHeapObject(seg)
+class VkDeviceMemory(seg: MemorySegment) : IHeapObject(seg)
+class VkBuffer(seg: MemorySegment) : IHeapObject(seg)
+class VkImage(seg: MemorySegment) : IHeapObject(seg)
+class VkEvent(seg: MemorySegment) : IHeapObject(seg)
+class VkQueryPool(seg: MemorySegment) : IHeapObject(seg)
+class VkBufferView(seg: MemorySegment) : IHeapObject(seg)
+class VkImageView(seg: MemorySegment) : IHeapObject(seg)
+class VkShaderModule(seg: MemorySegment) : IHeapObject(seg)
+class VkPipelineCache(seg: MemorySegment) : IHeapObject(seg)
+class VkPipeline(seg: MemorySegment) : IHeapObject(seg)
+class VkPipelineLayout(seg: MemorySegment) : IHeapObject(seg)
+class VkRenderPass(seg: MemorySegment) : IHeapObject(seg)
+class VkDescriptorSetLayout(seg: MemorySegment) : IHeapObject(seg)
+class VkSampler(seg: MemorySegment) : IHeapObject(seg)
+class VkDescriptorPool(seg: MemorySegment) : IHeapObject(seg)
+class VkDescriptorSet(seg: MemorySegment) : IHeapObject(seg)
+class VkCommandPool(seg: MemorySegment) : IHeapObject(seg)
+class VkFramebuffer(seg: MemorySegment) : IHeapObject(seg)
 
 object Vk10Funcs {
     const val VK_SUCCESS: Int = 0
@@ -1012,11 +915,11 @@ object Vk10Funcs {
     }
 
     fun vkGetPhysicalDeviceSparseImageFormatProperties(
-        physicalDevice: VkPhysicalDevice, 
-        format: Int, 
-        type: Int, 
-        samples: Int, 
-        usage: Int, 
+        physicalDevice: VkPhysicalDevice,
+        format: Int,
+        type: Int,
+        samples: Int,
+        usage: Int,
         tiling: Int
     ): Array<VkSparseImageMemoryRequirements> {
         val count = HeapInt()
