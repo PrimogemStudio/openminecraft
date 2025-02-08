@@ -1,15 +1,14 @@
 package com.primogemstudio.engine.bindings.vulkan.ext.debugutils
 
-import com.primogemstudio.engine.interfaces.align
-import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
-import com.primogemstudio.engine.interfaces.toCPointerArray
+import com.primogemstudio.engine.bindings.vulkan.ext.debugutils.VkEXTDebugUtils.VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT
+import com.primogemstudio.engine.interfaces.*
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
 
-class VkDebugUtilsMessengerCallbackDataEXT(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
+class VkDebugUtilsMessengerCallbackDataEXT(private val seg: MemorySegment) : IHeapObject(seg) {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
             JAVA_INT_UNALIGNED,
@@ -29,25 +28,47 @@ class VkDebugUtilsMessengerCallbackDataEXT(private val seg: MemorySegment) : IHe
         private val OFFSETS = LAYOUT.cacheOffsets()
     }
 
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
+    constructor() : this(Arena.ofAuto().allocate(LAYOUT)) {
+        sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT
+    }
 
-    val sType: Int get() = seg.get(JAVA_INT, OFFSETS[0])
-    val next: MemorySegment get() = seg.get(ADDRESS, OFFSETS[1])
-    val flags: Int get() = seg.get(JAVA_INT, OFFSETS[2])
-    val messageIdName: String get() = seg.get(ADDRESS, OFFSETS[3]).fetchString()
-    val messageIdNumber: Int get() = seg.get(JAVA_INT, OFFSETS[4])
-    val message: String get() = seg.get(ADDRESS, OFFSETS[5]).fetchString()
-    val queueLabelCount: Int get() = seg.get(JAVA_INT, OFFSETS[6])
-    val queueLabels: Array<VkDebugUtilsLabelEXT>
+    var sType: Int
+        get() = seg.get(JAVA_INT, OFFSETS[0])
+        set(value) = seg.set(JAVA_INT, OFFSETS[0], value)
+    var next: MemorySegment
+        get() = seg.get(ADDRESS, OFFSETS[1])
+        set(value) = seg.set(ADDRESS, OFFSETS[1], value)
+    var flags: Int
+        get() = seg.get(JAVA_INT, OFFSETS[2])
+        set(value) = seg.set(JAVA_INT, OFFSETS[2], value)
+    var messageIdName: String
+        get() = seg.get(ADDRESS, OFFSETS[3]).fetchString()
+        set(value) = seg.set(ADDRESS, OFFSETS[3], value.toCString())
+    var messageIdNumber: Int
+        get() = seg.get(JAVA_INT, OFFSETS[4])
+        set(value) = seg.set(JAVA_INT, OFFSETS[4], value)
+    var message: String
+        get() = seg.get(ADDRESS, OFFSETS[5]).fetchString()
+        set(value) = seg.set(ADDRESS, OFFSETS[5], value.toCString())
+    var queueLabelCount: Int
+        get() = seg.get(JAVA_INT, OFFSETS[6])
+        set(value) = seg.set(JAVA_INT, OFFSETS[6], value)
+    var queueLabels: Array<VkDebugUtilsLabelEXT>
         get() = seg.get(ADDRESS, OFFSETS[7]).toCPointerArray(queueLabelCount).map { VkDebugUtilsLabelEXT(it) }
             .toTypedArray()
-    val cmdBufLabelCount: Int get() = seg.get(JAVA_INT, OFFSETS[8])
-    val cmdBufLabels: Array<VkDebugUtilsLabelEXT>
+        set(value) = seg.set(ADDRESS, OFFSETS[7], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
+    var cmdBufLabelCount: Int
+        get() = seg.get(JAVA_INT, OFFSETS[8])
+        set(value) = seg.set(JAVA_INT, OFFSETS[8], value)
+    var cmdBufLabels: Array<VkDebugUtilsLabelEXT>
         get() = seg.get(ADDRESS, OFFSETS[9]).toCPointerArray(cmdBufLabelCount).map { VkDebugUtilsLabelEXT(it) }
             .toTypedArray()
-    val objectCount: Int get() = seg.get(JAVA_INT, OFFSETS[10])
-    val objects: Array<VkDebugUtilsObjectNameInfoEXT>
+        set(value) = seg.set(ADDRESS, OFFSETS[9], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
+    var objectCount: Int
+        get() = seg.get(JAVA_INT, OFFSETS[10])
+        set(value) = seg.set(JAVA_INT, OFFSETS[10], value)
+    var objects: Array<VkDebugUtilsObjectNameInfoEXT>
         get() = seg.get(ADDRESS, OFFSETS[11]).toCPointerArray(objectCount).map { VkDebugUtilsObjectNameInfoEXT(it) }
             .toTypedArray()
+        set(value) = seg.set(ADDRESS, OFFSETS[11], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
 }

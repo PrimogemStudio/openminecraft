@@ -4,19 +4,13 @@ import com.primogemstudio.engine.bindings.vulkan.ext.debugutils.VkEXTDebugUtils.
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.struct.IStruct
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
 
-class VkDebugUtilsMessengerCreateInfoEXT(
-    private val next: IStruct? = null,
-    private val flags: Int = 0,
-    private val messageSeverity: Int,
-    private val messageType: Int,
-    private val callback: VkDebugUtilsMessengerCallbackEXT,
-    private val userData: MemorySegment? = null
-) : IStruct() {
+class VkDebugUtilsMessengerCreateInfoEXT(private val seg: MemorySegment) : IHeapObject(seg) {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
             JAVA_INT_UNALIGNED,
@@ -31,18 +25,31 @@ class VkDebugUtilsMessengerCreateInfoEXT(
         private val OFFSETS = LAYOUT.cacheOffsets()
     }
 
-    init {
-        construct(seg)
+    constructor() : this(Arena.ofAuto().allocate(LAYOUT)) {
+        sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT
     }
 
-    override fun layout(): MemoryLayout = LAYOUT
-    override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT)
-        seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
-        seg.set(JAVA_INT, OFFSETS[2], flags)
-        seg.set(JAVA_INT, OFFSETS[3], messageSeverity)
-        seg.set(JAVA_INT, OFFSETS[4], messageType)
-        seg.set(ADDRESS, OFFSETS[5], constructStub(VkDebugUtilsMessengerCallbackEXT::class, callback))
-        seg.set(ADDRESS, OFFSETS[6], userData ?: MemorySegment.NULL)
-    }
+    var sType: Int
+        get() = seg.get(JAVA_INT, OFFSETS[0])
+        set(value) = seg.set(JAVA_INT, OFFSETS[0], value)
+    var next: MemorySegment
+        get() = seg.get(ADDRESS, OFFSETS[1])
+        set(value) = seg.set(ADDRESS, OFFSETS[1], value)
+    var flags: Int
+        get() = seg.get(JAVA_INT, OFFSETS[2])
+        set(value) = seg.set(JAVA_INT, OFFSETS[2], value)
+    var messageSeverity: Int
+        get() = seg.get(JAVA_INT, OFFSETS[3])
+        set(value) = seg.set(JAVA_INT, OFFSETS[3], value)
+    var messageType: Int
+        get() = seg.get(JAVA_INT, OFFSETS[4])
+        set(value) = seg.set(JAVA_INT, OFFSETS[4], value)
+    var callback: VkDebugUtilsMessengerCallbackEXT
+        get() {
+            TODO("Unsupported operation!")
+        }
+        set(value) = seg.set(ADDRESS, OFFSETS[5], constructStub(VkDebugUtilsMessengerCallbackEXT::class, value))
+    var userData: MemorySegment
+        get() = seg.get(ADDRESS, OFFSETS[6])
+        set(value) = seg.set(ADDRESS, OFFSETS[6], value)
 }

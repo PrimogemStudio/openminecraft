@@ -1,6 +1,8 @@
 package com.primogemstudio.engine.interfaces
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.heap.HeapStructArray
+import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
@@ -51,6 +53,13 @@ fun MemorySegment.toCByteArray(length: Int): ByteArray = (0 ..< length).map { th
 fun StructLayout.cacheOffsets(): LongArray =
     (0..<this.memberLayouts().size).map { this.byteOffset(MemoryLayout.PathElement.groupElement(it.toLong())) }
         .toLongArray()
+
+fun <T : IHeapVar<*>> Array<T>.toCStructArray(layout: MemoryLayout): HeapStructArray =
+    HeapStructArray(layout, this.size).apply {
+        for (i in this@toCStructArray.indices) {
+            this[i] = this@toCStructArray[i]
+        }
+    }
 
 private fun checkLayoutAlign(e: StructLayout): Long = e.memberLayouts().maxOfOrNull {
     if (it is StructLayout) checkLayoutAlign(it) else it.byteSize()
