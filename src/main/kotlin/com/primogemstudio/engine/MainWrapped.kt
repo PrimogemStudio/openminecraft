@@ -97,7 +97,7 @@ fun main() {
                     val arr = PointerArrayStruct(arrayOf(fence))
                     logger.info("${vkResetFences(dev, arr)}")
 
-                    println(vkCreatePipelineLayout(dev, VkPipelineLayoutCreateInfo(), null))
+                    // println(vkCreatePipelineLayout(dev, VkPipelineLayoutCreateInfo(), null))
                 }, { logger.error("vulkan error: $it") })
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
