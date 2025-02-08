@@ -5,7 +5,6 @@ import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.logging.LoggerFactory
-import java.io.Closeable
 import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.*
 import java.lang.invoke.MethodHandle
@@ -85,10 +84,9 @@ object NativeMethodCache {
         rettype: KClass<T>?,
         vararg args: Any
     ): T {
-        val descList = mutableListOf<Closeable>()
         val argListNew = args.map {
             return@map when (it) {
-                is IStruct -> it.apply { descList.add(this@apply) }.pointer()
+                is IStruct -> it.pointer()
                 is IHeapVar<*> -> it.ref()
                 else -> it
             }
@@ -112,8 +110,8 @@ object NativeMethodCache {
             logger.info(tr("engine.nativeloader.func", name, funcP.get().address().toHexString()))
         }
 
-        return (if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(argListNew) as T).apply {
-            descList.forEach { it.close() }
-        }
+        return (if (args.isEmpty()) funcCache[name]!!.invoke() as T else funcCache[name]!!.invokeWithArguments(
+            argListNew
+        ) as T)
     }
 }

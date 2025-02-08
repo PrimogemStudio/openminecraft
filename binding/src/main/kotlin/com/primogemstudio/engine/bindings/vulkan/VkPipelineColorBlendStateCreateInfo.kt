@@ -39,12 +39,6 @@ class VkPipelineColorBlendStateCreateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        attachments.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

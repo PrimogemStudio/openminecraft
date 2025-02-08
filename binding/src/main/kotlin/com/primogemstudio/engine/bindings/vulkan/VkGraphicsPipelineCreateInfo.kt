@@ -60,21 +60,6 @@ class VkGraphicsPipelineCreateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        stages?.close()
-        vertex?.close()
-        inputAssembly?.close()
-        tessellation?.close()
-        viewport?.close()
-        rasterization?.close()
-        multisample?.close()
-        depthStencil?.close()
-        colorBlend?.close()
-        dynamic?.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

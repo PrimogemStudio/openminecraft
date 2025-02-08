@@ -37,12 +37,6 @@ class VkImageViewCreateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        range.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

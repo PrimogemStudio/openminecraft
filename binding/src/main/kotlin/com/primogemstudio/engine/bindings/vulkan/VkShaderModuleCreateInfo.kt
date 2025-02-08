@@ -31,12 +31,6 @@ class VkShaderModuleCreateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        code.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

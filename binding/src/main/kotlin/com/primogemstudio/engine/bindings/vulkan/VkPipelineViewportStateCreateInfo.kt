@@ -33,13 +33,6 @@ class VkPipelineViewportStateCreateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        viewports.close()
-        scissors.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

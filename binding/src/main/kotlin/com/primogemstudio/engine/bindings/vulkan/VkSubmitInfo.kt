@@ -39,14 +39,6 @@ data class VkSubmitInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        waitSemaphores.close()
-        commandBuffers.close()
-        signalSemaphores.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

@@ -40,15 +40,6 @@ class VkSubpassDescription(
         construct(seg)
     }
 
-    override fun close() {
-        inputAttachments?.close()
-        colorAttachments?.close()
-        resolveAttachments?.close()
-        depthStencilAttachment?.close()
-        preserveAttachments?.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

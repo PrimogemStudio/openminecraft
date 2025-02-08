@@ -36,13 +36,6 @@ class VkRenderPassBeginInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        renderArea.close()
-        clearValues.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO)

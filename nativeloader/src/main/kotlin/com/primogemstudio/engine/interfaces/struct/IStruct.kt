@@ -6,7 +6,7 @@ import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 
 abstract class IStruct(layout: MemoryLayout?) : IHeapVar<MemorySegment> {
-    private val arena = Arena.ofConfined()
+    private val arena = Arena.ofAuto()
     protected val seg: MemorySegment
 
     init {
@@ -23,7 +23,6 @@ abstract class IStruct(layout: MemoryLayout?) : IHeapVar<MemorySegment> {
         construct(seg)
     }
     fun pointer(): MemorySegment = seg
-    override fun close() = arena.close()
 
     override fun ref(): MemorySegment = seg
     override fun value(): MemorySegment = seg

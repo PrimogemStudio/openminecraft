@@ -41,15 +41,6 @@ data class VkBindSparseInfo(
         construct(seg)
     }
 
-    override fun close() {
-        waitSemaphores?.close()
-        bufferBinds?.close()
-        imageOpaqueBinds?.close()
-        imageBinds?.close()
-        signalSemaphores?.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

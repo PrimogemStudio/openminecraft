@@ -33,7 +33,7 @@ import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumeratePhysi
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkResetFences
 import com.primogemstudio.engine.bindings.vulkan.core.VkApplicationInfo
 import com.primogemstudio.engine.bindings.vulkan.core.VkInstanceCreateInfo
-import com.primogemstudio.engine.interfaces.struct.ArrayStruct
+import com.primogemstudio.engine.interfaces.heap.HeapStructArray
 import com.primogemstudio.engine.interfaces.struct.ByteArrayStruct
 import com.primogemstudio.engine.interfaces.struct.FloatArrayStruct
 import com.primogemstudio.engine.interfaces.struct.PointerArrayStruct
@@ -87,14 +87,14 @@ fun main() {
                 VkDeviceCreateInfo(
                     null,
                     0,
-                    ArrayStruct(arrayOf(
-                        VkDeviceQueueCreateInfo(
+                    HeapStructArray(VkDeviceQueueCreateInfo.LAYOUT, 1).apply {
+                        this[0] = VkDeviceQueueCreateInfo(
                             null,
                             0,
                             0,
                             FloatArrayStruct(floatArrayOf(1f))
                         )
-                    )),
+                    },
                     listOf(),
                     listOf(),
                     VkPhysicalDeviceFeatures()

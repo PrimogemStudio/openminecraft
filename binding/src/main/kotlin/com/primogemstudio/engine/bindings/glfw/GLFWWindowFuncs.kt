@@ -35,11 +35,6 @@ data class GLFWImage(
         construct(seg)
     }
 
-    override fun close() {
-        pixels.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, OFFSETS[0], width)

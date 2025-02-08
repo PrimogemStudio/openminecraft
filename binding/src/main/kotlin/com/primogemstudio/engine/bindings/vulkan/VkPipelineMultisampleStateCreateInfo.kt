@@ -37,12 +37,6 @@ class VkPipelineMultisampleStateCreateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        sampleMask.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

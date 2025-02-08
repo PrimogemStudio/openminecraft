@@ -30,11 +30,6 @@ class VkCommandBufferAllocateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        super.close()
-    }
-
     fun count(): Int = commandBufferCount
 
     override fun layout(): MemoryLayout = LAYOUT

@@ -43,13 +43,6 @@ class VkPipelineDepthStencilStateCreateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        front.close()
-        back.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

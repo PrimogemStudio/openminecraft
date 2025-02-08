@@ -34,12 +34,6 @@ class VkImageBlit(
         construct(seg)
     }
 
-    override fun close() {
-        srcSubresource.close()
-        dstSubresource.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
     override fun construct(seg: MemorySegment) {
         srcSubresource.construct(seg.asSlice(OFFSETS[0], VkImageSubresourceLayers.LAYOUT.byteSize()))

@@ -36,14 +36,6 @@ class VkRenderPassCreateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        attachments?.close()
-        subpasses?.close()
-        dependencies?.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

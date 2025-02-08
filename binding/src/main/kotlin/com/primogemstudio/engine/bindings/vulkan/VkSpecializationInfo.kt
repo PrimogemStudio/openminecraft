@@ -28,12 +28,6 @@ class VkSpecializationInfo(
         construct(seg)
     }
 
-    override fun close() {
-        mapEntries.close()
-        data.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

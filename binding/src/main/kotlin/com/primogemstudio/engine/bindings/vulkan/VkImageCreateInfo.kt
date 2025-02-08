@@ -50,12 +50,6 @@ class VkImageCreateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        queueFamilyIndices.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {

@@ -31,11 +31,6 @@ class VkDescriptorSetAllocateInfo(
         construct(seg)
     }
 
-    override fun close() {
-        next?.close()
-        super.close()
-    }
-
     fun count(): Int = setLayouts.arr.size
 
     override fun layout(): MemoryLayout = LAYOUT

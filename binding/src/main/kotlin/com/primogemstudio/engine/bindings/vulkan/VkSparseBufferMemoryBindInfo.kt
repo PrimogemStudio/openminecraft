@@ -27,11 +27,6 @@ data class VkSparseBufferMemoryBindInfo(
         construct(seg)
     }
 
-    override fun close() {
-        binds.close()
-        super.close()
-    }
-
     override fun layout(): MemoryLayout = LAYOUT
 
     override fun construct(seg: MemorySegment) {
