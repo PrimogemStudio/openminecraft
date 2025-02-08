@@ -125,7 +125,7 @@ fun interface GLFWDropFun : IStub {
         call(
             GLFWWindow(window),
             path_count,
-            paths.toCPointerArray(path_count).map { it.fetchString() }.toTypedArray()
+            paths.toPointerArray(path_count).map { it.fetchString() }.toTypedArray()
         )
 
     override fun register(): Pair<String, MethodType> =
@@ -435,17 +435,17 @@ object GLFWInputFuncs {
 
     fun glfwGetJoystickAxes(jid: Int): FloatArray {
         val count = HeapInt()
-        return callPointerFunc("glfwGetJoystickAxes", jid, count).toCFloatArray(count.value())
+        return callPointerFunc("glfwGetJoystickAxes", jid, count).toFloatArray(count.value())
     }
 
     fun glfwGetJoystickButtons(jid: Int): ByteArray {
         val count = HeapInt()
-        return callPointerFunc("glfwGetJoystickButtons", jid, count).toCByteArray(count.value())
+        return callPointerFunc("glfwGetJoystickButtons", jid, count).toByteArray(count.value())
     }
 
     fun glfwGetJoystickHats(jid: Int): ByteArray {
         val count = HeapInt()
-        return callPointerFunc("glfwGetJoystickHats", jid, count).toCByteArray(count.value())
+        return callPointerFunc("glfwGetJoystickHats", jid, count).toByteArray(count.value())
     }
 
     fun glfwGetJoystickName(jid: Int): String =

@@ -1,6 +1,5 @@
 package com.primogemstudio.engine.bindings.vulkan.ext.debugutils
 
-import com.primogemstudio.engine.bindings.vulkan.VkAllocationCallbacks
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_SUCCESS
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkGetDeviceProcAddr
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkGetInstanceProcAddr
@@ -8,6 +7,7 @@ import com.primogemstudio.engine.bindings.vulkan.core.VkCommandBuffer
 import com.primogemstudio.engine.bindings.vulkan.core.VkDevice
 import com.primogemstudio.engine.bindings.vulkan.core.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.core.VkQueue
+import com.primogemstudio.engine.bindings.vulkan.memory.VkAllocationCallbacks
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.heap.IHeapObject

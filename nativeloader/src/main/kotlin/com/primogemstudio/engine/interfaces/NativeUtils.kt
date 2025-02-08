@@ -46,16 +46,26 @@ fun Array<String>.toCStrArray(): MemorySegment {
 
 inline fun <T> MemorySegment.fromCStructArray(length: Int, structLength: Int, constructor: (MemorySegment) -> T): List<T> = (0 ..< length).map { this.asSlice(it * structLength * 1L, structLength * 1L) }.map { constructor(it) }
 
-fun MemorySegment.toCPointerArray(length: Int): Array<MemorySegment> = (0 ..< length).map { this.reinterpret(length * sizetLength() * 1L).get(ADDRESS, it * sizetLength() * 1L) }.toTypedArray()
-fun MemorySegment.toCFloatArray(length: Int): FloatArray = (0 ..< length).map { this.reinterpret(length * 4L).get(JAVA_FLOAT, it * 4L) }.toFloatArray()
-fun MemorySegment.toCByteArray(length: Int): ByteArray = (0 ..< length).map { this.reinterpret(length * 1L).get(JAVA_BYTE, it * 1L) }.toByteArray()
+fun MemorySegment.toPointerArray(length: Int): Array<MemorySegment> =
+    (0..<length).map { this.reinterpret(length * sizetLength() * 1L).get(ADDRESS, it * sizetLength() * 1L) }
+        .toTypedArray()
+
+fun MemorySegment.toFloatArray(length: Int): FloatArray =
+    (0..<length).map { this.reinterpret(length * 4L).get(JAVA_FLOAT, it * 4L) }.toFloatArray()
+
+fun MemorySegment.toByteArray(length: Int): ByteArray =
+    (0..<length).map { this.reinterpret(length * 1L).get(JAVA_BYTE, it * 1L) }.toByteArray()
+
+fun FloatArray.toCFloatArray(): MemorySegment = Arena.ofAuto().allocate(4L * size).apply {
+    this@toCFloatArray.indices.forEach { this.set(JAVA_FLOAT, 4L * it, this@toCFloatArray[it]) }
+}
 
 fun StructLayout.cacheOffsets(): LongArray =
     (0..<this.memberLayouts().size).map { this.byteOffset(MemoryLayout.PathElement.groupElement(it.toLong())) }
         .toLongArray()
 
-fun <T : IHeapVar<*>> Array<T>.toCStructArray(layout: MemoryLayout): HeapStructArray =
-    HeapStructArray(layout, this.size).apply {
+fun <T : IHeapVar<*>> Array<T>.toCStructArray(layout: MemoryLayout): HeapStructArray<T> =
+    HeapStructArray<T>(layout, this.size).apply {
         for (i in this@toCStructArray.indices) {
             this[i] = this@toCStructArray[i]
         }

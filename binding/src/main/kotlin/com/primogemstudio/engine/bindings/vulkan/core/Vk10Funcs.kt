@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.bindings.vulkan.core
 
 import com.primogemstudio.engine.bindings.vulkan.*
+import com.primogemstudio.engine.bindings.vulkan.memory.VkAllocationCallbacks
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
@@ -10,8 +11,8 @@ import com.primogemstudio.engine.interfaces.heap.HeapLong
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.struct.*
-import com.primogemstudio.engine.interfaces.toCPointerArray
 import com.primogemstudio.engine.interfaces.toCString
+import com.primogemstudio.engine.interfaces.toPointerArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import com.primogemstudio.engine.types.Result
 import org.joml.Vector2i
@@ -740,7 +741,7 @@ object Vk10Funcs {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
 
-        return Result.success(seg.toCPointerArray(count.value()).map { VkPhysicalDevice(it) }.toTypedArray())
+        return Result.success(seg.toPointerArray(count.value()).map { VkPhysicalDevice(it) }.toTypedArray())
     }
 
     fun vkGetPhysicalDeviceFeatures(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceFeatures =
@@ -1081,7 +1082,7 @@ object Vk10Funcs {
             allocator?.pointer() ?: MemorySegment.NULL,
             seg
         )
-        return if (retCode == VK_SUCCESS) Result.success(seg.toCPointerArray(createInfo.arr.size).map { VkPipeline(it) }
+        return if (retCode == VK_SUCCESS) Result.success(seg.toPointerArray(createInfo.arr.size).map { VkPipeline(it) }
             .toTypedArray()) else Result.fail(retCode)
     }
 
@@ -1102,7 +1103,7 @@ object Vk10Funcs {
             allocator?.pointer() ?: MemorySegment.NULL,
             seg
         )
-        return if (retCode == VK_SUCCESS) Result.success(seg.toCPointerArray(createInfo.arr.size).map { VkPipeline(it) }
+        return if (retCode == VK_SUCCESS) Result.success(seg.toPointerArray(createInfo.arr.size).map { VkPipeline(it) }
             .toTypedArray()) else Result.fail(retCode)
     }
 
@@ -1194,7 +1195,7 @@ object Vk10Funcs {
         val seg = Arena.ofAuto().allocate(createInfo.count() * sizetLength() * 1L)
         val retCode = callFunc("vkAllocateDescriptorSets", Int::class, device, createInfo, seg)
         return if (retCode == VK_SUCCESS) Result.success(
-            seg.toCPointerArray(createInfo.count()).map { VkDescriptorSet(it) }.toTypedArray()
+            seg.toPointerArray(createInfo.count()).map { VkDescriptorSet(it) }.toTypedArray()
         ) else Result.fail(retCode)
     }
 
@@ -1286,7 +1287,7 @@ object Vk10Funcs {
         val seg = Arena.ofAuto().allocate(createInfo.count() * sizetLength() * 1L)
         val retCode = callFunc("vkAllocateCommandBuffers", Int::class, device, createInfo, seg)
         return if (retCode == VK_SUCCESS) Result.success(
-            seg.toCPointerArray(createInfo.count()).map { VkCommandBuffer(it) }.toTypedArray()
+            seg.toPointerArray(createInfo.count()).map { VkCommandBuffer(it) }.toTypedArray()
         ) else Result.fail(retCode)
     }
 

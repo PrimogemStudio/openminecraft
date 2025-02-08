@@ -21,7 +21,9 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebuffe
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSwapBuffers
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
-import com.primogemstudio.engine.bindings.vulkan.*
+import com.primogemstudio.engine.bindings.vulkan.VkFenceCreateInfo
+import com.primogemstudio.engine.bindings.vulkan.VkPipelineLayoutCreateInfo
+import com.primogemstudio.engine.bindings.vulkan.core.*
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_MAKE_VERSION
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreateDevice
@@ -31,11 +33,7 @@ import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreatePipeline
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkResetFences
-import com.primogemstudio.engine.bindings.vulkan.core.VkApplicationInfo
-import com.primogemstudio.engine.bindings.vulkan.core.VkInstanceCreateInfo
-import com.primogemstudio.engine.interfaces.heap.HeapStructArray
 import com.primogemstudio.engine.interfaces.struct.ByteArrayStruct
-import com.primogemstudio.engine.interfaces.struct.FloatArrayStruct
 import com.primogemstudio.engine.interfaces.struct.PointerArrayStruct
 import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.logging.LoggerFactory
@@ -84,21 +82,15 @@ fun main() {
         vkEnumeratePhysicalDevices(instance).match({ phyDevice -> 
             vkCreateDevice(
                 phyDevice[0],
-                VkDeviceCreateInfo(
-                    null,
-                    0,
-                    HeapStructArray(VkDeviceQueueCreateInfo.LAYOUT, 1).apply {
-                        this[0] = VkDeviceQueueCreateInfo(
-                            null,
-                            0,
-                            0,
-                            FloatArrayStruct(floatArrayOf(1f))
-                        )
-                    },
-                    listOf(),
-                    listOf(),
-                    VkPhysicalDeviceFeatures()
-                ),
+                VkDeviceCreateInfo().apply {
+                    queueCreateInfos = arrayOf(VkDeviceQueueCreateInfo().apply {
+                        queueFamilyIndex = 0
+                        queuePriorities = floatArrayOf(1f)
+                    })
+                    layers = arrayOf()
+                    extensions = arrayOf()
+                    features = VkPhysicalDeviceFeatures()
+                },
                 null
             ).match({ dev -> 
                 vkCreateFence(dev, VkFenceCreateInfo(), null).match({ fence -> 

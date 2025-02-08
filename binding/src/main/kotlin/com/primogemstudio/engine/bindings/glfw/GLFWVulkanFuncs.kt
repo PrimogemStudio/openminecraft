@@ -1,13 +1,13 @@
 package com.primogemstudio.engine.bindings.glfw
 
-import com.primogemstudio.engine.bindings.vulkan.VkAllocationCallbacks
 import com.primogemstudio.engine.bindings.vulkan.core.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.core.VkPhysicalDevice
+import com.primogemstudio.engine.bindings.vulkan.memory.VkAllocationCallbacks
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.toCPointerArray
+import com.primogemstudio.engine.interfaces.toPointerArray
 import java.lang.foreign.MemorySegment
 
 object GLFWVulkanFuncs {
@@ -16,7 +16,7 @@ object GLFWVulkanFuncs {
 
     fun glfwGetRequiredInstanceExtensions(): Array<String> {
         val count = HeapInt()
-        return callPointerFunc("glfwGetRequiredInstanceExtensions", count).toCPointerArray(count.value())
+        return callPointerFunc("glfwGetRequiredInstanceExtensions", count).toPointerArray(count.value())
             .map { it.fetchString() }
             .toTypedArray()
     }

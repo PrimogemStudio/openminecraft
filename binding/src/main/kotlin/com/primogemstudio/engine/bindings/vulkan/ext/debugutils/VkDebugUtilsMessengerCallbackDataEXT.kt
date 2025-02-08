@@ -50,25 +50,31 @@ class VkDebugUtilsMessengerCallbackDataEXT(private val seg: MemorySegment) : IHe
     var message: String
         get() = seg.get(ADDRESS, OFFSETS[5]).fetchString()
         set(value) = seg.set(ADDRESS, OFFSETS[5], value.toCString())
-    var queueLabelCount: Int
-        get() = seg.get(JAVA_INT, OFFSETS[6])
-        set(value) = seg.set(JAVA_INT, OFFSETS[6], value)
+
     var queueLabels: Array<VkDebugUtilsLabelEXT>
-        get() = seg.get(ADDRESS, OFFSETS[7]).toCPointerArray(queueLabelCount).map { VkDebugUtilsLabelEXT(it) }
+        get() = seg.get(ADDRESS, OFFSETS[7]).toPointerArray(seg.get(JAVA_INT, OFFSETS[6]))
+            .map { VkDebugUtilsLabelEXT(it) }
             .toTypedArray()
-        set(value) = seg.set(ADDRESS, OFFSETS[7], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
-    var cmdBufLabelCount: Int
-        get() = seg.get(JAVA_INT, OFFSETS[8])
-        set(value) = seg.set(JAVA_INT, OFFSETS[8], value)
+        set(value) {
+            seg.set(ADDRESS, OFFSETS[7], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
+            seg.set(JAVA_INT, OFFSETS[6], value.size)
+        }
+
     var cmdBufLabels: Array<VkDebugUtilsLabelEXT>
-        get() = seg.get(ADDRESS, OFFSETS[9]).toCPointerArray(cmdBufLabelCount).map { VkDebugUtilsLabelEXT(it) }
+        get() = seg.get(ADDRESS, OFFSETS[9]).toPointerArray(seg.get(JAVA_INT, OFFSETS[8]))
+            .map { VkDebugUtilsLabelEXT(it) }
             .toTypedArray()
-        set(value) = seg.set(ADDRESS, OFFSETS[9], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
-    var objectCount: Int
-        get() = seg.get(JAVA_INT, OFFSETS[10])
-        set(value) = seg.set(JAVA_INT, OFFSETS[10], value)
+        set(value) {
+            seg.set(ADDRESS, OFFSETS[9], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
+            seg.set(JAVA_INT, OFFSETS[8], value.size)
+        }
+
     var objects: Array<VkDebugUtilsObjectNameInfoEXT>
-        get() = seg.get(ADDRESS, OFFSETS[11]).toCPointerArray(objectCount).map { VkDebugUtilsObjectNameInfoEXT(it) }
+        get() = seg.get(ADDRESS, OFFSETS[11]).toPointerArray(seg.get(JAVA_INT, OFFSETS[10]))
+            .map { VkDebugUtilsObjectNameInfoEXT(it) }
             .toTypedArray()
-        set(value) = seg.set(ADDRESS, OFFSETS[11], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
+        set(value) {
+            seg.set(ADDRESS, OFFSETS[11], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
+            seg.set(JAVA_INT, OFFSETS[10], value.size)
+        }
 }

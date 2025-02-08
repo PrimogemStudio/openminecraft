@@ -9,7 +9,7 @@ import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.stub.IStub
-import com.primogemstudio.engine.interfaces.toCPointerArray
+import com.primogemstudio.engine.interfaces.toPointerArray
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -55,7 +55,7 @@ fun interface GLFWMonitorFun : IStub {
 object GLFWMonitorFuncs {
     fun glfwGetMonitors(): Array<GLFWMonitor> {
         val count = HeapInt()
-        return callPointerFunc("glfwGetMonitors", count).toCPointerArray(count.value())
+        return callPointerFunc("glfwGetMonitors", count).toPointerArray(count.value())
             .map { GLFWMonitor(it) }
             .toTypedArray()
     }
@@ -89,7 +89,7 @@ object GLFWMonitorFuncs {
 
     fun glfwGetVideoModes(monitor: GLFWMonitor): Array<GLFWVidMode> {
         val count = HeapInt()
-        return callPointerFunc("glfwGetVideoModes", monitor, count).toCPointerArray(count.value())
+        return callPointerFunc("glfwGetVideoModes", monitor, count).toPointerArray(count.value())
             .map { GLFWVidMode(it) }
             .toTypedArray()
     }

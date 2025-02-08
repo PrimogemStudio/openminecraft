@@ -1,9 +1,8 @@
 package com.primogemstudio.engine.interfaces.struct
 
-import com.primogemstudio.engine.interfaces.struct.IStruct
 import java.lang.foreign.MemoryLayout
-import java.lang.foreign.ValueLayout.*
 import java.lang.foreign.MemorySegment
+import java.lang.foreign.ValueLayout.JAVA_FLOAT
 
 class FloatArrayStruct(val arr: FloatArray): IStruct(MemoryLayout.paddingLayout(arr.size * 4L)) {
     init {

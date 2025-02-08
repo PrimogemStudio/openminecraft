@@ -4,7 +4,11 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 
-class HeapStructArray(val length: Int, private val seg: MemorySegment, private val layout: MemoryLayout) :
+class HeapStructArray<T : IHeapVar<*>>(
+    val length: Int,
+    private val seg: MemorySegment,
+    private val layout: MemoryLayout
+) :
     IHeapVar<Array<IHeapVar<*>>> {
     override fun ref(): MemorySegment = seg
     override fun value(): Array<IHeapVar<*>> {

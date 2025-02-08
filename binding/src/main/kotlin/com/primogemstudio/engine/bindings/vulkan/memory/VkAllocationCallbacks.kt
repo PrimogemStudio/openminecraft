@@ -1,4 +1,4 @@
-package com.primogemstudio.engine.bindings.vulkan
+package com.primogemstudio.engine.bindings.vulkan.memory
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
 import com.primogemstudio.engine.interfaces.align
