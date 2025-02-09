@@ -2,6 +2,7 @@ package com.primogemstudio.engine.bindings.vulkan.core
 
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.*
+import com.primogemstudio.engine.interfaces.heap.HeapStructArray
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
@@ -39,13 +40,15 @@ class VkDeviceCreateInfo(private val seg: MemorySegment) : IHeapObject(seg) {
     var flag: Int
         get() = seg.get(JAVA_INT, OFFSETS[2])
         set(value) = seg.set(JAVA_INT, OFFSETS[2], value)
-    var queueCreateInfos: Array<VkDeviceQueueCreateInfo>
-        get() = seg.get(ADDRESS, OFFSETS[4]).toPointerArray(seg.get(JAVA_INT, OFFSETS[3]))
-            .map { VkDeviceQueueCreateInfo(it) }
-            .toTypedArray()
+    var queueCreateInfos: HeapStructArray<VkDeviceQueueCreateInfo>
+        get() = HeapStructArray(
+            seg.get(JAVA_INT, OFFSETS[3]),
+            seg.get(ADDRESS, OFFSETS[4]),
+            VkDeviceQueueCreateInfo.LAYOUT
+        )
         set(value) {
-            seg.set(ADDRESS, OFFSETS[4], value.toCStructArray(VkDeviceQueueCreateInfo.LAYOUT).ref())
-            seg.set(JAVA_INT, OFFSETS[3], value.size)
+            seg.set(ADDRESS, OFFSETS[4], value.ref())
+            seg.set(JAVA_INT, OFFSETS[3], value.length)
         }
     var layers: Array<String>
         get() = seg.get(ADDRESS, OFFSETS[6]).toPointerArray(seg.get(JAVA_INT, OFFSETS[5])).map { it.fetchString() }

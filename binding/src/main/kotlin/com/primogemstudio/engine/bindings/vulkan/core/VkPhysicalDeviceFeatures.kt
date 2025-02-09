@@ -16,6 +16,6 @@ class VkPhysicalDeviceFeatures(private val seg: MemorySegment) : IHeapObject(seg
 
     constructor() : this(Arena.ofAuto().allocate(LAYOUT))
 
-    fun featureAt(i: Int): Boolean = seg.get(JAVA_INT, 4L * i) == 1
-    fun setFeature(i: Int, enabled: Boolean) = seg.set(JAVA_INT, 4L * i, if (enabled) 1 else 0)
+    operator fun get(i: Int): Boolean = seg.get(JAVA_INT, 4L * i) == 1
+    operator fun set(i: Int, enabled: Boolean) = seg.set(JAVA_INT, 4L * i, if (enabled) 1 else 0)
 }

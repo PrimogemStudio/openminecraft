@@ -31,8 +31,10 @@ import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkResetFences
+import com.primogemstudio.engine.interfaces.heap.HeapFloatArray
 import com.primogemstudio.engine.interfaces.struct.ByteArrayStruct
 import com.primogemstudio.engine.interfaces.struct.PointerArrayStruct
+import com.primogemstudio.engine.interfaces.toCStructArray
 import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.MemorySegment
@@ -83,8 +85,8 @@ fun main() {
                 VkDeviceCreateInfo().apply {
                     queueCreateInfos = arrayOf(VkDeviceQueueCreateInfo().apply {
                         queueFamilyIndex = 0
-                        queuePriorities = floatArrayOf(1f)
-                    })
+                        queuePriorities = HeapFloatArray(floatArrayOf(1f))
+                    }).toCStructArray(VkDeviceQueueCreateInfo.LAYOUT)
                     layers = arrayOf()
                     extensions = arrayOf()
                     features = VkPhysicalDeviceFeatures()

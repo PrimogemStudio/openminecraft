@@ -3,9 +3,8 @@ package com.primogemstudio.engine.bindings.vulkan.core
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
+import com.primogemstudio.engine.interfaces.heap.HeapFloatArray
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
-import com.primogemstudio.engine.interfaces.toCFloatArray
-import com.primogemstudio.engine.interfaces.toFloatArray
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -40,10 +39,10 @@ class VkDeviceQueueCreateInfo(private val seg: MemorySegment) : IHeapObject(seg)
     var queueFamilyIndex: Int
         get() = seg.get(JAVA_INT, OFFSETS[3])
         set(value) = seg.set(JAVA_INT, OFFSETS[3], value)
-    var queuePriorities: FloatArray
-        get() = seg.get(ADDRESS, OFFSETS[5]).toFloatArray(seg.get(JAVA_INT, OFFSETS[4]))
+    var queuePriorities: HeapFloatArray
+        get() = HeapFloatArray(seg.get(JAVA_INT, OFFSETS[4]), seg.get(ADDRESS, OFFSETS[5]))
         set(value) {
-            seg.set(ADDRESS, OFFSETS[5], value.toCFloatArray())
-            seg.set(JAVA_INT, OFFSETS[4], value.size)
+            seg.set(ADDRESS, OFFSETS[5], value.ref())
+            seg.set(JAVA_INT, OFFSETS[4], value.length)
         }
 }
