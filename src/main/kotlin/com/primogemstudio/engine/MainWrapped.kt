@@ -21,7 +21,6 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebuffe
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSwapBuffers
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
-import com.primogemstudio.engine.bindings.vulkan.VkFenceCreateInfo
 import com.primogemstudio.engine.bindings.vulkan.core.*
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_MAKE_VERSION
