@@ -1,6 +1,7 @@
 package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.core.VkStencilOpState
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.struct.IStruct
@@ -54,8 +55,8 @@ class VkPipelineDepthStencilStateCreateInfo(
         seg.set(JAVA_INT, OFFSETS[5], depthCompareOp)
         seg.set(JAVA_INT, OFFSETS[6], if (depthBoundsTestEnable) 1 else 0)
         seg.set(JAVA_INT, OFFSETS[7], if (stencilTestEnable) 1 else 0)
-        front.construct(seg.asSlice(OFFSETS[8], VkStencilOpState.LAYOUT.byteSize()))
-        back.construct(seg.asSlice(OFFSETS[9], VkStencilOpState.LAYOUT.byteSize()))
+        seg.asSlice(OFFSETS[8], VkStencilOpState.LAYOUT.byteSize()).copyFrom(front.ref())
+        seg.asSlice(OFFSETS[9], VkStencilOpState.LAYOUT.byteSize()).copyFrom(back.ref())
         seg.set(JAVA_FLOAT, OFFSETS[10], minDepthBounds)
         seg.set(JAVA_FLOAT, OFFSETS[11], maxDepthBounds)
     }
