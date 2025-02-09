@@ -933,8 +933,8 @@ object Vk10Funcs {
         return seg.fromCStructArray(count.value(), 48) { VkSparseImageMemoryRequirements(it) }.toTypedArray()
     }
 
-    fun vkQueueBindSparse(queue: VkQueue, bindInfo: ArrayStruct<VkBindSparseInfo>, fence: VkFence): Int =
-        callFunc("vkQueueBindSparse", Int::class, queue, bindInfo.arr.size, bindInfo, fence)
+    fun vkQueueBindSparse(queue: VkQueue, bindInfo: HeapStructArray<VkBindSparseInfo>, fence: VkFence): Int =
+        callFunc("vkQueueBindSparse", Int::class, queue, bindInfo.length, bindInfo, fence)
 
     fun vkCreateFence(device: VkDevice, createInfo: VkFenceCreateInfo, allocator: VkAllocationCallbacks?): Result<VkFence, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
