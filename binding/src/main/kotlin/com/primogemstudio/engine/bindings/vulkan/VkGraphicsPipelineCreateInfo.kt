@@ -3,6 +3,7 @@ package com.primogemstudio.engine.bindings.vulkan
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.core.VkPipeline
 import com.primogemstudio.engine.bindings.vulkan.core.VkPipelineLayout
+import com.primogemstudio.engine.bindings.vulkan.core.VkPipelineViewportStateCreateInfo
 import com.primogemstudio.engine.bindings.vulkan.core.VkRenderPass
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets

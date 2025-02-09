@@ -6,10 +6,7 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.fromCStructArray
-import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.HeapLong
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.interfaces.heap.*
 import com.primogemstudio.engine.interfaces.struct.*
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.interfaces.toPointerArray
@@ -1320,8 +1317,8 @@ object Vk10Funcs {
     fun vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: Int, viewports: ArrayStruct<VkViewport>) =
         callVoidFunc("vkCmdSetViewport", commandBuffer, firstViewport, viewports.arr.size, viewports)
 
-    fun vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: Int, scissors: ArrayStruct<VkRect2D>) =
-        callVoidFunc("vkCmdSetScissor", commandBuffer, firstScissor, scissors.arr.size, scissors)
+    fun vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: Int, scissors: HeapStructArray<VkRect2D>) =
+        callVoidFunc("vkCmdSetScissor", commandBuffer, firstScissor, scissors.length, scissors)
 
     fun vkCmdSetLineWidth(commandBuffer: VkCommandBuffer, lineWidth: Int) =
         callVoidFunc("vkCmdSetLineWidth", commandBuffer, lineWidth)
@@ -1436,9 +1433,9 @@ object Vk10Funcs {
         commandBuffer: VkCommandBuffer,
         srcBuffer: VkBuffer,
         dstBuffer: VkBuffer,
-        regions: ArrayStruct<VkBufferCopy>
+        regions: HeapStructArray<VkBufferCopy>
     ) =
-        callVoidFunc("vkCmdCopyBuffer", commandBuffer, srcBuffer, dstBuffer, regions.arr.size, regions)
+        callVoidFunc("vkCmdCopyBuffer", commandBuffer, srcBuffer, dstBuffer, regions.length, regions)
 
     fun vkCmdCopyImage(
         commandBuffer: VkCommandBuffer,
@@ -1548,15 +1545,15 @@ object Vk10Funcs {
 
     fun vkCmdClearAttachments(
         commandBuffer: VkCommandBuffer,
-        attachments: ArrayStruct<VkClearAttachment>,
-        rects: ArrayStruct<VkClearRect>
+        attachments: HeapStructArray<VkClearAttachment>,
+        rects: HeapStructArray<VkClearRect>
     ) =
         callVoidFunc(
             "vkCmdClearAttachments",
             commandBuffer,
-            attachments.arr.size,
-            attachments.pointer(),
-            rects.arr.size,
+            attachments.length,
+            attachments,
+            rects.length,
             rects
         )
 

@@ -1,8 +1,10 @@
-package com.primogemstudio.engine.bindings.vulkan
+package com.primogemstudio.engine.bindings.vulkan.core
 
+import com.primogemstudio.engine.bindings.vulkan.VkViewport
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
+import com.primogemstudio.engine.interfaces.heap.HeapStructArray
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import java.lang.foreign.MemoryLayout
@@ -13,7 +15,7 @@ class VkPipelineViewportStateCreateInfo(
     private val next: IStruct? = null,
     private val flags: Int = 0,
     private val viewports: ArrayStruct<VkViewport>,
-    private val scissors: ArrayStruct<VkRect2D>
+    private val scissors: HeapStructArray<VkRect2D>
 ) : IStruct() {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
@@ -41,7 +43,7 @@ class VkPipelineViewportStateCreateInfo(
         seg.set(JAVA_INT, OFFSETS[2], flags)
         seg.set(JAVA_INT, OFFSETS[3], viewports.arr.size)
         seg.set(ADDRESS, OFFSETS[4], viewports.pointer())
-        seg.set(JAVA_INT, OFFSETS[5], scissors.arr.size)
-        seg.set(ADDRESS, OFFSETS[6], scissors.pointer())
+        seg.set(JAVA_INT, OFFSETS[5], scissors.length)
+        seg.set(ADDRESS, OFFSETS[6], scissors.ref())
     }
 }
