@@ -31,7 +31,7 @@ class VkDeviceQueueCreateInfo(private val seg: MemorySegment) : IHeapObject(seg)
         get() = seg.get(JAVA_INT, OFFSETS[0])
         set(value) = seg.set(JAVA_INT, OFFSETS[0], value)
     var next: MemorySegment
-        get() = seg.get(ADDRESS, OFFSETS[1])
+        get() = seg.get(ADDRESS, OFFSETS[1]).reinterpret(Long.MAX_VALUE)
         set(value) = seg.set(ADDRESS, OFFSETS[1], value)
     var flag: Int
         get() = seg.get(JAVA_INT, OFFSETS[2])
@@ -40,7 +40,7 @@ class VkDeviceQueueCreateInfo(private val seg: MemorySegment) : IHeapObject(seg)
         get() = seg.get(JAVA_INT, OFFSETS[3])
         set(value) = seg.set(JAVA_INT, OFFSETS[3], value)
     var queuePriorities: HeapFloatArray
-        get() = HeapFloatArray(seg.get(JAVA_INT, OFFSETS[4]), seg.get(ADDRESS, OFFSETS[5]))
+        get() = HeapFloatArray(seg.get(JAVA_INT, OFFSETS[4]), seg.get(ADDRESS, OFFSETS[5]).reinterpret(Long.MAX_VALUE))
         set(value) {
             seg.set(ADDRESS, OFFSETS[5], value.ref())
             seg.set(JAVA_INT, OFFSETS[4], value.length)

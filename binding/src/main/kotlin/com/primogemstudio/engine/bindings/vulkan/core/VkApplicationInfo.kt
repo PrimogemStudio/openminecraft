@@ -33,7 +33,7 @@ class VkApplicationInfo(private val seg: MemorySegment) : IHeapObject(seg) {
         get() = seg.get(JAVA_INT, OFFSETS[0])
         set(value) = seg.set(JAVA_INT, OFFSETS[0], value)
     var next: MemorySegment
-        get() = seg.get(ADDRESS, OFFSETS[1])
+        get() = seg.get(ADDRESS, OFFSETS[1]).reinterpret(Long.MAX_VALUE)
         set(value) = seg.set(ADDRESS, OFFSETS[1], value)
     var appName: String
         get() = seg.get(ADDRESS, OFFSETS[2]).fetchString()

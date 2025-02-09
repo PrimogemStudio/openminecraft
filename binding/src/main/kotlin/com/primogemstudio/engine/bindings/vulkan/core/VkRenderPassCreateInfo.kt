@@ -1,7 +1,8 @@
 package com.primogemstudio.engine.bindings.vulkan.core
 
-import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
-import com.primogemstudio.engine.interfaces.*
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.heap.HeapStructArray
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import java.lang.foreign.Arena
@@ -9,8 +10,7 @@ import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
 
-// TODO complete define
-class VkDeviceCreateInfo(private val seg: MemorySegment) : IHeapObject(seg) {
+class VkRenderPassCreateInfo(private val seg: MemorySegment) : IHeapObject(seg) {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
             JAVA_INT_UNALIGNED,
@@ -21,14 +21,14 @@ class VkDeviceCreateInfo(private val seg: MemorySegment) : IHeapObject(seg) {
             JAVA_INT_UNALIGNED,
             ADDRESS_UNALIGNED,
             JAVA_INT_UNALIGNED,
-            ADDRESS_UNALIGNED,
             ADDRESS_UNALIGNED
         ).align()
+
         private val OFFSETS = LAYOUT.cacheOffsets()
     }
 
     constructor() : this(Arena.ofAuto().allocate(LAYOUT)) {
-        sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO
+        sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO
     }
 
     var sType: Int
@@ -40,31 +40,34 @@ class VkDeviceCreateInfo(private val seg: MemorySegment) : IHeapObject(seg) {
     var flag: Int
         get() = seg.get(JAVA_INT, OFFSETS[2])
         set(value) = seg.set(JAVA_INT, OFFSETS[2], value)
-    var queueCreateInfos: HeapStructArray<VkDeviceQueueCreateInfo>
+    var attachments: HeapStructArray<VkAttachmentDescription>
         get() = HeapStructArray(
             seg.get(JAVA_INT, OFFSETS[3]),
             seg.get(ADDRESS, OFFSETS[4]).reinterpret(Long.MAX_VALUE),
-            VkDeviceQueueCreateInfo.LAYOUT
+            VkAttachmentDescription.LAYOUT
         )
         set(value) {
             seg.set(ADDRESS, OFFSETS[4], value.ref())
             seg.set(JAVA_INT, OFFSETS[3], value.length)
         }
-    var layers: Array<String>
-        get() = seg.get(ADDRESS, OFFSETS[6]).toPointerArray(seg.get(JAVA_INT, OFFSETS[5])).map { it.fetchString() }
-            .toTypedArray()
+    var subpasses: HeapStructArray<VkSubpassDescription>
+        get() = HeapStructArray(
+            seg.get(JAVA_INT, OFFSETS[5]),
+            seg.get(ADDRESS, OFFSETS[6]).reinterpret(Long.MAX_VALUE),
+            VkSubpassDescription.LAYOUT
+        )
         set(value) {
-            seg.set(JAVA_INT, OFFSETS[5], value.size)
-            seg.set(ADDRESS, OFFSETS[6], value.toCStrArray())
+            seg.set(ADDRESS, OFFSETS[6], value.ref())
+            seg.set(JAVA_INT, OFFSETS[5], value.length)
         }
-    var extensions: Array<String>
-        get() = seg.get(ADDRESS, OFFSETS[8]).toPointerArray(seg.get(JAVA_INT, OFFSETS[7])).map { it.fetchString() }
-            .toTypedArray()
+    var dependencies: HeapStructArray<VkSubpassDependency>
+        get() = HeapStructArray(
+            seg.get(JAVA_INT, OFFSETS[7]),
+            seg.get(ADDRESS, OFFSETS[8]).reinterpret(Long.MAX_VALUE),
+            VkSubpassDependency.LAYOUT
+        )
         set(value) {
-            seg.set(JAVA_INT, OFFSETS[7], value.size)
-            seg.set(ADDRESS, OFFSETS[8], value.toCStrArray())
+            seg.set(ADDRESS, OFFSETS[8], value.ref())
+            seg.set(JAVA_INT, OFFSETS[7], value.length)
         }
-    var features: VkPhysicalDeviceFeatures
-        get() = VkPhysicalDeviceFeatures(seg.get(ADDRESS, OFFSETS[9]).reinterpret(Long.MAX_VALUE))
-        set(value) = seg.set(ADDRESS, OFFSETS[9], value.ref())
 }

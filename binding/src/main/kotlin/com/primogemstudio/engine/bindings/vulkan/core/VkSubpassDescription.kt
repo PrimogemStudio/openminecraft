@@ -2,6 +2,7 @@ package com.primogemstudio.engine.bindings.vulkan.core
 
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
+import com.primogemstudio.engine.interfaces.heap.HeapIntArray
 import com.primogemstudio.engine.interfaces.heap.HeapStructArray
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import java.lang.foreign.Arena
@@ -38,26 +39,43 @@ class VkSubpassDescription(private val seg: MemorySegment) : IHeapObject(seg) {
     var inputAttachments: HeapStructArray<VkAttachmentReference>
         get() = HeapStructArray(
             seg.get(JAVA_INT, OFFSETS[2]),
-            seg.get(ADDRESS, OFFSETS[3]),
+            seg.get(ADDRESS, OFFSETS[3]).reinterpret(Long.MAX_VALUE),
             VkAttachmentReference.LAYOUT
         )
         set(value) {
             seg.set(ADDRESS, OFFSETS[3], value.ref())
             seg.set(JAVA_INT, OFFSETS[2], value.length)
         }
-
-}
-
-/*
-        seg.set(
-            JAVA_INT,
-            OFFSETS[4],
-            min(colorAttachments?.length ?: 0, resolveAttachments?.length ?: 0)
+    var colorAttachments: HeapStructArray<VkAttachmentReference>
+        get() = HeapStructArray(
+            seg.get(JAVA_INT, OFFSETS[4]),
+            seg.get(ADDRESS, OFFSETS[5]).reinterpret(Long.MAX_VALUE),
+            VkAttachmentReference.LAYOUT
         )
-        seg.set(ADDRESS, OFFSETS[5], colorAttachments?.ref() ?: MemorySegment.NULL)
-        seg.set(ADDRESS, OFFSETS[6], resolveAttachments?.ref() ?: MemorySegment.NULL)
-        seg.set(ADDRESS, OFFSETS[7], depthStencilAttachment?.ref() ?: MemorySegment.NULL)
-        seg.set(JAVA_INT, OFFSETS[8], preserveAttachments?.length ?: 0)
-        seg.set(ADDRESS, OFFSETS[9], preserveAttachments?.ref() ?: MemorySegment.NULL)
-    }
-}*/
+        set(value) {
+            seg.set(ADDRESS, OFFSETS[5], value.ref())
+            seg.set(JAVA_INT, OFFSETS[4], value.length)
+        }
+    var resolveAttachments: HeapStructArray<VkAttachmentReference>
+        get() = HeapStructArray(
+            seg.get(JAVA_INT, OFFSETS[4]),
+            seg.get(ADDRESS, OFFSETS[6]).reinterpret(Long.MAX_VALUE),
+            VkAttachmentReference.LAYOUT
+        )
+        set(value) {
+            seg.set(ADDRESS, OFFSETS[6], value.ref())
+            seg.set(JAVA_INT, OFFSETS[4], value.length)
+        }
+    var depthStencilAttachment: VkAttachmentReference
+        get() = VkAttachmentReference(seg.get(ADDRESS, OFFSETS[7]).reinterpret(Long.MAX_VALUE))
+        set(value) = seg.set(ADDRESS, OFFSETS[7], value.ref())
+    var preserveAttachments: HeapIntArray
+        get() = HeapIntArray(
+            seg.get(JAVA_INT, OFFSETS[8]),
+            seg.get(ADDRESS, OFFSETS[9]).reinterpret(Long.MAX_VALUE)
+        )
+        set(value) {
+            seg.set(ADDRESS, OFFSETS[9], value.ref())
+            seg.set(JAVA_INT, OFFSETS[8], value.length)
+        }
+}

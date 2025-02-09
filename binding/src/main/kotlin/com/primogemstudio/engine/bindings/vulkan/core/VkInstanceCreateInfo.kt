@@ -31,13 +31,13 @@ class VkInstanceCreateInfo(private val seg: MemorySegment) : IHeapObject(seg) {
         get() = seg.get(JAVA_INT, OFFSETS[0])
         set(value) = seg.set(JAVA_INT, OFFSETS[0], value)
     var next: MemorySegment
-        get() = seg.get(ADDRESS, OFFSETS[1])
+        get() = seg.get(ADDRESS, OFFSETS[1]).reinterpret(Long.MAX_VALUE)
         set(value) = seg.set(ADDRESS, OFFSETS[1], value)
     var flag: Int
         get() = seg.get(JAVA_INT, OFFSETS[2])
         set(value) = seg.set(JAVA_INT, OFFSETS[2], value)
     var appInfo: VkApplicationInfo
-        get() = VkApplicationInfo(seg.get(ADDRESS, OFFSETS[3]))
+        get() = VkApplicationInfo(seg.get(ADDRESS, OFFSETS[3]).reinterpret(Long.MAX_VALUE))
         set(value) = seg.set(ADDRESS, OFFSETS[3], value.ref())
     var layers: Array<String>
         get() = seg.get(ADDRESS, OFFSETS[5]).toPointerArray(seg.get(JAVA_INT, OFFSETS[4])).map { it.fetchString() }
