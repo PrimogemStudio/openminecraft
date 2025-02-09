@@ -5,8 +5,8 @@ import com.primogemstudio.engine.bindings.vulkan.core.VkImageView
 import com.primogemstudio.engine.bindings.vulkan.core.VkRenderPass
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
+import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
 import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.interfaces.struct.PointerArrayStruct
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -15,7 +15,7 @@ class VkFramebufferCreateInfo(
     private val next: IStruct? = null,
     private val flags: Int = 0,
     private val renderPass: VkRenderPass,
-    private val attachments: PointerArrayStruct<VkImageView>? = null,
+    private val attachments: HeapPointerArray<VkImageView>? = null,
     private val width: Int,
     private val height: Int,
     private val layers: Int
@@ -46,8 +46,8 @@ class VkFramebufferCreateInfo(
         seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
         seg.set(JAVA_INT, OFFSETS[2], flags)
         seg.set(ADDRESS, OFFSETS[3], renderPass.ref())
-        seg.set(JAVA_INT, OFFSETS[4], attachments?.arr?.size ?: 0)
-        seg.set(ADDRESS, OFFSETS[5], attachments?.pointer() ?: MemorySegment.NULL)
+        seg.set(JAVA_INT, OFFSETS[4], attachments?.length ?: 0)
+        seg.set(ADDRESS, OFFSETS[5], attachments?.ref() ?: MemorySegment.NULL)
         seg.set(JAVA_INT, OFFSETS[6], width)
         seg.set(JAVA_INT, OFFSETS[7], height)
         seg.set(JAVA_INT, OFFSETS[8], layers)

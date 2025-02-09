@@ -31,9 +31,9 @@ import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkResetFences
+import com.primogemstudio.engine.interfaces.heap.HeapByteArray
 import com.primogemstudio.engine.interfaces.heap.HeapFloatArray
-import com.primogemstudio.engine.interfaces.struct.ByteArrayStruct
-import com.primogemstudio.engine.interfaces.struct.PointerArrayStruct
+import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
 import com.primogemstudio.engine.interfaces.toCStructArray
 import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.logging.LoggerFactory
@@ -93,8 +93,8 @@ fun main() {
                 },
                 null
             ).match({ dev -> 
-                vkCreateFence(dev, VkFenceCreateInfo(), null).match({ fence -> 
-                    val arr = PointerArrayStruct(arrayOf(fence))
+                vkCreateFence(dev, VkFenceCreateInfo(), null).match({ fence ->
+                    val arr = HeapPointerArray(arrayOf(fence))
                     logger.info("${vkResetFences(dev, arr)}")
                 }, { logger.error("vulkan error: $it") })
             }, { logger.error("vulkan error: $it") })
@@ -105,7 +105,7 @@ fun main() {
     glfwSetCursor(
         window,
         glfwCreateCursor(
-            GLFWImage(32, 32, ByteArrayStruct((0..<32 * 32 * 4).map { 0xcc.toByte() }.toByteArray())),
+            GLFWImage(32, 32, HeapByteArray((0..<32 * 32 * 4).map { 0xcc.toByte() }.toByteArray())),
             0,
             0
         )

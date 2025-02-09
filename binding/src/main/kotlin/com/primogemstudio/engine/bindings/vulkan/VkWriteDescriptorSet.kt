@@ -5,9 +5,9 @@ import com.primogemstudio.engine.bindings.vulkan.core.VkBufferView
 import com.primogemstudio.engine.bindings.vulkan.core.VkDescriptorSet
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
+import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.interfaces.struct.PointerArrayStruct
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -21,7 +21,7 @@ class VkWriteDescriptorSet(
     private val descriptorType: Int,
     private val imageInfo: ArrayStruct<VkDescriptorImageInfo>,
     private val bufferInfo: ArrayStruct<VkDescriptorBufferInfo>,
-    private val texelBufferView: PointerArrayStruct<VkBufferView>
+    private val texelBufferView: HeapPointerArray<VkBufferView>
 ) : IStruct() {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
@@ -55,11 +55,11 @@ class VkWriteDescriptorSet(
         seg.set(
             JAVA_INT,
             OFFSETS[5],
-            min(imageInfo.arr.size, min(bufferInfo.arr.size, texelBufferView.arr.size))
+            min(imageInfo.arr.size, min(bufferInfo.arr.size, texelBufferView.length))
         )
         seg.set(JAVA_INT, OFFSETS[6], descriptorType)
         seg.set(ADDRESS, OFFSETS[7], imageInfo.pointer())
         seg.set(ADDRESS, OFFSETS[8], bufferInfo.pointer())
-        seg.set(ADDRESS, OFFSETS[9], texelBufferView.pointer())
+        seg.set(ADDRESS, OFFSETS[9], texelBufferView.ref())
     }
 }

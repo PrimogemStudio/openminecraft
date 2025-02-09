@@ -3,8 +3,8 @@ package com.primogemstudio.engine.bindings.vulkan
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
+import com.primogemstudio.engine.interfaces.heap.HeapIntArray
 import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.interfaces.struct.IntArrayStruct
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -15,7 +15,7 @@ data class VkBufferCreateInfo(
     private val size: Long,
     private val usage: Int,
     private val sharingMode: Int,
-    private val queueFamilyIndices: IntArrayStruct
+    private val queueFamilyIndices: HeapIntArray
 ) : IStruct() {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
@@ -44,7 +44,7 @@ data class VkBufferCreateInfo(
         seg.set(JAVA_LONG, OFFSETS[3], size)
         seg.set(JAVA_INT, OFFSETS[4], usage)
         seg.set(JAVA_INT, OFFSETS[5], sharingMode)
-        seg.set(JAVA_INT, OFFSETS[6], queueFamilyIndices.arr.size)
-        seg.set(ADDRESS, OFFSETS[7], queueFamilyIndices.pointer())
+        seg.set(JAVA_INT, OFFSETS[6], queueFamilyIndices.length)
+        seg.set(ADDRESS, OFFSETS[7], queueFamilyIndices.ref())
     }
 }

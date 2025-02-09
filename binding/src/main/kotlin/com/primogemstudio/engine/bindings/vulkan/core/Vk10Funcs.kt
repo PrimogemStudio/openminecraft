@@ -7,7 +7,7 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.fromCStructArray
 import com.primogemstudio.engine.interfaces.heap.*
-import com.primogemstudio.engine.interfaces.struct.*
+import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.interfaces.toPointerArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
@@ -787,7 +787,13 @@ object Vk10Funcs {
     }
 
     fun vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceMemoryProperties =
-        VkPhysicalDeviceMemoryProperties().apply { callVoidFunc("vkGetPhysicalDeviceMemoryProperties", physicalDevice) }
+        VkPhysicalDeviceMemoryProperties().apply {
+            callVoidFunc(
+                "vkGetPhysicalDeviceMemoryProperties",
+                physicalDevice,
+                this
+            )
+        }
 
     fun vkGetInstanceProcAddr(instance: VkInstance, name: String): MemorySegment =
         callPointerFunc("vkGetInstanceProcAddr", instance, name.toCString())
@@ -939,14 +945,14 @@ object Vk10Funcs {
     fun vkDestroyFence(device: VkDevice, fence: VkFence, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkDestroyFence", device, fence, allocator?.pointer()?: MemorySegment.NULL)
 
-    fun vkResetFences(device: VkDevice, fences: PointerArrayStruct<VkFence>): Int =
-        callFunc("vkResetFences", Int::class, device, fences.arr.size, fences)
+    fun vkResetFences(device: VkDevice, fences: HeapPointerArray<VkFence>): Int =
+        callFunc("vkResetFences", Int::class, device, fences.length, fences)
 
     fun vkGetFenceStatus(device: VkDevice, fence: VkFence): Int =
         callFunc("vkGetFenceStatus", Int::class, device, fence)
 
-    fun vkWaitForFences(device: VkDevice, fences: PointerArrayStruct<VkFence>, waitAll: Boolean, timeout: Long): Int =
-        callFunc("vkWaitForFences", Int::class, device, fences.arr.size, fences, if (waitAll) 1 else 0, timeout)
+    fun vkWaitForFences(device: VkDevice, fences: HeapPointerArray<VkFence>, waitAll: Boolean, timeout: Long): Int =
+        callFunc("vkWaitForFences", Int::class, device, fences.length, fences, if (waitAll) 1 else 0, timeout)
 
     fun vkCreateSemaphore(device: VkDevice, createInfo: VkSemaphoreCreateInfo, allocator: VkAllocationCallbacks?): Result<VkSemaphore, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
@@ -1059,8 +1065,12 @@ object Vk10Funcs {
         return Result.success(seg.asByteBuffer())
     }
 
-    fun vkMergePipelineCaches(device: VkDevice, dstCache: VkPipelineCache, srcCaches: PointerArrayStruct<VkPipelineCache>): Int =
-        callFunc("vkMergePipelineCaches", Int::class, device, dstCache, srcCaches.arr.size, srcCaches)
+    fun vkMergePipelineCaches(
+        device: VkDevice,
+        dstCache: VkPipelineCache,
+        srcCaches: HeapPointerArray<VkPipelineCache>
+    ): Int =
+        callFunc("vkMergePipelineCaches", Int::class, device, dstCache, srcCaches.length, srcCaches)
 
     fun vkCreateGraphicsPipelines(
         device: VkDevice,
@@ -1203,8 +1213,8 @@ object Vk10Funcs {
         ) else Result.fail(retCode)
     }
 
-    fun vkFreeDescriptorSets(device: VkDevice, sets: PointerArrayStruct<VkDescriptorSet>): Int =
-        callFunc("vkFreeDescriptorSets", Int::class, device, sets.arr.size, sets)
+    fun vkFreeDescriptorSets(device: VkDevice, sets: HeapPointerArray<VkDescriptorSet>): Int =
+        callFunc("vkFreeDescriptorSets", Int::class, device, sets.length, sets)
 
     fun vkUpdateDescriptorSets(
         device: VkDevice,
@@ -1298,9 +1308,9 @@ object Vk10Funcs {
     fun vkFreeCommandBuffers(
         device: VkDevice,
         commandPool: VkCommandPool,
-        commandBuffer: PointerArrayStruct<VkCommandBuffer>
+        commandBuffer: HeapPointerArray<VkCommandBuffer>
     ) =
-        callVoidFunc("vkFreeCommandBuffers", device, commandPool, commandBuffer.arr.size, commandBuffer)
+        callVoidFunc("vkFreeCommandBuffers", device, commandPool, commandBuffer.length, commandBuffer)
 
     fun vkBeginCommandBuffer(commandBuffer: VkCommandBuffer, beginInfo: VkCommandBufferBeginInfo): Int =
         callFunc("vkBeginCommandBuffer", Int::class, commandBuffer, beginInfo)
@@ -1331,7 +1341,7 @@ object Vk10Funcs {
     ) =
         callVoidFunc("vkCmdSetDepthBias", commandBuffer, depthBiasConstantFactor, depthBiasClamp, depthBiasSlopeFactor)
 
-    fun vkCmdSetBlendConstants(commandBuffer: VkCommandBuffer, blendConstants: FloatArrayStruct) =
+    fun vkCmdSetBlendConstants(commandBuffer: VkCommandBuffer, blendConstants: HeapFloatArray) =
         callVoidFunc("vkCmdSetBlendConstants", commandBuffer, blendConstants)
 
     fun vkCmdSetDepthBounds(commandBuffer: VkCommandBuffer, minDepthBounds: Float, maxDepthBounds: Float) =
@@ -1351,8 +1361,8 @@ object Vk10Funcs {
         pipelineBindPoint: Int,
         layout: VkPipelineLayout,
         firstSet: Int,
-        sets: PointerArrayStruct<VkDescriptorSet>,
-        dynamicOffsets: IntArrayStruct
+        sets: HeapPointerArray<VkDescriptorSet>,
+        dynamicOffsets: HeapIntArray
     ) =
         callVoidFunc(
             "vkCmdBindDescriptorSets",
@@ -1360,9 +1370,9 @@ object Vk10Funcs {
             pipelineBindPoint,
             layout,
             firstSet,
-            sets.arr.size,
+            sets.length,
             sets,
-            dynamicOffsets.arr.size,
+            dynamicOffsets.length,
             dynamicOffsets
         )
 
@@ -1372,14 +1382,14 @@ object Vk10Funcs {
     fun vkCmdBindVertexBuffers(
         commandBuffer: VkCommandBuffer,
         firstBinding: Int,
-        buffers: PointerArrayStruct<VkBuffer>,
-        offsets: LongArrayStruct
+        buffers: HeapPointerArray<VkBuffer>,
+        offsets: HeapLongArray
     ) =
         callVoidFunc(
             "vkCmdBindVertexBuffers",
             commandBuffer,
             firstBinding,
-            min(buffers.arr.size, offsets.arr.size),
+            min(buffers.length, offsets.length),
             buffers,
             offsets
         )
@@ -1584,7 +1594,7 @@ object Vk10Funcs {
 
     fun vkCmdWaitEvents(
         commandBuffer: VkCommandBuffer,
-        events: PointerArrayStruct<VkEvent>,
+        events: HeapPointerArray<VkEvent>,
         srcStageMask: Int,
         dstStageMask: Int,
         memoryBarriers: ArrayStruct<VkMemoryBarrier>,
@@ -1594,7 +1604,7 @@ object Vk10Funcs {
         callVoidFunc(
             "vkCmdWaitEvents",
             commandBuffer,
-            events.arr.size,
+            events.length,
             events,
             srcStageMask,
             dstStageMask,
@@ -1679,8 +1689,8 @@ object Vk10Funcs {
     fun vkCmdEndRenderPass(commandBuffer: VkCommandBuffer) =
         callVoidFunc("vkCmdEndRenderPass", commandBuffer)
 
-    fun vkCmdExecuteCommands(commandBuffer: VkCommandBuffer, commandBuffers: PointerArrayStruct<VkCommandBuffer>) =
-        callVoidFunc("vkCmdExecuteCommands", commandBuffer, commandBuffers.arr.size, commandBuffers)
+    fun vkCmdExecuteCommands(commandBuffer: VkCommandBuffer, commandBuffers: HeapPointerArray<VkCommandBuffer>) =
+        callVoidFunc("vkCmdExecuteCommands", commandBuffer, commandBuffers.length, commandBuffers)
 
 
 }

@@ -2,8 +2,8 @@ package com.primogemstudio.engine.bindings.vulkan
 
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.heap.HeapIntArray
 import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.interfaces.struct.IntArrayStruct
 import com.primogemstudio.engine.loader.Platform.sizetLength
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -15,7 +15,7 @@ class VkPipelineMultisampleStateCreateInfo(
     private val rasterizationSamples: Int,
     private val sampleShadingEnable: Boolean,
     private val minSampleShading: Float,
-    private val sampleMask: IntArrayStruct,
+    private val sampleMask: HeapIntArray,
     private val alphaToCoverageEnable: Boolean,
     private val alphaToOneEnable: Boolean
 ) : IStruct() {
@@ -46,7 +46,7 @@ class VkPipelineMultisampleStateCreateInfo(
         seg.set(JAVA_INT, sizetLength() + 12L, rasterizationSamples)
         seg.set(JAVA_INT, sizetLength() + 16L, if (sampleShadingEnable) 1 else 0)
         seg.set(JAVA_FLOAT, sizetLength() + 20L, minSampleShading)
-        seg.set(ADDRESS, sizetLength() + 24L, sampleMask.pointer())
+        seg.set(ADDRESS, sizetLength() + 24L, sampleMask.ref())
         seg.set(JAVA_INT, sizetLength() * 2 + 24L, if (alphaToCoverageEnable) 1 else 0)
         seg.set(JAVA_INT, sizetLength() * 2 + 28L, if (alphaToOneEnable) 1 else 0)
     }

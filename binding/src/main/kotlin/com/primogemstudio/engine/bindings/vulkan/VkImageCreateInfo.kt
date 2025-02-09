@@ -3,8 +3,8 @@ package com.primogemstudio.engine.bindings.vulkan
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
+import com.primogemstudio.engine.interfaces.heap.HeapIntArray
 import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.interfaces.struct.IntArrayStruct
 import org.joml.Vector3i
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -22,7 +22,7 @@ class VkImageCreateInfo(
     private val tiling: Int,
     private val usage: Int,
     private val sharingMode: Int,
-    private val queueFamilyIndices: IntArrayStruct,
+    private val queueFamilyIndices: HeapIntArray,
     private val initialLayout: Int
 ) : IStruct() {
     companion object {
@@ -67,8 +67,8 @@ class VkImageCreateInfo(
         seg.set(JAVA_INT, OFFSETS[11], tiling)
         seg.set(JAVA_INT, OFFSETS[12], usage)
         seg.set(JAVA_INT, OFFSETS[13], sharingMode)
-        seg.set(JAVA_INT, OFFSETS[14], queueFamilyIndices.arr.size)
-        seg.set(ADDRESS, OFFSETS[15], queueFamilyIndices.pointer())
+        seg.set(JAVA_INT, OFFSETS[14], queueFamilyIndices.length)
+        seg.set(ADDRESS, OFFSETS[15], queueFamilyIndices.ref())
         seg.set(JAVA_INT, OFFSETS[16], initialLayout)
     }
 }

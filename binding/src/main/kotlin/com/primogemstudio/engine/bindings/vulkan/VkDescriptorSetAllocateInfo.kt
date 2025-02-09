@@ -5,8 +5,8 @@ import com.primogemstudio.engine.bindings.vulkan.core.VkDescriptorPool
 import com.primogemstudio.engine.bindings.vulkan.core.VkDescriptorSetLayout
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
+import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
 import com.primogemstudio.engine.interfaces.struct.IStruct
-import com.primogemstudio.engine.interfaces.struct.PointerArrayStruct
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
@@ -14,7 +14,7 @@ import java.lang.foreign.ValueLayout.*
 class VkDescriptorSetAllocateInfo(
     private val next: IStruct? = null,
     private val descriptorPool: VkDescriptorPool,
-    private val setLayouts: PointerArrayStruct<VkDescriptorSetLayout>
+    private val setLayouts: HeapPointerArray<VkDescriptorSetLayout>
 ) : IStruct() {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
@@ -31,7 +31,7 @@ class VkDescriptorSetAllocateInfo(
         construct(seg)
     }
 
-    fun count(): Int = setLayouts.arr.size
+    fun count(): Int = setLayouts.length
 
     override fun layout(): MemoryLayout = LAYOUT
 
@@ -39,7 +39,7 @@ class VkDescriptorSetAllocateInfo(
         seg.set(JAVA_INT, OFFSETS[0], VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO)
         seg.set(ADDRESS, OFFSETS[1], next?.pointer() ?: MemorySegment.NULL)
         seg.set(ADDRESS, OFFSETS[2], descriptorPool.ref())
-        seg.set(JAVA_INT, OFFSETS[3], setLayouts.arr.size)
-        seg.set(ADDRESS, OFFSETS[4], setLayouts.pointer())
+        seg.set(JAVA_INT, OFFSETS[3], setLayouts.length)
+        seg.set(ADDRESS, OFFSETS[4], setLayouts.ref())
     }
 }

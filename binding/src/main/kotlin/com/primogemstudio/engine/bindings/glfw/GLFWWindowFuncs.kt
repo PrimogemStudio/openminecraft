@@ -6,10 +6,10 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
 import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.fetchString
+import com.primogemstudio.engine.interfaces.heap.HeapByteArray
 import com.primogemstudio.engine.interfaces.heap.HeapFloat
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
-import com.primogemstudio.engine.interfaces.struct.ByteArrayStruct
 import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.interfaces.toCString
@@ -24,7 +24,7 @@ class GLFWWindow(data: MemorySegment) : IHeapObject(data)
 data class GLFWImage(
     private val width: Int,
     private val height: Int,
-    private val pixels: ByteArrayStruct
+    private val pixels: HeapByteArray
 ) : IStruct() {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(JAVA_INT, JAVA_INT, ADDRESS)
@@ -39,7 +39,7 @@ data class GLFWImage(
     override fun construct(seg: MemorySegment) {
         seg.set(JAVA_INT, OFFSETS[0], width)
         seg.set(JAVA_INT, OFFSETS[1], height)
-        seg.set(ADDRESS, OFFSETS[2], pixels.pointer())
+        seg.set(ADDRESS, OFFSETS[2], pixels.ref())
     }
 }
 
