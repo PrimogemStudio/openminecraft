@@ -22,14 +22,12 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSwapBuffers
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
 import com.primogemstudio.engine.bindings.vulkan.VkFenceCreateInfo
-import com.primogemstudio.engine.bindings.vulkan.VkPipelineLayoutCreateInfo
 import com.primogemstudio.engine.bindings.vulkan.core.*
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_MAKE_VERSION
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreateDevice
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreateFence
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreateInstance
-import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreatePipelineLayout
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkResetFences
@@ -96,8 +94,6 @@ fun main() {
                 vkCreateFence(dev, VkFenceCreateInfo(), null).match({ fence -> 
                     val arr = PointerArrayStruct(arrayOf(fence))
                     logger.info("${vkResetFences(dev, arr)}")
-
-                    // println(vkCreatePipelineLayout(dev, VkPipelineLayoutCreateInfo(), null))
                 }, { logger.error("vulkan error: $it") })
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })

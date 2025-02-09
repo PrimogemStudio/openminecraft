@@ -1112,7 +1112,14 @@ object Vk10Funcs {
 
     fun vkCreatePipelineLayout(device: VkDevice, createInfo: VkPipelineLayoutCreateInfo, allocator: VkAllocationCallbacks?): Result<VkPipelineLayout, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreatePipelineLayout", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL)
+        val retCode = callFunc(
+            "vkCreatePipelineLayout",
+            Int::class,
+            device,
+            createInfo,
+            allocator?.pointer() ?: MemorySegment.NULL,
+            seg
+        )
         return if (retCode == VK_SUCCESS) Result.success(VkPipelineLayout(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
