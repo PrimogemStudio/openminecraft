@@ -72,7 +72,7 @@ class VkGraphicsPipelineCreateInfo(
         seg.set(ADDRESS, OFFSETS[5], vertex?.pointer() ?: MemorySegment.NULL)
         seg.set(ADDRESS, OFFSETS[6], inputAssembly?.pointer() ?: MemorySegment.NULL)
         seg.set(ADDRESS, OFFSETS[7], tessellation?.pointer() ?: MemorySegment.NULL)
-        seg.set(ADDRESS, OFFSETS[8], viewport?.pointer() ?: MemorySegment.NULL)
+        seg.set(ADDRESS, OFFSETS[8], viewport?.ref() ?: MemorySegment.NULL)
         seg.set(ADDRESS, OFFSETS[9], rasterization?.pointer() ?: MemorySegment.NULL)
         seg.set(ADDRESS, OFFSETS[10], multisample?.pointer() ?: MemorySegment.NULL)
         seg.set(ADDRESS, OFFSETS[11], depthStencil?.pointer() ?: MemorySegment.NULL)

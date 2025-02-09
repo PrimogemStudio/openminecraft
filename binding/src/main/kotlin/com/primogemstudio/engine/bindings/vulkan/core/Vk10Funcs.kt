@@ -1314,8 +1314,8 @@ object Vk10Funcs {
     fun vkCmdBindPipeline(commandBuffer: VkCommandBuffer, pipelineBindPoint: Int, pipeline: VkPipeline) =
         callVoidFunc("vkCmdBindPipeline", commandBuffer, pipelineBindPoint, pipeline)
 
-    fun vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: Int, viewports: ArrayStruct<VkViewport>) =
-        callVoidFunc("vkCmdSetViewport", commandBuffer, firstViewport, viewports.arr.size, viewports)
+    fun vkCmdSetViewport(commandBuffer: VkCommandBuffer, firstViewport: Int, viewports: HeapStructArray<VkViewport>) =
+        callVoidFunc("vkCmdSetViewport", commandBuffer, firstViewport, viewports.length, viewports)
 
     fun vkCmdSetScissor(commandBuffer: VkCommandBuffer, firstScissor: Int, scissors: HeapStructArray<VkRect2D>) =
         callVoidFunc("vkCmdSetScissor", commandBuffer, firstScissor, scissors.length, scissors)
