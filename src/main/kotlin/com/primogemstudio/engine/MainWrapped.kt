@@ -31,6 +31,7 @@ import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.vkResetFences
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.heap.HeapByteArray
 import com.primogemstudio.engine.interfaces.heap.HeapFloatArray
 import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
@@ -117,6 +118,8 @@ fun main() {
     glfwSwapInterval(0)
 
     while (glfwWindowShouldClose(window) != 1) {
+        callVoidFunc("glClearColor", 1f, 1f, 1f, 1f)
+        callVoidFunc("glClear", 0x00004000)
         glfwSwapBuffers(window)
         glfwPollEvents()
     }

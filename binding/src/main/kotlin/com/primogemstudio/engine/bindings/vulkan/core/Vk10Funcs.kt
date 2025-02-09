@@ -1453,7 +1453,7 @@ object Vk10Funcs {
         srcImageLayout: Int,
         dstImage: VkImage,
         dstImageLayout: Int,
-        regions: ArrayStruct<VkImageCopy>
+        regions: HeapStructArray<VkImageCopy>
     ) =
         callVoidFunc(
             "vkCmdCopyImage",
@@ -1462,7 +1462,7 @@ object Vk10Funcs {
             srcImageLayout,
             dstImage,
             dstImageLayout,
-            regions.arr.size,
+            regions.length,
             regions
         )
 
@@ -1472,7 +1472,7 @@ object Vk10Funcs {
         srcImageLayout: Int,
         dstImage: VkImage,
         dstImageLayout: Int,
-        regions: ArrayStruct<VkImageBlit>,
+        regions: HeapStructArray<VkImageBlit>,
         filter: Int
     ) =
         callVoidFunc(
@@ -1482,7 +1482,7 @@ object Vk10Funcs {
             srcImageLayout,
             dstImage,
             dstImageLayout,
-            regions.arr.size,
+            regions.length,
             regions,
             filter
         )
@@ -1492,7 +1492,7 @@ object Vk10Funcs {
         srcBuffer: VkBuffer,
         dstImage: VkImage,
         dstImageLayout: Int,
-        regions: ArrayStruct<VkBufferImageCopy>
+        regions: HeapPointerArray<VkBufferImageCopy>
     ) =
         callVoidFunc(
             "vkCmdCopyBufferToImage",
@@ -1500,7 +1500,7 @@ object Vk10Funcs {
             srcBuffer,
             dstImage,
             dstImageLayout,
-            regions.arr.size,
+            regions.length,
             regions
         )
 
@@ -1509,7 +1509,7 @@ object Vk10Funcs {
         srcImage: VkImage,
         srcImageLayout: Int,
         dstBuffer: VkBuffer,
-        regions: ArrayStruct<VkBufferImageCopy>
+        regions: HeapPointerArray<VkBufferImageCopy>
     ) =
         callVoidFunc(
             "vkCmdCopyImageToBuffer",
@@ -1517,7 +1517,7 @@ object Vk10Funcs {
             srcImage,
             srcImageLayout,
             dstBuffer,
-            regions.arr.size,
+            regions.length,
             regions
         )
 
@@ -1573,7 +1573,7 @@ object Vk10Funcs {
         srcImageLayout: Int,
         dstImage: VkImage,
         dstImageLayout: Int,
-        regions: ArrayStruct<VkImageResolve>
+        regions: HeapStructArray<VkImageResolve>
     ) =
         callVoidFunc(
             "vkCmdResolveImage",
@@ -1582,7 +1582,7 @@ object Vk10Funcs {
             srcImageLayout,
             dstImage,
             dstImageLayout,
-            regions.arr.size,
+            regions.length,
             regions
         )
 
