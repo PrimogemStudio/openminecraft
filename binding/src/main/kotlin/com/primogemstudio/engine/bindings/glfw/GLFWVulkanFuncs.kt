@@ -1,8 +1,8 @@
 package com.primogemstudio.engine.bindings.glfw
 
-import com.primogemstudio.engine.bindings.vulkan.core.VkInstance
-import com.primogemstudio.engine.bindings.vulkan.core.VkPhysicalDevice
 import com.primogemstudio.engine.bindings.vulkan.memory.VkAllocationCallbacks
+import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
+import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDevice
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.fetchString

@@ -3,9 +3,10 @@ package com.primogemstudio.engine.bindings.vulkan.memory
 import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.struct.IStruct
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.loader.Platform.sizetMap
+import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
@@ -94,14 +95,7 @@ interface VkInternalMemNotificationFunc : IStub {
         )
 }
 
-data class VkAllocationCallbacks(
-    private val userdata: MemorySegment,
-    private val allocateFunc: VkAllocateFunc,
-    private val reallocateFunc: VkReallocateFunc,
-    private val freeFunc: VkFreeFunc,
-    private val internalAllocationFunc: VkInternalMemNotificationFunc,
-    private val internalFreeFunc: VkInternalMemNotificationFunc
-): IStruct() {
+class VkAllocationCallbacks(private val seg: MemorySegment) : IHeapObject(seg) {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
             ADDRESS,
@@ -114,22 +108,34 @@ data class VkAllocationCallbacks(
         private val OFFSET = LAYOUT.cacheOffsets()
     }
 
-    init {
-        construct(seg)
-    }
+    constructor() : this(Arena.ofAuto().allocate(LAYOUT))
 
-    override fun layout(): MemoryLayout = LAYOUT
-
-    override fun construct(seg: MemorySegment) {
-        seg.set(ADDRESS, OFFSET[0], userdata)
-        seg.set(ADDRESS, OFFSET[1], constructStub(VkAllocateFunc::class, allocateFunc))
-        seg.set(ADDRESS, OFFSET[2], constructStub(VkReallocateFunc::class, reallocateFunc))
-        seg.set(ADDRESS, OFFSET[3], constructStub(VkFreeFunc::class, freeFunc))
-        seg.set(
-            ADDRESS,
-            OFFSET[4],
-            constructStub(VkInternalMemNotificationFunc::class, internalAllocationFunc)
-        )
-        seg.set(ADDRESS, OFFSET[5], constructStub(VkInternalMemNotificationFunc::class, internalFreeFunc))
-    }
+    var userdata: MemorySegment
+        get() = seg.get(ADDRESS, OFFSET[0])
+        set(value) = seg.set(ADDRESS, OFFSET[0], value)
+    var allocateFunc: VkAllocateFunc
+        get() {
+            TODO("Unsupported Operation!")
+        }
+        set(value) = seg.set(ADDRESS, OFFSET[1], constructStub(VkAllocateFunc::class, value))
+    var reallocateFunc: VkReallocateFunc
+        get() {
+            TODO("Unsupported Operation!")
+        }
+        set(value) = seg.set(ADDRESS, OFFSET[2], constructStub(VkReallocateFunc::class, value))
+    var freeFunc: VkFreeFunc
+        get() {
+            TODO("Unsupported Operation!")
+        }
+        set(value) = seg.set(ADDRESS, OFFSET[3], constructStub(VkFreeFunc::class, value))
+    var internalAllocationFunc: VkInternalMemNotificationFunc
+        get() {
+            TODO("Unsupported Operation!")
+        }
+        set(value) = seg.set(ADDRESS, OFFSET[4], constructStub(VkInternalMemNotificationFunc::class, value))
+    var internalFreeFunc: VkInternalMemNotificationFunc
+        get() {
+            TODO("Unsupported Operation!")
+        }
+        set(value) = seg.set(ADDRESS, OFFSET[5], constructStub(VkInternalMemNotificationFunc::class, value))
 }

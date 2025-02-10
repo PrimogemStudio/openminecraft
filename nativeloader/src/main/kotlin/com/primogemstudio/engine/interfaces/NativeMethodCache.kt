@@ -2,7 +2,6 @@ package com.primogemstudio.engine.interfaces
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
-import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.*
@@ -86,7 +85,6 @@ object NativeMethodCache {
     ): T {
         val argListNew = args.map {
             return@map when (it) {
-                is IStruct -> it.pointer()
                 is IHeapVar<*> -> it.ref()
                 else -> it
             }

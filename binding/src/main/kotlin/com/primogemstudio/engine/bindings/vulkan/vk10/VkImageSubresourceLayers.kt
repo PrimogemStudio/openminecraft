@@ -1,0 +1,36 @@
+package com.primogemstudio.engine.bindings.vulkan.vk10
+
+import com.primogemstudio.engine.interfaces.cacheOffsets
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import java.lang.foreign.Arena
+import java.lang.foreign.MemoryLayout
+import java.lang.foreign.MemorySegment
+import java.lang.foreign.ValueLayout.JAVA_INT
+
+class VkImageSubresourceLayers(private val seg: MemorySegment) : IHeapObject(seg) {
+    companion object {
+        val LAYOUT = MemoryLayout.structLayout(
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT,
+            JAVA_INT
+        )
+
+        private val OFFSETS = LAYOUT.cacheOffsets()
+    }
+
+    constructor() : this(Arena.ofAuto().allocate(LAYOUT))
+
+    var aspectMask: Int
+        get() = seg.get(JAVA_INT, OFFSETS[0])
+        set(value) = seg.set(JAVA_INT, OFFSETS[0], value)
+    var mipLevel: Int
+        get() = seg.get(JAVA_INT, OFFSETS[1])
+        set(value) = seg.set(JAVA_INT, OFFSETS[1], value)
+    var baseArrayLayer: Int
+        get() = seg.get(JAVA_INT, OFFSETS[2])
+        set(value) = seg.set(JAVA_INT, OFFSETS[2], value)
+    var layerCount: Int
+        get() = seg.get(JAVA_INT, OFFSETS[3])
+        set(value) = seg.set(JAVA_INT, OFFSETS[3], value)
+}
