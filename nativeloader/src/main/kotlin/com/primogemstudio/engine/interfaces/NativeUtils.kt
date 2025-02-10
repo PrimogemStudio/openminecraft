@@ -44,8 +44,6 @@ fun Array<String>.toCStrArray(): MemorySegment {
     }
 }
 
-inline fun <T> MemorySegment.fromCStructArray(length: Int, structLength: Int, constructor: (MemorySegment) -> T): List<T> = (0 ..< length).map { this.asSlice(it * structLength * 1L, structLength * 1L) }.map { constructor(it) }
-
 fun MemorySegment.toPointerArray(length: Int): Array<MemorySegment> =
     (0..<length).map { this.reinterpret(length * sizetLength() * 1L).get(ADDRESS, it * sizetLength() * 1L) }
         .toTypedArray()

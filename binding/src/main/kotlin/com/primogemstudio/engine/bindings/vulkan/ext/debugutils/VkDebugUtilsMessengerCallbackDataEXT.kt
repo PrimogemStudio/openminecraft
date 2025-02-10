@@ -1,8 +1,12 @@
 package com.primogemstudio.engine.bindings.vulkan.ext.debugutils
 
 import com.primogemstudio.engine.bindings.vulkan.ext.debugutils.VkEXTDebugUtils.VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CALLBACK_DATA_EXT
-import com.primogemstudio.engine.interfaces.*
+import com.primogemstudio.engine.interfaces.align
+import com.primogemstudio.engine.interfaces.cacheOffsets
+import com.primogemstudio.engine.interfaces.fetchString
+import com.primogemstudio.engine.interfaces.heap.HeapStructArray
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import com.primogemstudio.engine.interfaces.toCString
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -51,30 +55,36 @@ class VkDebugUtilsMessengerCallbackDataEXT(private val seg: MemorySegment) : IHe
         get() = seg.get(ADDRESS, OFFSETS[5]).fetchString()
         set(value) = seg.set(ADDRESS, OFFSETS[5], value.toCString())
 
-    var queueLabels: Array<VkDebugUtilsLabelEXT>
-        get() = seg.get(ADDRESS, OFFSETS[7]).toPointerArray(seg.get(JAVA_INT, OFFSETS[6]))
-            .map { VkDebugUtilsLabelEXT(it) }
-            .toTypedArray()
+    var queueLabels: HeapStructArray<VkDebugUtilsLabelEXT>
+        get() = HeapStructArray(
+            seg.get(JAVA_INT, OFFSETS[6]),
+            seg.get(ADDRESS, OFFSETS[7]),
+            VkDebugUtilsLabelEXT.LAYOUT
+        )
         set(value) {
-            seg.set(ADDRESS, OFFSETS[7], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
-            seg.set(JAVA_INT, OFFSETS[6], value.size)
+            seg.set(ADDRESS, OFFSETS[7], value.ref())
+            seg.set(JAVA_INT, OFFSETS[6], value.length)
         }
 
-    var cmdBufLabels: Array<VkDebugUtilsLabelEXT>
-        get() = seg.get(ADDRESS, OFFSETS[9]).toPointerArray(seg.get(JAVA_INT, OFFSETS[8]))
-            .map { VkDebugUtilsLabelEXT(it) }
-            .toTypedArray()
+    var cmdBufLabels: HeapStructArray<VkDebugUtilsLabelEXT>
+        get() = HeapStructArray(
+            seg.get(JAVA_INT, OFFSETS[8]),
+            seg.get(ADDRESS, OFFSETS[9]),
+            VkDebugUtilsLabelEXT.LAYOUT
+        )
         set(value) {
-            seg.set(ADDRESS, OFFSETS[9], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
-            seg.set(JAVA_INT, OFFSETS[8], value.size)
+            seg.set(ADDRESS, OFFSETS[9], value.ref())
+            seg.set(JAVA_INT, OFFSETS[8], value.length)
         }
 
-    var objects: Array<VkDebugUtilsObjectNameInfoEXT>
-        get() = seg.get(ADDRESS, OFFSETS[11]).toPointerArray(seg.get(JAVA_INT, OFFSETS[10]))
-            .map { VkDebugUtilsObjectNameInfoEXT(it) }
-            .toTypedArray()
+    var objects: HeapStructArray<VkDebugUtilsObjectNameInfoEXT>
+        get() = HeapStructArray(
+            seg.get(JAVA_INT, OFFSETS[10]),
+            seg.get(ADDRESS, OFFSETS[11]),
+            VkDebugUtilsLabelEXT.LAYOUT
+        )
         set(value) {
-            seg.set(ADDRESS, OFFSETS[11], value.toCStructArray(VkDebugUtilsLabelEXT.LAYOUT).ref())
-            seg.set(JAVA_INT, OFFSETS[10], value.size)
+            seg.set(ADDRESS, OFFSETS[11], value.ref())
+            seg.set(JAVA_INT, OFFSETS[10], value.length)
         }
 }

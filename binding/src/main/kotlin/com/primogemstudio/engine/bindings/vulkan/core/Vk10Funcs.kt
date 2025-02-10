@@ -5,7 +5,6 @@ import com.primogemstudio.engine.bindings.vulkan.memory.VkAllocationCallbacks
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.fromCStructArray
 import com.primogemstudio.engine.interfaces.heap.*
 import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.toCString
@@ -921,9 +920,10 @@ object Vk10Funcs {
     fun vkGetImageSparseMemoryRequirements(device: VkDevice, image: VkImage): Array<VkSparseImageMemoryRequirements> {
         val count = HeapInt()
         callVoidFunc("vkGetImageSparseMemoryRequirements", device, image, count, MemorySegment.NULL)
-        val seg = Arena.ofAuto().allocate(48L * count.value())
-        callVoidFunc("vkGetImageSparseMemoryRequirements", device, image, count, seg)
-        return seg.fromCStructArray(count.value(), 48) { VkSparseImageMemoryRequirements(it) }.toTypedArray()
+        val sarr =
+            HeapStructArray<VkSparseImageMemoryRequirements>(VkSparseImageMemoryRequirements.LAYOUT, count.value())
+        callVoidFunc("vkGetImageSparseMemoryRequirements", device, image, count, sarr.ref())
+        return (0..<count.value()).map { VkSparseImageMemoryRequirements(sarr[it]) }.toTypedArray()
     }
 
     fun vkGetPhysicalDeviceSparseImageFormatProperties(
@@ -936,9 +936,20 @@ object Vk10Funcs {
     ): Array<VkSparseImageMemoryRequirements> {
         val count = HeapInt()
         callVoidFunc("vkGetPhysicalDeviceSparseImageFormatProperties", physicalDevice, format, type, samples, usage, tiling, count, MemorySegment.NULL)
-        val seg = Arena.ofAuto().allocate(48L * count.value())
-        callVoidFunc("vkGetPhysicalDeviceSparseImageFormatProperties", physicalDevice, format, type, samples, usage, tiling, count, seg)
-        return seg.fromCStructArray(count.value(), 48) { VkSparseImageMemoryRequirements(it) }.toTypedArray()
+        val sarr =
+            HeapStructArray<VkSparseImageMemoryRequirements>(VkSparseImageMemoryRequirements.LAYOUT, count.value())
+        callVoidFunc(
+            "vkGetPhysicalDeviceSparseImageFormatProperties",
+            physicalDevice,
+            format,
+            type,
+            samples,
+            usage,
+            tiling,
+            count,
+            sarr.ref()
+        )
+        return (0..<count.value()).map { VkSparseImageMemoryRequirements(sarr[it]) }.toTypedArray()
     }
 
     fun vkQueueBindSparse(queue: VkQueue, bindInfo: HeapStructArray<VkBindSparseInfo>, fence: VkFence): Int =
@@ -1540,16 +1551,16 @@ object Vk10Funcs {
         image: VkImage,
         imageLayout: Int,
         color: VkClearColorValue,
-        ranges: ArrayStruct<VkImageSubresourceRange>
+        ranges: HeapStructArray<VkImageSubresourceRange>
     ) =
-        callVoidFunc("vkCmdClearColorImage", commandBuffer, image, imageLayout, color, ranges.arr.size, ranges)
+        callVoidFunc("vkCmdClearColorImage", commandBuffer, image, imageLayout, color, ranges.length, ranges)
 
     fun vkCmdClearDepthStencilImage(
         commandBuffer: VkCommandBuffer,
         image: VkImage,
         imageLayout: Int,
         depthStencil: VkClearDepthStencilValue,
-        ranges: ArrayStruct<VkImageSubresourceRange>
+        ranges: HeapStructArray<VkImageSubresourceRange>
     ) =
         callVoidFunc(
             "vkCmdClearDepthStencilImage",
@@ -1557,7 +1568,7 @@ object Vk10Funcs {
             image,
             imageLayout,
             depthStencil,
-            ranges.arr.size,
+            ranges.length,
             ranges
         )
 
@@ -1605,9 +1616,9 @@ object Vk10Funcs {
         events: HeapPointerArray<VkEvent>,
         srcStageMask: Int,
         dstStageMask: Int,
-        memoryBarriers: ArrayStruct<VkMemoryBarrier>,
-        bufferMemoryBarriers: ArrayStruct<VkBufferMemoryBarrier>,
-        imageMemoryBarriers: ArrayStruct<VkImageMemoryBarrier>
+        memoryBarriers: HeapStructArray<VkMemoryBarrier>,
+        bufferMemoryBarriers: HeapStructArray<VkBufferMemoryBarrier>,
+        imageMemoryBarriers: HeapStructArray<VkImageMemoryBarrier>
     ) =
         callVoidFunc(
             "vkCmdWaitEvents",
@@ -1616,11 +1627,11 @@ object Vk10Funcs {
             events,
             srcStageMask,
             dstStageMask,
-            memoryBarriers.arr.size,
+            memoryBarriers.length,
             memoryBarriers,
-            bufferMemoryBarriers.arr.size,
+            bufferMemoryBarriers.length,
             bufferMemoryBarriers,
-            imageMemoryBarriers.arr.size,
+            imageMemoryBarriers.length,
             imageMemoryBarriers
         )
 
@@ -1628,20 +1639,20 @@ object Vk10Funcs {
         commandBuffer: VkCommandBuffer,
         srcStageMask: Int,
         dstStageMask: Int,
-        memoryBarriers: ArrayStruct<VkMemoryBarrier>,
-        bufferMemoryBarriers: ArrayStruct<VkBufferMemoryBarrier>,
-        imageMemoryBarriers: ArrayStruct<VkImageMemoryBarrier>
+        memoryBarriers: HeapStructArray<VkMemoryBarrier>,
+        bufferMemoryBarriers: HeapStructArray<VkBufferMemoryBarrier>,
+        imageMemoryBarriers: HeapStructArray<VkImageMemoryBarrier>
     ) =
         callVoidFunc(
             "vkCmdPipelineBarrier",
             commandBuffer,
             srcStageMask,
             dstStageMask,
-            memoryBarriers.arr.size,
+            memoryBarriers.length,
             memoryBarriers,
-            bufferMemoryBarriers.arr.size,
+            bufferMemoryBarriers.length,
             bufferMemoryBarriers,
-            imageMemoryBarriers.arr.size,
+            imageMemoryBarriers.length,
             imageMemoryBarriers
         )
 
