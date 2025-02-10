@@ -10,9 +10,9 @@ import com.primogemstudio.engine.interfaces.heap.HeapByteArray
 import com.primogemstudio.engine.interfaces.heap.HeapFloat
 import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
-import com.primogemstudio.engine.interfaces.struct.IStruct
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.interfaces.toCString
+import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
@@ -21,26 +21,26 @@ import java.lang.invoke.MethodType
 
 class GLFWWindow(data: MemorySegment) : IHeapObject(data)
 
-data class GLFWImage(
-    private val width: Int,
-    private val height: Int,
-    private val pixels: HeapByteArray
-) : IStruct() {
+data class GLFWImage(private val seg: MemorySegment) : IHeapObject(seg) {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(JAVA_INT, JAVA_INT, ADDRESS)
         private val OFFSETS = LAYOUT.cacheOffsets()
     }
 
-    init {
-        construct(seg)
-    }
+    constructor() : this(Arena.ofAuto().allocate(LAYOUT))
 
-    override fun layout(): MemoryLayout = LAYOUT
-    override fun construct(seg: MemorySegment) {
-        seg.set(JAVA_INT, OFFSETS[0], width)
-        seg.set(JAVA_INT, OFFSETS[1], height)
-        seg.set(ADDRESS, OFFSETS[2], pixels.ref())
-    }
+    var width: Int
+        get() = seg.get(JAVA_INT, OFFSETS[0])
+        set(value) = seg.set(JAVA_INT, OFFSETS[0], value)
+    var height: Int
+        get() = seg.get(JAVA_INT, OFFSETS[1])
+        set(value) = seg.set(JAVA_INT, OFFSETS[1], value)
+    var data: HeapByteArray
+        get() = HeapByteArray(
+            width * height,
+            seg.get(ADDRESS, OFFSETS[2])
+        )
+        set(value) = seg.set(ADDRESS, OFFSETS[2], value.ref())
 }
 
 fun interface GLFWWindowPosFun : IStub {

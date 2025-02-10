@@ -105,7 +105,11 @@ fun main() {
     glfwSetCursor(
         window,
         glfwCreateCursor(
-            GLFWImage(32, 32, HeapByteArray((0..<32 * 32 * 4).map { 0xcc.toByte() }.toByteArray())),
+            GLFWImage().apply {
+                width = 32
+                height = 32
+                data = HeapByteArray((0..<32 * 32 * 4).map { 0xcc.toByte() }.toByteArray())
+            },
             0,
             0
         )
