@@ -1,13 +1,13 @@
 package com.primogemstudio.engine.bindings.glfw
 
-import com.primogemstudio.engine.interfaces.*
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.heap.HeapDouble
-import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import com.primogemstudio.engine.interfaces.fetchString
+import com.primogemstudio.engine.interfaces.heap.*
 import com.primogemstudio.engine.interfaces.stub.IStub
+import com.primogemstudio.engine.interfaces.toCString
+import com.primogemstudio.engine.interfaces.toPointerArray
 import java.lang.foreign.MemorySegment
 import java.lang.invoke.MethodType
 
@@ -435,17 +435,20 @@ object GLFWInputFuncs {
 
     fun glfwGetJoystickAxes(jid: Int): FloatArray {
         val count = HeapInt()
-        return callPointerFunc("glfwGetJoystickAxes", jid, count).toFloatArray(count.value())
+        val seg = callPointerFunc("glfwGetJoystickAxes", jid, count)
+        return HeapFloatArray(count.value(), seg).value()
     }
 
     fun glfwGetJoystickButtons(jid: Int): ByteArray {
         val count = HeapInt()
-        return callPointerFunc("glfwGetJoystickButtons", jid, count).toByteArray(count.value())
+        val seg = callPointerFunc("glfwGetJoystickButtons", jid, count)
+        return HeapByteArray(count.value(), seg).value()
     }
 
     fun glfwGetJoystickHats(jid: Int): ByteArray {
         val count = HeapInt()
-        return callPointerFunc("glfwGetJoystickHats", jid, count).toByteArray(count.value())
+        val seg = callPointerFunc("glfwGetJoystickHats", jid, count)
+        return HeapByteArray(count.value(), seg).value()
     }
 
     fun glfwGetJoystickName(jid: Int): String =

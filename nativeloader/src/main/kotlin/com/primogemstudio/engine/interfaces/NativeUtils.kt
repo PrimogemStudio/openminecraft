@@ -8,8 +8,10 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.StructLayout
-import java.lang.foreign.ValueLayout.*
+import java.lang.foreign.ValueLayout.ADDRESS
+import java.lang.foreign.ValueLayout.JAVA_BYTE
 import kotlin.math.max
+import kotlin.math.min
 
 fun MemorySegment.fetchString(): String {
     val buf = reinterpret(callFunc("strlen", Int::class, this).toLong() + 1).asByteBuffer()
@@ -48,12 +50,6 @@ fun MemorySegment.toPointerArray(length: Int): Array<MemorySegment> =
     (0..<length).map { this.reinterpret(length * sizetLength() * 1L).get(ADDRESS, it * sizetLength() * 1L) }
         .toTypedArray()
 
-fun MemorySegment.toFloatArray(length: Int): FloatArray =
-    (0..<length).map { this.reinterpret(length * 4L).get(JAVA_FLOAT, it * 4L) }.toFloatArray()
-
-fun MemorySegment.toByteArray(length: Int): ByteArray =
-    (0..<length).map { this.reinterpret(length * 1L).get(JAVA_BYTE, it * 1L) }.toByteArray()
-
 fun StructLayout.cacheOffsets(): LongArray =
     (0..<this.memberLayouts().size).map { this.byteOffset(MemoryLayout.PathElement.groupElement(it.toLong())) }
         .toLongArray()
@@ -81,6 +77,7 @@ fun StructLayout.align(): StructLayout {
             ali = checkLayoutAlign(e)
         }
 
+        ali = min(8, ali)
         alignment = max(ali, alignment)
 
         if (size % ali != 0L) {
