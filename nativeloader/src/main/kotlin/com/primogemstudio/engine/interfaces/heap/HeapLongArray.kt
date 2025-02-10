@@ -13,9 +13,7 @@ class HeapLongArray(val length: Int, private val seg: MemorySegment) : IHeapVar<
     }
 
     override fun ref(): MemorySegment = seg
-    override fun value(): LongArray {
-        TODO("Unsupported operation!")
-    }
+    override fun value(): LongArray = (0..<length).map { this[it] }.toLongArray()
 
     operator fun get(idx: Int): Long = seg.get(JAVA_LONG, 8L * idx)
     operator fun set(idx: Int, value: Long) = seg.set(JAVA_LONG, 8L * idx, value)

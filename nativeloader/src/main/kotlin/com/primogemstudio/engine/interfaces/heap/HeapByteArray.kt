@@ -13,9 +13,7 @@ class HeapByteArray(val length: Int, private val seg: MemorySegment) : IHeapVar<
     }
 
     override fun ref(): MemorySegment = seg
-    override fun value(): ByteArray {
-        TODO("Unsupported operation!")
-    }
+    override fun value(): ByteArray = (0..<length).map { this[it] }.toByteArray()
 
     operator fun get(idx: Int): Byte = seg.get(JAVA_BYTE, 1L * idx)
     operator fun set(idx: Int, value: Byte) = seg.set(JAVA_BYTE, 1L * idx, value)

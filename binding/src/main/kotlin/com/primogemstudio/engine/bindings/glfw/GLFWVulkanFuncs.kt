@@ -38,5 +38,5 @@ object GLFWVulkanFuncs {
         allocator: VkAllocationCallbacks,
         surface: MemorySegment
     ): Int =
-        callFunc("glfwCreateWindowSurface", Int::class, instance, window, allocator.pointer(), surface)
+        callFunc("glfwCreateWindowSurface", Int::class, instance, window, allocator.ref(), surface)
 }

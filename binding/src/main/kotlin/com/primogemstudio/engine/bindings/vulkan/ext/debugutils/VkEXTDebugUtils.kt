@@ -79,7 +79,7 @@ object VkEXTDebugUtils {
             Int::class,
             instance,
             createInfo,
-            allocator?.pointer() ?: MemorySegment.NULL,
+            allocator?.ref() ?: MemorySegment.NULL,
             seg
         )
         return if (retCode == VK_SUCCESS) Result.success(
@@ -102,8 +102,14 @@ object VkEXTDebugUtils {
             { vkGetInstanceProcAddr(instance, it) },
             instance,
             messenger,
-            allocator?.pointer() ?: MemorySegment.NULL
+            allocator?.ref() ?: MemorySegment.NULL
         )
 
-    // vkSubmitDebugUtilsMessageEXT
+    fun vkSubmitDebugUtilsMessageEXT(
+        instance: VkInstance,
+        severity: Int,
+        types: Int,
+        callbackData: VkDebugUtilsMessengerCallbackDataEXT
+    ) =
+        callVoidFunc("vkSubmitDebugUtilsMessageEXT", instance, severity, types, callbackData)
 }

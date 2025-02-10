@@ -718,12 +718,12 @@ object Vk10Funcs {
         allocator: VkAllocationCallbacks?
     ): Result<VkInstance, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateInstance", Int::class, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode = callFunc("vkCreateInstance", Int::class, createInfo, allocator?.ref() ?: MemorySegment.NULL, seg)
         return if (retCode == 0) Result.success(VkInstance(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyInstance(instance: VkInstance, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyInstance", instance, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyInstance", instance, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkEnumeratePhysicalDevices(instance: VkInstance): Result<Array<VkPhysicalDevice>, Int> {
         val count = HeapInt()
@@ -807,12 +807,19 @@ object Vk10Funcs {
         allocator: VkAllocationCallbacks?
     ): Result<VkDevice, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateDevice", Int::class, physicalDevice, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode = callFunc(
+            "vkCreateDevice",
+            Int::class,
+            physicalDevice,
+            createInfo,
+            allocator?.ref() ?: MemorySegment.NULL,
+            seg
+        )
         return if (retCode == VK_SUCCESS) Result.success(VkDevice(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyDevice(device: VkDevice, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyDevice", device, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyDevice", device, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkEnumerateInstanceExtensionProperties(layerName: String): Result<Array<VkExtensionProperties>, Int> {
         val count = HeapInt()
@@ -887,12 +894,13 @@ object Vk10Funcs {
 
     fun vkAllocateMemory(device: VkDevice, allocateInfo: VkMemoryAllocateInfo, allocator: VkAllocationCallbacks?): Result<VkDeviceMemory, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkAllocateMemory", Int::class, device, allocateInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode =
+            callFunc("vkAllocateMemory", Int::class, device, allocateInfo, allocator?.ref() ?: MemorySegment.NULL, seg)
         return if (retCode == VK_SUCCESS) Result.success(VkDeviceMemory(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkFreeMemory(device: VkDevice, memory: VkDeviceMemory, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkFreeMemory", device, memory, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkFreeMemory", device, memory, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkMapMemory(device: VkDevice, memory: VkDeviceMemory, offset: Long, size: Long, flags: Int, data: MemorySegment): Int {
         val seg = Arena.ofAuto().allocate(ADDRESS)
@@ -958,12 +966,13 @@ object Vk10Funcs {
 
     fun vkCreateFence(device: VkDevice, createInfo: VkFenceCreateInfo, allocator: VkAllocationCallbacks?): Result<VkFence, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateFence", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode =
+            callFunc("vkCreateFence", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL, seg)
         return if (retCode == VK_SUCCESS) Result.success(VkFence(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyFence(device: VkDevice, fence: VkFence, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyFence", device, fence, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyFence", device, fence, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkResetFences(device: VkDevice, fences: HeapPointerArray<VkFence>): Int =
         callFunc("vkResetFences", Int::class, device, fences.length, fences)
@@ -976,21 +985,23 @@ object Vk10Funcs {
 
     fun vkCreateSemaphore(device: VkDevice, createInfo: VkSemaphoreCreateInfo, allocator: VkAllocationCallbacks?): Result<VkSemaphore, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateSemaphore", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode =
+            callFunc("vkCreateSemaphore", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL, seg)
         return if (retCode == VK_SUCCESS) Result.success(VkSemaphore(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroySemaphore(device: VkDevice, semaphore: VkSemaphore, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroySemaphore", device, semaphore, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroySemaphore", device, semaphore, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkCreateEvent(device: VkDevice, createInfo: VkEventCreateInfo, allocator: VkAllocationCallbacks?): Result<VkEvent, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateEvent", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode =
+            callFunc("vkCreateEvent", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL, seg)
         return if (retCode == VK_SUCCESS) Result.success(VkEvent(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyEvent(device: VkDevice, event: VkEvent, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyEvent", device, event, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyEvent", device, event, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkGetEventStatus(device: VkDevice, event: VkEvent): Int =
         callFunc("vkGetEventStatus", Int::class, device, event)
@@ -1003,42 +1014,46 @@ object Vk10Funcs {
 
     fun vkCreateQueryPool(device: VkDevice, createInfo: VkQueryPoolCreateInfo, allocator: VkAllocationCallbacks?): Result<VkQueryPool, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateQueryPool", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL)
+        val retCode =
+            callFunc("vkCreateQueryPool", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL)
         return if (retCode == VK_SUCCESS) Result.success(VkQueryPool(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyQueryPool(device: VkDevice, queryPool: VkQueryPool, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyQueryPool", device, queryPool, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyQueryPool", device, queryPool, allocator?.ref() ?: MemorySegment.NULL)
 
     fun <T> vkGetQueryPoolResults(device: VkDevice, queryPool: VkQueryPool, firstQuery: Int, queryCount: Int, data: IHeapVar<T>, stride: Long, flags: Int): Int =
         callFunc("vkGetQueryPoolResults", Int::class, device, queryPool, firstQuery, queryCount, data, stride, flags)
 
     fun vkCreateBuffer(device: VkDevice, createInfo: VkBufferCreateInfo, allocator: VkAllocationCallbacks?): Result<VkBuffer, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateBuffer", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode =
+            callFunc("vkCreateBuffer", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL, seg)
         return if (retCode == VK_SUCCESS) Result.success(VkBuffer(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyBuffer(device: VkDevice, buffer: VkBuffer, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyBuffer", device, buffer, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyBuffer", device, buffer, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkCreateBufferView(device: VkDevice, createInfo: VkBufferViewCreateInfo, allocator: VkAllocationCallbacks?): Result<VkBufferView, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateBufferView", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode =
+            callFunc("vkCreateBufferView", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL, seg)
         return if (retCode == VK_SUCCESS) Result.success(VkBufferView(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyBufferView(device: VkDevice, bufferView: VkBufferView, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyBufferView", device, bufferView, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyBufferView", device, bufferView, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkCreateImage(device: VkDevice, createInfo: VkImageCreateInfo, allocator: VkAllocationCallbacks?): Result<VkImage, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateImage", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode =
+            callFunc("vkCreateImage", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL, seg)
         return if (retCode == VK_SUCCESS) Result.success(VkImage(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyImage(device: VkDevice, image: VkImage, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyImage", device, image, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyImage", device, image, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkGetImageSubresourceLayout(device: VkDevice, image: VkImage, subresource: VkImageSubresource): VkSubresourceLayout {
         val seg = Arena.ofAuto().allocate(40L)
@@ -1048,30 +1063,45 @@ object Vk10Funcs {
 
     fun vkCreateImageView(device: VkDevice, createInfo: VkImageViewCreateInfo, allocator: VkAllocationCallbacks?): Result<VkImageView, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateImageView", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode =
+            callFunc("vkCreateImageView", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL, seg)
         return if (retCode == VK_SUCCESS) Result.success(VkImageView(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyImageView(device: VkDevice, imageView: VkImageView, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyImageView", device, imageView, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyImageView", device, imageView, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkCreateShaderModule(device: VkDevice, createInfo: VkShaderModuleCreateInfo, allocator: VkAllocationCallbacks?): Result<VkShaderModule, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreateShaderModule", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode = callFunc(
+            "vkCreateShaderModule",
+            Int::class,
+            device,
+            createInfo,
+            allocator?.ref() ?: MemorySegment.NULL,
+            seg
+        )
         return if (retCode == VK_SUCCESS) Result.success(VkShaderModule(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyShaderModule(device: VkDevice, shaderModule: VkShaderModule, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyShaderModule", device, shaderModule, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyShaderModule", device, shaderModule, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkCreatePipelineCache(device: VkDevice, createInfo: VkPipelineCacheCreateInfo, allocator: VkAllocationCallbacks?): Result<VkPipelineCache, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkCreatePipelineCache", Int::class, device, createInfo, allocator?.pointer()?: MemorySegment.NULL, seg)
+        val retCode = callFunc(
+            "vkCreatePipelineCache",
+            Int::class,
+            device,
+            createInfo,
+            allocator?.ref() ?: MemorySegment.NULL,
+            seg
+        )
         return if (retCode == VK_SUCCESS) Result.success(VkPipelineCache(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyPipelineCache(device: VkDevice, pipelineCache: VkPipelineCache, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyPipelineCache", device, pipelineCache, allocator?.pointer()?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyPipelineCache", device, pipelineCache, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkGetPipelineCacheData(device: VkDevice, pipelineCache: VkPipelineCache): Result<ByteBuffer, Int> {
         val size = HeapInt()
@@ -1106,7 +1136,7 @@ object Vk10Funcs {
             pipelineCache,
             createInfo.length,
             createInfo,
-            allocator?.pointer() ?: MemorySegment.NULL,
+            allocator?.ref() ?: MemorySegment.NULL,
             parr
         )
         return if (retCode == VK_SUCCESS) Result.success(
@@ -1128,7 +1158,7 @@ object Vk10Funcs {
             pipelineCache,
             createInfo.length,
             createInfo,
-            allocator?.pointer() ?: MemorySegment.NULL,
+            allocator?.ref() ?: MemorySegment.NULL,
             parr
         )
         return if (retCode == VK_SUCCESS) Result.success(
@@ -1137,7 +1167,7 @@ object Vk10Funcs {
     }
 
     fun vkDestroyPipeline(device: VkDevice, pipeline: VkPipeline, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyPipeline", device, pipeline, allocator?.pointer() ?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyPipeline", device, pipeline, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkCreatePipelineLayout(device: VkDevice, createInfo: VkPipelineLayoutCreateInfo, allocator: VkAllocationCallbacks?): Result<VkPipelineLayout, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
@@ -1146,14 +1176,14 @@ object Vk10Funcs {
             Int::class,
             device,
             createInfo,
-            allocator?.pointer() ?: MemorySegment.NULL,
+            allocator?.ref() ?: MemorySegment.NULL,
             seg
         )
         return if (retCode == VK_SUCCESS) Result.success(VkPipelineLayout(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyPipelineLayout(device: VkDevice, pipelineLayout: VkPipelineLayout, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyPipelineLayout", device, pipelineLayout, allocator?.pointer() ?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyPipelineLayout", device, pipelineLayout, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkCreateSampler(
         device: VkDevice,
@@ -1162,12 +1192,12 @@ object Vk10Funcs {
     ): Result<VkSampler, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode =
-            callFunc("vkCreateSampler", Int::class, device, createInfo, allocator?.pointer() ?: MemorySegment.NULL)
+            callFunc("vkCreateSampler", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL)
         return if (retCode == VK_SUCCESS) Result.success(VkSampler(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroySampler(device: VkDevice, sampler: VkSampler, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroySampler", device, sampler, allocator?.pointer() ?: MemorySegment.NULL)
+        callVoidFunc("vkDestroySampler", device, sampler, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkCreateDescriptorSetLayout(
         device: VkDevice,
@@ -1181,7 +1211,7 @@ object Vk10Funcs {
                 Int::class,
                 device,
                 createInfo,
-                allocator?.pointer() ?: MemorySegment.NULL
+                allocator?.ref() ?: MemorySegment.NULL
             )
         return if (retCode == VK_SUCCESS) Result.success(VkDescriptorSetLayout(seg.get(ADDRESS, 0))) else Result.fail(
             retCode
@@ -1193,7 +1223,7 @@ object Vk10Funcs {
         layout: VkDescriptorSetLayout,
         allocator: VkAllocationCallbacks?
     ) =
-        callVoidFunc("vkDestroyDescriptorSetLayout", device, layout, allocator?.pointer() ?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyDescriptorSetLayout", device, layout, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkCreateDescriptorPool(
         device: VkDevice,
@@ -1206,7 +1236,7 @@ object Vk10Funcs {
             Int::class,
             device,
             createInfo,
-            allocator?.pointer() ?: MemorySegment.NULL
+            allocator?.ref() ?: MemorySegment.NULL
         )
         return if (retCode == VK_SUCCESS) Result.success(
             VkDescriptorPool(
@@ -1219,7 +1249,7 @@ object Vk10Funcs {
     }
 
     fun vkDestroyDescriptorPool(device: VkDevice, pool: VkDescriptorPool, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyDescriptorPool", device, pool, allocator?.pointer() ?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyDescriptorPool", device, pool, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkResetDescriptorPool(device: VkDevice, pool: VkDescriptorPool, flags: Int): Int =
         callFunc("vkResetDescriptorPool", Int::class, device, pool, flags)
@@ -1264,14 +1294,14 @@ object Vk10Funcs {
             Int::class,
             device,
             createInfo,
-            allocator?.pointer() ?: MemorySegment.NULL,
+            allocator?.ref() ?: MemorySegment.NULL,
             seg
         )
         return if (retCode == VK_SUCCESS) Result.success(VkFramebuffer(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyFramebuffer(device: VkDevice, framebuffer: VkFramebuffer, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyFramebuffer", device, framebuffer, allocator?.pointer() ?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyFramebuffer", device, framebuffer, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkCreateRenderPass(
         device: VkDevice,
@@ -1280,12 +1310,12 @@ object Vk10Funcs {
     ): Result<VkRenderPass, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode =
-            callFunc("vkCreateRenderPass", Int::class, device, createInfo, allocator?.pointer() ?: MemorySegment.NULL)
+            callFunc("vkCreateRenderPass", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL)
         return if (retCode == VK_SUCCESS) Result.success(VkRenderPass(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyRenderPass(device: VkDevice, renderPass: VkRenderPass, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyRenderPass", device, renderPass, allocator?.pointer() ?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyRenderPass", device, renderPass, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkGetRenderAreaGranularity(device: VkDevice, renderPass: VkRenderPass): Vector2i {
         val seg = Arena.ofAuto().allocate(4 * 2)
@@ -1304,14 +1334,14 @@ object Vk10Funcs {
             Int::class,
             device,
             createInfo,
-            allocator?.pointer() ?: MemorySegment.NULL,
+            allocator?.ref() ?: MemorySegment.NULL,
             seg
         )
         return if (retCode == VK_SUCCESS) Result.success(VkCommandPool(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
     fun vkDestroyCommandPool(device: VkDevice, commandPool: VkCommandPool, allocator: VkAllocationCallbacks?) =
-        callVoidFunc("vkDestroyCommandPool", device, commandPool, allocator?.pointer() ?: MemorySegment.NULL)
+        callVoidFunc("vkDestroyCommandPool", device, commandPool, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkResetCommandPool(device: VkDevice, commandPool: VkCommandPool, flags: Int): Int =
         callFunc("vkResetCommandPool", Int::class, device, commandPool, flags)

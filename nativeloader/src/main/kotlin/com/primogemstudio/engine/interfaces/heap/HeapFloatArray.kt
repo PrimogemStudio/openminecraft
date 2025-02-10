@@ -13,9 +13,7 @@ class HeapFloatArray(val length: Int, private val seg: MemorySegment) : IHeapVar
     }
 
     override fun ref(): MemorySegment = seg
-    override fun value(): FloatArray {
-        TODO("Unsupported operation!")
-    }
+    override fun value(): FloatArray = (0..<length).map { this[it] }.toFloatArray()
 
     operator fun get(idx: Int): Float = seg.get(JAVA_FLOAT, 4L * idx)
     operator fun set(idx: Int, value: Float) = seg.set(JAVA_FLOAT, 4L * idx, value)

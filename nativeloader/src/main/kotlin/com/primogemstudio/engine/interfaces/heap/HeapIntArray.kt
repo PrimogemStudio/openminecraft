@@ -13,9 +13,7 @@ class HeapIntArray(val length: Int, private val seg: MemorySegment) : IHeapVar<I
     }
 
     override fun ref(): MemorySegment = seg
-    override fun value(): IntArray {
-        TODO("Unsupported operation!")
-    }
+    override fun value(): IntArray = (0..<length).map { this[it] }.toIntArray()
 
     operator fun get(idx: Int): Int = seg.get(JAVA_INT, 4L * idx)
     operator fun set(idx: Int, value: Int) = seg.set(JAVA_INT, 4L * idx, value)
