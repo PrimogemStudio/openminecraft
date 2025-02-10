@@ -1,6 +1,9 @@
 package com.primogemstudio.engine.bindings.vulkan.core
 
-import com.primogemstudio.engine.bindings.vulkan.*
+import com.primogemstudio.engine.bindings.vulkan.VkGraphicsPipelineCreateInfo
+import com.primogemstudio.engine.bindings.vulkan.VkImageCreateInfo
+import com.primogemstudio.engine.bindings.vulkan.VkSamplerCreateInfo
+import com.primogemstudio.engine.bindings.vulkan.VkSubmitInfo
 import com.primogemstudio.engine.bindings.vulkan.memory.VkAllocationCallbacks
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
@@ -770,8 +773,11 @@ object Vk10Funcs {
         return if (retCode == VK_SUCCESS) Result.success(prop) else Result.fail(retCode)
     }
 
-    fun vkGetPhysicalDeviceProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceProperties =
-        VkPhysicalDeviceProperties().apply { callVoidFunc("vkGetPhysicalDeviceProperties", physicalDevice, this) }
+    fun vkGetPhysicalDeviceProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceProperties {
+        val seg = Arena.ofAuto().allocate(VkPhysicalDeviceProperties.LAYOUT)
+        callVoidFunc("vkGetPhysicalDeviceProperties", physicalDevice, seg)
+        return VkPhysicalDeviceProperties(seg)
+    }
 
     fun vkGetPhysicalDeviceQueueFamilyProperties(
         physicalDevice: VkPhysicalDevice

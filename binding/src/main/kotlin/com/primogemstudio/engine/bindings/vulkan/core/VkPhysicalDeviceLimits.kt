@@ -1,12 +1,13 @@
-package com.primogemstudio.engine.bindings.vulkan
+package com.primogemstudio.engine.bindings.vulkan.core
 
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
 
-class VkPhysicalDeviceLimits(private val seg: MemorySegment) : IHeapVar<MemorySegment> {
-    override fun ref(): MemorySegment = seg
-    override fun value(): MemorySegment = seg
+class VkPhysicalDeviceLimits(private val seg: MemorySegment) : IHeapObject(seg) {
+    companion object {
+        val size = 504L
+    }
 
     val maxImageDimension1D: UInt get() = seg.get(JAVA_INT, 0).toUInt()
     val maxImageDimension2D: UInt get() = seg.get(JAVA_INT, 4).toUInt()
