@@ -74,7 +74,7 @@ class VkGraphicsPipelineCreateInfo(
         seg.set(ADDRESS, OFFSETS[10], multisample?.pointer() ?: MemorySegment.NULL)
         seg.set(ADDRESS, OFFSETS[11], depthStencil?.ref() ?: MemorySegment.NULL)
         seg.set(ADDRESS, OFFSETS[12], colorBlend?.pointer() ?: MemorySegment.NULL)
-        seg.set(ADDRESS, OFFSETS[13], dynamic?.pointer() ?: MemorySegment.NULL)
+        seg.set(ADDRESS, OFFSETS[13], dynamic?.ref() ?: MemorySegment.NULL)
         seg.set(ADDRESS, OFFSETS[14], layout.ref())
         seg.set(ADDRESS, OFFSETS[15], renderPass.ref())
         seg.set(JAVA_INT, OFFSETS[16], subpass)

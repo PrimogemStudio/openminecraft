@@ -1237,15 +1237,15 @@ object Vk10Funcs {
 
     fun vkUpdateDescriptorSets(
         device: VkDevice,
-        writes: ArrayStruct<VkWriteDescriptorSet>,
-        copies: ArrayStruct<VkCopyDescriptorSet>
+        writes: HeapStructArray<VkWriteDescriptorSet>,
+        copies: HeapStructArray<VkCopyDescriptorSet>
     ): Int =
         callFunc(
             "vkUpdateDescriptorSets",
             Int::class,
             device,
-            writes.arr.size,
-            copies.arr.size,
+            writes.length,
+            copies.length,
             writes,
             copies
         )
