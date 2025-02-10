@@ -780,10 +780,10 @@ object Vk10Funcs {
         val count = HeapInt()
         callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, MemorySegment.NULL)
 
-        val seg = Arena.ofAuto().allocate(24L * count.value())
-        callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, seg)
+        val sarr = HeapStructArray<VkQueueFamilyProperties>(VkQueueFamilyProperties.LAYOUT, count.value())
+        callVoidFunc("vkGetPhysicalDeviceQueueFamilyProperties", physicalDevice, count, sarr.ref())
 
-        return seg.fromCStructArray(count.value(), 24) { VkQueueFamilyProperties(it) }.toTypedArray()
+        return (0..<count.value()).map { VkQueueFamilyProperties(sarr[it]) }.toTypedArray()
     }
 
     fun vkGetPhysicalDeviceMemoryProperties(physicalDevice: VkPhysicalDevice): VkPhysicalDeviceMemoryProperties =
@@ -819,11 +819,12 @@ object Vk10Funcs {
         callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        val seg = Arena.ofAuto().allocate(260L * count.value())
-        callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, seg).apply {
+        val sarr = HeapStructArray<VkExtensionProperties>(VkExtensionProperties.LAYOUT, count.value())
+        callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, sarr.ref()).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Result.success(seg.fromCStructArray(count.value(), 260) { VkExtensionProperties(it) }.toTypedArray())
+
+        return Result.success((0..<count.value()).map { VkExtensionProperties(sarr[it]) }.toTypedArray())
     }
 
     fun vkEnumerateDeviceExtensionProperties(physicalDevice: VkPhysicalDevice, layerName: String): Result<Array<VkExtensionProperties>, Int> {
@@ -831,11 +832,18 @@ object Vk10Funcs {
         callFunc("vkEnumerateDeviceExtensionProperties", Int::class, physicalDevice, layerName, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        val seg = Arena.ofAuto().allocate(260L * count.value())
-        callFunc("vkEnumerateDeviceExtensionProperties", Int::class, physicalDevice, layerName, count, seg).apply {
+        val sarr = HeapStructArray<VkExtensionProperties>(VkExtensionProperties.LAYOUT, count.value())
+        callFunc(
+            "vkEnumerateDeviceExtensionProperties",
+            Int::class,
+            physicalDevice,
+            layerName,
+            count,
+            sarr.ref()
+        ).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Result.success(seg.fromCStructArray(count.value(), 260) { VkExtensionProperties(it) }.toTypedArray())
+        return Result.success((0..<count.value()).map { VkExtensionProperties(sarr[it]) }.toTypedArray())
     }
 
     fun vkEnumerateInstanceLayerProperties(): Result<Array<VkLayerProperties>, Int> {
@@ -843,11 +851,11 @@ object Vk10Funcs {
         callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        val seg = Arena.ofAuto().allocate(520L * count.value())
-        callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, seg).apply {
+        val sarr = HeapStructArray<VkLayerProperties>(VkLayerProperties.LAYOUT, count.value())
+        callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, sarr.ref()).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Result.success(seg.fromCStructArray(count.value(), 520) { VkLayerProperties(it) }.toTypedArray())
+        return Result.success((0..<count.value()).map { VkLayerProperties(sarr[it]) }.toTypedArray())
     }
 
     fun vkEnumerateDeviceLayerProperties(physicalDevice: VkPhysicalDevice): Result<Array<VkLayerProperties>, Int> {
@@ -855,11 +863,11 @@ object Vk10Funcs {
         callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, MemorySegment.NULL).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        val seg = Arena.ofAuto().allocate(520L * count.value())
-        callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, seg).apply {
+        val sarr = HeapStructArray<VkLayerProperties>(VkLayerProperties.LAYOUT, count.value())
+        callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, sarr.ref()).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Result.success(seg.fromCStructArray(count.value(), 520) { VkLayerProperties(it) }.toTypedArray())
+        return Result.success((0..<count.value()).map { VkLayerProperties(sarr[it]) }.toTypedArray())
     }
 
     fun vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: Int, queueIndex: Int): Result<VkQueue, Int> {
@@ -1096,21 +1104,21 @@ object Vk10Funcs {
     fun vkCreateComputePipelines(
         device: VkDevice,
         pipelineCache: VkPipelineCache,
-        createInfo: ArrayStruct<VkComputePipelineCreateInfo>,
+        createInfo: HeapStructArray<VkComputePipelineCreateInfo>,
         allocator: VkAllocationCallbacks?
     ): Result<Array<VkPipeline>, Int> {
-        val seg = Arena.ofAuto().allocate(createInfo.arr.size * sizetLength() * 1L)
+        val seg = Arena.ofAuto().allocate(createInfo.length * sizetLength() * 1L)
         val retCode = callFunc(
             "vkCreateComputePipelines",
             Int::class,
             device,
             pipelineCache,
-            createInfo.arr.size,
+            createInfo.length,
             createInfo,
             allocator?.pointer() ?: MemorySegment.NULL,
             seg
         )
-        return if (retCode == VK_SUCCESS) Result.success(seg.toPointerArray(createInfo.arr.size).map { VkPipeline(it) }
+        return if (retCode == VK_SUCCESS) Result.success(seg.toPointerArray(createInfo.length).map { VkPipeline(it) }
             .toTypedArray()) else Result.fail(retCode)
     }
 
