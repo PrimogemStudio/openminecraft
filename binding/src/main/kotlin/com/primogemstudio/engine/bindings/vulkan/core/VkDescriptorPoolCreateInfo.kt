@@ -10,7 +10,7 @@ import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
 
-class VkDescriptorPoolCreateInfo(private var seg: MemorySegment) : IHeapObject(seg) {
+class VkDescriptorPoolCreateInfo(private val seg: MemorySegment) : IHeapObject(seg) {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
             JAVA_INT_UNALIGNED,

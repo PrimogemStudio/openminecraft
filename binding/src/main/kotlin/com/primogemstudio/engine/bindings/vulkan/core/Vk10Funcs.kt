@@ -1,15 +1,10 @@
 package com.primogemstudio.engine.bindings.vulkan.core
 
-import com.primogemstudio.engine.bindings.vulkan.VkGraphicsPipelineCreateInfo
-import com.primogemstudio.engine.bindings.vulkan.VkImageCreateInfo
-import com.primogemstudio.engine.bindings.vulkan.VkSamplerCreateInfo
-import com.primogemstudio.engine.bindings.vulkan.VkSubmitInfo
 import com.primogemstudio.engine.bindings.vulkan.memory.VkAllocationCallbacks
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.heap.*
-import com.primogemstudio.engine.interfaces.struct.ArrayStruct
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.interfaces.toPointerArray
 import com.primogemstudio.engine.loader.Platform.sizetLength
@@ -881,8 +876,8 @@ object Vk10Funcs {
         return if (retCode == VK_SUCCESS) Result.success(VkQueue(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
-    fun vkQueueSubmit(queue: VkQueue, submits: ArrayStruct<VkSubmitInfo>, fence: VkFence): Int =
-        callFunc("vkQueueSubmit", Int::class, queue, submits.arr.size, submits, fence)
+    fun vkQueueSubmit(queue: VkQueue, submits: HeapStructArray<VkSubmitInfo>, fence: VkFence): Int =
+        callFunc("vkQueueSubmit", Int::class, queue, submits.length, submits, fence)
 
     fun vkQueueWaitIdle(queue: VkQueue): Int =
         callFunc("vkQueueWaitIdle", Int::class, queue)
@@ -1100,22 +1095,23 @@ object Vk10Funcs {
     fun vkCreateGraphicsPipelines(
         device: VkDevice,
         pipelineCache: VkPipelineCache,
-        createInfo: ArrayStruct<VkGraphicsPipelineCreateInfo>,
+        createInfo: HeapStructArray<VkGraphicsPipelineCreateInfo>,
         allocator: VkAllocationCallbacks?
     ): Result<Array<VkPipeline>, Int> {
-        val seg = Arena.ofAuto().allocate(createInfo.arr.size * sizetLength() * 1L)
+        val parr = HeapPointerArray<VkPipeline>(createInfo.length)
         val retCode = callFunc(
             "vkCreateGraphicsPipelines",
             Int::class,
             device,
             pipelineCache,
-            createInfo.arr.size,
+            createInfo.length,
             createInfo,
             allocator?.pointer() ?: MemorySegment.NULL,
-            seg
+            parr
         )
-        return if (retCode == VK_SUCCESS) Result.success(seg.toPointerArray(createInfo.arr.size).map { VkPipeline(it) }
-            .toTypedArray()) else Result.fail(retCode)
+        return if (retCode == VK_SUCCESS) Result.success(
+            parr.ref().toPointerArray(createInfo.length).map { VkPipeline(it) }.toTypedArray()
+        ) else Result.fail(retCode)
     }
 
     fun vkCreateComputePipelines(
@@ -1124,7 +1120,7 @@ object Vk10Funcs {
         createInfo: HeapStructArray<VkComputePipelineCreateInfo>,
         allocator: VkAllocationCallbacks?
     ): Result<Array<VkPipeline>, Int> {
-        val seg = Arena.ofAuto().allocate(createInfo.length * sizetLength() * 1L)
+        val parr = HeapPointerArray<VkPipeline>(createInfo.length)
         val retCode = callFunc(
             "vkCreateComputePipelines",
             Int::class,
@@ -1133,10 +1129,11 @@ object Vk10Funcs {
             createInfo.length,
             createInfo,
             allocator?.pointer() ?: MemorySegment.NULL,
-            seg
+            parr
         )
-        return if (retCode == VK_SUCCESS) Result.success(seg.toPointerArray(createInfo.length).map { VkPipeline(it) }
-            .toTypedArray()) else Result.fail(retCode)
+        return if (retCode == VK_SUCCESS) Result.success(
+            parr.ref().toPointerArray(createInfo.length).map { VkPipeline(it) }.toTypedArray()
+        ) else Result.fail(retCode)
     }
 
     fun vkDestroyPipeline(device: VkDevice, pipeline: VkPipeline, allocator: VkAllocationCallbacks?) =
@@ -1231,10 +1228,10 @@ object Vk10Funcs {
         device: VkDevice,
         createInfo: VkDescriptorSetAllocateInfo
     ): Result<Array<VkDescriptorSet>, Int> {
-        val seg = Arena.ofAuto().allocate(createInfo.count() * sizetLength() * 1L)
-        val retCode = callFunc("vkAllocateDescriptorSets", Int::class, device, createInfo, seg)
+        val parr = HeapPointerArray<VkDescriptorSet>(createInfo.count())
+        val retCode = callFunc("vkAllocateDescriptorSets", Int::class, device, createInfo, parr)
         return if (retCode == VK_SUCCESS) Result.success(
-            seg.toPointerArray(createInfo.count()).map { VkDescriptorSet(it) }.toTypedArray()
+            parr.ref().toPointerArray(createInfo.count()).map { VkDescriptorSet(it) }.toTypedArray()
         ) else Result.fail(retCode)
     }
 
@@ -1323,10 +1320,10 @@ object Vk10Funcs {
         device: VkDevice,
         createInfo: VkCommandBufferAllocateInfo
     ): Result<Array<VkCommandBuffer>, Int> {
-        val seg = Arena.ofAuto().allocate(createInfo.count() * sizetLength() * 1L)
-        val retCode = callFunc("vkAllocateCommandBuffers", Int::class, device, createInfo, seg)
+        val parr = HeapPointerArray<VkCommandBuffer>(createInfo.count())
+        val retCode = callFunc("vkAllocateCommandBuffers", Int::class, device, createInfo, parr)
         return if (retCode == VK_SUCCESS) Result.success(
-            seg.toPointerArray(createInfo.count()).map { VkCommandBuffer(it) }.toTypedArray()
+            parr.ref().toPointerArray(createInfo.count()).map { VkCommandBuffer(it) }.toTypedArray()
         ) else Result.fail(retCode)
     }
 
