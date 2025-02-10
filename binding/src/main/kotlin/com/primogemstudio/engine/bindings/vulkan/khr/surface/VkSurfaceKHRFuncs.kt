@@ -3,8 +3,12 @@ package com.primogemstudio.engine.bindings.vulkan.khr.surface
 import com.primogemstudio.engine.bindings.vulkan.memory.VkAllocationCallbacks
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUCCESS
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
+import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDevice
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.interfaces.heap.HeapInt
+import com.primogemstudio.engine.interfaces.heap.HeapIntArray
+import com.primogemstudio.engine.interfaces.heap.HeapStructArray
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.types.Result
 import java.lang.foreign.Arena
@@ -51,5 +55,58 @@ object VkSurfaceKHRFuncs {
         val retCode =
             callFunc("vkGetPhysicalDeviceSurfaceSupportKHR", Int::class, instance, queueFamilyIndex, surface, seg)
         return if (retCode == VK_SUCCESS) Result.success(seg.get(JAVA_INT, 0) != 0) else Result.fail(retCode)
+    }
+
+    fun vkGetPhysicalDeviceSurfaceCapabilitiesKHR(
+        physicalDevice: VkPhysicalDevice,
+        surface: VkSurfaceKHR
+    ): Result<VkSurfaceCapabilitiesKHR, Int> {
+        val seg = Arena.ofAuto().allocate(VkSurfaceCapabilitiesKHR.LAYOUT)
+        val retCode = callFunc("vkGetPhysicalDeviceSurfaceCapabilitiesKHR", Int::class, physicalDevice, surface, seg)
+        return if (retCode == VK_SUCCESS) Result.success(VkSurfaceCapabilitiesKHR(seg)) else Result.fail(retCode)
+    }
+
+    fun vkGetPhysicalDeviceSurfaceFormatsKHR(
+        physicalDevice: VkPhysicalDevice,
+        surface: VkSurfaceKHR
+    ): Result<Array<VkSurfaceCapabilitiesKHR>, Int> {
+        val count = HeapInt()
+        callFunc(
+            "vkGetPhysicalDeviceSurfaceFormatsKHR",
+            Int::class,
+            physicalDevice,
+            surface,
+            count,
+            MemorySegment.NULL
+        ).apply {
+            if (this != VK_SUCCESS) return Result.fail(this)
+        }
+        val sarr = HeapStructArray<VkSurfaceCapabilitiesKHR>(VkSurfaceCapabilitiesKHR.LAYOUT, count.value())
+        callFunc("vkGetPhysicalDeviceSurfaceFormatsKHR", Int::class, physicalDevice, surface, count, sarr).apply {
+            if (this != VK_SUCCESS) return Result.fail(this)
+        }
+        return Result.success((0..<count.value()).map { VkSurfaceCapabilitiesKHR(sarr[it]) }.toTypedArray())
+    }
+
+    fun vkGetPhysicalDeviceSurfacePresentModesKHR(
+        physicalDevice: VkPhysicalDevice,
+        surface: VkSurfaceKHR
+    ): Result<IntArray, Int> {
+        val count = HeapInt()
+        callFunc(
+            "vkGetPhysicalDeviceSurfacePresentModesKHR",
+            Int::class,
+            physicalDevice,
+            surface,
+            count,
+            MemorySegment.NULL
+        ).apply {
+            if (this != VK_SUCCESS) return Result.fail(this)
+        }
+        val iarr = HeapIntArray(count.value())
+        callFunc("vkGetPhysicalDeviceSurfacePresentModesKHR", Int::class, physicalDevice, surface, count, iarr).apply {
+            if (this != VK_SUCCESS) return Result.fail(this)
+        }
+        return Result.success(iarr.value())
     }
 }

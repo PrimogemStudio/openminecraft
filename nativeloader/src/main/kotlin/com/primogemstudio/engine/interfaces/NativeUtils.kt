@@ -54,10 +54,6 @@ fun MemorySegment.toFloatArray(length: Int): FloatArray =
 fun MemorySegment.toByteArray(length: Int): ByteArray =
     (0..<length).map { this.reinterpret(length * 1L).get(JAVA_BYTE, it * 1L) }.toByteArray()
 
-fun FloatArray.toCFloatArray(): MemorySegment = Arena.ofAuto().allocate(4L * size).apply {
-    this@toCFloatArray.indices.forEach { this.set(JAVA_FLOAT, 4L * it, this@toCFloatArray[it]) }
-}
-
 fun StructLayout.cacheOffsets(): LongArray =
     (0..<this.memberLayouts().size).map { this.byteOffset(MemoryLayout.PathElement.groupElement(it.toLong())) }
         .toLongArray()

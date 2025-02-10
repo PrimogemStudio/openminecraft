@@ -17,7 +17,7 @@ class HeapStructArray<T : IHeapVar<*>>(
 
     constructor(layout: MemoryLayout, length: Int) : this(
         length,
-        Arena.ofAuto().allocate(MemoryLayout.sequenceLayout(length.toLong(), layout)),
+        Arena.ofAuto().allocate(length.toLong() * layout.byteSize()),
         layout
     )
 

@@ -859,7 +859,7 @@ object Vk10Funcs {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
         val sarr = HeapStructArray<VkLayerProperties>(VkLayerProperties.LAYOUT, count.value())
-        callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, sarr.ref()).apply {
+        callFunc("vkEnumerateInstanceLayerProperties", Int::class, count, sarr).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
         return Result.success((0..<count.value()).map { VkLayerProperties(sarr[it]) }.toTypedArray())
@@ -871,7 +871,7 @@ object Vk10Funcs {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
         val sarr = HeapStructArray<VkLayerProperties>(VkLayerProperties.LAYOUT, count.value())
-        callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, sarr.ref()).apply {
+        callFunc("vkEnumerateDeviceLayerProperties", Int::class, physicalDevice, count, sarr).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
         return Result.success((0..<count.value()).map { VkLayerProperties(sarr[it]) }.toTypedArray())
