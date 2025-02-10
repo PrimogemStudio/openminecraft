@@ -1,0 +1,31 @@
+package com.primogemstudio.engine.bindings.vulkan.khr.swapchain
+
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import java.lang.foreign.MemorySegment
+
+class VkSwapchainKHR(private val seg: MemorySegment) : IHeapObject(seg)
+
+object VkSwapchainKHRFuncs {
+    const val VK_KHR_SWAPCHAIN_SPEC_VERSION: Int = 70
+    const val VK_KHR_SWAPCHAIN_EXTENSION_NAME: String = "VK_KHR_swapchain"
+    const val VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR: Int = 1000001000
+    const val VK_STRUCTURE_TYPE_PRESENT_INFO_KHR: Int = 1000001001
+    const val VK_IMAGE_LAYOUT_PRESENT_SRC_KHR: Int = 1000001002
+    const val VK_SUBOPTIMAL_KHR: Int = 1000001003
+    const val VK_ERROR_OUT_OF_DATE_KHR: Int = -1000001004
+    const val VK_OBJECT_TYPE_SWAPCHAIN_KHR: Int = 1000001000
+    const val VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_CAPABILITIES_KHR: Int = 1000060007
+    const val VK_STRUCTURE_TYPE_IMAGE_SWAPCHAIN_CREATE_INFO_KHR: Int = 1000060008
+    const val VK_STRUCTURE_TYPE_BIND_IMAGE_MEMORY_SWAPCHAIN_INFO_KHR: Int = 1000060009
+    const val VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR: Int = 1000060010
+    const val VK_STRUCTURE_TYPE_DEVICE_GROUP_PRESENT_INFO_KHR: Int = 1000060011
+    const val VK_STRUCTURE_TYPE_DEVICE_GROUP_SWAPCHAIN_CREATE_INFO_KHR: Int = 1000060012
+    const val VK_SWAPCHAIN_CREATE_SPLIT_INSTANCE_BIND_REGIONS_BIT_KHR: Int = 1
+    const val VK_SWAPCHAIN_CREATE_PROTECTED_BIT_KHR: Int = 2
+    const val VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_BIT_KHR: Int = 1
+    const val VK_DEVICE_GROUP_PRESENT_MODE_REMOTE_BIT_KHR: Int = 2
+    const val VK_DEVICE_GROUP_PRESENT_MODE_SUM_BIT_KHR: Int = 4
+    const val VK_DEVICE_GROUP_PRESENT_MODE_LOCAL_MULTI_DEVICE_BIT_KHR: Int = 8
+
+
+}
