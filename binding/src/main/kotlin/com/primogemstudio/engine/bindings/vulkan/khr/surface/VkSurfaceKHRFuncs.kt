@@ -47,13 +47,13 @@ object VkSurfaceKHRFuncs {
         callVoidFunc("vkDestroySurfaceKHR", instance, surface, allocator?.ref() ?: MemorySegment.NULL)
 
     fun vkGetPhysicalDeviceSurfaceSupportKHR(
-        instance: VkInstance,
+        physicalDevice: VkPhysicalDevice,
         queueFamilyIndex: Int,
         surface: VkSurfaceKHR
     ): Result<Boolean, Int> {
         val seg = Arena.ofAuto().allocate(JAVA_INT)
         val retCode =
-            callFunc("vkGetPhysicalDeviceSurfaceSupportKHR", Int::class, instance, queueFamilyIndex, surface, seg)
+            callFunc("vkGetPhysicalDeviceSurfaceSupportKHR", Int::class, physicalDevice, queueFamilyIndex, surface, seg)
         return if (retCode == VK_SUCCESS) Result.success(seg.get(JAVA_INT, 0) != 0) else Result.fail(retCode)
     }
 

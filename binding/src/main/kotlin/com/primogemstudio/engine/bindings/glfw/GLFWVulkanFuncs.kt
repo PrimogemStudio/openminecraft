@@ -39,10 +39,17 @@ object GLFWVulkanFuncs {
     fun glfwCreateWindowSurface(
         instance: VkInstance,
         window: GLFWWindow,
-        allocator: VkAllocationCallbacks
+        allocator: VkAllocationCallbacks?
     ): Result<VkSurfaceKHR, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("glfwCreateWindowSurface", Int::class, instance, window, allocator.ref(), seg)
-        return if (retCode != VK_SUCCESS) Result.success(VkSurfaceKHR(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+        val retCode = callFunc(
+            "glfwCreateWindowSurface",
+            Int::class,
+            instance,
+            window,
+            allocator?.ref() ?: MemorySegment.NULL,
+            seg
+        )
+        return if (retCode == VK_SUCCESS) Result.success(VkSurfaceKHR(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 }
