@@ -1,5 +1,6 @@
 package com.primogemstudio.engine.bindings.vulkan.core
 
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
@@ -24,7 +25,9 @@ class VkCommandBufferInheritanceInfo(private val seg: MemorySegment) : IHeapObje
         private val OFFSETS = LAYOUT.cacheOffsets()
     }
 
-    constructor() : this(Arena.ofAuto().allocate(LAYOUT))
+    constructor() : this(Arena.ofAuto().allocate(LAYOUT)) {
+        sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_INHERITANCE_INFO
+    }
 
     var sType: Int
         get() = seg.get(JAVA_INT, OFFSETS[0])

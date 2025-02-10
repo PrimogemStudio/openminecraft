@@ -1,31 +1,31 @@
 package com.primogemstudio.engine.bindings.vulkan.core
 
-import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.heap.HeapStructArray
+import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
 
-class VkDescriptorPoolCreateInfo(private var seg: MemorySegment) : IHeapObject(seg) {
+class VkFramebufferCreateInfo(private val seg: MemorySegment) : IHeapObject(seg) {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
             JAVA_INT_UNALIGNED,
             ADDRESS_UNALIGNED,
             JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
             JAVA_INT_UNALIGNED,
             JAVA_INT_UNALIGNED,
-            ADDRESS_UNALIGNED
+            JAVA_INT_UNALIGNED
         ).align()
         private val OFFSETS = LAYOUT.cacheOffsets()
     }
 
-    constructor() : this(Arena.ofAuto().allocate(LAYOUT)) {
-        sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO
-    }
+    constructor() : this(Arena.ofAuto().allocate(LAYOUT))
 
     var sType: Int
         get() = seg.get(JAVA_INT, OFFSETS[0])
@@ -36,17 +36,25 @@ class VkDescriptorPoolCreateInfo(private var seg: MemorySegment) : IHeapObject(s
     var flag: Int
         get() = seg.get(JAVA_INT, OFFSETS[2])
         set(value) = seg.set(JAVA_INT, OFFSETS[2], value)
-    var maxSets: Int
-        get() = seg.get(JAVA_INT, OFFSETS[3])
-        set(value) = seg.set(JAVA_INT, OFFSETS[3], value)
-    var poolSizes: HeapStructArray<VkDescriptorPoolSize>
-        get() = HeapStructArray(
+    var renderPass: VkRenderPass
+        get() = VkRenderPass(seg.get(ADDRESS, OFFSETS[3]))
+        set(value) = seg.set(ADDRESS, OFFSETS[3], value.ref())
+    var attachments: HeapPointerArray<VkImageView>
+        get() = HeapPointerArray(
             seg.get(JAVA_INT, OFFSETS[4]),
-            seg.get(ADDRESS, OFFSETS[5]),
-            VkDescriptorPoolSize.LAYOUT
-        )
+            seg.get(ADDRESS, OFFSETS[5])
+        ) { VkImageView(it) }
         set(value) {
             seg.set(ADDRESS, OFFSETS[5], value.ref())
             seg.set(JAVA_INT, OFFSETS[4], value.length)
         }
+    var width: Int
+        get() = seg.get(JAVA_INT, OFFSETS[6])
+        set(value) = seg.set(JAVA_INT, OFFSETS[6], value)
+    var height: Int
+        get() = seg.get(JAVA_INT, OFFSETS[7])
+        set(value) = seg.set(JAVA_INT, OFFSETS[7], value)
+    var layers: Int
+        get() = seg.get(JAVA_INT, OFFSETS[8])
+        set(value) = seg.set(JAVA_INT, OFFSETS[8], value)
 }

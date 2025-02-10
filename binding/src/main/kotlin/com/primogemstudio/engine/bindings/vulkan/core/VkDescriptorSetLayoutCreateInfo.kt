@@ -1,5 +1,6 @@
 package com.primogemstudio.engine.bindings.vulkan.core
 
+import com.primogemstudio.engine.bindings.vulkan.core.Vk10Funcs.VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO
 import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.heap.HeapStructArray
@@ -21,7 +22,9 @@ class VkDescriptorSetLayoutCreateInfo(private val seg: MemorySegment) : IHeapObj
         private val OFFSETS = LAYOUT.cacheOffsets()
     }
 
-    constructor() : this(Arena.ofAuto().allocate(LAYOUT))
+    constructor() : this(Arena.ofAuto().allocate(LAYOUT)) {
+        sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO
+    }
 
     var sType: Int
         get() = seg.get(JAVA_INT, OFFSETS[0])

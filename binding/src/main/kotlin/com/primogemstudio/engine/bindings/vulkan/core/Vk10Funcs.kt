@@ -899,11 +899,11 @@ object Vk10Funcs {
         return callFunc("vkMapMemory", Int::class, device, memory, offset, size, flags, seg)
     }
 
-    fun vkFlushMappedMemoryRanges(device: VkDevice, ranges: ArrayStruct<VkMappedMemoryRange>): Int =
-        callFunc("vkFlushMappedMemoryRanges", Int::class, device, ranges.arr.size, ranges)
+    fun vkFlushMappedMemoryRanges(device: VkDevice, ranges: HeapStructArray<VkMappedMemoryRange>): Int =
+        callFunc("vkFlushMappedMemoryRanges", Int::class, device, ranges.length, ranges)
 
-    fun vkInvalidateMappedMemoryRanges(device: VkDevice, ranges: ArrayStruct<VkMappedMemoryRange>): Int =
-        callFunc("vkInvalidateMappedMemoryRanges", Int::class, device, ranges.arr.size, ranges)
+    fun vkInvalidateMappedMemoryRanges(device: VkDevice, ranges: HeapStructArray<VkMappedMemoryRange>): Int =
+        callFunc("vkInvalidateMappedMemoryRanges", Int::class, device, ranges.length, ranges)
 
     fun vkGetDeviceMemoryCommitment(device: VkDevice, memory: VkDeviceMemory, committedMemoryInBytes: HeapLong) =
         callVoidFunc("vkGetDeviceMemoryCommitment", device, memory, committedMemoryInBytes)
