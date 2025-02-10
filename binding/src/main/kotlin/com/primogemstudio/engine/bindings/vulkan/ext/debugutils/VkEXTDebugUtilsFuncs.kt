@@ -18,7 +18,7 @@ import java.lang.foreign.ValueLayout.ADDRESS
 
 class VkDebugUtilsMessengerEXT(seg: MemorySegment) : IHeapObject(seg)
 
-object VkEXTDebugUtilsFuncs {
+object VkEXTDebugUtils {
     const val VK_EXT_DEBUG_UTILS_SPEC_VERSION: Int = 2
     const val VK_EXT_DEBUG_UTILS_EXTENSION_NAME: String = "VK_EXT_debug_utils"
     const val VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT: Int = 1000128000
