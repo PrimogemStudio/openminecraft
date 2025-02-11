@@ -1,17 +1,15 @@
 package com.primogemstudio.engine.interfaces
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
 import com.primogemstudio.engine.interfaces.heap.HeapStructArray
+import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.loader.Platform.sizetLength
-import java.lang.foreign.Arena
-import java.lang.foreign.MemoryLayout
-import java.lang.foreign.MemorySegment
-import java.lang.foreign.StructLayout
+import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.ADDRESS
 import java.lang.foreign.ValueLayout.JAVA_BYTE
 import kotlin.math.max
-import kotlin.math.min
 
 fun MemorySegment.fetchString(): String {
     val buf = reinterpret(callFunc("strlen", Int::class, this).toLong() + 1).asByteBuffer()
@@ -47,8 +45,7 @@ fun Array<String>.toCStrArray(): MemorySegment {
 }
 
 fun MemorySegment.toPointerArray(length: Int): Array<MemorySegment> =
-    (0..<length).map { this.reinterpret(length * sizetLength() * 1L).get(ADDRESS, it * sizetLength() * 1L) }
-        .toTypedArray()
+    HeapPointerArray<IHeapObject>(length, this, null).value()
 
 fun StructLayout.cacheOffsets(): LongArray =
     (0..<this.memberLayouts().size).map { this.byteOffset(MemoryLayout.PathElement.groupElement(it.toLong())) }
@@ -77,7 +74,10 @@ fun StructLayout.align(): StructLayout {
             ali = checkLayoutAlign(e)
         }
 
-        ali = min(8, ali)
+        if (e is PaddingLayout) {
+            ali = 1
+        }
+
         alignment = max(ali, alignment)
 
         if (size % ali != 0L) {

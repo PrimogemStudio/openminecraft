@@ -1140,7 +1140,7 @@ object Vk10Funcs {
             parr
         )
         return if (retCode == VK_SUCCESS) Result.success(
-            parr.ref().toPointerArray(createInfo.length).map { VkPipeline(it) }.toTypedArray()
+            parr.value().map { VkPipeline(it) }.toTypedArray()
         ) else Result.fail(retCode)
     }
 
@@ -1162,7 +1162,7 @@ object Vk10Funcs {
             parr
         )
         return if (retCode == VK_SUCCESS) Result.success(
-            parr.ref().toPointerArray(createInfo.length).map { VkPipeline(it) }.toTypedArray()
+            parr.value().map { VkPipeline(it) }.toTypedArray()
         ) else Result.fail(retCode)
     }
 
@@ -1261,7 +1261,7 @@ object Vk10Funcs {
         val parr = HeapPointerArray<VkDescriptorSet>(createInfo.count())
         val retCode = callFunc("vkAllocateDescriptorSets", Int::class, device, createInfo, parr)
         return if (retCode == VK_SUCCESS) Result.success(
-            parr.ref().toPointerArray(createInfo.count()).map { VkDescriptorSet(it) }.toTypedArray()
+            parr.value().map { VkDescriptorSet(it) }.toTypedArray()
         ) else Result.fail(retCode)
     }
 
@@ -1353,7 +1353,7 @@ object Vk10Funcs {
         val parr = HeapPointerArray<VkCommandBuffer>(createInfo.count())
         val retCode = callFunc("vkAllocateCommandBuffers", Int::class, device, createInfo, parr)
         return if (retCode == VK_SUCCESS) Result.success(
-            parr.ref().toPointerArray(createInfo.count()).map { VkCommandBuffer(it) }.toTypedArray()
+            parr.value().map { VkCommandBuffer(it) }.toTypedArray()
         ) else Result.fail(retCode)
     }
 

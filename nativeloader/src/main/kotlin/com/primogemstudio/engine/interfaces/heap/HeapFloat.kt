@@ -4,9 +4,8 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.JAVA_FLOAT
 
-class HeapFloat : IHeapVar<Float> {
-    private val arena = Arena.ofAuto()
-    private val seg = arena.allocate(JAVA_FLOAT)
+class HeapFloat(private val seg: MemorySegment) : IHeapVar<Float> {
+    constructor() : this(Arena.ofAuto().allocate(JAVA_FLOAT))
     override fun ref(): MemorySegment = seg
     override fun value(): Float = seg.get(JAVA_FLOAT, 0)
 

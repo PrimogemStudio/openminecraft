@@ -120,12 +120,12 @@ fun interface GLFWCharModsFun : IStub {
 }
 
 fun interface GLFWDropFun : IStub {
-    fun call(window: GLFWWindow, path_count: Int, paths: Array<String>)
-    fun call(window: MemorySegment, path_count: Int, paths: MemorySegment) =
+    fun call(window: GLFWWindow, pathCount: Int, paths: Array<String>)
+    fun call(window: MemorySegment, pathCount: Int, paths: MemorySegment) =
         call(
             GLFWWindow(window),
-            path_count,
-            paths.toPointerArray(path_count).map { it.fetchString() }.toTypedArray()
+            pathCount,
+            paths.toPointerArray(pathCount).map { it.fetchString() }.toTypedArray()
         )
 
     override fun register(): Pair<String, MethodType> =
