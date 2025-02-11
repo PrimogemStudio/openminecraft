@@ -1,12 +1,6 @@
-import java.io.OutputStreamWriter
-import java.nio.file.Files
 import java.util.*
-import kotlin.io.path.Path
 
 val sysin = Scanner(System.`in`)
-val f = OutputStreamWriter(Files.newOutputStream(Path("temp.txt")))
-
-Runtime.getRuntime().addShutdownHook(Thread { f.close() })
 
 val types = mapOf(
     Pair("b", "Byte"),
@@ -23,7 +17,16 @@ val types = mapOf(
     Pair("f[", "HeapFloatArray"),
     Pair("i[", "HeapIntArray"),
     Pair("l[", "HeapLongArray"),
-    Pair("s[", "HeapShortArray")
+    Pair("s[", "HeapShortArray"),
+    Pair("*b", "HeapByte"),
+    Pair("*c", "HeapChar"),
+    Pair("*s", "HeapShort"),
+    Pair("*i", "HeapInt"),
+    Pair("*f", "HeapFloat"),
+    Pair("*d", "HeapDouble"),
+    Pair("*z", "HeapBoolean"),
+    Pair("*l", "HeapLong"),
+    Pair("*", "MemorySegment")
 )
 
 fun remap(s: String): String {
@@ -34,9 +37,9 @@ fun remap(s: String): String {
 while (true) {
     val args = sysin.nextLine().split(",").map { it.split(".") }
 
-    val funname = args[0][1]
+    val funname = args[0][0]
+    val typen = remap(args[0][1])
     val ar = args.subList(1, args.size).map { "${it[0]}: ${remap(it[1])}" }.joinToString(", ")
     val call = args.subList(1, args.size).map { it[0] }.joinToString(", ")
-    println("fun $funname(${ar}) = callVoidFunc(\"$funname\", $call)")
-    f.write("fun $funname(${ar}) = callVoidFunc(\"$funname\", $call)\n")
+    if (typen == "") println("fun $funname(${ar}) = callVoidFunc(\"$funname\", $call)") else println("fun $funname(${ar}): $typen = callFunc(\"$funname\", $typen::class, $call)")
 }

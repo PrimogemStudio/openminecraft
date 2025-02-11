@@ -1,7 +1,11 @@
 package com.primogemstudio.engine.bindings.opengl.gl11
 
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
+import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.*
+import java.lang.foreign.MemorySegment
 
 object GL11Funcs {
     const val GL_ACCUM: Int = 256
@@ -585,5 +589,127 @@ object GL11Funcs {
     fun glColor4usv(v: HeapShortArray) = callVoidFunc("glColor4usv", v)
     fun glColor4uiv(v: HeapIntArray) = callVoidFunc("glColor4uiv", v)
     fun glColorMask(r: Boolean, g: Boolean, b: Boolean, a: Boolean) = callVoidFunc("glColorMask", r, g, b, a)
+    fun glColorMaterial(face: Int, mode: Int) = callVoidFunc("glColorMaterial", face, mode)
+    fun glColorPointer(size: Int, type: Int, stride: Int, pointer: MemorySegment) =
+        callVoidFunc("glColorPointer", size, type, stride, pointer)
+
+    fun glCopyPixels(x: Int, y: Int, width: Int, height: Int, type: Int) =
+        callVoidFunc("glCopyPixels", x, y, width, height, type)
+
+    fun glCullFace(mode: Int) = callVoidFunc("glCullFace", mode)
+    fun glDeleteLists(list: Int, range: Int) = callVoidFunc("glDeleteLists", list, range)
+    fun glDepthFunc(func: Int) = callVoidFunc("glDepthFunc", func)
+    fun glDepthMask(flag: Boolean) = callVoidFunc("glDepthMask", flag)
+    fun glDepthRange(zNear: Double, zFar: Double) = callVoidFunc("glDepthRange", zNear, zFar)
+    fun glDisableClientState(flags: Int) = callVoidFunc("glDisableClientState", flags)
+    fun glDrawArrays(mode: Int, first: Int, count: Int) = callVoidFunc("glDrawArrays", mode, first, count)
+    fun glDrawBuffer(buf: Int) = callVoidFunc("glDrawBuffer", buf)
+    fun glDrawElements(mode: Int, count: Int, type: Int, indices: MemorySegment) =
+        callVoidFunc("glDrawElements", mode, count, type, indices)
+
+    fun glDrawPixels(width: Int, height: Int, format: Int, type: Int, pixels: MemorySegment) =
+        callVoidFunc("glDrawPixels", width, height, format, type, pixels)
+
+    fun glEdgeFlag(flag: Boolean) = callVoidFunc("glEdgeFlag", flag)
+    fun glEdgeFlagv(flag: HeapBooleanArray) = callVoidFunc("glEdgeFlagv", flag)
+    fun glEdgeFlagPointer(stride: Int, pointer: MemorySegment) = callVoidFunc("glEdgeFlagPointer", stride, pointer)
+    fun glEnableClientState(flag: Boolean) = callVoidFunc("glEnableClientState", flag)
+    fun glEnd() = callVoidFunc("glEnd")
+    fun glEvalCoord1f(u: Float) = callVoidFunc("glEvalCoord1f", u)
+    fun glEvalCoord1fv(u: HeapFloat) = callVoidFunc("glEvalCoord1fv", u)
+    fun glEvalCoord1d(u: Double) = callVoidFunc("glEvalCoord1d", u)
+    fun glEvalCoord1dv(u: HeapDouble) = callVoidFunc("glEvalCoord1dv", u)
+    fun glEvalCoord2f(u: Float, v: Float) = callVoidFunc("glEvalCoord2f", u, v)
+    fun glEvalCoord2fv(u: HeapFloatArray) = callVoidFunc("glEvalCoord2fv", u)
+    fun glEvalCoord2d(u: Double, v: Double) = callVoidFunc("glEvalCoord2d", u, v)
+    fun glEvalCoord2dv(u: HeapDoubleArray) = callVoidFunc("glEvalCoord2dv", u)
+    fun glEvalMesh1(mode: Int, i1: Int, i2: Int) = callVoidFunc("glEvalMesh1", mode, i1, i2)
+    fun glEvalMesh2(mode: Int, i1: Int, i2: Int, i3: Int, i4: Int) = callVoidFunc("glEvalMesh2", mode, i1, i2, i3, i4)
+    fun glEvalPoint1(i: Int) = callVoidFunc("glEvalPoint1", i)
+    fun glEvalPoint2(i: Int, j: Int) = callVoidFunc("glEvalPoint2", i, j)
+    fun glFeedbackBuffer(type: Int, buffer: MemorySegment) = callVoidFunc("glFeedbackBuffer", type, buffer)
+    fun glFinish() = callVoidFunc("glFinish")
+    fun glFlush() = callVoidFunc("glFlush")
+    fun glFogi(type: Int, fog: Int) = callVoidFunc("glFogi", type, fog)
+    fun glFogiv(type: Int, params: HeapIntArray) = callVoidFunc("glFogiv", type, params)
+    fun glFogf(type: Int, fog: Float) = callVoidFunc("glFogf", type, fog)
+    fun glFogfv(type: Int, params: HeapFloatArray) = callVoidFunc("glFogfv", type, params)
+    fun glFrontFace(dir: Int) = callVoidFunc("glFrontFace", dir)
+    fun glGenLists(length: Int): Int = callFunc("glGenLists", Int::class, length)
+    fun glGenTextures(count: Int): IntArray =
+        HeapIntArray(count).apply { callVoidFunc("glGenTextures", count, this) }.value()
+
+    fun glDeleteTextures(textures: IntArray) =
+        HeapIntArray(textures).apply { callVoidFunc("glDeleteTextures", this.length, this) }
+
+    fun glGetClipPlane(plane: Int, equation: HeapDoubleArray) = callVoidFunc("glGetClipPlane", plane, equation)
+    fun glGetBooleanv(pname: Int, params: HeapBoolean) = callVoidFunc("glGetBooleanv", pname, params)
+    fun glGetBoolean(pname: Int): Boolean = HeapBoolean().apply { callVoidFunc("glGetBooleanv", pname, this) }.value()
+    fun glGetFloatv(pname: Int, params: HeapFloat) = callVoidFunc("glGetFloatv", pname, params)
+    fun glGetFloat(pname: Int): Float = HeapFloat().apply { callVoidFunc("glGetFloatv", pname, this) }.value()
+    fun glGetIntegerv(pname: Int, params: HeapInt) = callVoidFunc("glGetIntegerv", pname, params)
+    fun glGetInteger(pname: Int): Int = HeapInt().apply { callVoidFunc("glGetIntegerv", pname, this) }.value()
+    fun glGetDoublev(pname: Int, params: HeapDouble) = callVoidFunc("glGetDoublev", pname, params)
+    fun glGetDouble(pname: Int): Double = HeapDouble().apply { callVoidFunc("glGetDoublev", pname, this) }.value()
+    fun glGetError(): Int = callFunc("glGetError", Int::class)
+    fun glGetLightiv(light: Int, pname: Int, data: HeapIntArray) = callVoidFunc("glGetLightiv", light, pname, data)
+    fun glGetLightfv(light: Int, pname: Int, data: HeapFloatArray) = callVoidFunc("glGetLightfv", light, pname, data)
+    fun glGetMapiv(target: Int, query: Int, data: HeapIntArray) = callVoidFunc("glGetMapiv", target, query, data)
+    fun glGetMapfv(target: Int, query: Int, data: HeapFloatArray) = callVoidFunc("glGetMapfv", target, query, data)
+    fun glGetMapdv(target: Int, query: Int, data: HeapDoubleArray) = callVoidFunc("glGetMapdv", target, query, data)
+    fun glGetMaterialiv(face: Int, pname: Int, data: HeapInt) = callVoidFunc("glGetMaterialiv", face, pname, data)
+    fun glGetMaterialfv(face: Int, pname: Int, data: HeapFloat) = callVoidFunc("glGetMaterialfv", face, pname, data)
+    fun glGetPixelMapfv(map: Int, data: HeapFloatArray) = callVoidFunc("glGetPixelMapfv", map, data)
+    fun glGetPixelMapusv(map: Int, data: HeapShortArray) = callVoidFunc("glGetPixelMapusv", map, data)
+    fun glGetPixelMapuiv(map: Int, data: HeapIntArray) = callVoidFunc("glGetPixelMapuiv", map, data)
+    fun glGetPointerv(pname: Int, params: MemorySegment) = callVoidFunc("glGetPointerv", pname, params)
+    fun glGetPolygonStipple(pattern: MemorySegment) = callVoidFunc("glGetPolygonStipple", pattern)
+    fun glGetString(pname: Int): String = callPointerFunc("glGetString", pname).fetchString()
+    fun glGetTexEnviv(env: Int, pname: Int, data: HeapInt) = callVoidFunc("glGetTexEnviv", env, pname, data)
+    fun glGetTexEnvfv(env: Int, pname: Int, data: HeapFloat) = callVoidFunc("glGetTexEnvfv", env, pname, data)
+    fun glGetTexGeniv(coord: Int, pname: Int, data: HeapInt) = callVoidFunc("glGetTexGeniv", coord, pname, data)
+    fun glGetTexGenfv(coord: Int, pname: Int, data: HeapFloatArray) = callVoidFunc("glGetTexGenfv", coord, pname, data)
+    fun glGetTexGendv(coord: Int, pname: Int, data: HeapDoubleArray) = callVoidFunc("glGetTexGendv", coord, pname, data)
+    fun glGetTexImage(tex: Int, level: Int, format: Int, type: Int, pixels: MemorySegment) =
+        callVoidFunc("glGetTexImage", tex, level, format, type, pixels)
+
+    fun glGetTexLevelParameteriv(target: Int, level: Int, pname: Int, params: HeapInt) =
+        callVoidFunc("glGetTexLevelParameteriv", target, level, pname, params)
+
+    fun glGetTexLevelParameterfv(target: Int, level: Int, pname: Int, params: HeapFloat) =
+        callVoidFunc("glGetTexLevelParameterfv", target, level, pname, params)
+
+    fun glGetTexParameteriv(target: Int, pname: Int, params: HeapInt) =
+        callVoidFunc("glGetTexParameteriv", target, pname, params)
+
+    fun glGetTexParameterfv(target: Int, pname: Int, params: HeapFloat) =
+        callVoidFunc("glGetTexParameterfv", target, pname, params)
+
+    fun glHint(target: Int, hint: Int) = callVoidFunc("glHint", target, hint)
+    fun glIndexi(i: Int) = callVoidFunc("glIndexi", i)
+    fun glIndexub(i: Byte) = callVoidFunc("glIndexub", i)
+    fun glIndexs(i: Short) = callVoidFunc("glIndexs", i)
+    fun glIndexf(i: Float) = callVoidFunc("glIndexf", i)
+    fun glIndexd(i: Double) = callVoidFunc("glIndexd", i)
+    fun glIndexiv(i: HeapInt) = callVoidFunc("glIndexiv", i)
+    fun glIndexubv(i: HeapByte) = callVoidFunc("glIndexubv", i)
+    fun glIndexsv(i: HeapShort) = callVoidFunc("glIndexsv", i)
+    fun glIndexfv(i: HeapFloat) = callVoidFunc("glIndexfv", i)
+    fun glIndexdv(i: HeapDouble) = callVoidFunc("glIndexdv", i)
+    fun glIndexMask(mask: Int) = callVoidFunc("glIndexMask", mask)
+    fun glIndexPointer(type: Int, stride: Int, pointer: MemorySegment) =
+        callVoidFunc("glIndexPointer", type, stride, pointer)
+
+    fun glInitNames() = callVoidFunc("glInitNames")
+    fun glInterleavedArrays(format: Int, stride: Int, pointer: MemorySegment) =
+        callVoidFunc("glInterleavedArrays", format, stride, pointer)
+
+    fun glIsEnabled(cap: Int): Boolean = callFunc("glIsEnabled", Boolean::class, cap)
+    fun glIsList(list: Int): Boolean = callFunc("glIsList", Boolean::class, list)
+    fun glIsTexture(texture: Int): Boolean = callFunc("glIsTexture", Boolean::class, texture)
+    fun glLightModeli(pname: Int, d: Int) = callVoidFunc("glLightModeli", pname, d)
+    fun glLightModelf(pname: Int, d: Float) = callVoidFunc("glLightModelf", pname, d)
+    fun glLightModeliv(pname: Int, params: HeapIntArray) = callVoidFunc("glLightModeliv", pname, params)
+    fun glLightModelfv(pname: Int, params: HeapIntArray) = callVoidFunc("glLightModelfv", pname, params)
 
 }
