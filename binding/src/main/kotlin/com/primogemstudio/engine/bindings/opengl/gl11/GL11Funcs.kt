@@ -1,9 +1,7 @@
 package com.primogemstudio.engine.bindings.opengl.gl11
 
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.heap.HeapBooleanArray
-import com.primogemstudio.engine.interfaces.heap.HeapByteArray
-import com.primogemstudio.engine.interfaces.heap.HeapIntArray
+import com.primogemstudio.engine.interfaces.heap.*
 
 object GL11Funcs {
     const val GL_ACCUM: Int = 256
@@ -547,4 +545,45 @@ object GL11Funcs {
     fun glBindTexture(target: Int, texture: Int) = callVoidFunc("glBindTexture", target, texture)
     fun glBitmap(w: Int, h: Int, xOrig: Float, yOrig: Float, xInc: Float, yInc: Float, data: HeapByteArray) =
         callVoidFunc("glBitmap", w, h, xOrig, yOrig, xInc, yInc, data)
+    fun glBlendFunc(sfactor: Int, dfactor: Int) = callVoidFunc("glBlendFunc", sfactor, dfactor)
+    fun glCallList(list: Int) = callVoidFunc("glCallList", list)
+    fun glCallLists(type: Int, list: IHeapArray<*>) = callVoidFunc("glCallLists", list.length, type, list.ref())
+    fun glClear(mask: Int) = callVoidFunc("glClear", mask)
+    fun glClearAccum(r: Float, g: Float, b: Float, a: Float) = callVoidFunc("glClearAccum", r, g, b, a)
+    fun glClearColor(r: Float, g: Float, b: Float, a: Float) = callVoidFunc("glClearColor", r, g, b, a)
+    fun glClearDepth(d: Double) = callVoidFunc("glClearDepth", d)
+    fun glClearIndex(c: Float) = callVoidFunc("glClearIndex", c)
+    fun glClearStencil(s: Int) = callVoidFunc("glClearStencil", s)
+    fun glClipPlane(plane: Int, equation: HeapDoubleArray) = callVoidFunc("glClipPlane", plane, equation)
+    fun glColor3b(r: Byte, g: Byte, b: Byte) = callVoidFunc("glColor3b", r, g, b)
+    fun glColor3s(r: Short, g: Short, b: Short) = callVoidFunc("glColor3s", r, g, b)
+    fun glColor3i(r: Int, g: Int, b: Int) = callVoidFunc("glColor3i", r, g, b)
+    fun glColor3f(r: Float, g: Float, b: Float) = callVoidFunc("glColor3f", r, g, b)
+    fun glColor3d(r: Double, g: Double, b: Double) = callVoidFunc("glColor3d", r, g, b)
+    fun glColor3bv(v: HeapByteArray) = callVoidFunc("glColor3bv", v)
+    fun glColor3sv(v: HeapShortArray) = callVoidFunc("glColor3sv", v)
+    fun glColor3iv(v: HeapIntArray) = callVoidFunc("glColor3iv", v)
+    fun glColor3fv(v: HeapFloatArray) = callVoidFunc("glColor3fv", v)
+    fun glColor3dv(v: HeapDoubleArray) = callVoidFunc("glColor3dv", v)
+    fun glColor3ubv(v: HeapByteArray) = callVoidFunc("glColor3ubv", v)
+    fun glColor3usv(v: HeapShortArray) = callVoidFunc("glColor3usv", v)
+    fun glColor3uiv(v: HeapIntArray) = callVoidFunc("glColor3uiv", v)
+    fun glColor4b(r: Byte, g: Byte, b: Byte, a: Byte) = callVoidFunc("glColor4b", r, g, b, a)
+    fun glColor4s(r: Short, g: Short, b: Short, a: Short) = callVoidFunc("glColor4s", r, g, b, a)
+    fun glColor4i(r: Int, g: Int, b: Int, a: Int) = callVoidFunc("glColor4i", r, g, b, a)
+    fun glColor4f(r: Float, g: Float, b: Float, a: Float) = callVoidFunc("glColor4f", r, g, b, a)
+    fun glColor4d(r: Double, g: Double, b: Double, a: Double) = callVoidFunc("glColor4d", r, g, b, a)
+    fun glColor4ub(r: Byte, g: Byte, b: Byte, a: Byte) = callVoidFunc("glColor4ub", r, g, b, a)
+    fun glColor4us(r: Short, g: Short, b: Short, a: Short) = callVoidFunc("glColor4us", r, g, b, a)
+    fun glColor4ui(r: Int, g: Int, b: Int, a: Int) = callVoidFunc("glColor4ui", r, g, b, a)
+    fun glColor4bv(v: HeapByteArray) = callVoidFunc("glColor4bv", v)
+    fun glColor4sv(v: HeapShortArray) = callVoidFunc("glColor4sv", v)
+    fun glColor4iv(v: HeapIntArray) = callVoidFunc("glColor4iv", v)
+    fun glColor4fv(v: HeapFloatArray) = callVoidFunc("glColor4fv", v)
+    fun glColor4dv(v: HeapDoubleArray) = callVoidFunc("glColor4dv", v)
+    fun glColor4ubv(v: HeapByteArray) = callVoidFunc("glColor4ubv", v)
+    fun glColor4usv(v: HeapShortArray) = callVoidFunc("glColor4usv", v)
+    fun glColor4uiv(v: HeapIntArray) = callVoidFunc("glColor4uiv", v)
+    fun glColorMask(r: Boolean, g: Boolean, b: Boolean, a: Boolean) = callVoidFunc("glColorMask", r, g, b, a)
+
 }

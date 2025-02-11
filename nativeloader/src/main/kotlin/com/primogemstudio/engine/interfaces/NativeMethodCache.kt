@@ -3,6 +3,7 @@ package com.primogemstudio.engine.interfaces
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.stub.IStub
+import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.*
@@ -13,6 +14,10 @@ import kotlin.reflect.KClass
 
 @Suppress("UNCHECKED_CAST")
 object NativeMethodCache {
+    init {
+        Platform.init()
+    }
+
     private val logger = LoggerFactory.getLogger()
     private val funcCache = mutableMapOf<String, MethodHandle>()
     private val stubCache = mutableMapOf<Any, MemorySegment>()

@@ -21,6 +21,8 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebuffe
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSwapBuffers
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
+import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_COLOR_BUFFER_BIT
+import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glClear
 import com.primogemstudio.engine.bindings.vulkan.vk10.*
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_VERSION
@@ -35,7 +37,6 @@ import com.primogemstudio.engine.interfaces.heap.HeapByteArray
 import com.primogemstudio.engine.interfaces.heap.HeapFloatArray
 import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
 import com.primogemstudio.engine.interfaces.toCStructArray
-import com.primogemstudio.engine.loader.Platform
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.MemorySegment
 
@@ -45,8 +46,6 @@ fun main() {
     instance.vkWindow!!.mainLoop()*/
 
     val logger = LoggerFactory.getLogger()
-
-    Platform.init()
 
     glfwInit()
     glfwSetErrorCallback { err, desc ->
@@ -122,7 +121,7 @@ fun main() {
 
     while (glfwWindowShouldClose(window) != 1) {
         callVoidFunc("glClearColor", 1f, 1f, 1f, 1f)
-        callVoidFunc("glClear", 0x00004000)
+        glClear(GL_COLOR_BUFFER_BIT)
         glfwSwapBuffers(window)
         glfwPollEvents()
     }
