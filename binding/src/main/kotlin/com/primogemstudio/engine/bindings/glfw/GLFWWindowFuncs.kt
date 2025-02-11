@@ -250,10 +250,11 @@ object GLFWWindowFuncs {
     fun glfwDestroyWindow(window: GLFWWindow) =
         callVoidFunc("glfwDestroyWindow", window)
 
-    fun glfwWindowShouldClose(window: GLFWWindow): Int =
-        callFunc("glfwWindowShouldClose", Int::class, window)
-    fun glfwSetWindowShouldClose(window: GLFWWindow, value: Int) =
-        callVoidFunc("glfwSetWindowShouldClose", window, value)
+    fun glfwWindowShouldClose(window: GLFWWindow): Boolean =
+        callFunc("glfwWindowShouldClose", Int::class, window) != 0
+
+    fun glfwSetWindowShouldClose(window: GLFWWindow, value: Boolean) =
+        callVoidFunc("glfwSetWindowShouldClose", window, if (value) 1 else 0)
     fun glfwGetWindowTitle(window: GLFWWindow): String =
         callPointerFunc("glfwGetWindowTitle", window).fetchString()
     fun glfwSetWindowTitle(window: GLFWWindow, title: String) =
