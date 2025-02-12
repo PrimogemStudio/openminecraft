@@ -12,7 +12,7 @@ import java.lang.foreign.ValueLayout.JAVA_BYTE
 import kotlin.math.max
 
 fun MemorySegment.fetchString(): String {
-    val buf = reinterpret(callFunc("strlen", Int::class, this).toLong() + 1).asByteBuffer()
+    val buf = reinterpret(Long.MAX_VALUE).asByteBuffer()
     val bList = mutableListOf<Byte>()
     var chr: Byte
 
