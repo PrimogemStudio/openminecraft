@@ -711,5 +711,303 @@ object GL11Funcs {
     fun glLightModelf(pname: Int, d: Float) = callVoidFunc("glLightModelf", pname, d)
     fun glLightModeliv(pname: Int, params: HeapIntArray) = callVoidFunc("glLightModeliv", pname, params)
     fun glLightModelfv(pname: Int, params: HeapIntArray) = callVoidFunc("glLightModelfv", pname, params)
+    fun glLighti(i: Int) = callVoidFunc("glLighti", i)
+    fun glLightf(i: Float) = callVoidFunc("glLightf", i)
+    fun glLightiv(light: Int, pname: Int, params: HeapIntArray) = callVoidFunc("glLightiv", light, pname, params)
+    fun glLightfv(light: Int, pname: Int, params: HeapFloatArray) = callVoidFunc("glLightfv", light, pname, params)
+    fun glLineStipple(factor: Int, pattern: Short) = callVoidFunc("glLineStipple", factor, pattern)
+    fun glLineWidth(width: Float) = callVoidFunc("glLineWidth", width)
+    fun glListBase(base: Int) = callVoidFunc("glListBase", base)
+    fun glLoadMatrixf(m: HeapFloatArray) = callVoidFunc("glLoadMatrixf", m)
+    fun glLoadMatrixd(m: HeapDoubleArray) = callVoidFunc("glLoadMatrixd", m)
+    fun glLoadIdentity() = callVoidFunc("glLoadIdentity")
+    fun glLoadName(name: Int) = callVoidFunc("glLoadName", name)
+    fun glLogicOp(op: Int) = callVoidFunc("glLogicOp", op)
+    fun glMap1f(target: Int, u1: Float, u2: Float, stride: Int, order: Int, points: HeapFloatArray) =
+        callVoidFunc("glMap1f", target, u1, u2, stride, order, points)
 
+    fun glMap1d(target: Int, u1: Double, u2: Double, stride: Int, order: Int, points: HeapDoubleArray) =
+        callVoidFunc("glMap1d", target, u1, u2, stride, order, points)
+
+    fun glMap2f(
+        target: Int,
+        u1: Float,
+        u2: Float,
+        ustride: Int,
+        uorder: Int,
+        v1: Float,
+        v2: Float,
+        vstride: Int,
+        vorder: Int,
+        points: HeapFloatArray
+    ) = callVoidFunc("glMap2f", target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points)
+
+    fun glMap2d(
+        target: Int,
+        u1: Double,
+        u2: Double,
+        ustride: Int,
+        uorder: Int,
+        v1: Double,
+        v2: Double,
+        vstride: Int,
+        vorder: Int,
+        points: HeapDoubleArray
+    ) = callVoidFunc("glMap2d", target, u1, u2, ustride, uorder, v1, v2, vstride, vorder, points)
+
+    fun glMapGrid1f(un: Int, u1: Float, u2: Float) = callVoidFunc("glMapGrid1f", un, u1, u2)
+    fun glMapGrid1d(un: Int, u1: Double, u2: Double) = callVoidFunc("glMapGrid1d", un, u1, u2)
+    fun glMapGrid2f(un: Int, u1: Float, u2: Float, vn: Int, v1: Float, v2: Float) =
+        callVoidFunc("glMapGrid2f", un, u1, u2, vn, v1, v2)
+
+    fun glMapGrid2d(un: Int, u1: Double, u2: Double, vn: Int, v1: Double, v2: Double) =
+        callVoidFunc("glMapGrid2d", un, u1, u2, vn, v1, v2)
+
+    fun glMateriali(face: Int, pname: Int, param: Int) = callVoidFunc("glMateriali", face, pname, param)
+    fun glMaterialf(face: Int, pname: Int, param: Float) = callVoidFunc("glMaterialf", face, pname, param)
+    fun glMaterialiv(face: Int, pname: Int, param: HeapIntArray) = callVoidFunc("glMaterialiv", face, pname, param)
+    fun glMaterialfv(face: Int, pname: Int, param: HeapFloatArray) = callVoidFunc("glMaterialfv", face, pname, param)
+    fun glMatrixMode(type: Int) = callVoidFunc("glMatrixMode", type)
+    fun glMultMatrixf(m: HeapFloatArray) = callVoidFunc("glMultMatrixf", m)
+    fun glMultMatrixd(m: HeapDoubleArray) = callVoidFunc("glMultMatrixd", m)
+    fun glFrustum(left: Double, right: Double, bottom: Double, top: Double, zNear: Double, zFar: Double) =
+        callVoidFunc("glFrustum", left, right, bottom, top, zNear, zFar)
+
+    fun glNewList(list: Int, mode: Int) = callVoidFunc("glNewList", list, mode)
+    fun glEndList() = callVoidFunc("glEndList")
+    fun glNormal3f(x: Float, y: Float, z: Float) = callVoidFunc("glNormal3f", x, y, z)
+    fun glNormal3s(x: Byte, y: Byte, z: Byte) = callVoidFunc("glNormal3s", x, y, z)
+    fun glNormal3s(x: Short, y: Short, z: Short) = callVoidFunc("glNormal3s", x, y, z)
+    fun glNormal3i(x: Int, y: Int, z: Int) = callVoidFunc("glNormal3i", x, y, z)
+    fun glNormal3d(x: Double, y: Double, z: Double) = callVoidFunc("glNormal3d", x, y, z)
+    fun glNormal3fv(v: HeapFloatArray) = callVoidFunc("glNormal3fv", v)
+    fun glNormal3bv(v: HeapByteArray) = callVoidFunc("glNormal3bv", v)
+    fun glNormal3sv(v: HeapShortArray) = callVoidFunc("glNormal3sv", v)
+    fun glNormal3iv(v: HeapIntArray) = callVoidFunc("glNormal3iv", v)
+    fun glNormal3dv(v: HeapDoubleArray) = callVoidFunc("glNormal3dv", v)
+    fun glNormalPointer(type: Int, stride: Int, pointer: MemorySegment) =
+        callVoidFunc("glNormalPointer", type, stride, pointer)
+
+    fun glOrtho(left: Double, right: Double, bottom: Double, top: Double, zNear: Double, zFar: Double) =
+        callVoidFunc("glOrtho", left, right, bottom, top, zNear, zFar)
+
+    fun glPassThrough(token: Float) = callVoidFunc("glPassThrough", token)
+    fun glPixelMapfv(map: Int, data: HeapFloatArray) = callVoidFunc("glPixelMapfv", map, data.length, data)
+    fun glPixelMapusv(map: Int, data: HeapShortArray) = callVoidFunc("glPixelMapusv", map, data.length, data)
+    fun glPixelMapuiv(map: Int, data: HeapIntArray) = callVoidFunc("glPixelMapuiv", map, data.length, data)
+    fun glPixelStorei(pname: Int, param: Int) = callVoidFunc("glPixelStorei", pname, param)
+    fun glPixelStoref(pname: Int, param: Float) = callVoidFunc("glPixelStoref", pname, param)
+    fun glPixelTransferi(pname: Int, param: Int) = callVoidFunc("glPixelTransferi", pname, param)
+    fun glPixelTransferf(pname: Int, param: Float) = callVoidFunc("glPixelTransferf", pname, param)
+    fun glPixeloom(x: Float, y: Float) = callVoidFunc("glPixeloom", x, y)
+    fun glPointSize(size: Float) = callVoidFunc("glPointSize", size)
+    fun glPolygonMode(face: Int, mode: Int) = callVoidFunc("glPolygonMode", face, mode)
+    fun glPolygonOffset(factor: Float, units: Float) = callVoidFunc("glPolygonOffset", factor, units)
+    fun glPolygonStipple(pattern: HeapByteArray) = callVoidFunc("glPolygonStipple", pattern)
+    fun glPushAttrib(mask: Int) = callVoidFunc("glPushAttrib", mask)
+    fun glPushClientAttrib(mask: Int) = callVoidFunc("glPushClientAttrib", mask)
+    fun glPopAttrib() = callVoidFunc("glPopAttrib")
+    fun glPopClientAttrib() = callVoidFunc("glPopClientAttrib")
+    fun glPopMatrix() = callVoidFunc("glPopMatrix")
+    fun glPopName() = callVoidFunc("glPopName")
+    fun glPrioritizeTextures(textures: HeapIntArray, priorities: HeapFloatArray) =
+        callVoidFunc("glPrioritizeTextures", textures.length, textures, priorities)
+
+    fun glPushMatrix() = callVoidFunc("glPushMatrix")
+    fun glPushName(name: Int) = callVoidFunc("glPushName", name)
+    fun glRasterPos2i(x: Int, y: Int) = callVoidFunc("glRasterPos2i", x, y)
+    fun glRasterPos2s(x: Short, y: Short) = callVoidFunc("glRasterPos2s", x, y)
+    fun glRasterPos2f(x: Float, y: Float) = callVoidFunc("glRasterPos2f", x, y)
+    fun glRasterPos2d(x: Double, y: Double) = callVoidFunc("glRasterPos2d", x, y)
+    fun glRasterPos2iv(coords: HeapIntArray) = callVoidFunc("glRasterPos2iv", coords)
+    fun glRasterPos2sv(coords: HeapShortArray) = callVoidFunc("glRasterPos2sv", coords)
+    fun glRasterPos2fv(coords: HeapFloatArray) = callVoidFunc("glRasterPos2fv", coords)
+    fun glRasterPos2dv(coords: HeapDoubleArray) = callVoidFunc("glRasterPos2dv", coords)
+    fun glRasterPos3i(x: Int, y: Int, z: Int) = callVoidFunc("glRasterPos3i", x, y, z)
+    fun glRasterPos3s(x: Short, y: Short, z: Short) = callVoidFunc("glRasterPos3s", x, y, z)
+    fun glRasterPos3f(x: Float, y: Float, z: Float) = callVoidFunc("glRasterPos3f", x, y, z)
+    fun glRasterPos3d(x: Double, y: Double, z: Double) = callVoidFunc("glRasterPos3d", x, y, z)
+    fun glRasterPos3iv(coords: HeapIntArray) = callVoidFunc("glRasterPos3iv", coords)
+    fun glRasterPos3sv(coords: HeapShortArray) = callVoidFunc("glRasterPos3sv", coords)
+    fun glRasterPos3fv(coords: HeapFloatArray) = callVoidFunc("glRasterPos3fv", coords)
+    fun glRasterPos3dv(coords: HeapDoubleArray) = callVoidFunc("glRasterPos3dv", coords)
+    fun glRasterPos4i(x: Int, y: Int, z: Int, w: Int) = callVoidFunc("glRasterPos4i", x, y, z, w)
+    fun glRasterPos4s(x: Short, y: Short, z: Short, w: Short) = callVoidFunc("glRasterPos4s", x, y, z, w)
+    fun glRasterPos4f(x: Float, y: Float, z: Float, w: Float) = callVoidFunc("glRasterPos4f", x, y, z, w)
+    fun glRasterPos4d(x: Double, y: Double, z: Double, w: Double) = callVoidFunc("glRasterPos4d", x, y, z, w)
+    fun glRasterPos4iv(coords: HeapIntArray) = callVoidFunc("glRasterPos4iv", coords)
+    fun glRasterPos4sv(coords: HeapShortArray) = callVoidFunc("glRasterPos4sv", coords)
+    fun glRasterPos4fv(coords: HeapFloatArray) = callVoidFunc("glRasterPos4fv", coords)
+    fun glRasterPos4dv(coords: HeapDoubleArray) = callVoidFunc("glRasterPos4dv", coords)
+    fun glReadBuffer(src: Int) = callVoidFunc("glReadBuffer", src)
+    fun glReadPixels(x: Int, y: Int, width: Int, height: Int, format: Int, type: Int, pixels: MemorySegment) =
+        callVoidFunc("glReadPixels", x, y, width, height, format, type, pixels)
+
+    fun glRecti(x1: Int, y1: Int, x2: Int, y2: Int) = callVoidFunc("glRecti", x1, y1, x2, y2)
+    fun glRects(x1: Short, y1: Short, x2: Short, y2: Short) = callVoidFunc("glRects", x1, y1, x2, y2)
+    fun glRectf(x1: Float, y1: Float, x2: Float, y2: Float) = callVoidFunc("glRectf", x1, y1, x2, y2)
+    fun glRectd(x1: Double, y1: Double, x2: Double, y2: Double) = callVoidFunc("glRectd", x1, y1, x2, y2)
+    fun glRectiv(v1: HeapIntArray, v2: HeapIntArray) = callVoidFunc("glRectiv", v1, v2)
+    fun glRectsv(v1: HeapShortArray, v2: HeapShortArray) = callVoidFunc("glRectsv", v1, v2)
+    fun glRectfv(v1: HeapFloatArray, v2: HeapFloatArray) = callVoidFunc("glRectfv", v1, v2)
+    fun glRectdv(v1: HeapDoubleArray, v2: HeapDoubleArray) = callVoidFunc("glRectdv", v1, v2)
+    fun glRenderMode(mode: Int): Int = callFunc("glRenderMode", Int::class, mode)
+    fun glRotatef(angle: Float, x: Float, y: Float, z: Float) = callVoidFunc("glRotatef", angle, x, y, z)
+    fun glRotated(angle: Double, x: Double, y: Double, z: Double) = callVoidFunc("glRotated", angle, x, y, z)
+    fun glScalef(x: Float, y: Float, z: Float) = callVoidFunc("glScalef", x, y, z)
+    fun glScaled(x: Double, y: Double, z: Double) = callVoidFunc("glScaled", x, y, z)
+    fun glScissor(x: Int, y: Int, width: Int, height: Int) = callVoidFunc("glScissor", x, y, width, height)
+    fun glSelectBuffer(data: HeapIntArray) = callVoidFunc("glSelectBuffer", data)
+    fun glShadeModel(mode: Int) = callVoidFunc("glShadeModel", mode)
+    fun glStencilFunc(func: Int, ref: Int, mask: Int) = callVoidFunc("glStencilFunc", func, ref, mask)
+    fun glStencilMask(mask: Int) = callVoidFunc("glStencilMask", mask)
+    fun glStencilOp(sfail: Int, dpfail: Int, dppass: Int) = callVoidFunc("glStencilOp", sfail, dpfail, dppass)
+    fun glTexCoord1f(s: Float) = callVoidFunc("glTexCoord1f", s)
+    fun glTexCoord1s(s: Short) = callVoidFunc("glTexCoord1s", s)
+    fun glTexCoord1i(s: Int) = callVoidFunc("glTexCoord1i", s)
+    fun glTexCoord1d(s: Double) = callVoidFunc("glTexCoord1d", s)
+    fun glTexCoord1fv(v: MemorySegment) = callVoidFunc("glTexCoord1fv", v)
+    fun glTexCoord1sv(v: HeapShort) = callVoidFunc("glTexCoord1sv", v)
+    fun glTexCoord1iv(v: HeapInt) = callVoidFunc("glTexCoord1iv", v)
+    fun glTexCoord1dv(v: HeapDouble) = callVoidFunc("glTexCoord1dv", v)
+    fun glTexCoord2f(s: Float, t: Float) = callVoidFunc("glTexCoord2f", s, t)
+    fun glTexCoord2s(s: Short, t: Short) = callVoidFunc("glTexCoord2s", s, t)
+    fun glTexCoord2i(s: Int, t: Int) = callVoidFunc("glTexCoord2i", s, t)
+    fun glTexCoord2d(s: Double, t: Double) = callVoidFunc("glTexCoord2d", s, t)
+    fun glTexCoord2fv(v: MemorySegment) = callVoidFunc("glTexCoord2fv", v)
+    fun glTexCoord2sv(v: HeapShortArray) = callVoidFunc("glTexCoord2sv", v)
+    fun glTexCoord2iv(v: HeapIntArray) = callVoidFunc("glTexCoord2iv", v)
+    fun glTexCoord2dv(v: HeapDoubleArray) = callVoidFunc("glTexCoord2dv", v)
+    fun glTexCoord3f(s: Float, t: Float, r: Float) = callVoidFunc("glTexCoord3f", s, t, r)
+    fun glTexCoord3s(s: Short, t: Short, r: Short) = callVoidFunc("glTexCoord3s", s, t, r)
+    fun glTexCoord3i(s: Int, t: Int, r: Int) = callVoidFunc("glTexCoord3i", s, t, r)
+    fun glTexCoord3d(s: Double, t: Double, r: Double) = callVoidFunc("glTexCoord3d", s, t, r)
+    fun glTexCoord3fv(v: MemorySegment) = callVoidFunc("glTexCoord3fv", v)
+    fun glTexCoord3sv(v: HeapShortArray) = callVoidFunc("glTexCoord3sv", v)
+    fun glTexCoord3iv(v: HeapIntArray) = callVoidFunc("glTexCoord3iv", v)
+    fun glTexCoord3dv(v: HeapDoubleArray) = callVoidFunc("glTexCoord3dv", v)
+    fun glTexCoord4f(s: Float, t: Float, r: Float, q: Float) = callVoidFunc("glTexCoord4f", s, t, r, q)
+    fun glTexCoord4s(s: Short, t: Short, r: Short, q: Short) = callVoidFunc("glTexCoord4s", s, t, r, q)
+    fun glTexCoord4i(s: Int, t: Int, r: Int, q: Int) = callVoidFunc("glTexCoord4i", s, t, r, q)
+    fun glTexCoord4d(s: Double, t: Double, r: Double, q: Double) = callVoidFunc("glTexCoord4d", s, t, r, q)
+    fun glTexCoord4fv(v: MemorySegment) = callVoidFunc("glTexCoord4fv", v)
+    fun glTexCoord4sv(v: HeapShortArray) = callVoidFunc("glTexCoord4sv", v)
+    fun glTexCoord4iv(v: HeapIntArray) = callVoidFunc("glTexCoord4iv", v)
+    fun glTexCoord4dv(v: HeapDoubleArray) = callVoidFunc("glTexCoord4dv", v)
+    fun glTexCoordPointer(size: Int, type: Int, stride: Int, pointer: MemorySegment) =
+        callVoidFunc("glTexCoordPointer", size, type, stride, pointer)
+
+    fun glTexEnvi(target: Int, pname: Int, param: Int) = callVoidFunc("glTexEnvi", target, pname, param)
+    fun glTexEnviv(target: Int, pname: Int, param: HeapIntArray) = callVoidFunc("glTexEnviv", target, pname, param)
+    fun glTexEnvf(target: Int, pname: Int, param: Float) = callVoidFunc("glTexEnvf", target, pname, param)
+    fun glTexEnvfv(target: Int, pname: Int, param: HeapFloatArray) = callVoidFunc("glTexEnvfv", target, pname, param)
+    fun glTexGeni(coord: Int, pname: Int, param: Int) = callVoidFunc("glTexGeni", coord, pname, param)
+    fun glTexGeniv(coord: Int, pname: Int, param: HeapIntArray) = callVoidFunc("glTexGeniv", coord, pname, param)
+    fun glTexGenf(coord: Int, pname: Int, param: Float) = callVoidFunc("glTexGenf", coord, pname, param)
+    fun glTexGenfv(coord: Int, pname: Int, param: HeapFloatArray) = callVoidFunc("glTexGenfv", coord, pname, param)
+    fun glTexGend(coord: Int, pname: Int, param: Double) = callVoidFunc("glTexGend", coord, pname, param)
+    fun glTexGendv(coord: Int, pname: Int, param: HeapDoubleArray) = callVoidFunc("glTexGendv", coord, pname, param)
+    fun glTexImage1D(
+        target: Int,
+        level: Int,
+        internalformal: Int,
+        width: Int,
+        border: Int,
+        format: Int,
+        type: Int,
+        pixels: MemorySegment
+    ) = callVoidFunc("glTexImage1D", target, level, internalformal, width, border, format, type, pixels)
+
+    fun glTexImage2D(
+        target: Int,
+        level: Int,
+        internalformat: Int,
+        width: Int,
+        height: Int,
+        border: Int,
+        format: Int,
+        type: Int,
+        pixels: MemorySegment
+    ) = callVoidFunc("glTexImage2D", target, level, internalformat, width, height, border, format, type, pixels)
+
+    fun glCopyTexImage1D(target: Int, level: Int, internalformat: Int, x: Int, y: Int, width: Int, border: Int) =
+        callVoidFunc("glCopyTexImage1D", target, level, internalformat, x, y, width, border)
+
+    fun glCopyTexImage2D(
+        target: Int,
+        level: Int,
+        internalformat: Int,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
+        border: Int
+    ) = callVoidFunc("glCopyTexImage2D", target, level, internalformat, x, y, width, height, border)
+
+    fun glCopyTexSubImage1D(target: Int, level: Int, xoffset: Int, x: Int, y: Int, width: Int) =
+        callVoidFunc("glCopyTexSubImage1D", target, level, xoffset, x, y, width)
+
+    fun glCopyTexSubImage2D(target: Int, level: Int, xoffset: Int, yoffset: Int, width: Int, height: Int) =
+        callVoidFunc("glCopyTexSubImage2D", target, level, xoffset, yoffset, width, height)
+
+    fun glTexParameteri(target: Int, pname: Int, param: Int) = callVoidFunc("glTexParameteri", target, pname, param)
+    fun glTexParameteriv(target: Int, pname: Int, params: HeapIntArray) =
+        callVoidFunc("glTexParameteriv", target, pname, params)
+
+    fun glTexParameterf(target: Int, pname: Int, param: Float) = callVoidFunc("glTexParameterf", target, pname, param)
+    fun glTexParameterfv(target: Int, pname: Int, params: HeapFloatArray) =
+        callVoidFunc("glTexParameterfv", target, pname, params)
+
+    fun glTexSubImage1D(
+        target: Int,
+        level: Int,
+        xoffset: Int,
+        width: Int,
+        format: Int,
+        type: Int,
+        pixels: MemorySegment
+    ) = callVoidFunc("glTexSubImage1D", target, level, xoffset, width, format, type, pixels)
+
+    fun glTexSubImage2D(
+        target: Int,
+        level: Int,
+        xoffset: Int,
+        yoffset: Int,
+        width: Int,
+        height: Int,
+        format: Int,
+        type: Int,
+        pixels: MemorySegment
+    ) = callVoidFunc("glTexSubImage2D", target, level, xoffset, yoffset, width, height, format, type, pixels)
+
+    fun glTranslatef(x: Float, y: Float, z: Float) = callVoidFunc("glTranslatef", x, y, z)
+    fun glTranslated(x: Double, y: Double, z: Double) = callVoidFunc("glTranslated", x, y, z)
+    fun glVertex2f(x: Float, y: Float) = callVoidFunc("glVertex2f", x, y)
+    fun glVertex2s(x: Short, y: Short) = callVoidFunc("glVertex2s", x, y)
+    fun glVertex2i(x: Int, y: Int) = callVoidFunc("glVertex2i", x, y)
+    fun glVertex2d(x: Double, y: Double) = callVoidFunc("glVertex2d", x, y)
+    fun glVertex2fv(coords: HeapFloatArray) = callVoidFunc("glVertex2fv", coords)
+    fun glVertex2sv(coords: HeapShortArray) = callVoidFunc("glVertex2sv", coords)
+    fun glVertex2iv(coords: HeapIntArray) = callVoidFunc("glVertex2iv", coords)
+    fun glVertex2dv(coords: HeapDoubleArray) = callVoidFunc("glVertex2dv", coords)
+    fun glVertex3f(x: Float, y: Float, z: Float) = callVoidFunc("glVertex3f", x, y, z)
+    fun glVertex3s(x: Short, y: Short, z: Short) = callVoidFunc("glVertex3s", x, y, z)
+    fun glVertex3i(x: Int, y: Int, z: Int) = callVoidFunc("glVertex3i", x, y, z)
+    fun glVertex3d(x: Double, y: Double, z: Double) = callVoidFunc("glVertex3d", x, y, z)
+    fun glVertex3fv(coords: HeapFloatArray) = callVoidFunc("glVertex3fv", coords)
+    fun glVertex3sv(coords: HeapShortArray) = callVoidFunc("glVertex3sv", coords)
+    fun glVertex3iv(coords: HeapIntArray) = callVoidFunc("glVertex3iv", coords)
+    fun glVertex3dv(coords: HeapDoubleArray) = callVoidFunc("glVertex3dv", coords)
+    fun glVertex4f(x: Float, y: Float, z: Float, w: Float) = callVoidFunc("glVertex4f", x, y, z, w)
+    fun glVertex4s(x: Short, y: Short, z: Short, w: Short) = callVoidFunc("glVertex4s", x, y, z, w)
+    fun glVertex4i(x: Int, y: Int, z: Int, w: Int) = callVoidFunc("glVertex4i", x, y, z, w)
+    fun glVertex4d(x: Double, y: Double, z: Double, w: Double) = callVoidFunc("glVertex4d", x, y, z, w)
+    fun glVertex4fv(coords: HeapFloatArray) = callVoidFunc("glVertex4fv", coords)
+    fun glVertex4sv(coords: HeapShortArray) = callVoidFunc("glVertex4sv", coords)
+    fun glVertex4iv(coords: HeapIntArray) = callVoidFunc("glVertex4iv", coords)
+    fun glVertex4dv(coords: HeapDoubleArray) = callVoidFunc("glVertex4dv", coords)
+    fun glVertexPointer(size: Int, type: Int, stride: Int, pointer: MemorySegment) =
+        callVoidFunc("glVertexPointer", size, type, stride, pointer)
+
+    fun glViewport(x: Int, y: Int, w: Int, h: Int) = callVoidFunc("glViewport", x, y, w, h)
 }
