@@ -3,6 +3,7 @@ package com.primogemstudio.engine.bindings.glfw
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
 import com.primogemstudio.engine.interfaces.fetchString
 import com.primogemstudio.engine.interfaces.heap.*
 import com.primogemstudio.engine.interfaces.stub.IStub
@@ -407,28 +408,28 @@ object GLFWInputFuncs {
         callVoidFunc("glfwSetCursor", window, cursor)
 
     fun glfwSetKeyCallback(window: GLFWWindow, callback: GLFWKeyFun): MemorySegment =
-        callPointerFunc("glfwSetKeyCallback", window, callback)
+        callPointerFunc("glfwSetKeyCallback", window, constructStub(GLFWKeyFun::class, callback))
 
     fun glfwSetCharCallback(window: GLFWWindow, callback: GLFWCharFun): MemorySegment =
-        callPointerFunc("glfwSetCharCallback", window, callback)
+        callPointerFunc("glfwSetCharCallback", window, constructStub(GLFWCharFun::class, callback))
 
     fun glfwSetCharModsCallback(window: GLFWWindow, callback: GLFWCharFun): MemorySegment =
-        callPointerFunc("glfwSetCharModsCallback", window, callback)
+        callPointerFunc("glfwSetCharModsCallback", window, constructStub(GLFWCharFun::class, callback))
 
     fun glfwSetMouseButtonCallback(window: GLFWWindow, callback: GLFWMouseButtonFun): MemorySegment =
-        callPointerFunc("glfwSetMouseButtonCallback", window, callback)
+        callPointerFunc("glfwSetMouseButtonCallback", window, constructStub(GLFWMouseButtonFun::class, callback))
 
     fun glfwSetCursorPosCallback(window: GLFWWindow, callback: GLFWCursorPosFun): MemorySegment =
-        callPointerFunc("glfwSetCursorPosCallback", window, callback)
+        callPointerFunc("glfwSetCursorPosCallback", window, constructStub(GLFWCursorPosFun::class, callback))
 
     fun glfwSetCursorEnterCallback(window: GLFWWindow, callback: GLFWCursorEnterFun): MemorySegment =
-        callPointerFunc("glfwSetCursorEnterCallback", window, callback)
+        callPointerFunc("glfwSetCursorEnterCallback", window, constructStub(GLFWCursorEnterFun::class, callback))
 
     fun glfwSetScrollCallback(window: GLFWWindow, callback: GLFWScrollFun): MemorySegment =
-        callPointerFunc("glfwSetScrollCallback", window, callback)
+        callPointerFunc("glfwSetScrollCallback", window, constructStub(GLFWScrollFun::class, callback))
 
     fun glfwSetDropCallback(window: GLFWWindow, callback: GLFWDropFun): MemorySegment =
-        callPointerFunc("glfwSetDropCallback", window, callback)
+        callPointerFunc("glfwSetDropCallback", window, constructStub(GLFWDropFun::class, callback))
 
     fun glfwJoystickPresent(jid: Int): Int =
         callFunc("glfwJoystickPresent", Int::class, jid)

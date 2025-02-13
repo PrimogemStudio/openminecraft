@@ -29,7 +29,6 @@ import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glClearColor
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glColor4f
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glEnd
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glLineWidth
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glRotatef
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glVertex3f
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glViewport
 import com.primogemstudio.engine.bindings.vulkan.vk10.*
@@ -135,14 +134,14 @@ fun main() {
 
         glLineWidth(2f)
 
-        glRotatef(rotation, 0f, 0f, 1f)
+        // glRotatef(rotation, 0f, 0f, 1f)
         glBegin(GL_TRIANGLES)
         glColor4f(1f, 1f, 0f, 1f)
-        glVertex3f(-0.5f, -0.5f, -1f)
+        glVertex3f(-0.5f, -0.5f, 0f)
         glColor4f(0f, 1f, 1f, 1f)
-        glVertex3f(0.5f, -0.5f, -1f)
+        glVertex3f(0.5f, -0.5f, 0f)
         glColor4f(1f, 0f, 1f, 1f)
-        glVertex3f(0f, 0.5f, -1f)
+        glVertex3f(0f, 0.5f, 0f)
         glEnd()
 
         rotation += 0.00001f

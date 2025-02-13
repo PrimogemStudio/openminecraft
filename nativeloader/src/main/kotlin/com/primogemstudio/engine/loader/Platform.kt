@@ -41,6 +41,7 @@ object Platform {
     private val logger = LoggerFactory.getLogger()
     private val libStatus = mutableMapOf<String, Boolean>()
     fun libAvailable(name: String): Boolean = libStatus[name] == true
+    operator fun invoke(name: String): Boolean = libAvailable(name)
 
     val system = System.getProperty("os.name").lowercase(Locale.ROOT).let {
         if (it.contains("windows")) PlatformSystem.Windows

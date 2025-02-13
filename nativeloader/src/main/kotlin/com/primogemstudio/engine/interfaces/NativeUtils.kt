@@ -1,6 +1,5 @@
 package com.primogemstudio.engine.interfaces
 
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
 import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
 import com.primogemstudio.engine.interfaces.heap.HeapStructArray
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
@@ -12,18 +11,19 @@ import java.lang.foreign.ValueLayout.JAVA_BYTE
 import kotlin.math.max
 
 fun MemorySegment.fetchString(): String {
-    val buf = reinterpret(Int.MAX_VALUE.toLong() / 2).asByteBuffer()
-    val bList = mutableListOf<Byte>()
+    val buf = reinterpret(Long.MAX_VALUE)
     var chr: Byte
 
+    var idx = 0L
     while (true) {
-        chr = buf.get()
+        chr = buf.get(JAVA_BYTE, idx)
         if (chr == 0x00.toByte()) break
-
-        bList.add(chr)
+        idx++
     }
+    val barr = ByteArray(idx.toInt())
+    MemorySegment.copy(this, JAVA_BYTE, 0, barr, 0, idx.toInt())
 
-    return String(bList.toByteArray(), Charsets.UTF_8)
+    return String(barr, Charsets.UTF_8)
 }
 
 fun String.toCString(): MemorySegment {
