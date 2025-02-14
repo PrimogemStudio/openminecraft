@@ -7,7 +7,7 @@ import java.util.*
 
 object Internationalization {
     private val targetTranslations = mutableMapOf<String, MutableMap<String, String>>()
-    private val logger = LoggerFactory.getLogger()
+    private val logger = LoggerFactory.getAsyncLogger()
 
     private val localeList = mutableListOf(
         "jar:assets/openmc/locale.json",

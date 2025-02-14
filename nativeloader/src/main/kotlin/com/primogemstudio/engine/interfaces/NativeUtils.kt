@@ -21,7 +21,7 @@ fun MemorySegment.fetchString(): String {
         idx++
     }
     val barr = ByteArray(idx.toInt())
-    MemorySegment.copy(this, JAVA_BYTE, 0, barr, 0, idx.toInt())
+    MemorySegment.copy(buf, JAVA_BYTE, 0, barr, 0, idx.toInt())
 
     return String(barr, Charsets.UTF_8)
 }

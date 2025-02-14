@@ -39,6 +39,7 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateFence
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumeratePhysicalDevices
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkResetFences
 import com.primogemstudio.engine.interfaces.heap.HeapByteArray
 import com.primogemstudio.engine.interfaces.heap.HeapFloatArray
@@ -46,13 +47,15 @@ import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
 import com.primogemstudio.engine.interfaces.toCStructArray
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.MemorySegment
+import kotlin.uuid.ExperimentalUuidApi
 
+@OptIn(ExperimentalUuidApi::class)
 fun main() {
     /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
     val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
     instance.vkWindow!!.mainLoop()*/
 
-    val logger = LoggerFactory.getLogger()
+    val logger = LoggerFactory.getAsyncLogger()
 
     glfwInit()
     glfwSetErrorCallback { err, desc ->
@@ -103,11 +106,15 @@ fun main() {
                 vkCreateFence(dev, VkFenceCreateInfo(), null).match({ fence ->
                     val arr = HeapPointerArray(arrayOf(fence))
                     logger.info("${vkResetFences(dev, arr)}")
+
+                    println(vkGetPhysicalDeviceProperties(phyDevice[0]).pipelineCacheUUID)
                 }, { logger.error("vulkan error: $it") })
             }, { logger.error("vulkan error: $it") })
         }, { logger.error("vulkan error: $it") })
     }, { logger.error("vulkan error: $it") })
     vkEnumerateInstanceLayerProperties().match({ r -> println(r.map { it.layerName }) }, {})
+
+
 
     glfwSetCursor(
         window,
@@ -135,6 +142,7 @@ fun main() {
         glLineWidth(2f)
 
         // glRotatef(rotation, 0f, 0f, 1f)
+
         glBegin(GL_TRIANGLES)
         glColor4f(1f, 1f, 0f, 1f)
         glVertex3f(-0.5f, -0.5f, 0f)

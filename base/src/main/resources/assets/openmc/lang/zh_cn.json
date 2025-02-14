@@ -1,5 +1,6 @@
 {
-  "exception.i18n.replacement.at": "\t位于",
-  "exception.i18n.replacement.thread": "异常发生于线程",
-  "exception.i18n.replacement.trace": "堆栈追踪"
+  "engine.debugger.timer.log.ns": "函数 %s 已计时 -> %f ns",
+  "engine.debugger.timer.log.us": "函数 %s 已计时 -> %f us",
+  "engine.debugger.timer.log.ms": "函数 %s 已计时 -> %f ms",
+  "engine.debugger.timer.log.s": "函数 %s 已计时 -> %f s"
 }

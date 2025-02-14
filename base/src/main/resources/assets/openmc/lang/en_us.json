@@ -1,5 +1,6 @@
 {
-  "exception.i18n.replacement.at": "\tAt",
-  "exception.i18n.replacement.thread": "Exception in thread",
-  "exception.i18n.replacement.trace": "Stack trace"
+  "engine.debugger.timer.log.ns": "Timed func %s -> %f ns",
+  "engine.debugger.timer.log.us": "Timed func %s -> %f us",
+  "engine.debugger.timer.log.ms": "Timed func %s -> %f ms",
+  "engine.debugger.timer.log.s": "Timed func %s -> %f s"
 }

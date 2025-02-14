@@ -18,7 +18,7 @@ object NativeMethodCache {
         Platform.init()
     }
 
-    private val logger = LoggerFactory.getLogger()
+    private val logger = LoggerFactory.getAsyncLogger()
     private val funcCache = mutableMapOf<String, MethodHandle>()
     private val stubCache = mutableMapOf<Any, MemorySegment>()
     private val linker = Linker.nativeLinker()
