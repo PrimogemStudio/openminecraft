@@ -114,8 +114,6 @@ fun main() {
     }, { logger.error("vulkan error: $it") })
     vkEnumerateInstanceLayerProperties().match({ r -> println(r.map { it.layerName }) }, {})
 
-
-
     glfwSetCursor(
         window,
         glfwCreateCursor(
