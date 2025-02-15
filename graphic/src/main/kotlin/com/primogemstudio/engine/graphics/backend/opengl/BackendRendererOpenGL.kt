@@ -5,9 +5,10 @@ import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_VENDOR
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_VERSION
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glGetString
 import com.primogemstudio.engine.graphics.IRenderer
+import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.types.Version
 
-class BackendRendererOpenGL : IRenderer {
+class BackendRendererOpenGL(override val gameInfo: ApplicationInfo) : IRenderer {
     override fun version(): Version {
         try {
             val vers = glGetString(GL_VERSION).split(" ")[0].split(".").map { it.toUShort() }

@@ -8,6 +8,7 @@ version = "${properties["openminecraft.version"]}"
 dependencies {
     implementation(rootProject.project(":openminecraft-base"))
     implementation(rootProject.project(":openminecraft-binding"))
+    implementation(rootProject.project(":openminecraft-nativeloader"))
 
     properties["openminecraft.lwjgl_version"].toString().apply {
         properties["openminecraft.lwjgl_mods"].toString().split(",").forEach { mod ->

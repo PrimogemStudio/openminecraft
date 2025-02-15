@@ -31,31 +31,28 @@ import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glEnd
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glLineWidth
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glVertex3f
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glViewport
-import com.primogemstudio.engine.bindings.vulkan.vk10.*
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_API_VERSION
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_VERSION
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateDevice
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateFence
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateInstance
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceLayerProperties
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumeratePhysicalDevices
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceProperties
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkResetFences
+import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
+import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.interfaces.heap.HeapByteArray
-import com.primogemstudio.engine.interfaces.heap.HeapFloatArray
-import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
-import com.primogemstudio.engine.interfaces.toCStructArray
 import com.primogemstudio.engine.logging.LoggerFactory
+import com.primogemstudio.engine.types.Version
 import java.lang.foreign.MemorySegment
-import kotlin.uuid.ExperimentalUuidApi
 
-@OptIn(ExperimentalUuidApi::class)
 fun main() {
     /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
     val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
     instance.vkWindow!!.mainLoop()*/
 
     val logger = LoggerFactory.getAsyncLogger()
+
+    val re = BackendRendererVk(
+        ApplicationInfo(
+            "openminecraft",
+            Version.from(0u, 0u, 1u),
+            "openminecraft",
+            Version.from(0u, 0u, 1u)
+        )
+    )
 
     glfwInit()
     glfwSetErrorCallback { err, desc ->
@@ -74,45 +71,6 @@ fun main() {
         GLFWWindow(MemorySegment.NULL)
     )
     glfwMakeContextCurrent(window)
-
-    vkCreateInstance(
-        VkInstanceCreateInfo().apply {
-            appInfo = VkApplicationInfo().apply {
-                appName = "test"
-                appVersion = VK_MAKE_VERSION(0, 0, 1)
-                engineName = "test"
-                engineVersion = VK_MAKE_VERSION(0, 0, 1)
-                apiVersion = VK_MAKE_API_VERSION(1, 0, 0, 0)
-            }
-            layers = arrayOf("VK_LAYER_KHRONOS_validation")
-            extensions = arrayOf("VK_EXT_debug_utils")
-        },
-        allocator = null
-    ).match({ instance ->
-        vkEnumeratePhysicalDevices(instance).match({ phyDevice -> 
-            vkCreateDevice(
-                phyDevice[0],
-                VkDeviceCreateInfo().apply {
-                    queueCreateInfos = arrayOf(VkDeviceQueueCreateInfo().apply {
-                        queueFamilyIndex = 0
-                        queuePriorities = HeapFloatArray(floatArrayOf(1f))
-                    }).toCStructArray(VkDeviceQueueCreateInfo.LAYOUT)
-                    layers = arrayOf()
-                    extensions = arrayOf()
-                    features = VkPhysicalDeviceFeatures()
-                },
-                null
-            ).match({ dev -> 
-                vkCreateFence(dev, VkFenceCreateInfo(), null).match({ fence ->
-                    val arr = HeapPointerArray(arrayOf(fence))
-                    logger.info("${vkResetFences(dev, arr)}")
-
-                    println(vkGetPhysicalDeviceProperties(phyDevice[0]).pipelineCacheUUID)
-                }, { logger.error("vulkan error: $it") })
-            }, { logger.error("vulkan error: $it") })
-        }, { logger.error("vulkan error: $it") })
-    }, { logger.error("vulkan error: $it") })
-    vkEnumerateInstanceLayerProperties().match({ r -> println(r.map { it.layerName }) }, {})
 
     glfwSetCursor(
         window,

@@ -5,7 +5,6 @@ import com.primogemstudio.engine.interfaces.align
 import com.primogemstudio.engine.interfaces.cacheOffsets
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.stub.IStub
-import com.primogemstudio.engine.loader.Platform.sizetMap
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -19,23 +18,28 @@ const val VK_SYSTEM_ALLOCATION_SCOPE_DEVICE = 3
 const val VK_SYSTEM_ALLOCATION_SCOPE_INSTANCE = 4
 const val VK_INTERNAL_ALLOCATION_TYPE_EXECUTABLE = 0
 
-interface VkAllocateFunc : IStub {
+fun interface VkAllocateFunc : IStub {
     fun call(userdata: MemorySegment, size: Long, alignment: Long, allocationScope: Int): MemorySegment
-    fun call(userdata: MemorySegment, size: Int, alignment: Int, allocationScope: Int): MemorySegment
+    fun call(
+        userdata: MemorySegment,
+        size: MemorySegment,
+        alignment: MemorySegment,
+        allocationScope: Int
+    ): MemorySegment = call(userdata, size.address(), alignment.address(), allocationScope)
     override fun register(): Pair<String, MethodType> =
         Pair(
             "call",
             MethodType.methodType(
                 MemorySegment::class.java,
                 MemorySegment::class.java,
-                sizetMap().java,
-                sizetMap().java,
+                MemorySegment::class.java,
+                MemorySegment::class.java,
                 Int::class.java
             )
         )
 }
 
-interface VkReallocateFunc : IStub {
+fun interface VkReallocateFunc : IStub {
     fun call(
         userdata: MemorySegment,
         seg: MemorySegment,
@@ -47,10 +51,10 @@ interface VkReallocateFunc : IStub {
     fun call(
         userdata: MemorySegment,
         seg: MemorySegment,
-        size: Int,
-        alignment: Int,
+        size: MemorySegment,
+        alignment: MemorySegment,
         allocationScope: Int
-    ): MemorySegment
+    ): MemorySegment = call(userdata, seg, size.address(), alignment.address(), allocationScope)
 
     override fun register(): Pair<String, MethodType> =
         Pair(
@@ -59,8 +63,8 @@ interface VkReallocateFunc : IStub {
                 MemorySegment::class.java,
                 MemorySegment::class.java,
                 MemorySegment::class.java,
-                sizetMap().java,
-                sizetMap().java,
+                MemorySegment::class.java,
+                MemorySegment::class.java,
                 Int::class.java
             )
         )
@@ -79,16 +83,17 @@ fun interface VkFreeFunc : IStub {
         )
 }
 
-interface VkInternalMemNotificationFunc : IStub {
+fun interface VkInternalMemNotificationFunc : IStub {
     fun call(userdata: MemorySegment, size: Long, type: Int, scope: Int)
-    fun call(userdata: MemorySegment, size: Int, type: Int, scope: Int)
+    fun call(userdata: MemorySegment, size: MemorySegment, type: Int, scope: Int) =
+        call(userdata, size.address(), type, scope)
     override fun register(): Pair<String, MethodType> =
         Pair(
             "call",
             MethodType.methodType(
                 Void.TYPE,
                 MemorySegment::class.java,
-                sizetMap().java,
+                MemorySegment::class.java,
                 Int::class.java,
                 Int::class.java
             )

@@ -11,7 +11,6 @@ import com.primogemstudio.engine.interfaces.heap.HeapInt
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.interfaces.toCStrArray
-import com.primogemstudio.engine.loader.Platform.sizetMap
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -20,13 +19,13 @@ import java.lang.invoke.MethodType
 
 interface GLFWAllocateFun : IStub {
     fun call(size: Long, user: MemorySegment): MemorySegment
-    fun call(size: Int, user: MemorySegment): MemorySegment
+    fun call(size: MemorySegment, user: MemorySegment): MemorySegment = call(size.address(), user)
     override fun register(): Pair<String, MethodType> =
         Pair(
             "call",
             MethodType.methodType(
                 MemorySegment::class.java,
-                sizetMap().java,
+                MemorySegment::class.java,
                 MemorySegment::class.java
             )
         )
@@ -34,14 +33,15 @@ interface GLFWAllocateFun : IStub {
 
 interface GLFWReallocateFun : IStub {
     fun call(block: MemorySegment, size: Long, user: MemorySegment): MemorySegment
-    fun call(block: MemorySegment, size: Int, user: MemorySegment): MemorySegment
+    fun call(block: MemorySegment, size: MemorySegment, user: MemorySegment): MemorySegment =
+        call(block, size.address(), user)
     override fun register(): Pair<String, MethodType> =
         Pair(
             "call",
             MethodType.methodType(
                 MemorySegment::class.java,
                 MemorySegment::class.java,
-                sizetMap().java,
+                MemorySegment::class.java,
                 MemorySegment::class.java
             )
         )

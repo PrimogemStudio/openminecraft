@@ -25,4 +25,9 @@ data class Version(
         version.shr(16).and(0xFFFF),
         version.shr(0).and(0xFFFF)
     ).joinToString(".")
+
+    val major: Short get() = version.shr(48).and(0xFFFF).toShort()
+    val minor: Short get() = version.shr(32).and(0xFFFF).toShort()
+    val patch: Short get() = version.shr(16).and(0xFFFF).toShort()
+    val ext: Short get() = version.shr(0).and(0xFFFF).toShort()
 }
