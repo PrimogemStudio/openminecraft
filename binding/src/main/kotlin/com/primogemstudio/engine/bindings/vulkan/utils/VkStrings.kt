@@ -1,5 +1,8 @@
 package com.primogemstudio.engine.bindings.vulkan.utils
 
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_API_VERSION_MAJOR
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_API_VERSION_MINOR
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_API_VERSION_PATCH
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ERROR_DEVICE_LOST
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ERROR_EXTENSION_NOT_PRESENT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ERROR_FEATURE_NOT_PRESENT
@@ -19,10 +22,24 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_VERSION
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_NOT_READY
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUCCESS
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_TIMEOUT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_VERSION_MAJOR
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_VERSION_MINOR
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_VERSION_PATCH
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.types.Version
 
 fun Version.toVkVersion(): Int = VK_MAKE_VERSION(this.major.toInt(), this.minor.toInt(), this.patch.toInt())
+fun Int.fromVkVersion(): Version = Version.from(
+    VK_VERSION_MAJOR(this).toUShort(),
+    VK_VERSION_MINOR(this).toUShort(),
+    VK_VERSION_PATCH(this).toUShort()
+)
+
+fun Int.fromVkApiVersion(): Version = Version.from(
+    VK_API_VERSION_MAJOR(this).toUShort(),
+    VK_API_VERSION_MINOR(this).toUShort(),
+    VK_API_VERSION_PATCH(this).toUShort()
+)
 fun Int.toVkError(): String = when (this) {
     VK_SUCCESS -> "success"
     VK_NOT_READY -> "not_ready"

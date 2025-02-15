@@ -24,6 +24,7 @@
   "engine,shader.types.intersection": "Intersection Shader ",
   "engine,shader.types.callable": "Callable Shader ",
   "exception.renderer.backend_vk.instance": "Failed to create vulkan instance: 0x%s (%s)",
+  "exception.renderer.backend_vk.phy_dev": "Failed to fetch vulkan physical devices: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "Success",
   "engine.renderer.backend_vk.status.not_ready": "Not ready",
   "engine.renderer.backend_vk.status.timeout": "Invoke/Wait time out",

@@ -3,7 +3,6 @@ package com.primogemstudio.engine.loader
 import com.primogemstudio.engine.exceptions.PlatformLibInitException
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.json.GsonObjects
-import com.primogemstudio.engine.loader.sys.OSMesaLibLoader
 import com.primogemstudio.engine.loader.sys.OpenGLESLibLoader
 import com.primogemstudio.engine.loader.sys.OpenGLLibLoader
 import com.primogemstudio.engine.loader.sys.VulkanLibLoader
@@ -153,12 +152,7 @@ object Platform {
         }
         libStatus["vulkan"] = load(VulkanLibLoader.source())
         libStatus["opengl"] = load(OpenGLLibLoader.source())
-        if (!libStatus["opengl"]!!) {
-            libStatus["osmesa"] = load(OSMesaLibLoader.source())
-            if (!libStatus["osmesa"]!!) {
-                libStatus["opengles"] = load(OpenGLESLibLoader.source())
-            }
-        }
+        libStatus["opengles"] = load(OpenGLESLibLoader.source())
 
         return true
     }
