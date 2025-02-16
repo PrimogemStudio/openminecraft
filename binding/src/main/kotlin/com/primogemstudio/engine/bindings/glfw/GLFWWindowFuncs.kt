@@ -218,6 +218,8 @@ object GLFWWindowFuncs {
     const val GLFW_CONTEXT_NO_ERROR = 0x0002200a
     const val GLFW_CONTEXT_CREATION_API = 0x0002200b
     const val GLFW_NO_API = 0x0
+    const val GLFW_OPENGL_API = 0x00030001
+    const val GLFW_OPENGL_ES_API = 0x00030002
     const val GLFW_NATIVE_CONTEXT_API = 0x00036001
     const val GLFW_EGL_CONTEXT_API = 0x00036002
     const val GLFW_OSMESA_CONTEXT_API = 0x00036003

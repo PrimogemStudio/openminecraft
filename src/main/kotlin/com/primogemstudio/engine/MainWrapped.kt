@@ -10,8 +10,12 @@ import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwCreateCursor
 import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetCursor
 import com.primogemstudio.engine.bindings.glfw.GLFWMonitor
 import com.primogemstudio.engine.bindings.glfw.GLFWWindow
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CLIENT_API
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_CREATION_API
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_VERSION_MAJOR
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_VERSION_MINOR
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_NATIVE_CONTEXT_API
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_OPENGL_API
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_TRANSPARENT_FRAMEBUFFER
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwCreateWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwDestroyWindow
@@ -31,7 +35,11 @@ import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glEnd
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glLineWidth
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glVertex3f
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glViewport
+import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
+import com.primogemstudio.engine.graphics.data.ApplicationInfo
+import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
 import com.primogemstudio.engine.interfaces.heap.HeapByteArray
+import com.primogemstudio.engine.types.Version
 import java.lang.foreign.MemorySegment
 
 fun main() {
@@ -39,7 +47,7 @@ fun main() {
     val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
     instance.vkWindow!!.mainLoop()*/
 
-    /*val re = BackendRendererVk(
+    val re = BackendRendererVk(
         ApplicationInfo(
             "openminecraft",
             Version.from(0u, 0u, 1u),
@@ -52,7 +60,7 @@ fun main() {
             width = 800,
             height = 600
         )
-    ) { it.first() }*/
+    ) { it.first() }
 
     glfwInit()
     glfwSetErrorCallback { err, desc ->
@@ -63,6 +71,8 @@ fun main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 1)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1)
     glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GL_TRUE)
+    glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API)
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API)
     val window = glfwCreateWindow(
         640,
         480,
