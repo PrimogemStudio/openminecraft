@@ -31,10 +31,7 @@ import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glEnd
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glLineWidth
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glVertex3f
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glViewport
-import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
-import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.interfaces.heap.HeapByteArray
-import com.primogemstudio.engine.types.Version
 import java.lang.foreign.MemorySegment
 
 fun main() {
@@ -42,15 +39,20 @@ fun main() {
     val instance = VkInstanceEngine("OpenMinecraft", "0.0.1-alpha1")
     instance.vkWindow!!.mainLoop()*/
 
-    val re = BackendRendererVk(
+    /*val re = BackendRendererVk(
         ApplicationInfo(
             "openminecraft",
             Version.from(0u, 0u, 1u),
             "openminecraft",
             Version.from(0u, 0u, 1u),
             Version.fromStandard(1u, 0u, 0u, 0u)
+        ),
+        ApplicationWindowInfo(
+            windowTitle = "OpenMinecraft Dev Preview",
+            width = 800,
+            height = 600
         )
-    ) { it.first() }
+    ) { it.first() }*/
 
     glfwInit()
     glfwSetErrorCallback { err, desc ->

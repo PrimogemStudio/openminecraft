@@ -45,7 +45,7 @@ fun Array<String>.toCStrArray(): MemorySegment {
 }
 
 fun MemorySegment.toPointerArray(length: Int): Array<MemorySegment> =
-    HeapPointerArray<IHeapObject>(length, this, null).value()
+    HeapPointerArray<IHeapObject>(length, this.reinterpret(length * sizetLength() * 1L), null).value()
 
 fun StructLayout.cacheOffsets(): LongArray =
     (0..<this.memberLayouts().size).map { this.byteOffset(MemoryLayout.PathElement.groupElement(it.toLong())) }
