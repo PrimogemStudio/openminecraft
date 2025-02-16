@@ -47,7 +47,8 @@ fun main() {
             "openminecraft",
             Version.from(0u, 0u, 1u),
             "openminecraft",
-            Version.from(0u, 0u, 1u)
+            Version.from(0u, 0u, 1u),
+            Version.fromStandard(1u, 0u, 0u, 0u)
         )
     ) { it.first() }
 

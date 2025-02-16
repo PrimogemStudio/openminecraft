@@ -5,7 +5,7 @@ import com.primogemstudio.engine.bindings.vulkan.utils.fromVkVersion
 import com.primogemstudio.engine.bindings.vulkan.utils.toFullErr
 import com.primogemstudio.engine.bindings.vulkan.utils.toVkVersion
 import com.primogemstudio.engine.bindings.vulkan.vk10.*
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_API_VERSION_1_0
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceProperties
@@ -29,7 +29,12 @@ class BackendRendererVk(
                     appVersion = gameInfo.appVersion.toVkVersion()
                     engineName = gameInfo.engineName
                     engineVersion = gameInfo.engineVersion.toVkVersion()
-                    apiVersion = VK_API_VERSION_1_0
+                    apiVersion = VK_MAKE_API_VERSION(
+                        gameInfo.reqApiVersion.major.toInt(),
+                        gameInfo.reqApiVersion.minor.toInt(),
+                        gameInfo.reqApiVersion.patch.toInt(),
+                        gameInfo.reqApiVersion.ext.toInt()
+                    )
                 }
             },
             null

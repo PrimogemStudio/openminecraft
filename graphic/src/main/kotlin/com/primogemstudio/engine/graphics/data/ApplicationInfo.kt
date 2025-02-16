@@ -6,5 +6,6 @@ data class ApplicationInfo(
     val appName: String,
     val appVersion: Version,
     val engineName: String,
-    val engineVersion: Version
+    val engineVersion: Version,
+    val reqApiVersion: Version
 )
