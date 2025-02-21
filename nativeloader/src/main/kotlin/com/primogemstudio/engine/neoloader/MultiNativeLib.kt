@@ -12,7 +12,7 @@ class MultiNativeLib(private val name: String, private val libs: List<INativeLib
             try {
                 if (!i.load()) continue
                 return true
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 logger.error(tr("engine.nativeloader.load.fail", i.toString()), e)
             }
         }
