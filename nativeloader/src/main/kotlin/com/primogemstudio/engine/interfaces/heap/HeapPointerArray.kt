@@ -1,6 +1,6 @@
 package com.primogemstudio.engine.interfaces.heap
 
-import com.primogemstudio.engine.loader.Platform.sizetLength
+import com.primogemstudio.engine.neoloader.plat.Platform.sizetLength
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS

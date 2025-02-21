@@ -9,10 +9,13 @@ import com.primogemstudio.engine.bindings.glfw.GLFWVulkanFuncs.glfwCreateWindowS
 import com.primogemstudio.engine.bindings.glfw.GLFWWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CLIENT_API
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_NO_API
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_TRANSPARENT_FRAMEBUFFER
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwCreateWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwDestroyWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebufferSizeCallback
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
+import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_FALSE
+import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_TRUE
 import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHR
 import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHRFuncs.vkDestroySurfaceKHR
 import com.primogemstudio.engine.bindings.vulkan.utils.toFullErr
@@ -34,6 +37,7 @@ class VulkanWindow(
         glfwInit()
         glfwSetErrorCallback { code, msg -> errorCallback(code, msg) }
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
+        glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, if (windowInfo.transparent) GL_TRUE else GL_FALSE)
 
         window = glfwCreateWindow(
             windowInfo.width,

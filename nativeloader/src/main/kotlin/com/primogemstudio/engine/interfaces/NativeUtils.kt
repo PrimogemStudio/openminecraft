@@ -4,7 +4,7 @@ import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
 import com.primogemstudio.engine.interfaces.heap.HeapStructArray
 import com.primogemstudio.engine.interfaces.heap.IHeapObject
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
-import com.primogemstudio.engine.loader.Platform.sizetLength
+import com.primogemstudio.engine.neoloader.plat.Platform.sizetLength
 import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.ADDRESS
 import java.lang.foreign.ValueLayout.JAVA_BYTE
