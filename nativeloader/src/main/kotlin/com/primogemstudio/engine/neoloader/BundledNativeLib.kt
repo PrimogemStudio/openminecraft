@@ -15,7 +15,7 @@ class BundledNativeLib(private val name: String, private val source: InputStream
             return false
         }
 
-        val pathr = Files.createTempFile("openminecraftlib", "temp")
+        val pathr = Files.createTempFile("openminecraftlib", System.mapLibraryName(name))
         pathr.toFile().deleteOnExit()
         Files.copy(source, pathr, StandardCopyOption.REPLACE_EXISTING)
         logger.info(tr("engine.nativeloader.load.copy", name, pathr))
