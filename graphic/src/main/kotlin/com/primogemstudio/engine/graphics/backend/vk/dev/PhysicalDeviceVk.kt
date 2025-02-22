@@ -10,6 +10,7 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDevice
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDeviceProperties
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
+import com.primogemstudio.engine.i18n.Internationalization.tr
 
 class PhysicalDeviceVk(
     private val renderer: BackendRendererVk,
@@ -43,5 +44,9 @@ class PhysicalDeviceVk(
 
         graphicFamily = gf
         presentFamily = pf
+
+        if (graphicFamily == -1 || presentFamily == -1) {
+            throw IllegalStateException(tr("exception.renderer.backend_vk.family"))
+        }
     }
 }

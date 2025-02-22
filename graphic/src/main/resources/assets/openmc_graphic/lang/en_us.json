@@ -28,6 +28,7 @@
   "exception.renderer.backend_vk.surface": "Failed to create vulkan surface: 0x%s (%s)",
   "exception.renderer.backend_vk.validation": "Failed to create vulkan validation layer debugger: 0x%s (%s)",
   "exception.renderer.backend_vk.phy_dev_query": "Failed to query device surface support: 0x%s (%s)",
+  "exception.renderer.backend_vk.family": "Failed to find capable GPU family!",
   "engine.renderer.backend_vk.status.success": "Success",
   "engine.renderer.backend_vk.status.not_ready": "Not ready",
   "engine.renderer.backend_vk.status.timeout": "Invoke/Wait time out",

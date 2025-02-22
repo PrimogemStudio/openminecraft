@@ -28,6 +28,7 @@
   "exception.renderer.backend_vk.surface": "无法创建 Vulkan 表面: 0x%s (%s)",
   "exception.renderer.backend_vk.validation": "无法创建 Vulkan 验证层调试器: 0x%s (%s)",
   "exception.renderer.backend_vk.phy_dev_query": "无法查询设备表面支持: 0x%s (%s)",
+  "exception.renderer.backend_vk.family": "未找到有效的 GPU 组！",
   "engine.renderer.backend_vk.status.success": "成功",
   "engine.renderer.backend_vk.status.not_ready": "未准备",
   "engine.renderer.backend_vk.status.timeout": "调用/等待超时",
