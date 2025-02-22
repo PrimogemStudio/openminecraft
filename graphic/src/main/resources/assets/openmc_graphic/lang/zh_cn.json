@@ -51,5 +51,10 @@
   "engine.renderer.backend_vk.type.general": "默认",
   "engine.renderer.backend_vk.type.validation": "验证",
   "engine.renderer.backend_vk.type.performance": "性能",
-  "engine.renderer.backend_vk.log": "[Vk/%s] %s"
+  "engine.renderer.backend_vk.log": "[Vk/%s] %s",
+  "engine.renderer.backend_vk.stage.instance": "Vulkan 实例 (%s v%s) ...",
+  "engine.renderer.backend_vk.stage.validation": "验证层初始化 ...",
+  "engine.renderer.backend_vk.stage.window": "窗口 & 表面初始化 ...",
+  "engine.renderer.backend_vk.stage.phy_device": "检查物理设备 ...",
+  "engine.renderer.backend_vk.stage.phy_device.family": "选择 GPU 组 (图形: %d, 显示: %d) 于设备 %s ..."
 }

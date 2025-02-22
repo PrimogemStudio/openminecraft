@@ -11,11 +11,13 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDevice
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDeviceProperties
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.i18n.Internationalization.tr
+import com.primogemstudio.engine.logging.LoggerFactory
 
 class PhysicalDeviceVk(
     private val renderer: BackendRendererVk,
     instance: VkInstance
 ) {
+    private val logger = LoggerFactory.getAsyncLogger()
     private lateinit var physicalDevice: VkPhysicalDevice
     val physicalDeviceProps: VkPhysicalDeviceProperties
     val graphicFamily: Int
@@ -48,5 +50,14 @@ class PhysicalDeviceVk(
         if (graphicFamily == -1 || presentFamily == -1) {
             throw IllegalStateException(tr("exception.renderer.backend_vk.family"))
         }
+
+        logger.info(
+            tr(
+                "engine.renderer.backend_vk.stage.phy_device.family",
+                graphicFamily,
+                presentFamily,
+                physicalDeviceProps.deviceName
+            )
+        )
     }
 }

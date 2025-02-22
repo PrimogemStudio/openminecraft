@@ -18,6 +18,7 @@ import com.primogemstudio.engine.graphics.backend.vk.dev.PhysicalDeviceVk
 import com.primogemstudio.engine.graphics.backend.vk.validation.ValidationLayerVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
+import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.types.Version
 
@@ -56,12 +57,13 @@ class BackendRendererVk(
             { instance = it },
             { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.instance", it)) }
         )
+        logger.info(tr("engine.renderer.backend_vk.stage.instance", gameInfo.appName, gameInfo.appVersion))
         validationLayer.instanceAttach(instance)
-
+        logger.info(tr("engine.renderer.backend_vk.stage.validation"))
         window = VulkanWindow(this, windowInfo) { code, str -> }
-
+        logger.info(tr("engine.renderer.backend_vk.stage.window"))
         physicalDevice = PhysicalDeviceVk(this, instance)
-
+        logger.info(tr("engine.renderer.backend_vk.stage.phy_device"))
     }
 
     override fun close() {

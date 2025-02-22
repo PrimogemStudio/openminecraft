@@ -51,5 +51,10 @@
   "engine.renderer.backend_vk.type.general": "General",
   "engine.renderer.backend_vk.type.validation": "Validation",
   "engine.renderer.backend_vk.type.performance": "Performance",
-  "engine.renderer.backend_vk.log": "[Vk/%s] %s"
+  "engine.renderer.backend_vk.log": "[Vk/%s] %s",
+  "engine.renderer.backend_vk.stage.instance": "Vulkan instance (%s v%s) ...",
+  "engine.renderer.backend_vk.stage.validation": "Validation init ...",
+  "engine.renderer.backend_vk.stage.window": "Window & surface init ...",
+  "engine.renderer.backend_vk.stage.phy_device": "Physical device checking ...",
+  "engine.renderer.backend_vk.stage.phy_device.family": "Selected family (graphic: %d, present: %d) on %s ..."
 }
