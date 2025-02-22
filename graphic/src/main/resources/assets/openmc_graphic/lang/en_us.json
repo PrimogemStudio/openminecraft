@@ -44,5 +44,8 @@
   "engine.renderer.backend_vk.status.too_many_objects": "Too many objects",
   "engine.renderer.backend_vk.status.format_not_supported": "Format not supported",
   "engine.renderer.backend_vk.status.fragmented_pool": "Fragmented/Broken pool",
-  "engine.renderer.backend_vk.status.unknown_error": "Unknown error"
+  "engine.renderer.backend_vk.status.unknown_error": "Unknown error",
+  "engine.renderer.backend_vk.type.general": "General",
+  "engine.renderer.backend_vk.type.validation": "Validation",
+  "engine.renderer.backend_vk.type.performance": "Performance"
 }

@@ -44,5 +44,8 @@
   "engine.renderer.backend_vk.status.too_many_objects": "Vulkan 对象过多",
   "engine.renderer.backend_vk.status.format_not_supported": "格式不支持",
   "engine.renderer.backend_vk.status.fragmented_pool": "分段/损坏的 Vulkan 池",
-  "engine.renderer.backend_vk.status.unknown_error": "未知错误"
+  "engine.renderer.backend_vk.status.unknown_error": "未知错误",
+  "engine.renderer.backend_vk.type.general": "默认",
+  "engine.renderer.backend_vk.type.validation": "验证",
+  "engine.renderer.backend_vk.type.performance": "性能"
 }
