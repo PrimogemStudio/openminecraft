@@ -26,7 +26,21 @@
       ]
     },
     {
-      "type": "com.primogemstudio.engine.loader.NativeLibConfigModel",
+      "type": "com.primogemstudio.engine.bindings.vulkan.ext.debugutils.VkDebugUtilsMessengerCallbackEXT",
+      "methods": [
+        {
+          "name": "call",
+          "parameterTypes": [
+            "int",
+            "int",
+            "java.lang.foreign.MemorySegment",
+            "java.lang.foreign.MemorySegment"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "com.primogemstudio.engine.neoloader.plat.NativeLibConfigModel",
       "allDeclaredFields": true,
       "methods": [
         {

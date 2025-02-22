@@ -155,6 +155,7 @@ class NativeImageFeature: Feature {
 		upcallTypes.add(FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, JAVA_INT, JAVA_INT, JAVA_INT, JAVA_FLOAT, ADDRESS, ADDRESS))
 		upcallTypes.add(FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, ADDRESS))
 		upcallTypes.add(FunctionDescriptor.ofVoid(ADDRESS, ADDRESS, ADDRESS, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, JAVA_FLOAT, ADDRESS))
+        upcallTypes.add(FunctionDescriptor.of(JAVA_INT, JAVA_INT, JAVA_INT, JAVA_LONG, JAVA_LONG))
 
 		downcallTypes.forEach {
 			regDowncall.invoke(null, it, arrayOf<Any>())
