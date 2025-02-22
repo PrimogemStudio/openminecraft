@@ -5,8 +5,8 @@ import java.lang.foreign.MemorySegment
 import java.lang.invoke.MethodType
 
 fun interface VkDebugUtilsMessengerCallbackEXT : IStub {
-    fun call(severity: Int, type: Int, callbackData: VkDebugUtilsMessengerCallbackDataEXT, user: MemorySegment)
-    fun call(severity: Int, type: Int, callbackData: MemorySegment, user: MemorySegment) = call(
+    fun call(severity: Int, type: Int, callbackData: VkDebugUtilsMessengerCallbackDataEXT, user: MemorySegment): Int
+    fun call(severity: Int, type: Int, callbackData: MemorySegment, user: MemorySegment): Int = call(
         severity, type, VkDebugUtilsMessengerCallbackDataEXT(
             callbackData.reinterpret(
                 VkDebugUtilsMessengerCallbackDataEXT.LAYOUT.byteSize()
@@ -18,7 +18,7 @@ fun interface VkDebugUtilsMessengerCallbackEXT : IStub {
         Pair(
             "call",
             MethodType.methodType(
-                Void.TYPE,
+                Int::class.java,
                 Int::class.java,
                 Int::class.java,
                 MemorySegment::class.java,

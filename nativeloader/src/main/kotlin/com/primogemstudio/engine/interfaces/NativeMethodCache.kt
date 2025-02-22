@@ -21,8 +21,8 @@ object NativeMethodCache {
     private val logger = LoggerFactory.getAsyncLogger()
     private val funcCache = mutableMapOf<String, MethodHandle>()
     private val stubCache = mutableMapOf<Any, MemorySegment>()
-    private val linker = Linker.nativeLinker()
-    private val symbolLookup = SymbolLookup.loaderLookup()
+    val linker = Linker.nativeLinker()
+    private val symbolLookup = SymbolLookup.loaderLookup().or(DLSymLoader())
 
     private fun klassToLayout(klass: KClass<*>?): MemoryLayout? = klass.let {
         if (it == Boolean::class) return@let JAVA_BOOLEAN

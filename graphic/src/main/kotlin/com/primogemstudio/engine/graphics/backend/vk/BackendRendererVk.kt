@@ -13,8 +13,10 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyInstanc
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumeratePhysicalDevices
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceProperties
 import com.primogemstudio.engine.graphics.IRenderer
+import com.primogemstudio.engine.graphics.backend.vk.validation.ValidationLayerVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
+import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.types.Version
 
 class BackendRendererVk(
@@ -22,6 +24,8 @@ class BackendRendererVk(
     override val windowInfo: ApplicationWindowInfo,
     val deviceSelector: (Array<VkPhysicalDevice>) -> VkPhysicalDevice
 ) : IRenderer {
+    private val logger = LoggerFactory.getAsyncLogger()
+    private val validationLayer = ValidationLayerVk()
     lateinit var instance: VkInstance
     private lateinit var physicalDevice: VkPhysicalDevice
     private var physicalDeviceProps: VkPhysicalDeviceProperties
@@ -43,13 +47,15 @@ class BackendRendererVk(
                         gameInfo.reqApiVersion.ext.toInt()
                     )
                 }
-                extensions = glfwGetRequiredInstanceExtensions()
+                extensions = validationLayer.appendExt(glfwGetRequiredInstanceExtensions())
+                layers = validationLayer.layerArg()
             },
             null
         ).match(
             { instance = it },
             { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.instance", it)) }
         )
+        validationLayer.instanceAttach(instance)
 
         window = VulkanWindow(this, windowInfo) { code, str -> }
 
@@ -62,6 +68,7 @@ class BackendRendererVk(
     }
 
     override fun close() {
+        validationLayer.close()
         vkDestroyInstance(instance, null)
     }
 

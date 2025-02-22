@@ -823,11 +823,17 @@ object Vk10Funcs {
 
     fun vkEnumerateInstanceExtensionProperties(layerName: String): Result<Array<VkExtensionProperties>, Int> {
         val count = HeapInt()
-        callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, MemorySegment.NULL).apply {
+        callFunc(
+            "vkEnumerateInstanceExtensionProperties",
+            Int::class,
+            layerName.toCString(),
+            count,
+            MemorySegment.NULL
+        ).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
         val sarr = HeapStructArray<VkExtensionProperties>(VkExtensionProperties.LAYOUT, count.value())
-        callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName, count, sarr.ref()).apply {
+        callFunc("vkEnumerateInstanceExtensionProperties", Int::class, layerName.toCString(), count, sarr.ref()).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
 
@@ -836,7 +842,14 @@ object Vk10Funcs {
 
     fun vkEnumerateDeviceExtensionProperties(physicalDevice: VkPhysicalDevice, layerName: String): Result<Array<VkExtensionProperties>, Int> {
         val count = HeapInt()
-        callFunc("vkEnumerateDeviceExtensionProperties", Int::class, physicalDevice, layerName, count, MemorySegment.NULL).apply {
+        callFunc(
+            "vkEnumerateDeviceExtensionProperties",
+            Int::class,
+            physicalDevice,
+            layerName.toCString(),
+            count,
+            MemorySegment.NULL
+        ).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
         val sarr = HeapStructArray<VkExtensionProperties>(VkExtensionProperties.LAYOUT, count.value())

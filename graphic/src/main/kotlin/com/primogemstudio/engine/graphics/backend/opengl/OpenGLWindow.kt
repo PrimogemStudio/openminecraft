@@ -34,6 +34,7 @@ class OpenGLWindow(
     override val frameResizeCallback: MutableList<GLFWFrameBufferSizeFun> = mutableListOf()
 
     init {
+        // glfwInitHint(GLFW_PLATFORM, GLFW_PLATFORM_X11)
         glfwInit()
         glfwSetErrorCallback { code, msg -> errorCallback(code, msg) }
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, appInfo.reqApiVersion.major.toInt())
