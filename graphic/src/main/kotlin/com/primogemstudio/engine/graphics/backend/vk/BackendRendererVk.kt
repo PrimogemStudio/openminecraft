@@ -6,13 +6,15 @@ import com.primogemstudio.engine.bindings.vulkan.utils.fromVkApiVersion
 import com.primogemstudio.engine.bindings.vulkan.utils.fromVkVersion
 import com.primogemstudio.engine.bindings.vulkan.utils.toFullErr
 import com.primogemstudio.engine.bindings.vulkan.utils.toVkVersion
-import com.primogemstudio.engine.bindings.vulkan.vk10.*
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyInstance
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumeratePhysicalDevices
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceProperties
+import com.primogemstudio.engine.bindings.vulkan.vk10.VkApplicationInfo
+import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
+import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstanceCreateInfo
+import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDevice
 import com.primogemstudio.engine.graphics.IRenderer
+import com.primogemstudio.engine.graphics.backend.vk.dev.PhysicalDeviceVk
 import com.primogemstudio.engine.graphics.backend.vk.validation.ValidationLayerVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
@@ -27,9 +29,8 @@ class BackendRendererVk(
     private val logger = LoggerFactory.getAsyncLogger()
     private val validationLayer = ValidationLayerVk()
     lateinit var instance: VkInstance
-    private lateinit var physicalDevice: VkPhysicalDevice
-    private var physicalDeviceProps: VkPhysicalDeviceProperties
     override var window: VulkanWindow
+    val physicalDevice: PhysicalDeviceVk
 
     init {
         glfwInit()
@@ -59,12 +60,8 @@ class BackendRendererVk(
 
         window = VulkanWindow(this, windowInfo) { code, str -> }
 
-        vkEnumeratePhysicalDevices(instance).match(
-            { physicalDevice = deviceSelector(it) },
-            { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.phy_dev", it)) }
-        )
+        physicalDevice = PhysicalDeviceVk(this, instance)
 
-        physicalDeviceProps = vkGetPhysicalDeviceProperties(physicalDevice)
     }
 
     override fun close() {
@@ -72,7 +69,7 @@ class BackendRendererVk(
         vkDestroyInstance(instance, null)
     }
 
-    override fun version(): Version = physicalDeviceProps.driverVersion.fromVkApiVersion()
+    override fun version(): Version = physicalDevice.physicalDeviceProps.driverVersion.fromVkApiVersion()
     override fun driver(): String =
-        "${physicalDeviceProps.deviceName} ${physicalDeviceProps.driverVersion.fromVkVersion()}"
+        "${physicalDevice.physicalDeviceProps.deviceName} ${physicalDevice.physicalDeviceProps.driverVersion.fromVkVersion()}"
 }

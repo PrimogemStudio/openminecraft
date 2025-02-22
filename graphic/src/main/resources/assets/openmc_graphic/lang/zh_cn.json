@@ -26,6 +26,7 @@
   "exception.renderer.backend_vk.instance": "无法创建 Vulkan 实例: 0x%s (%s)",
   "exception.renderer.backend_vk.phy_dev": "无法获取 Vulkan 物理设备列表: 0x%s (%s)",
   "exception.renderer.backend_vk.surface": "无法创建 Vulkan 表面: 0x%s (%s)",
+  "exception.renderer.backend_vk.validation": "无法创建 Vulkan 验证层调试器: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "成功",
   "engine.renderer.backend_vk.status.not_ready": "未准备",
   "engine.renderer.backend_vk.status.timeout": "调用/等待超时",
@@ -47,5 +48,6 @@
   "engine.renderer.backend_vk.status.unknown_error": "未知错误",
   "engine.renderer.backend_vk.type.general": "默认",
   "engine.renderer.backend_vk.type.validation": "验证",
-  "engine.renderer.backend_vk.type.performance": "性能"
+  "engine.renderer.backend_vk.type.performance": "性能",
+  "engine.renderer.backend_vk.log": "[Vk/%s] %s"
 }

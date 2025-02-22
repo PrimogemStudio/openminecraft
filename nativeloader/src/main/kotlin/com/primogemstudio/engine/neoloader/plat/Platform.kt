@@ -36,8 +36,7 @@ enum class PlatformArch(val id: String) {
 object Platform {
     private val logger = LoggerFactory.getLogger()
     private val libStatus = mutableMapOf<String, Boolean>()
-    fun libAvailable(name: String): Boolean = libStatus[name] == true
-    operator fun invoke(name: String): Boolean = libAvailable(name)
+    operator fun invoke(name: String): Boolean = libStatus[name] == true
 
     val system = System.getProperty("os.name").lowercase(Locale.ROOT).let {
         if (it.contains("windows")) PlatformSystem.Windows
@@ -87,8 +86,10 @@ object Platform {
             INativeLib.default(it).load()
         }
         libStatus["vulkan"] = VulkanLoader.source().load()
-        libStatus["opengl"] = OpenGLLoader.source().load()
-        libStatus["opengles"] = OpenGLESLoader.source().load()
+        libStatus["gl"] = when (system) {
+            PlatformSystem.Android, PlatformSystem.IOS, PlatformSystem.OpenHarmony -> OpenGLESLoader.source().load()
+            else -> OpenGLLoader.source().load()
+        }
 
         return true
     }
