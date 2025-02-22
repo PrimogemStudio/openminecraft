@@ -12,12 +12,12 @@ class DLSymLoader : SymbolLookup {
         else {
             val seg = NativeMethodCache.linker.defaultLookup().find("dlsym")
             if (seg.isEmpty) return Optional.empty()
-            return Optional.of(
-                NativeMethodCache.linker.downcallHandle(
-                    seg.get(),
-                    FunctionDescriptor.of(ADDRESS, ADDRESS, ADDRESS)
-                ).invoke(MemorySegment.ofAddress(0), name.toCString()) as MemorySegment
-            )
+
+            val targetseg = NativeMethodCache.linker.downcallHandle(
+                seg.get(),
+                FunctionDescriptor.of(ADDRESS, ADDRESS, ADDRESS)
+            ).invoke(MemorySegment.ofAddress(0), name.toCString()) as MemorySegment
+            return if (targetseg.address() == 0L) Optional.empty() else Optional.of(targetseg)
         }
     }
 }

@@ -29,7 +29,7 @@ class VulkanWindow(
     val errorCallback: (Int, String) -> Unit
 ) : IWindow {
     override var window: GLFWWindow
-    private lateinit var surface: VkSurfaceKHR
+    lateinit var surface: VkSurfaceKHR
     private var resizing: Boolean = false
     override val frameResizeCallback: MutableList<GLFWFrameBufferSizeFun> = mutableListOf()
 

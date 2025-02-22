@@ -12,6 +12,7 @@ interface INativeLib {
         fun default(name: String): INativeLib = MultiNativeLib(
             name,
             listOf(
+                SystemNativeLib(name, name),
                 LocalNativeLib(name, File(System.mapLibraryName(name))),
                 BundledNativeLib(
                     name,
@@ -20,8 +21,7 @@ interface INativeLib {
                             System.mapLibraryName(name)
                         }"
                     )
-                ),
-                SystemNativeLib(name, name)
+                )
             )
         )
     }

@@ -2,6 +2,7 @@ package com.primogemstudio.engine.neoloader.plat
 
 import com.primogemstudio.engine.exceptions.PlatformLibInitException
 import com.primogemstudio.engine.i18n.Internationalization.tr
+import com.primogemstudio.engine.interfaces.NativeMethodCache
 import com.primogemstudio.engine.json.GsonObjects
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.neoloader.INativeLib
@@ -71,6 +72,12 @@ object Platform {
     }
 
     fun init(): Boolean {
+        libStatus["vulkan"] = VulkanLoader.source().load()
+        libStatus["gl"] = when (system) {
+            PlatformSystem.Android, PlatformSystem.IOS, PlatformSystem.OpenHarmony -> OpenGLESLoader.source().load()
+            else -> OpenGLLoader.source().load()
+        }
+
         val libst = GsonObjects.GSON.fromJson(
             ResourceManager.getResource("jar:assets/openmc_nativeloader/lib.json")?.readAllBytes()
                 ?.toString(Charsets.UTF_8),
@@ -83,12 +90,15 @@ object Platform {
             }
         }
         libst.optional?.forEach {
+            if (it == "glfw") {
+                try {
+                    if (NativeMethodCache.dlsymLoader.find("glfwInit").isPresent) return@forEach
+                } catch (_: Throwable) {
+
+                }
+            }
+
             INativeLib.default(it).load()
-        }
-        libStatus["vulkan"] = VulkanLoader.source().load()
-        libStatus["gl"] = when (system) {
-            PlatformSystem.Android, PlatformSystem.IOS, PlatformSystem.OpenHarmony -> OpenGLESLoader.source().load()
-            else -> OpenGLLoader.source().load()
         }
 
         return true

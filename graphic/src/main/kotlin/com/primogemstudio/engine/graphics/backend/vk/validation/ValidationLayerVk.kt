@@ -31,9 +31,11 @@ class ValidationLayerVk : Closeable {
             { false })
     }
 
-    fun layerArg(): Array<String> = if (hasValidationLayer()) arrayOf("VK_LAYER_KHRONOS_validation") else arrayOf()
+    private val enabled = hasValidationLayer()
+
+    fun layerArg(): Array<String> = if (enabled) arrayOf("VK_LAYER_KHRONOS_validation") else arrayOf()
     fun appendExt(ext: Array<String>): Array<String> = ext.toMutableList()
-        .apply { if (hasValidationLayer()) add(VkEXTDebugUtils.VK_EXT_DEBUG_UTILS_EXTENSION_NAME) }
+        .apply { if (enabled) add(VkEXTDebugUtils.VK_EXT_DEBUG_UTILS_EXTENSION_NAME) }
         .toTypedArray()
 
     private fun logActual(severity: Int, type: Int, data: VkDebugUtilsMessengerCallbackDataEXT) {
@@ -58,6 +60,7 @@ class ValidationLayerVk : Closeable {
     }
 
     fun instanceAttach(instance: VkInstance) {
+        if (!enabled) return
         this.instance = instance
         vkCreateDebugUtilsMessengerEXT(instance, VkDebugUtilsMessengerCreateInfoEXT().apply {
             messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT or
@@ -77,6 +80,7 @@ class ValidationLayerVk : Closeable {
     }
 
     override fun close() {
+        if (!enabled) return
         if (debugMessager != null) vkDestroyDebugUtilsMessengerEXT(instance, debugMessager!!, null)
     }
 }
