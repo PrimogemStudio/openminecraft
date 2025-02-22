@@ -840,13 +840,16 @@ object Vk10Funcs {
         return Result.success((0..<count.value()).map { VkExtensionProperties(sarr[it]) }.toTypedArray())
     }
 
-    fun vkEnumerateDeviceExtensionProperties(physicalDevice: VkPhysicalDevice, layerName: String): Result<Array<VkExtensionProperties>, Int> {
+    fun vkEnumerateDeviceExtensionProperties(
+        physicalDevice: VkPhysicalDevice,
+        layerName: String?
+    ): Result<Array<VkExtensionProperties>, Int> {
         val count = HeapInt()
         callFunc(
             "vkEnumerateDeviceExtensionProperties",
             Int::class,
             physicalDevice,
-            layerName.toCString(),
+            layerName?.toCString() ?: MemorySegment.NULL,
             count,
             MemorySegment.NULL
         ).apply {
@@ -857,7 +860,7 @@ object Vk10Funcs {
             "vkEnumerateDeviceExtensionProperties",
             Int::class,
             physicalDevice,
-            layerName,
+            layerName?.toCString() ?: MemorySegment.NULL,
             count,
             sarr.ref()
         ).apply {

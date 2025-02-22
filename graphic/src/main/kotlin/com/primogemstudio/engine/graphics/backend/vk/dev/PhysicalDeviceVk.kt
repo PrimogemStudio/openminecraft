@@ -60,4 +60,6 @@ class PhysicalDeviceVk(
             )
         )
     }
+
+    fun allFamilies(): IntArray = intArrayOf(graphicFamily, presentFamily).distinct().toIntArray()
 }
