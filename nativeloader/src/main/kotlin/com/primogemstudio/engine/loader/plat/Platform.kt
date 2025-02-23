@@ -1,8 +1,8 @@
 package com.primogemstudio.engine.loader.plat
 
 import com.primogemstudio.engine.exceptions.PlatformLibInitException
+import com.primogemstudio.engine.foreign.NativeMethodCache
 import com.primogemstudio.engine.i18n.Internationalization.tr
-import com.primogemstudio.engine.interfaces.NativeMethodCache
 import com.primogemstudio.engine.json.GsonObjects
 import com.primogemstudio.engine.loader.INativeLib
 import com.primogemstudio.engine.loader.sys.OpenGLESLoader

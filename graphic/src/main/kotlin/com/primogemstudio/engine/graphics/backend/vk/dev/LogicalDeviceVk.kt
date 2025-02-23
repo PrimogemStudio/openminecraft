@@ -8,9 +8,9 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkDevice
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkDeviceCreateInfo
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkDeviceQueueCreateInfo
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDeviceFeatures
+import com.primogemstudio.engine.foreign.heap.HeapFloatArray
+import com.primogemstudio.engine.foreign.toCStructArray
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
-import com.primogemstudio.engine.interfaces.heap.HeapFloatArray
-import com.primogemstudio.engine.interfaces.toCStructArray
 import java.io.Closeable
 
 class LogicalDeviceVk(

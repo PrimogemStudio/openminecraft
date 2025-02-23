@@ -1,6 +1,6 @@
 package com.primogemstudio.engine.bindings.vulkan.ext.debugutils
 
-import com.primogemstudio.engine.interfaces.stub.IStub
+import com.primogemstudio.engine.foreign.stub.IStub
 import java.lang.foreign.MemorySegment
 import java.lang.invoke.MethodType
 

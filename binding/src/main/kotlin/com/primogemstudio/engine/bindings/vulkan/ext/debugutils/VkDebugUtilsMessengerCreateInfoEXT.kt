@@ -1,10 +1,10 @@
 package com.primogemstudio.engine.bindings.vulkan.ext.debugutils
 
 import com.primogemstudio.engine.bindings.vulkan.ext.debugutils.VkEXTDebugUtils.VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT
-import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
-import com.primogemstudio.engine.interfaces.align
-import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import com.primogemstudio.engine.foreign.NativeMethodCache.constructStub
+import com.primogemstudio.engine.foreign.align
+import com.primogemstudio.engine.foreign.cacheOffsets
+import com.primogemstudio.engine.foreign.heap.IHeapObject
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment

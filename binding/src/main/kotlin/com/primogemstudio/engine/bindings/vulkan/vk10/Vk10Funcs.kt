@@ -1,12 +1,12 @@
 package com.primogemstudio.engine.bindings.vulkan.vk10
 
 import com.primogemstudio.engine.bindings.vulkan.memory.VkAllocationCallbacks
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.heap.*
-import com.primogemstudio.engine.interfaces.toCString
-import com.primogemstudio.engine.interfaces.toPointerArray
+import com.primogemstudio.engine.foreign.NativeMethodCache.callFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callPointerFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.foreign.heap.*
+import com.primogemstudio.engine.foreign.toCString
+import com.primogemstudio.engine.foreign.toPointerArray
 import com.primogemstudio.engine.loader.plat.Platform.sizetLength
 import com.primogemstudio.engine.types.Result
 import org.joml.Vector2i

@@ -1,10 +1,10 @@
 package com.primogemstudio.engine.bindings.vulkan.ext.debugutils
 
-import com.primogemstudio.engine.interfaces.align
-import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
-import com.primogemstudio.engine.interfaces.toCString
+import com.primogemstudio.engine.foreign.align
+import com.primogemstudio.engine.foreign.cacheOffsets
+import com.primogemstudio.engine.foreign.fetchString
+import com.primogemstudio.engine.foreign.heap.IHeapVar
+import com.primogemstudio.engine.foreign.toCString
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment

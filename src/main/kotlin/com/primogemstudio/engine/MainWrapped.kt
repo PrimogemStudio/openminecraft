@@ -35,10 +35,10 @@ import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glEnd
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glLineWidth
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glVertex3f
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glViewport
+import com.primogemstudio.engine.foreign.heap.HeapByteArray
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
-import com.primogemstudio.engine.interfaces.heap.HeapByteArray
 import com.primogemstudio.engine.types.Version
 import java.lang.foreign.MemorySegment
 
@@ -95,6 +95,7 @@ fun main() {
         glViewport(0, 0, width, height)
     }
     glfwSwapInterval(0)
+    glViewport(0, 0, 640, 480)
 
     var rotation = 0f
     while (!glfwWindowShouldClose(window)) {

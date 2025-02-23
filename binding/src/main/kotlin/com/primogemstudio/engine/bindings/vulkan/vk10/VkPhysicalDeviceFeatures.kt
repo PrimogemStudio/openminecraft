@@ -1,6 +1,6 @@
 package com.primogemstudio.engine.bindings.vulkan.vk10
 
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import com.primogemstudio.engine.foreign.heap.IHeapObject
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment

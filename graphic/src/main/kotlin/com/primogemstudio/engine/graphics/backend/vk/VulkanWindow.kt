@@ -20,9 +20,9 @@ import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_TRUE
 import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHR
 import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHRFuncs.vkDestroySurfaceKHR
 import com.primogemstudio.engine.bindings.vulkan.utils.toFullErr
+import com.primogemstudio.engine.foreign.heap.HeapInt
 import com.primogemstudio.engine.graphics.IWindow
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
-import com.primogemstudio.engine.interfaces.heap.HeapInt
 import org.joml.Vector2i
 import java.lang.foreign.MemorySegment
 

@@ -1,8 +1,8 @@
-package com.primogemstudio.engine.interfaces
+package com.primogemstudio.engine.foreign
 
+import com.primogemstudio.engine.foreign.heap.IHeapVar
+import com.primogemstudio.engine.foreign.stub.IStub
 import com.primogemstudio.engine.i18n.Internationalization.tr
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
-import com.primogemstudio.engine.interfaces.stub.IStub
 import com.primogemstudio.engine.loader.plat.Platform
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.lang.foreign.*

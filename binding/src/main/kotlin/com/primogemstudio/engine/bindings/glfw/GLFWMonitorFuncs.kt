@@ -1,15 +1,15 @@
 package com.primogemstudio.engine.bindings.glfw
 
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.heap.HeapFloat
-import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
-import com.primogemstudio.engine.interfaces.stub.IStub
-import com.primogemstudio.engine.interfaces.toPointerArray
+import com.primogemstudio.engine.foreign.NativeMethodCache.callFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callPointerFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.foreign.fetchString
+import com.primogemstudio.engine.foreign.heap.HeapFloat
+import com.primogemstudio.engine.foreign.heap.HeapInt
+import com.primogemstudio.engine.foreign.heap.IHeapObject
+import com.primogemstudio.engine.foreign.heap.IHeapVar
+import com.primogemstudio.engine.foreign.stub.IStub
+import com.primogemstudio.engine.foreign.toPointerArray
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment

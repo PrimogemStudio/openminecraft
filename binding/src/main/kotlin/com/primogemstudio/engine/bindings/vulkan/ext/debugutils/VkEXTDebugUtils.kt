@@ -8,9 +8,9 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkCommandBuffer
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkDevice
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkQueue
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import com.primogemstudio.engine.foreign.NativeMethodCache.callFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.foreign.heap.IHeapObject
 import com.primogemstudio.engine.types.Result
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment

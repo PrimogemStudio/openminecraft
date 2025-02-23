@@ -3,9 +3,9 @@ package com.primogemstudio.engine.bindings.vulkan.khr.swapchain
 import com.primogemstudio.engine.bindings.vulkan.khr.swapchain.VkSwapchainKHRFuncs.VK_STRUCTURE_TYPE_ACQUIRE_NEXT_IMAGE_INFO_KHR
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkFence
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkSemaphore
-import com.primogemstudio.engine.interfaces.align
-import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import com.primogemstudio.engine.foreign.align
+import com.primogemstudio.engine.foreign.cacheOffsets
+import com.primogemstudio.engine.foreign.heap.IHeapObject
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment

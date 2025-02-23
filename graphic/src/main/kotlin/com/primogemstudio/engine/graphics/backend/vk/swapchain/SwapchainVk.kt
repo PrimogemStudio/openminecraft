@@ -25,9 +25,9 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkImage
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkImageSubresourceRange
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkImageView
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkImageViewCreateInfo
+import com.primogemstudio.engine.foreign.heap.HeapIntArray
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.backend.vk.IReinitable
-import com.primogemstudio.engine.interfaces.heap.HeapIntArray
 import org.joml.Vector2i
 import org.joml.Vector4i
 import kotlin.math.max

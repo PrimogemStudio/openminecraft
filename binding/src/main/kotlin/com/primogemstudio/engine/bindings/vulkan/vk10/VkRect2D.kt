@@ -1,7 +1,7 @@
 package com.primogemstudio.engine.bindings.vulkan.vk10
 
-import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import com.primogemstudio.engine.foreign.cacheOffsets
+import com.primogemstudio.engine.foreign.heap.IHeapObject
 import org.joml.Vector2i
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout

@@ -1,4 +1,4 @@
-package com.primogemstudio.engine.interfaces.heap
+package com.primogemstudio.engine.foreign.heap
 
 import java.lang.foreign.MemorySegment
 

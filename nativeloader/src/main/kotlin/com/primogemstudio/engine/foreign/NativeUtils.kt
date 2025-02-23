@@ -1,9 +1,9 @@
-package com.primogemstudio.engine.interfaces
+package com.primogemstudio.engine.foreign
 
-import com.primogemstudio.engine.interfaces.heap.HeapPointerArray
-import com.primogemstudio.engine.interfaces.heap.HeapStructArray
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
-import com.primogemstudio.engine.interfaces.heap.IHeapVar
+import com.primogemstudio.engine.foreign.heap.HeapPointerArray
+import com.primogemstudio.engine.foreign.heap.HeapStructArray
+import com.primogemstudio.engine.foreign.heap.IHeapObject
+import com.primogemstudio.engine.foreign.heap.IHeapVar
 import com.primogemstudio.engine.loader.plat.Platform.sizetLength
 import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.ADDRESS

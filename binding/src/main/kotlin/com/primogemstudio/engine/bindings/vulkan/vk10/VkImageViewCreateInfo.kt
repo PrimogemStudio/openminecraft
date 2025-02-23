@@ -1,9 +1,9 @@
 package com.primogemstudio.engine.bindings.vulkan.vk10
 
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO
-import com.primogemstudio.engine.interfaces.align
-import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import com.primogemstudio.engine.foreign.align
+import com.primogemstudio.engine.foreign.cacheOffsets
+import com.primogemstudio.engine.foreign.heap.IHeapObject
 import org.joml.Vector4i
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout

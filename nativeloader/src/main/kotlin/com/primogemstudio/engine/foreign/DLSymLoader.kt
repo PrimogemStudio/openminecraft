@@ -1,4 +1,4 @@
-package com.primogemstudio.engine.interfaces
+package com.primogemstudio.engine.foreign
 
 import java.lang.foreign.FunctionDescriptor
 import java.lang.foreign.MemorySegment

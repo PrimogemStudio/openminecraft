@@ -1,16 +1,16 @@
 package com.primogemstudio.engine.bindings.glfw
 
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.constructStub
-import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
-import com.primogemstudio.engine.interfaces.stub.IStub
-import com.primogemstudio.engine.interfaces.toCStrArray
+import com.primogemstudio.engine.foreign.NativeMethodCache.callFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callPointerFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.constructStub
+import com.primogemstudio.engine.foreign.cacheOffsets
+import com.primogemstudio.engine.foreign.fetchString
+import com.primogemstudio.engine.foreign.heap.HeapInt
+import com.primogemstudio.engine.foreign.heap.IHeapObject
+import com.primogemstudio.engine.foreign.stub.IStub
+import com.primogemstudio.engine.foreign.toCStrArray
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment

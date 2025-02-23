@@ -2,10 +2,10 @@ package com.primogemstudio.engine.bindings.vulkan.khr.swapchain
 
 import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHR
 import com.primogemstudio.engine.bindings.vulkan.khr.swapchain.VkSwapchainKHRFuncs.VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR
-import com.primogemstudio.engine.interfaces.align
-import com.primogemstudio.engine.interfaces.cacheOffsets
-import com.primogemstudio.engine.interfaces.heap.HeapIntArray
-import com.primogemstudio.engine.interfaces.heap.IHeapObject
+import com.primogemstudio.engine.foreign.align
+import com.primogemstudio.engine.foreign.cacheOffsets
+import com.primogemstudio.engine.foreign.heap.HeapIntArray
+import com.primogemstudio.engine.foreign.heap.IHeapObject
 import org.joml.Vector2i
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout

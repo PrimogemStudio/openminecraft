@@ -5,11 +5,11 @@ import com.primogemstudio.engine.bindings.vulkan.memory.VkAllocationCallbacks
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUCCESS
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDevice
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
-import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.heap.HeapInt
-import com.primogemstudio.engine.interfaces.toPointerArray
+import com.primogemstudio.engine.foreign.NativeMethodCache.callFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callPointerFunc
+import com.primogemstudio.engine.foreign.fetchString
+import com.primogemstudio.engine.foreign.heap.HeapInt
+import com.primogemstudio.engine.foreign.toPointerArray
 import com.primogemstudio.engine.types.Result
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment

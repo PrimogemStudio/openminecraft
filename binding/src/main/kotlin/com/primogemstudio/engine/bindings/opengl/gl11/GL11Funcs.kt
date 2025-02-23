@@ -1,10 +1,10 @@
 package com.primogemstudio.engine.bindings.opengl.gl11
 
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callPointerFunc
-import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
-import com.primogemstudio.engine.interfaces.fetchString
-import com.primogemstudio.engine.interfaces.heap.*
+import com.primogemstudio.engine.foreign.NativeMethodCache.callFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callPointerFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.foreign.fetchString
+import com.primogemstudio.engine.foreign.heap.*
 import java.lang.foreign.MemorySegment
 
 object GL11Funcs {
