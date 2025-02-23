@@ -69,7 +69,7 @@ object VkSurfaceKHRFuncs {
     fun vkGetPhysicalDeviceSurfaceFormatsKHR(
         physicalDevice: VkPhysicalDevice,
         surface: VkSurfaceKHR
-    ): Result<Array<VkSurfaceCapabilitiesKHR>, Int> {
+    ): Result<Array<VkSurfaceFormatKHR>, Int> {
         val count = HeapInt()
         callFunc(
             "vkGetPhysicalDeviceSurfaceFormatsKHR",
@@ -81,11 +81,11 @@ object VkSurfaceKHRFuncs {
         ).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        val sarr = HeapStructArray<VkSurfaceCapabilitiesKHR>(VkSurfaceCapabilitiesKHR.LAYOUT, count.value())
+        val sarr = HeapStructArray<VkSurfaceFormatKHR>(VkSurfaceFormatKHR.LAYOUT, count.value())
         callFunc("vkGetPhysicalDeviceSurfaceFormatsKHR", Int::class, physicalDevice, surface, count, sarr).apply {
             if (this != VK_SUCCESS) return Result.fail(this)
         }
-        return Result.success((0..<count.value()).map { VkSurfaceCapabilitiesKHR(sarr[it]) }.toTypedArray())
+        return Result.success((0..<count.value()).map { VkSurfaceFormatKHR(sarr[it]) }.toTypedArray())
     }
 
     fun vkGetPhysicalDeviceSurfacePresentModesKHR(

@@ -14,6 +14,8 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstanceCreateInfo
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDevice
 import com.primogemstudio.engine.graphics.IRenderer
+import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceQueuesVk
+import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceVk
 import com.primogemstudio.engine.graphics.backend.vk.dev.PhysicalDeviceVk
 import com.primogemstudio.engine.graphics.backend.vk.validation.ValidationLayerVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
@@ -28,14 +30,16 @@ class BackendRendererVk(
     val deviceSelector: (Array<VkPhysicalDevice>) -> VkPhysicalDevice
 ) : IRenderer {
     private val logger = LoggerFactory.getAsyncLogger()
-    private val validationLayer = ValidationLayerVk()
-    lateinit var instance: VkInstance
-    override var window: VulkanWindow
+    val validationLayer = ValidationLayerVk()
+    val instance: VkInstance
+    override val window: VulkanWindow
     val physicalDevice: PhysicalDeviceVk
+    val logicalDevice: LogicalDeviceVk
+    val logicalDeviceQueues: LogicalDeviceQueuesVk
 
     init {
         glfwInit()
-        vkCreateInstance(
+        instance = vkCreateInstance(
             VkInstanceCreateInfo().apply {
                 appInfo = VkApplicationInfo().apply {
                     appName = gameInfo.appName
@@ -54,16 +58,20 @@ class BackendRendererVk(
             },
             null
         ).match(
-            { instance = it },
+            { it },
             { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.instance", it)) }
         )
         logger.info(tr("engine.renderer.backend_vk.stage.instance", gameInfo.appName, gameInfo.appVersion))
-        validationLayer.instanceAttach(instance)
+        validationLayer.instanceAttach(this)
         logger.info(tr("engine.renderer.backend_vk.stage.validation"))
         window = VulkanWindow(this, windowInfo) { code, str -> }
         logger.info(tr("engine.renderer.backend_vk.stage.window"))
-        physicalDevice = PhysicalDeviceVk(this, instance)
+        physicalDevice = PhysicalDeviceVk(this)
         logger.info(tr("engine.renderer.backend_vk.stage.phy_device"))
+        logicalDevice = LogicalDeviceVk(this)
+        logger.info(tr("engine.renderer.backend_vk.stage.logic_device"))
+        logicalDeviceQueues = LogicalDeviceQueuesVk(this)
+        logger.info(tr("engine.renderer.backend_vk.stage.logic_device_queue"))
     }
 
     override fun close() {

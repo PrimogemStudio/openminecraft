@@ -29,6 +29,10 @@
   "exception.renderer.backend_vk.validation": "无法创建 Vulkan 验证层调试器: 0x%s (%s)",
   "exception.renderer.backend_vk.phy_dev_query": "无法查询设备表面支持: 0x%s (%s)",
   "exception.renderer.backend_vk.family": "未找到有效的 GPU 组！",
+  "exception.renderer.backend_vk.swp_cap": "无法检查物理设备交换链支持: 0x%s (%s)",
+  "exception.renderer.backend_vk.swp_format": "无法检查物理设备交换链格式: 0x%s (%s)",
+  "exception.renderer.backend_vk.swp_present": "无法检查物理设备交换链显示格式: 0x%s (%s)",
+  "exception.renderer.backend_vk.logic_dev": "无法创建 Vulkan 逻辑设备: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "成功",
   "engine.renderer.backend_vk.status.not_ready": "未准备",
   "engine.renderer.backend_vk.status.timeout": "调用/等待超时",
@@ -56,5 +60,7 @@
   "engine.renderer.backend_vk.stage.validation": "验证层初始化 ...",
   "engine.renderer.backend_vk.stage.window": "窗口 & 表面初始化 ...",
   "engine.renderer.backend_vk.stage.phy_device": "检查物理设备 ...",
-  "engine.renderer.backend_vk.stage.phy_device.family": "选择 GPU 组 (图形: %d, 显示: %d) 于设备 %s ..."
+  "engine.renderer.backend_vk.stage.phy_device.family": "选择 GPU 组 (图形: %d, 显示: %d) 于设备 %s ...",
+  "engine.renderer.backend_vk.stage.logic_device": "逻辑设备初始化 ...",
+  "engine.renderer.backend_vk.stage.logic_device_queue": "获取逻辑设备队列 ..."
 }

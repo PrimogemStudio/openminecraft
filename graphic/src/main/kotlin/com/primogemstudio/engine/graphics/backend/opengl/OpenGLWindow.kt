@@ -30,7 +30,7 @@ class OpenGLWindow(
     windowInfo: ApplicationWindowInfo,
     val errorCallback: (Int, String) -> Unit
 ) : IWindow {
-    override var window: GLFWWindow
+    override val window: GLFWWindow
     override val frameResizeCallback: MutableList<GLFWFrameBufferSizeFun> = mutableListOf()
 
     init {

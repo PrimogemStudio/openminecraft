@@ -893,10 +893,10 @@ object Vk10Funcs {
         return Result.success((0..<count.value()).map { VkLayerProperties(sarr[it]) }.toTypedArray())
     }
 
-    fun vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: Int, queueIndex: Int): Result<VkQueue, Int> {
+    fun vkGetDeviceQueue(device: VkDevice, queueFamilyIndex: Int, queueIndex: Int): VkQueue {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        val retCode = callFunc("vkGetDeviceQueue", Int::class, device, queueFamilyIndex, queueIndex, seg)
-        return if (retCode == VK_SUCCESS) Result.success(VkQueue(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+        callFunc("vkGetDeviceQueue", Int::class, device, queueFamilyIndex, queueIndex, seg)
+        return VkQueue(seg.get(ADDRESS, 0))
     }
 
     fun vkQueueSubmit(queue: VkQueue, submits: HeapStructArray<VkSubmitInfo>, fence: VkFence): Int =

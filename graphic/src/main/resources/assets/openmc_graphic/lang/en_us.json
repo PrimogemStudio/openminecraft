@@ -29,6 +29,10 @@
   "exception.renderer.backend_vk.validation": "Failed to create vulkan validation layer debugger: 0x%s (%s)",
   "exception.renderer.backend_vk.phy_dev_query": "Failed to query device surface support: 0x%s (%s)",
   "exception.renderer.backend_vk.family": "Failed to find capable GPU family!",
+  "exception.renderer.backend_vk.swp_cap": "Failed to check physical device swapchain capabilities: 0x%s (%s)",
+  "exception.renderer.backend_vk.swp_format": "Failed to check physical device swapchain formats: 0x%s (%s)",
+  "exception.renderer.backend_vk.swp_present": "Failed to check physical device swapchain present modes: 0x%s (%s)",
+  "exception.renderer.backend_vk.logic_dev": "Failed to create vulkan logical device: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "Success",
   "engine.renderer.backend_vk.status.not_ready": "Not ready",
   "engine.renderer.backend_vk.status.timeout": "Invoke/Wait time out",
@@ -56,5 +60,7 @@
   "engine.renderer.backend_vk.stage.validation": "Validation init ...",
   "engine.renderer.backend_vk.stage.window": "Window & surface init ...",
   "engine.renderer.backend_vk.stage.phy_device": "Physical device checking ...",
-  "engine.renderer.backend_vk.stage.phy_device.family": "Selected family (graphic: %d, present: %d) on %s ..."
+  "engine.renderer.backend_vk.stage.phy_device.family": "Selected family (graphic: %d, present: %d) on %s ...",
+  "engine.renderer.backend_vk.stage.logic_device": "Logical device init ...",
+  "engine.renderer.backend_vk.stage.logic_device_queue": "Fetching device queues ..."
 }

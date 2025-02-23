@@ -29,7 +29,7 @@ class VulkanWindow(
     val errorCallback: (Int, String) -> Unit
 ) : IWindow {
     override var window: GLFWWindow
-    lateinit var surface: VkSurfaceKHR
+    var surface: VkSurfaceKHR
     private var resizing: Boolean = false
     override val frameResizeCallback: MutableList<GLFWFrameBufferSizeFun> = mutableListOf()
 
@@ -47,8 +47,8 @@ class VulkanWindow(
             GLFWWindow(MemorySegment.NULL)
         )
 
-        glfwCreateWindowSurface(rendererVk.instance, window, null).match(
-            { surface = it },
+        surface = glfwCreateWindowSurface(rendererVk.instance, window, null).match(
+            { it },
             { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.surface", it)) }
         )
 

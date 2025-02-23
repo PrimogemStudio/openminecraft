@@ -15,6 +15,7 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUCCESS
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceExtensionProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
+import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.io.Closeable
@@ -59,9 +60,9 @@ class ValidationLayerVk : Closeable {
         }
     }
 
-    fun instanceAttach(instance: VkInstance) {
+    fun instanceAttach(renderer: BackendRendererVk) {
         if (!enabled) return
-        this.instance = instance
+        this.instance = renderer.instance
         vkCreateDebugUtilsMessengerEXT(instance, VkDebugUtilsMessengerCreateInfoEXT().apply {
             messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT or
                     VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT or
