@@ -20,6 +20,7 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebuffe
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_FALSE
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_TRUE
+import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glViewport
 import com.primogemstudio.engine.graphics.IWindow
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
@@ -52,7 +53,14 @@ class OpenGLWindow(
         )
         glfwMakeContextCurrent(window)
 
-        glfwSetFramebufferSizeCallback(window) { wi, w, h -> frameResizeCallback.forEach { it.call(wi, w, h) } }
+        glfwSetFramebufferSizeCallback(window) { wi, w, h ->
+            glViewport(
+                0,
+                0,
+                w,
+                h
+            ); frameResizeCallback.forEach { it.call(wi, w, h) }
+        }
     }
 
     override fun close() {
