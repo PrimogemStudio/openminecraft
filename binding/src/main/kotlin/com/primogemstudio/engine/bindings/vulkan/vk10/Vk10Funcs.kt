@@ -7,7 +7,7 @@ import com.primogemstudio.engine.interfaces.NativeMethodCache.callVoidFunc
 import com.primogemstudio.engine.interfaces.heap.*
 import com.primogemstudio.engine.interfaces.toCString
 import com.primogemstudio.engine.interfaces.toPointerArray
-import com.primogemstudio.engine.neoloader.plat.Platform.sizetLength
+import com.primogemstudio.engine.loader.plat.Platform.sizetLength
 import com.primogemstudio.engine.types.Result
 import org.joml.Vector2i
 import java.lang.foreign.Arena

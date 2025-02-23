@@ -1,11 +1,12 @@
-package com.primogemstudio.engine.neoloader.sys
+package com.primogemstudio.engine.loader.sys
 
-import com.primogemstudio.engine.neoloader.BundledNativeLib
-import com.primogemstudio.engine.neoloader.INativeLib
-import com.primogemstudio.engine.neoloader.MultiNativeLib
-import com.primogemstudio.engine.neoloader.SystemNativeLib
-import com.primogemstudio.engine.neoloader.plat.Platform
-import com.primogemstudio.engine.neoloader.plat.PlatformSystem
+import com.primogemstudio.engine.loader.BundledNativeLib
+import com.primogemstudio.engine.loader.INativeLib
+import com.primogemstudio.engine.loader.MultiNativeLib
+import com.primogemstudio.engine.loader.SystemNativeLib
+import com.primogemstudio.engine.loader.plat.Platform
+import com.primogemstudio.engine.loader.plat.PlatformSystem
+import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.resource.ResourceManager
 import java.nio.file.Files
 import java.nio.file.Path
@@ -21,9 +22,12 @@ object VulkanLoader {
                         BundledNativeLib(
                             "vulkan",
                             ResourceManager.getResource(
-                                "jar:assets/openmc_nativeloader/lib/${Platform.system.id}/${Platform.arch.id}/${
+                                Identifier(
+                                    namespace = "openmc_nativeloader",
+                                    path = "lib/${Platform.system.id}/${Platform.arch.id}/${
                                     System.mapLibraryName("MoltenVK")
-                                }"
+                                    }"
+                                )
                             )
                         )
                     )
@@ -33,8 +37,12 @@ object VulkanLoader {
                 PlatformSystem.Windows -> {
                     val path = Path.of("C:\\Windows\\System32\\vulkan-1.dll")
                     if (!path.exists()) {
-                        val thr =
-                            ResourceManager.getResource("jar:assets/openmc_nativeloader/lib/${Platform.system.id}/${Platform.arch.id}/vulkan.dll")
+                        val thr = ResourceManager.getResource(
+                            Identifier(
+                                namespace = "openmc_nativeloader",
+                                path = "lib/${Platform.system.id}/${Platform.arch.id}/vulkan.dll"
+                            )
+                        )
                         if (thr != null) Files.copy(thr, path)
                     }
 

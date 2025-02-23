@@ -1,4 +1,4 @@
-package com.primogemstudio.engine.neoloader
+package com.primogemstudio.engine.loader
 
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory

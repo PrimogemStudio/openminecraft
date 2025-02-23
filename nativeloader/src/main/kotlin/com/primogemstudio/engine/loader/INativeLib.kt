@@ -1,6 +1,7 @@
-package com.primogemstudio.engine.neoloader
+package com.primogemstudio.engine.loader
 
-import com.primogemstudio.engine.neoloader.plat.Platform
+import com.primogemstudio.engine.loader.plat.Platform
+import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.resource.ResourceManager
 import java.io.File
 
@@ -17,9 +18,12 @@ interface INativeLib {
                 BundledNativeLib(
                     name,
                     ResourceManager.getResource(
-                        "jar:assets/openmc_nativeloader/lib/${Platform.system.id}/${Platform.arch.id}/${
-                            System.mapLibraryName(name)
-                        }"
+                        Identifier(
+                            namespace = "openmc_nativeloader",
+                            path = "lib/${Platform.system.id}/${Platform.arch.id}/${
+                                System.mapLibraryName(name)
+                            }"
+                        )
                     )
                 )
             )

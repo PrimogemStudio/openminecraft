@@ -1,7 +1,7 @@
-package com.primogemstudio.engine.neoloader.sys
+package com.primogemstudio.engine.loader.sys
 
-import com.primogemstudio.engine.neoloader.MultiNativeLib
-import com.primogemstudio.engine.neoloader.SystemNativeLib
+import com.primogemstudio.engine.loader.MultiNativeLib
+import com.primogemstudio.engine.loader.SystemNativeLib
 
 object OpenGLESLoader {
     fun source(): MultiNativeLib = MultiNativeLib(

@@ -1,4 +1,4 @@
-package com.primogemstudio.engine.neoloader.plat
+package com.primogemstudio.engine.loader.plat
 
 data class NativeLibConfigModel(
     val required: List<String>? = null,

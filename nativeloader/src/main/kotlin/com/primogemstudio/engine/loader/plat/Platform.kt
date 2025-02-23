@@ -1,14 +1,15 @@
-package com.primogemstudio.engine.neoloader.plat
+package com.primogemstudio.engine.loader.plat
 
 import com.primogemstudio.engine.exceptions.PlatformLibInitException
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.interfaces.NativeMethodCache
 import com.primogemstudio.engine.json.GsonObjects
+import com.primogemstudio.engine.loader.INativeLib
+import com.primogemstudio.engine.loader.sys.OpenGLESLoader
+import com.primogemstudio.engine.loader.sys.OpenGLLoader
+import com.primogemstudio.engine.loader.sys.VulkanLoader
 import com.primogemstudio.engine.logging.LoggerFactory
-import com.primogemstudio.engine.neoloader.INativeLib
-import com.primogemstudio.engine.neoloader.sys.OpenGLESLoader
-import com.primogemstudio.engine.neoloader.sys.OpenGLLoader
-import com.primogemstudio.engine.neoloader.sys.VulkanLoader
+import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.resource.ResourceManager
 import java.util.*
 
@@ -79,7 +80,8 @@ object Platform {
         }
 
         val libst = GsonObjects.GSON.fromJson(
-            ResourceManager.getResource("jar:assets/openmc_nativeloader/lib.json")?.readAllBytes()
+            ResourceManager.getResource(Identifier(namespace = "openmc_nativeloader", path = "lib.json"))
+                ?.readAllBytes()
                 ?.toString(Charsets.UTF_8),
             NativeLibConfigModel::class.java
         )

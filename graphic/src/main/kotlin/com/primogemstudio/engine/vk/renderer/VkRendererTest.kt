@@ -1,5 +1,6 @@
 package com.primogemstudio.engine.vk.renderer
 
+import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.resource.ResourceManager
 import com.primogemstudio.engine.vk.*
 import com.primogemstudio.engine.vk.shader.ShaderCompiler
@@ -27,7 +28,8 @@ class VkRendererTest(
 
     private val vkShaderCompiler = ShaderCompiler()
     private val vkBaseShaderFrag = vkShaderCompiler.compile(
-        ResourceManager.getResource("jar:assets/openmc_graphic/shaders/vtx_shader.frag")?.readAllBytes()
+        ResourceManager.getResource(Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.frag"))
+            ?.readAllBytes()
             ?.toString(Charsets.UTF_8) ?: "",
         "vtx_shader.frag",
         "main",
@@ -35,7 +37,8 @@ class VkRendererTest(
         ShaderType.Fragment
     )
     private val vkBaseShaderVert = vkShaderCompiler.compile(
-        ResourceManager.getResource("jar:assets/openmc_graphic/shaders/vtx_shader.vert")?.readAllBytes()
+        ResourceManager.getResource(Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.vert"))
+            ?.readAllBytes()
             ?.toString(Charsets.UTF_8) ?: "",
         "vtx_shader.vert",
         "main",

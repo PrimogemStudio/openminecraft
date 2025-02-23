@@ -3,8 +3,8 @@ package com.primogemstudio.engine.interfaces
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.interfaces.heap.IHeapVar
 import com.primogemstudio.engine.interfaces.stub.IStub
+import com.primogemstudio.engine.loader.plat.Platform
 import com.primogemstudio.engine.logging.LoggerFactory
-import com.primogemstudio.engine.neoloader.plat.Platform
 import java.lang.foreign.*
 import java.lang.foreign.ValueLayout.*
 import java.lang.invoke.MethodHandle

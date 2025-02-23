@@ -5,12 +5,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 
 object ResourceManager {
-    fun getResources(p: String): List<InputStream> =
-        if (p.startsWith("jar:")) ResourceManager::class.java.classLoader.getResources(p.substring(4)).toList()
-            .map { it.openStream() } else listOf(Files.newInputStream(Path.of(p)))
-
-    fun getResource(p: String): InputStream? =
-        if (p.startsWith("jar:")) ResourceManager::class.java.classLoader.getResourceAsStream(p.substring(4)) else Files.newInputStream(
-            Path.of(p)
+    fun getResource(p: Identifier): InputStream? =
+        if (p.type == ResourceLocation.BUNDLED) ResourceManager::class.java.classLoader.getResourceAsStream(p.toPath()) else Files.newInputStream(
+            Path.of(p.toPath())
         )
 }
