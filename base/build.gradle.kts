@@ -7,7 +7,7 @@ version = "${properties["openminecraft.version"]}"
 
 dependencies {
     implementation("org.fusesource.jansi:jansi:${properties["openminecraft.jansi_version"]}")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${properties["openminecraft.kotlin_version"]}")
+    implementation(kotlin("reflect"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["openminecraft.kotlinx_coroutines_core_version"]}")
     implementation("com.google.code.gson:gson:${properties["openminecraft.gson_version"]}")
 }

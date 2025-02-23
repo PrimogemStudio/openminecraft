@@ -12,6 +12,7 @@ import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_NO_API
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_TRANSPARENT_FRAMEBUFFER
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwCreateWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwDestroyWindow
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwGetFramebufferSize
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebufferSizeCallback
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_FALSE
@@ -21,6 +22,8 @@ import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHRFuncs.v
 import com.primogemstudio.engine.bindings.vulkan.utils.toFullErr
 import com.primogemstudio.engine.graphics.IWindow
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
+import com.primogemstudio.engine.interfaces.heap.HeapInt
+import org.joml.Vector2i
 import java.lang.foreign.MemorySegment
 
 class VulkanWindow(
@@ -61,6 +64,13 @@ class VulkanWindow(
     fun resizing(): Boolean = resizing
     fun resetState() {
         resizing = false
+    }
+
+    fun size(): Vector2i {
+        val w = HeapInt()
+        val h = HeapInt()
+        glfwGetFramebufferSize(window, w, h)
+        return Vector2i(w.value(), h.value())
     }
 
     override fun close() {

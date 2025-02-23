@@ -17,6 +17,7 @@ import com.primogemstudio.engine.graphics.IRenderer
 import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceQueuesVk
 import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceVk
 import com.primogemstudio.engine.graphics.backend.vk.dev.PhysicalDeviceVk
+import com.primogemstudio.engine.graphics.backend.vk.swapchain.SwapchainVk
 import com.primogemstudio.engine.graphics.backend.vk.validation.ValidationLayerVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
@@ -36,6 +37,7 @@ class BackendRendererVk(
     val physicalDevice: PhysicalDeviceVk
     val logicalDevice: LogicalDeviceVk
     val logicalDeviceQueues: LogicalDeviceQueuesVk
+    val swapchain: SwapchainVk
 
     init {
         glfwInit()
@@ -64,7 +66,15 @@ class BackendRendererVk(
         logger.info(tr("engine.renderer.backend_vk.stage.instance", gameInfo.appName, gameInfo.appVersion))
         validationLayer.instanceAttach(this)
         logger.info(tr("engine.renderer.backend_vk.stage.validation"))
-        window = VulkanWindow(this, windowInfo) { code, str -> }
+        window = VulkanWindow(this, windowInfo) { code, str ->
+            logger.error(
+                tr(
+                    "engine.renderer.backend_vk.log",
+                    "GLFW",
+                    "$code, $str"
+                )
+            )
+        }
         logger.info(tr("engine.renderer.backend_vk.stage.window"))
         physicalDevice = PhysicalDeviceVk(this)
         logger.info(tr("engine.renderer.backend_vk.stage.phy_device"))
@@ -72,9 +82,14 @@ class BackendRendererVk(
         logger.info(tr("engine.renderer.backend_vk.stage.logic_device"))
         logicalDeviceQueues = LogicalDeviceQueuesVk(this)
         logger.info(tr("engine.renderer.backend_vk.stage.logic_device_queue"))
+        swapchain = SwapchainVk(this)
+        logger.info(tr("engine.renderer.backend_vk.stage.swapchain"))
+
     }
 
     override fun close() {
+        swapchain.close()
+        logicalDevice.close()
         validationLayer.close()
         vkDestroyInstance(instance, null)
     }

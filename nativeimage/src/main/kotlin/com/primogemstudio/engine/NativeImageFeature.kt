@@ -131,6 +131,18 @@ class NativeImageFeature: Feature {
                 JAVA_INT
             )
         )
+        downcallTypes.add(
+            FunctionDescriptor.of(
+                ADDRESS,
+                ADDRESS,
+                ADDRESS,
+                JAVA_LONG,
+                JAVA_INT,
+                ADDRESS,
+                ADDRESS,
+                ADDRESS
+            )
+        )
 
 		upcallTypes.add(FunctionDescriptor.ofVoid())
 		for (arg1 in basicTypes) {
