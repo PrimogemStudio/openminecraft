@@ -65,7 +65,8 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: build/libs/*
-
+          tag_name: v${{ env.VERSION }}-${{ env.LAST_COMMIT_SHA }}
+          name: "OpenMinecraft v${{ env.VERSION }} build ${{ env.LAST_COMMIT_SHA }}"
   build-nativeimage:
     strategy:
       fail-fast: false
