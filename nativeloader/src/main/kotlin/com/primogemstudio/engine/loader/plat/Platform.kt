@@ -80,7 +80,7 @@ object Platform {
         }
 
         val libst = GsonObjects.GSON.fromJson(
-            ResourceManager.getResource(Identifier(namespace = "openmc_nativeloader", path = "lib.json"))
+            ResourceManager(Identifier(namespace = "openmc_nativeloader", path = "lib.json"))
                 ?.readAllBytes()
                 ?.toString(Charsets.UTF_8),
             NativeLibConfigModel::class.java

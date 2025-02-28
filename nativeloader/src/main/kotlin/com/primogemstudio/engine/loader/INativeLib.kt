@@ -17,7 +17,7 @@ interface INativeLib {
                 LocalNativeLib(name, File(System.mapLibraryName(name))),
                 BundledNativeLib(
                     name,
-                    ResourceManager.getResource(
+                    ResourceManager(
                         Identifier(
                             namespace = "openmc_nativeloader",
                             path = "lib/${Platform.system.id}/${Platform.arch.id}/${

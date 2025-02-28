@@ -28,7 +28,7 @@ class VkRendererTest(
 
     private val vkShaderCompiler = ShaderCompiler()
     private val vkBaseShaderFrag = vkShaderCompiler.compile(
-        ResourceManager.getResource(Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.frag"))
+        ResourceManager(Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.frag"))
             ?.readAllBytes()
             ?.toString(Charsets.UTF_8) ?: "",
         "vtx_shader.frag",
@@ -37,7 +37,7 @@ class VkRendererTest(
         ShaderType.Fragment
     )
     private val vkBaseShaderVert = vkShaderCompiler.compile(
-        ResourceManager.getResource(Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.vert"))
+        ResourceManager(Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.vert"))
             ?.readAllBytes()
             ?.toString(Charsets.UTF_8) ?: "",
         "vtx_shader.vert",

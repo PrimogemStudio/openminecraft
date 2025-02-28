@@ -21,7 +21,7 @@ object VulkanLoader {
                     add(
                         BundledNativeLib(
                             "vulkan",
-                            ResourceManager.getResource(
+                            ResourceManager(
                                 Identifier(
                                     namespace = "openmc_nativeloader",
                                     path = "lib/${Platform.system.id}/${Platform.arch.id}/${
@@ -37,7 +37,7 @@ object VulkanLoader {
                 PlatformSystem.Windows -> {
                     val path = Path.of("C:\\Windows\\System32\\vulkan-1.dll")
                     if (!path.exists()) {
-                        val thr = ResourceManager.getResource(
+                        val thr = ResourceManager(
                             Identifier(
                                 namespace = "openmc_nativeloader",
                                 path = "lib/${Platform.system.id}/${Platform.arch.id}/vulkan.dll"

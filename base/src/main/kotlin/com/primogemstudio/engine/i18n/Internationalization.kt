@@ -22,10 +22,10 @@ object Internationalization {
 
     private fun load() {
         targetTranslations.clear()
-        logger.info("Available locale files: ${localeList.filter { ResourceManager.getResource(it) != null }}")
-        localeList.mapNotNull { ResourceManager.getResource(it) }.forEach {
+        logger.info("Available locale files: ${localeList.filter { ResourceManager(it) != null }}")
+        localeList.mapNotNull { ResourceManager(it) }.forEach {
             GsonObjects.GSON.fromJson(it.readAllBytes().toString(Charsets.UTF_8), Map::class.java).forEach { (k, v) ->
-                val t = ResourceManager.getResource(Identifier.parse(v.toString()))
+                val t = ResourceManager(Identifier.parse(v.toString()))
                 if (!targetTranslations.containsKey(k)) targetTranslations[k.toString()] = mutableMapOf()
                 logger.info("Processing $k -> $v")
                 if (t != null) {
