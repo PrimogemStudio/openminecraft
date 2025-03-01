@@ -37,6 +37,8 @@
   "exception.renderer.backend_vk.swapchain_img": "无法获取 Vulkan 交换链图像: 0x%s (%s)",
   "exception.renderer.backend_vk.swapchain_img_view": "无法创建 Vulkan 交换链图像显示器: 0x%s (%s)",
   "exception.renderer.backend_vk.shader": "无法创建 Vulkan 着色器模块: 0x%s (%s)",
+  "exception.renderer.backend_vk.layer": "无法查询 Vulkan 层: 0x%s (%s)",
+  "exception.renderer.backend_vk.ext": "无法查询 Vulkan 扩展: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "成功",
   "engine.renderer.backend_vk.status.not_ready": "未准备",
   "engine.renderer.backend_vk.status.timeout": "调用/等待超时",

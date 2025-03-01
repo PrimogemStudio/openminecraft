@@ -9,6 +9,7 @@ import com.primogemstudio.engine.bindings.vulkan.utils.toVkVersion
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyInstance
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkApplicationInfo
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstanceCreateInfo
@@ -28,10 +29,11 @@ import com.primogemstudio.engine.types.Version
 class BackendRendererVk(
     override val gameInfo: ApplicationInfo,
     override val windowInfo: ApplicationWindowInfo,
-    val deviceSelector: (Array<VkPhysicalDevice>) -> VkPhysicalDevice
+    val deviceSelector: (Array<VkPhysicalDevice>) -> VkPhysicalDevice,
+    val layerEnabler: (Array<String>) -> Array<String>
 ) : IRenderer {
     private val logger = LoggerFactory.getAsyncLogger()
-    val validationLayer = ValidationLayerVk()
+    val validationLayer: ValidationLayerVk
     val instance: VkInstance
     override val window: VulkanWindow
     val physicalDevice: PhysicalDeviceVk
@@ -41,6 +43,14 @@ class BackendRendererVk(
 
     init {
         glfwInit()
+
+        val exts = vkEnumerateInstanceLayerProperties().match({ it }, {
+            logger.warn(toFullErr("exception.renderer.backend_vk.layer", it))
+            arrayOf()
+        })
+
+        validationLayer = ValidationLayerVk(exts)
+
         instance = vkCreateInstance(
             VkInstanceCreateInfo().apply {
                 appInfo = VkApplicationInfo().apply {
@@ -56,7 +66,7 @@ class BackendRendererVk(
                     )
                 }
                 extensions = validationLayer.appendExt(glfwGetRequiredInstanceExtensions())
-                layers = validationLayer.layerArg()
+                layers = layerEnabler(exts.map { it.layerName }.toTypedArray())
             },
             null
         ).match(

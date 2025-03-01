@@ -46,6 +46,8 @@ import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_tess_control_s
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_tess_evaluation_shader
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_vertex_shader
 import com.primogemstudio.engine.foreign.heap.HeapByteArray
+import com.primogemstudio.engine.graphics.IShaderCompiler
+import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.Identifier
@@ -70,11 +72,15 @@ enum class ShaderType(val glslType: Int, val hlslType: Int, val type: String) {
     Callable(shaderc_glsl_callable_shader, shaderc_callable_shader, "callable")
 }
 
-class ShaderCompilerVk {
+class ShaderCompilerVk(
+    private val renderer: BackendRendererVk
+) : IShaderCompiler {
     private val compiler = shaderc_compiler_initialize()
     private val logger = LoggerFactory.getAsyncLogger()
+    var type: ShaderType = ShaderType.Vertex
+    var lang: ShaderLanguage = ShaderLanguage.Glsl
 
-    fun compile(src: Identifier, type: ShaderType, lang: ShaderLanguage): HeapByteArray {
+    override fun compile(src: Identifier): ShaderModuleVk {
         val options = shaderc_compile_options_initialize()
         shaderc_compile_options_set_source_language(options, lang.data)
 
@@ -112,9 +118,9 @@ class ShaderCompilerVk {
 
         shaderc_compile_options_release(options)
 
-        return HeapByteArray(shaderc_result_get_length(result).toInt()).apply {
+        return ShaderModuleVk(renderer, HeapByteArray(shaderc_result_get_length(result).toInt()).apply {
             ref().copyFrom(shaderc_result_get_bytes(result))
             shaderc_result_release(result)
-        }
+        })
     }
 }

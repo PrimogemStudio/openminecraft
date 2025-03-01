@@ -11,4 +11,6 @@ interface IRenderer : Closeable {
     val gameInfo: ApplicationInfo
     val windowInfo: ApplicationWindowInfo
     val window: IWindow
+
+
 }

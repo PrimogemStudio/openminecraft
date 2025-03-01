@@ -13,20 +13,21 @@ import com.primogemstudio.engine.bindings.vulkan.ext.debugutils.VkEXTDebugUtils.
 import com.primogemstudio.engine.bindings.vulkan.utils.toFullErr
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUCCESS
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceExtensionProperties
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
+import com.primogemstudio.engine.bindings.vulkan.vk10.VkLayerProperties
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.io.Closeable
 
-class ValidationLayerVk : Closeable {
+class ValidationLayerVk(private val exts: Array<VkLayerProperties>) : Closeable {
     private val logger = LoggerFactory.getAsyncLogger()
     private var debugMessager: VkDebugUtilsMessengerEXT? = null
     private lateinit var instance: VkInstance
-    private fun hasValidationLayer(): Boolean = vkEnumerateInstanceLayerProperties().let { d ->
-        d.match({ it.map { l -> l.layerName }.contains("VK_LAYER_KHRONOS_validation") }, { false })
-    } && vkEnumerateInstanceExtensionProperties("VK_LAYER_KHRONOS_validation").let { d ->
+    private fun hasValidationLayer(): Boolean =
+        exts.map { l -> l.layerName }.contains("VK_LAYER_KHRONOS_validation") && vkEnumerateInstanceExtensionProperties(
+            "VK_LAYER_KHRONOS_validation"
+        ).let { d ->
         d.match(
             { it.map { ext -> ext.extensionName }.contains(VkEXTDebugUtils.VK_EXT_DEBUG_UTILS_EXTENSION_NAME) },
             { false })
