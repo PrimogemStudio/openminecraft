@@ -2,8 +2,24 @@ package com.primogemstudio.engine.graphics
 
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
+import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
 import java.io.Closeable
+
+enum class ShaderType {
+    Vertex,
+    Fragment,
+    Compute,
+    Geometry,
+    TessControl,
+    TessEvaluation,
+    RayGen,
+    AnyHit,
+    ClosestHit,
+    Miss,
+    Intersection,
+    Callable
+}
 
 interface IRenderer : Closeable {
     fun version(): Version
@@ -12,5 +28,6 @@ interface IRenderer : Closeable {
     val windowInfo: ApplicationWindowInfo
     val window: IWindow
 
-
+    fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType)
+    fun linkShader(progId: Identifier, progs: Array<Identifier>)
 }

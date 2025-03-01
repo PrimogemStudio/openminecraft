@@ -15,15 +15,18 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstanceCreateInfo
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDevice
 import com.primogemstudio.engine.graphics.IRenderer
+import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceQueuesVk
 import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceVk
 import com.primogemstudio.engine.graphics.backend.vk.dev.PhysicalDeviceVk
+import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderCompilerVk
 import com.primogemstudio.engine.graphics.backend.vk.swapchain.SwapchainVk
 import com.primogemstudio.engine.graphics.backend.vk.validation.ValidationLayerVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory
+import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
 
 class BackendRendererVk(
@@ -33,6 +36,8 @@ class BackendRendererVk(
     val layerEnabler: (Array<String>) -> Array<String>
 ) : IRenderer {
     private val logger = LoggerFactory.getAsyncLogger()
+    private val compiler = ShaderCompilerVk(this)
+
     val validationLayer: ValidationLayerVk
     val instance: VkInstance
     override val window: VulkanWindow
@@ -107,4 +112,12 @@ class BackendRendererVk(
     override fun version(): Version = physicalDevice.physicalDeviceProps.driverVersion.fromVkApiVersion()
     override fun driver(): String =
         "${physicalDevice.physicalDeviceProps.deviceName} ${physicalDevice.physicalDeviceProps.driverVersion.fromVkVersion()}"
+
+    override fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType) {
+        TODO("Not yet implemented")
+    }
+
+    override fun linkShader(progId: Identifier, progs: Array<Identifier>) {
+        TODO("Not yet implemented")
+    }
 }

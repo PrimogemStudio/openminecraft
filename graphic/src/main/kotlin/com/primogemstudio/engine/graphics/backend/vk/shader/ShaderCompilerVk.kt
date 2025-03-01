@@ -81,13 +81,18 @@ class ShaderCompilerVk(
     var lang: ShaderLanguage = ShaderLanguage.Glsl
 
     override fun compile(src: Identifier): ShaderModuleVk {
+        val l = lang.data
+        val glslT = type.glslType
+        val hlslT = type.hlslType
+        val t = type.type
+
         val options = shaderc_compile_options_initialize()
-        shaderc_compile_options_set_source_language(options, lang.data)
+        shaderc_compile_options_set_source_language(options, l)
 
         val result = shaderc_compile_into_spv(
             compiler,
             ResourceManager(src)!!.readAllBytes().toString(Charsets.UTF_8),
-            if (lang == ShaderLanguage.Glsl) type.glslType else type.hlslType,
+            if (lang == ShaderLanguage.Glsl) glslT else hlslT,
             src.toString(),
             "main",
             options
@@ -98,7 +103,7 @@ class ShaderCompilerVk(
         }
 
         logger.info(
-            "${tr("engine.shader.types.${type.type}")}${
+            "${tr("engine.shader.types.$t")}${
                 tr(
                     when (shaderc_result_get_compilation_status(result)) {
                         shaderc_compilation_status_success -> "engine.shader.compile_status.success"

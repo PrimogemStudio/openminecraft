@@ -5,9 +5,11 @@ import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_VENDOR
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_VERSION
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glGetString
 import com.primogemstudio.engine.graphics.IRenderer
+import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
 import com.primogemstudio.engine.logging.LoggerFactory
+import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
 
 class BackendRendererOpenGL(
@@ -16,6 +18,14 @@ class BackendRendererOpenGL(
 ) : IRenderer {
     private val logger = LoggerFactory.getAsyncLogger()
     override val window: OpenGLWindow = OpenGLWindow(gameInfo, windowInfo) { code, str -> }
+    override fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType) {
+        TODO("Not yet implemented")
+    }
+
+    override fun linkShader(progId: Identifier, progs: Array<Identifier>) {
+        TODO("Not yet implemented")
+    }
+
     override fun version(): Version {
         try {
             val vers = glGetString(GL_VERSION).split(" ")[0].split(".").map { it.toUShort() }
