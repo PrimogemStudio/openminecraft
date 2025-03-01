@@ -8,7 +8,6 @@ import com.primogemstudio.engine.foreign.heap.HeapInt
 import com.primogemstudio.engine.foreign.heap.IHeapObject
 import com.primogemstudio.engine.foreign.toCString
 import java.lang.foreign.MemorySegment
-import java.nio.ByteBuffer
 
 class shaderc_compiler_t(seg: MemorySegment) : IHeapObject(seg)
 class shaderc_compile_options_t(seg: MemorySegment) : IHeapObject(seg)
@@ -411,9 +410,8 @@ object Shaderc {
     fun shaderc_result_get_compilation_status(result: shaderc_compilation_result_t): Int =
         callFunc("shaderc_result_get_compilation_status", Int::class, result)
 
-    fun shaderc_result_get_bytes(result: shaderc_compilation_result_t): ByteBuffer =
+    fun shaderc_result_get_bytes(result: shaderc_compilation_result_t): MemorySegment =
         callPointerFunc("shaderc_result_get_bytes", result).reinterpret(shaderc_result_get_length(result))
-            .asByteBuffer()
 
     fun shaderc_result_get_error_message(result: shaderc_compilation_result_t): String =
         callPointerFunc("shaderc_result_get_error_message", result).fetchString()

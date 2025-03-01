@@ -36,6 +36,7 @@
   "exception.renderer.backend_vk.swapchain": "Failed to create vulkan swapchain: 0x%s (%s)",
   "exception.renderer.backend_vk.swapchain_img": "Failed to fetch vulkan swapchain images: 0x%s (%s)",
   "exception.renderer.backend_vk.swapchain_img_view": "Failed to create vulkan swapchain image views: 0x%s (%s)",
+  "exception.renderer.backend_vk.shader": "Failed to create vulkan shader module: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "Success",
   "engine.renderer.backend_vk.status.not_ready": "Not ready",
   "engine.renderer.backend_vk.status.timeout": "Invoke/Wait time out",

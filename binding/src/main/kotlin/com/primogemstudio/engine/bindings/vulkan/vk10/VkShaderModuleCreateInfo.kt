@@ -16,7 +16,7 @@ class VkShaderModuleCreateInfo(private val seg: MemorySegment) : IHeapObject(seg
             JAVA_INT_UNALIGNED,
             ADDRESS_UNALIGNED,
             JAVA_INT_UNALIGNED,
-            JAVA_LONG_UNALIGNED,
+            ADDRESS_UNALIGNED,
             ADDRESS_UNALIGNED
         ).align()
 

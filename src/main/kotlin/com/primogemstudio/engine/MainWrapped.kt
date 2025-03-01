@@ -63,10 +63,12 @@ fun main() {
     ) { it.first() }
 
     val shader = ShaderCompilerVk()
-    shader.compile(
-        Identifier(namespace = "openmc_graphic", path = "shaders/basic_shader.frag"),
-        ShaderType.Vertex,
-        ShaderLanguage.Glsl
+    println(
+        shader.compile(
+            Identifier(namespace = "openmc_graphic", path = "shaders/basic_shader.frag"),
+            ShaderType.Vertex,
+            ShaderLanguage.Glsl
+        ).byteSize()
     )
 
     glfwInit()
