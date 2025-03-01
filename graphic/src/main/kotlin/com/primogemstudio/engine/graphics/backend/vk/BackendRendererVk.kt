@@ -20,6 +20,8 @@ import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceQueuesVk
 import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceVk
 import com.primogemstudio.engine.graphics.backend.vk.dev.PhysicalDeviceVk
 import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderCompilerVk
+import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderLanguage
+import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderModuleVk
 import com.primogemstudio.engine.graphics.backend.vk.swapchain.SwapchainVk
 import com.primogemstudio.engine.graphics.backend.vk.validation.ValidationLayerVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
@@ -28,6 +30,10 @@ import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 
 class BackendRendererVk(
     override val gameInfo: ApplicationInfo,
@@ -37,6 +43,8 @@ class BackendRendererVk(
 ) : IRenderer {
     private val logger = LoggerFactory.getAsyncLogger()
     private val compiler = ShaderCompilerVk(this)
+    private val shaderCompileTasks = mutableListOf<Deferred<Int>>()
+    private val shaders = mutableMapOf<Identifier, ShaderModuleVk>()
 
     val validationLayer: ValidationLayerVk
     val instance: VkInstance
@@ -113,8 +121,20 @@ class BackendRendererVk(
     override fun driver(): String =
         "${physicalDevice.physicalDeviceProps.deviceName} ${physicalDevice.physicalDeviceProps.driverVersion.fromVkVersion()}"
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType) {
-        TODO("Not yet implemented")
+        shaderCompileTasks.add(GlobalScope.async {
+            try {
+                shaders[shaderId] = compiler.compile(
+                    src,
+                    com.primogemstudio.engine.graphics.backend.vk.shader.ShaderType.entries[type.ordinal],
+                    ShaderLanguage.Glsl
+                )
+                0
+            } catch (_: Exception) {
+                1
+            }
+        })
     }
 
     override fun linkShader(progId: Identifier, progs: Array<Identifier>) {

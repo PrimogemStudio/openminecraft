@@ -46,7 +46,6 @@ import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_tess_control_s
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_tess_evaluation_shader
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_vertex_shader
 import com.primogemstudio.engine.foreign.heap.HeapByteArray
-import com.primogemstudio.engine.graphics.IShaderCompiler
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory
@@ -74,25 +73,18 @@ enum class ShaderType(val glslType: Int, val hlslType: Int, val type: String) {
 
 class ShaderCompilerVk(
     private val renderer: BackendRendererVk
-) : IShaderCompiler {
+) {
     private val compiler = shaderc_compiler_initialize()
     private val logger = LoggerFactory.getAsyncLogger()
-    var type: ShaderType = ShaderType.Vertex
-    var lang: ShaderLanguage = ShaderLanguage.Glsl
 
-    override fun compile(src: Identifier): ShaderModuleVk {
-        val l = lang.data
-        val glslT = type.glslType
-        val hlslT = type.hlslType
-        val t = type.type
-
+    fun compile(src: Identifier, type: ShaderType, lang: ShaderLanguage): ShaderModuleVk {
         val options = shaderc_compile_options_initialize()
-        shaderc_compile_options_set_source_language(options, l)
+        shaderc_compile_options_set_source_language(options, lang.data)
 
         val result = shaderc_compile_into_spv(
             compiler,
             ResourceManager(src)!!.readAllBytes().toString(Charsets.UTF_8),
-            if (lang == ShaderLanguage.Glsl) glslT else hlslT,
+            if (lang == ShaderLanguage.Glsl) type.glslType else type.hlslType,
             src.toString(),
             "main",
             options
@@ -103,7 +95,7 @@ class ShaderCompilerVk(
         }
 
         logger.info(
-            "${tr("engine.shader.types.$t")}${
+            "${tr("engine.shader.types.${type.type}")}${
                 tr(
                     when (shaderc_result_get_compilation_status(result)) {
                         shaderc_compilation_status_success -> "engine.shader.compile_status.success"
