@@ -1,11 +1,11 @@
 package com.primogemstudio.engine.vk.renderer
 
+import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderLanguage
+import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderType
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.resource.ResourceManager
 import com.primogemstudio.engine.vk.*
 import com.primogemstudio.engine.vk.shader.ShaderCompiler
-import com.primogemstudio.engine.vk.shader.ShaderLanguage
-import com.primogemstudio.engine.vk.shader.ShaderType
 import com.primogemstudio.engine.vk.shader.VkShaderModule
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryStack.stackPush
