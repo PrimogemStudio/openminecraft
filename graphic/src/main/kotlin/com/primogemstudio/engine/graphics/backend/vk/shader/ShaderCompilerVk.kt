@@ -37,17 +37,19 @@ import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_miss_shader
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_raygen_shader
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_result_get_bytes
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_result_get_compilation_status
+import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_result_get_error_message
+import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_result_get_length
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_result_release
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_source_language_glsl
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_source_language_hlsl
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_tess_control_shader
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_tess_evaluation_shader
 import com.primogemstudio.engine.bindings.shaderc.Shaderc.shaderc_vertex_shader
+import com.primogemstudio.engine.foreign.heap.HeapByteArray
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.resource.ResourceManager
-import java.lang.foreign.MemorySegment
 
 enum class ShaderLanguage(val data: Int) {
     Glsl(shaderc_source_language_glsl), Hlsl(shaderc_source_language_hlsl)
@@ -72,7 +74,7 @@ class ShaderCompilerVk {
     private val compiler = shaderc_compiler_initialize()
     private val logger = LoggerFactory.getAsyncLogger()
 
-    fun compile(src: Identifier, type: ShaderType, lang: ShaderLanguage): MemorySegment {
+    fun compile(src: Identifier, type: ShaderType, lang: ShaderLanguage): HeapByteArray {
         val options = shaderc_compile_options_initialize()
         shaderc_compile_options_set_source_language(options, lang.data)
 
@@ -84,6 +86,10 @@ class ShaderCompilerVk {
             "main",
             options
         )
+
+        shaderc_result_get_error_message(result).split("\n").filter { it.isNotEmpty() }.forEach {
+            logger.error(it)
+        }
 
         logger.info(
             "${tr("engine.shader.types.${type.type}")}${
@@ -106,6 +112,9 @@ class ShaderCompilerVk {
 
         shaderc_compile_options_release(options)
 
-        return shaderc_result_get_bytes(result).apply { shaderc_result_release(result) }
+        return HeapByteArray(shaderc_result_get_length(result).toInt()).apply {
+            ref().copyFrom(shaderc_result_get_bytes(result))
+            shaderc_result_release(result)
+        }
     }
 }

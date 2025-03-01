@@ -8,17 +8,14 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkShaderModuleCreateInfo
 import com.primogemstudio.engine.foreign.heap.HeapByteArray
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import java.io.Closeable
-import java.lang.foreign.MemorySegment
 
 class ShaderModuleVk(
     private val renderer: BackendRendererVk,
-    private val data: MemorySegment
+    private val data: HeapByteArray
 ) : Closeable {
     private val shaderModule: VkShaderModule = vkCreateShaderModule(
         renderer.logicalDevice.device,
-        VkShaderModuleCreateInfo().apply {
-            code = HeapByteArray(data.byteSize().toInt(), data)
-        },
+        VkShaderModuleCreateInfo().apply { code = data },
         null
     ).match(
         { it },

@@ -37,12 +37,8 @@ import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glVertex3f
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glViewport
 import com.primogemstudio.engine.foreign.heap.HeapByteArray
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
-import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderCompilerVk
-import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderLanguage
-import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderType
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
-import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
 import java.lang.foreign.MemorySegment
 
@@ -61,15 +57,6 @@ fun main() {
             height = 600
         )
     ) { it.first() }
-
-    val shader = ShaderCompilerVk()
-    println(
-        shader.compile(
-            Identifier(namespace = "openmc_graphic", path = "shaders/basic_shader.frag"),
-            ShaderType.Vertex,
-            ShaderLanguage.Glsl
-        ).byteSize()
-    )
 
     glfwInit()
     glfwSetErrorCallback { err, desc ->
