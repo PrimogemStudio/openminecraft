@@ -27,6 +27,10 @@ class BackendRendererOpenGL(
         TODO("Not yet implemented")
     }
 
+    override fun createRenderPass(passId: Identifier) {
+        TODO("Not yet implemented")
+    }
+
     override fun version(): Version {
         try {
             val vers = glGetString(GL_VERSION).split(" ")[0].split(".").map { it.toUShort() }

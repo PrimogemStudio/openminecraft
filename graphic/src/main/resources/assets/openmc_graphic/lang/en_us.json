@@ -39,6 +39,7 @@
   "exception.renderer.backend_vk.shader": "Failed to create vulkan shader module: 0x%s (%s)",
   "exception.renderer.backend_vk.layer": "Failed to query vulkan layers: 0x%s (%s)",
   "exception.renderer.backend_vk.ext": "Failed to query vulkan extensions: 0x%s (%s)",
+  "exception.renderer.backend_vk.renderpass": "Failed to create vulkan renderpass: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "Success",
   "engine.renderer.backend_vk.status.not_ready": "Not ready",
   "engine.renderer.backend_vk.status.timeout": "Invoke/Wait time out",
@@ -69,5 +70,6 @@
   "engine.renderer.backend_vk.stage.phy_device.family": "Selected family (graphic: %d, present: %d) on %s ...",
   "engine.renderer.backend_vk.stage.logic_device": "Logical device init ...",
   "engine.renderer.backend_vk.stage.logic_device_queue": "Fetching device queues ...",
-  "engine.renderer.backend_vk.stage.swapchain": "Swapchain init ..."
+  "engine.renderer.backend_vk.stage.swapchain": "Swapchain init ...",
+  "engine.renderer.backend_vk.stage.shader_compile": "%s %s compiled ..."
 }

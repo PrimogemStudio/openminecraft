@@ -77,7 +77,7 @@ class ShaderCompilerVk(
     private val compiler = shaderc_compiler_initialize()
     private val logger = LoggerFactory.getAsyncLogger()
 
-    fun compile(src: Identifier, type: ShaderType, lang: ShaderLanguage): ShaderModuleVk {
+    fun compile(src: Identifier, type: ShaderType, lang: ShaderLanguage): HeapByteArray {
         val options = shaderc_compile_options_initialize()
         shaderc_compile_options_set_source_language(options, lang.data)
 
@@ -115,9 +115,9 @@ class ShaderCompilerVk(
 
         shaderc_compile_options_release(options)
 
-        return ShaderModuleVk(renderer, HeapByteArray(shaderc_result_get_length(result).toInt()).apply {
+        return HeapByteArray(shaderc_result_get_length(result).toInt()).apply {
             ref().copyFrom(shaderc_result_get_bytes(result))
             shaderc_result_release(result)
-        })
+        }
     }
 }

@@ -77,6 +77,9 @@ suspend fun main() {
     ).await()
     re.linkShader(Identifier(namespace = "openmc_graphic", path = "basic_shader"), arrayOf(frg, vtx)).await()
 
+    val target = Identifier(namespace = "openmc_graphic", path = "main_pass")
+    re.createRenderPass(target)
+
     glfwInit()
     glfwSetErrorCallback { err, desc ->
         println("$err $desc")

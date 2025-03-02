@@ -39,6 +39,7 @@
   "exception.renderer.backend_vk.shader": "无法创建 Vulkan 着色器模块: 0x%s (%s)",
   "exception.renderer.backend_vk.layer": "无法查询 Vulkan 层: 0x%s (%s)",
   "exception.renderer.backend_vk.ext": "无法查询 Vulkan 扩展: 0x%s (%s)",
+  "exception.renderer.backend_vk.renderpass": "无法创建 Vulkan Render Pass: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "成功",
   "engine.renderer.backend_vk.status.not_ready": "未准备",
   "engine.renderer.backend_vk.status.timeout": "调用/等待超时",
@@ -69,5 +70,6 @@
   "engine.renderer.backend_vk.stage.phy_device.family": "选择 GPU 组 (图形: %d, 显示: %d) 于设备 %s ...",
   "engine.renderer.backend_vk.stage.logic_device": "逻辑设备初始化 ...",
   "engine.renderer.backend_vk.stage.logic_device_queue": "获取逻辑设备队列 ...",
-  "engine.renderer.backend_vk.stage.swapchain": "交换链初始化 ..."
+  "engine.renderer.backend_vk.stage.swapchain": "交换链初始化 ...",
+  "engine.renderer.backend_vk.stage.shader_compile": "%s %s 已编译 ..."
 }
