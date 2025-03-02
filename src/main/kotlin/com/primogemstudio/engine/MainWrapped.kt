@@ -36,6 +36,7 @@ import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glLineWidth
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glVertex3f
 import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glViewport
 import com.primogemstudio.engine.foreign.heap.HeapByteArray
+import com.primogemstudio.engine.graphics.IRenderer
 import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
@@ -44,8 +45,8 @@ import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
 import java.lang.foreign.MemorySegment
 
-fun main() {
-    val re = BackendRendererVk(
+suspend fun main() {
+    val re: IRenderer = BackendRendererVk(
         ApplicationInfo(
             "openminecraft",
             Version.from(0u, 0u, 1u),
@@ -61,11 +62,20 @@ fun main() {
         { it.first() },
         { arrayOf() }
     )
+    val frg = Identifier(namespace = "openmc_graphic", path = "basic_shader_frag")
+    val vtx = Identifier(namespace = "openmc_graphic", path = "basic_shader_vert")
+
     re.registerShader(
-        Identifier(namespace = "openmc_graphic", path = "basic_shader_frag"),
+        frg,
         Identifier(namespace = "openmc_graphic", path = "shaders/basic_shader.frag"),
+        ShaderType.Fragment
+    ).await()
+    re.registerShader(
+        vtx,
+        Identifier(namespace = "openmc_graphic", path = "shaders/basic_shader.vert"),
         ShaderType.Vertex
-    )
+    ).await()
+    re.linkShader(Identifier(namespace = "openmc_graphic", path = "basic_shader"), arrayOf(frg, vtx)).await()
 
     glfwInit()
     glfwSetErrorCallback { err, desc ->

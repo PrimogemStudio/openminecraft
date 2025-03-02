@@ -11,6 +11,7 @@ import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
+import kotlinx.coroutines.Deferred
 
 class BackendRendererOpenGL(
     override val gameInfo: ApplicationInfo,
@@ -18,11 +19,11 @@ class BackendRendererOpenGL(
 ) : IRenderer {
     private val logger = LoggerFactory.getAsyncLogger()
     override val window: OpenGLWindow = OpenGLWindow(gameInfo, windowInfo) { code, str -> }
-    override fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType) {
+    override fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType): Deferred<Int> {
         TODO("Not yet implemented")
     }
 
-    override fun linkShader(progId: Identifier, progs: Array<Identifier>) {
+    override fun linkShader(progId: Identifier, progs: Array<Identifier>): Deferred<Int> {
         TODO("Not yet implemented")
     }
 

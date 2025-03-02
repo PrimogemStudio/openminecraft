@@ -18,6 +18,8 @@ dependencies {
     implementation(rootProject.project(":openminecraft-base"))
     implementation(rootProject.project(":openminecraft-binding"))
     if (System.getProperty("openminecraft.graalvm.env") == "1") implementation(rootProject.project(":openminecraft-nativeimage"))
+
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["openminecraft.kotlinx_coroutines_core_version"]}")
 }
 
 tasks.jar {

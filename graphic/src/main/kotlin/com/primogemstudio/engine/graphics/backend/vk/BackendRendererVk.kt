@@ -48,7 +48,6 @@ class BackendRendererVk(
 ) : IRenderer {
     private val logger = LoggerFactory.getAsyncLogger()
     private val compiler = ShaderCompilerVk(this)
-    val shaderCompileTasks = mutableListOf<Deferred<Int>>()
     private val shaders = mutableMapOf<Identifier, ShaderModuleVk>()
     private val shaderTypes = mutableMapOf<Identifier, ShaderType>()
     private val shaderProgs = mutableMapOf<Identifier, HeapStructArray<VkPipelineShaderStageCreateInfo>>()
@@ -130,9 +129,9 @@ class BackendRendererVk(
         "${physicalDevice.physicalDeviceProps.deviceName} ${physicalDevice.physicalDeviceProps.driverVersion.fromVkVersion()}"
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType) {
+    override fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType): Deferred<Int> =
+        GlobalScope.async {
         shaderTypes[shaderId] = type
-        shaderCompileTasks.add(GlobalScope.async {
             try {
                 shaders[shaderId] = compiler.compile(
                     src,
@@ -143,10 +142,10 @@ class BackendRendererVk(
             } catch (_: Exception) {
                 1
             }
-        })
     }
 
-    override fun linkShader(progId: Identifier, progs: Array<Identifier>) {
+    @OptIn(DelicateCoroutinesApi::class)
+    override fun linkShader(progId: Identifier, progs: Array<Identifier>): Deferred<Int> = GlobalScope.async {
         val shaders = progs.filter { shaders.containsKey(it) }
         shaderProgs[progId] = HeapStructArray<VkPipelineShaderStageCreateInfo>(
             VkPipelineShaderStageCreateInfo.LAYOUT,
@@ -168,5 +167,6 @@ class BackendRendererVk(
                 }
             }
         }
+        0
     }
 }
