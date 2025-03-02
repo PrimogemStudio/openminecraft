@@ -205,6 +205,7 @@ class BackendRendererVk(
                 }
             }
         }
+        logger.info(tr("engine.renderer.backend_vk.stage.shader_link", progs.toList()))
         0
     }
 

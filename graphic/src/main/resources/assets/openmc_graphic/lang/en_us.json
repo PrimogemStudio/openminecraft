@@ -71,5 +71,6 @@
   "engine.renderer.backend_vk.stage.logic_device": "Logical device init ...",
   "engine.renderer.backend_vk.stage.logic_device_queue": "Fetching device queues ...",
   "engine.renderer.backend_vk.stage.swapchain": "Swapchain init ...",
-  "engine.renderer.backend_vk.stage.shader_compile": "%s %s compiled ..."
+  "engine.renderer.backend_vk.stage.shader_compile": "%s %s compiled ...",
+  "engine.renderer.backend_vk.stage.shader_link": "%s linked ..."
 }
