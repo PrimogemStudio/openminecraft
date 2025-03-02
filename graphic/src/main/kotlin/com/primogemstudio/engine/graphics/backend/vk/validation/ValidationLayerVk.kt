@@ -19,6 +19,7 @@ import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory
 import java.io.Closeable
+import java.lang.foreign.MemorySegment
 
 class ValidationLayerVk(private val exts: Array<VkLayerProperties>) : Closeable {
     private val logger = LoggerFactory.getAsyncLogger()
@@ -61,22 +62,27 @@ class ValidationLayerVk(private val exts: Array<VkLayerProperties>) : Closeable 
         }
     }
 
+    private val debuggerCreateInfo = VkDebugUtilsMessengerCreateInfoEXT().apply {
+        messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT or
+                VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT or
+                VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT or
+                VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
+        messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT or
+                VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT or
+                VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT
+        callback = VkDebugUtilsMessengerCallbackEXT { severity, type, callbackData, _ ->
+            logActual(severity, type, callbackData)
+            VK_SUCCESS
+        }
+    }
+
+    fun preInstanceAttach(): VkDebugUtilsMessengerCreateInfoEXT =
+        if (enabled) debuggerCreateInfo else VkDebugUtilsMessengerCreateInfoEXT(MemorySegment.NULL)
+
     fun instanceAttach(renderer: BackendRendererVk) {
         if (!enabled) return
         this.instance = renderer.instance
-        vkCreateDebugUtilsMessengerEXT(instance, VkDebugUtilsMessengerCreateInfoEXT().apply {
-            messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT or
-                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT or
-                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT or
-                    VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT
-            messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT or
-                    VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT or
-                    VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT
-            callback = VkDebugUtilsMessengerCallbackEXT { severity, type, callbackData, _ ->
-                logActual(severity, type, callbackData)
-                VK_SUCCESS
-            }
-        }, null).match(
+        vkCreateDebugUtilsMessengerEXT(instance, debuggerCreateInfo, null).match(
             { debugMessager = it },
             { logger.warn(tr(toFullErr("exception.renderer.backend_vk.validation", it))) })
     }

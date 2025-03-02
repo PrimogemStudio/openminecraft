@@ -62,7 +62,7 @@ fun main() {
         { arrayOf() }
     )
     re.registerShader(
-        Identifier(namespace = "openmc_graphic", path = "shaders/basic_shader.frag"),
+        Identifier(namespace = "openmc_graphic", path = "basic_shader_frag"),
         Identifier(namespace = "openmc_graphic", path = "shaders/basic_shader.frag"),
         ShaderType.Vertex
     )

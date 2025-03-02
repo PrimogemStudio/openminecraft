@@ -6,14 +6,19 @@ import com.primogemstudio.engine.bindings.vulkan.utils.fromVkApiVersion
 import com.primogemstudio.engine.bindings.vulkan.utils.fromVkVersion
 import com.primogemstudio.engine.bindings.vulkan.utils.toFullErr
 import com.primogemstudio.engine.bindings.vulkan.utils.toVkVersion
+import com.primogemstudio.engine.bindings.vulkan.vk10.*
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_API_VERSION
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_ALL_GRAPHICS
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_COMPUTE_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_FRAGMENT_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_GEOMETRY_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_VERTEX_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceLayerProperties
-import com.primogemstudio.engine.bindings.vulkan.vk10.VkApplicationInfo
-import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstance
-import com.primogemstudio.engine.bindings.vulkan.vk10.VkInstanceCreateInfo
-import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDevice
+import com.primogemstudio.engine.foreign.heap.HeapStructArray
 import com.primogemstudio.engine.graphics.IRenderer
 import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceQueuesVk
@@ -43,8 +48,10 @@ class BackendRendererVk(
 ) : IRenderer {
     private val logger = LoggerFactory.getAsyncLogger()
     private val compiler = ShaderCompilerVk(this)
-    private val shaderCompileTasks = mutableListOf<Deferred<Int>>()
+    val shaderCompileTasks = mutableListOf<Deferred<Int>>()
     private val shaders = mutableMapOf<Identifier, ShaderModuleVk>()
+    private val shaderTypes = mutableMapOf<Identifier, ShaderType>()
+    private val shaderProgs = mutableMapOf<Identifier, HeapStructArray<VkPipelineShaderStageCreateInfo>>()
 
     val validationLayer: ValidationLayerVk
     val instance: VkInstance
@@ -79,7 +86,8 @@ class BackendRendererVk(
                     )
                 }
                 extensions = validationLayer.appendExt(glfwGetRequiredInstanceExtensions())
-                layers = layerEnabler(exts.map { it.layerName }.toTypedArray())
+                layers = validationLayer.layerArg() + layerEnabler(exts.map { it.layerName }.toTypedArray())
+                next = validationLayer.preInstanceAttach().ref()
             },
             null
         ).match(
@@ -123,6 +131,7 @@ class BackendRendererVk(
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType) {
+        shaderTypes[shaderId] = type
         shaderCompileTasks.add(GlobalScope.async {
             try {
                 shaders[shaderId] = compiler.compile(
@@ -138,6 +147,26 @@ class BackendRendererVk(
     }
 
     override fun linkShader(progId: Identifier, progs: Array<Identifier>) {
-        TODO("Not yet implemented")
+        val shaders = progs.filter { shaders.containsKey(it) }
+        shaderProgs[progId] = HeapStructArray<VkPipelineShaderStageCreateInfo>(
+            VkPipelineShaderStageCreateInfo.LAYOUT,
+            shaders.size
+        ).apply {
+            for (i in shaders.indices) {
+                VkPipelineShaderStageCreateInfo(this[i]).apply {
+                    module = this@BackendRendererVk.shaders[shaders[i]]!!()
+                    stage = when (this@BackendRendererVk.shaderTypes[shaders[i]]!!) {
+                        ShaderType.Vertex -> VK_SHADER_STAGE_VERTEX_BIT
+                        ShaderType.Fragment -> VK_SHADER_STAGE_FRAGMENT_BIT
+                        ShaderType.TessControl -> VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
+                        ShaderType.TessEvaluation -> VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
+                        ShaderType.Geometry -> VK_SHADER_STAGE_GEOMETRY_BIT
+                        ShaderType.Compute -> VK_SHADER_STAGE_COMPUTE_BIT
+                        else -> VK_SHADER_STAGE_ALL_GRAPHICS
+                    }
+                    name = "main"
+                }
+            }
+        }
     }
 }
