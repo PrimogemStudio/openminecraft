@@ -1,0 +1,6 @@
+{
+    cmdlines = {
+        "xmake lua /home/coder2/.local/share/xmake/modules/private/utils/statistics.lua --verbose --yes",
+        "xmake -vy"
+    }
+}

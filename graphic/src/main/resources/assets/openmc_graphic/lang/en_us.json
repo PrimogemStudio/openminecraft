@@ -40,6 +40,8 @@
   "exception.renderer.backend_vk.layer": "Failed to query vulkan layers: 0x%s (%s)",
   "exception.renderer.backend_vk.ext": "Failed to query vulkan extensions: 0x%s (%s)",
   "exception.renderer.backend_vk.renderpass": "Failed to create vulkan renderpass: 0x%s (%s)",
+  "exception.renderer.backend_vk.pipeline_layout": "Failed to create vulkan pipeline layout: 0x%s (%s)",
+  "exception.renderer.backend_vk.pipeline": "Failed to create vulkan pipeline: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "Success",
   "engine.renderer.backend_vk.status.not_ready": "Not ready",
   "engine.renderer.backend_vk.status.timeout": "Invoke/Wait time out",

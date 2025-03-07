@@ -1,0 +1,22 @@
+{
+    ["tool_target_openminecraft-launcher_linux_x86_64_ld"] = {
+        toolname = "gxx",
+        program = "/usr/bin/g++",
+        toolchain_info = {
+            name = "gcc",
+            cachekey = "gcc_arch_x86_64_plat_linux",
+            arch = "x86_64",
+            plat = "linux"
+        }
+    },
+    ["tool_target_openminecraft-launcher_linux_x86_64_cc"] = {
+        toolname = "gcc",
+        program = "/usr/bin/gcc",
+        toolchain_info = {
+            name = "gcc",
+            cachekey = "gcc_arch_x86_64_plat_linux",
+            arch = "x86_64",
+            plat = "linux"
+        }
+    }
+}

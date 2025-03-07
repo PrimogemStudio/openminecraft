@@ -40,6 +40,8 @@
   "exception.renderer.backend_vk.layer": "无法查询 Vulkan 层: 0x%s (%s)",
   "exception.renderer.backend_vk.ext": "无法查询 Vulkan 扩展: 0x%s (%s)",
   "exception.renderer.backend_vk.renderpass": "无法创建 Vulkan Render Pass: 0x%s (%s)",
+  "exception.renderer.backend_vk.pipeline_layout": "无法创建 Vulkan 渲染管线格式: 0x%s (%s)",
+  "exception.renderer.backend_vk.pipeline": "无法创建 Vulkan 渲染管线: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "成功",
   "engine.renderer.backend_vk.status.not_ready": "未准备",
   "engine.renderer.backend_vk.status.timeout": "调用/等待超时",

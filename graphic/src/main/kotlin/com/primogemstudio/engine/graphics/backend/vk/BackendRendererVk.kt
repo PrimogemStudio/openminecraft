@@ -14,11 +14,22 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ATTACHMENT_LO
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ATTACHMENT_LOAD_OP_DONT_CARE
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ATTACHMENT_STORE_OP_DONT_CARE
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ATTACHMENT_STORE_OP_STORE
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONENT_A_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONENT_B_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONENT_G_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONENT_R_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_CULL_MODE_BACK_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_FORMAT_R32G32B32_SFLOAT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_FORMAT_R32G32_SFLOAT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_FRONT_FACE_CLOCKWISE
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_IMAGE_LAYOUT_UNDEFINED
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_LOGIC_OP_COPY
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_API_VERSION
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_PIPELINE_BIND_POINT_GRAPHICS
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_POLYGON_MODE_FILL
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SAMPLE_COUNT_1_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_ALL_GRAPHICS
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_COMPUTE_BIT
@@ -28,7 +39,10 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_VERTEX_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUBPASS_EXTERNAL
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_VERTEX_INPUT_RATE_VERTEX
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateGraphicsPipelines
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateInstance
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreatePipelineLayout
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateRenderPass
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateShaderModule
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyInstance
@@ -56,6 +70,9 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import org.joml.Vector2i
+import org.joml.Vector4f
+import java.lang.foreign.MemorySegment
 
 class BackendRendererVk(
     override val gameInfo: ApplicationInfo,
@@ -239,5 +256,90 @@ class BackendRendererVk(
         }, null).match(
             { it },
             { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.renderpass", it)) })
+    }
+
+    override fun createPipeline(pipeId: Identifier, progId: Identifier, passId: Identifier) {
+        vkCreateGraphicsPipelines(
+            logicalDevice(),
+            VkPipelineCache(MemorySegment.NULL),
+            arrayOf(VkGraphicsPipelineCreateInfo().apply {
+                stages = shaderProgs[progId]!!
+                vertex = VkPipelineVertexInputStateCreateInfo().apply {
+                    bindings = arrayOf(VkVertexInputBindingDescription().apply {
+                        binding = 0
+                        stride = (2 + 3) * Float.SIZE_BYTES
+                        inputRate = VK_VERTEX_INPUT_RATE_VERTEX
+                    }).toCStructArray(VkVertexInputBindingDescription.LAYOUT)
+                    attributes = arrayOf(
+                        VkVertexInputAttributeDescription().apply {
+                            binding = 0
+                            location = 0
+                            format = VK_FORMAT_R32G32_SFLOAT
+                            position = 0
+                        },
+                        VkVertexInputAttributeDescription().apply {
+                            binding = 0
+                            location = 1
+                            format = VK_FORMAT_R32G32B32_SFLOAT
+                            position = 2 * Float.SIZE_BYTES
+                        },
+                    ).toCStructArray(VkVertexInputAttributeDescription.LAYOUT)
+                }
+                inputAssembly = VkPipelineInputAssemblyStateCreateInfo().apply {
+                    topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST
+                    primitiveRestartEnable = false
+                }
+                viewport = VkPipelineViewportStateCreateInfo().apply {
+                    viewports = arrayOf(VkViewport().apply {
+                        x = 0f
+                        y = 0f
+                        width = swapchain.swapchainExtent.x.toFloat()
+                        height = swapchain.swapchainExtent.y.toFloat()
+                        minDepth = 0f
+                        maxDepth = 1f
+                    }).toCStructArray(VkViewport.LAYOUT)
+                    scissors = arrayOf(VkRect2D().apply {
+                        offset = Vector2i(0, 0)
+                        extent = swapchain.swapchainExtent
+                    }).toCStructArray(VkRect2D.LAYOUT)
+                }
+                rasterization = VkPipelineRasterizationStateCreateInfo().apply {
+                    depthClampEnable = false
+                    rasterizerDiscardEnable = false
+                    polygonMode = VK_POLYGON_MODE_FILL
+                    lineWidth = 1f
+                    cullMode = VK_CULL_MODE_BACK_BIT
+                    frontFace = VK_FRONT_FACE_CLOCKWISE
+                    depthBiasEnable = true
+                }
+                multisample = VkPipelineMultisampleStateCreateInfo().apply {
+                    sampleShadingEnable = false
+                    rasterizationSamples = VK_SAMPLE_COUNT_1_BIT
+                }
+                colorBlend = VkPipelineColorBlendStateCreateInfo().apply {
+                    logicOpEnable = false
+                    logicOp = VK_LOGIC_OP_COPY
+                    attachments = arrayOf(VkPipelineColorBlendAttachmentState().apply {
+                        colorWriteMask =
+                            VK_COLOR_COMPONENT_R_BIT or VK_COLOR_COMPONENT_G_BIT or VK_COLOR_COMPONENT_B_BIT or VK_COLOR_COMPONENT_A_BIT
+                        blendEnable = false
+                    }).toCStructArray(VkPipelineColorBlendAttachmentState.LAYOUT)
+                    blendConstants = Vector4f(0f, 0f, 0f, 0f)
+                }
+
+                layout = vkCreatePipelineLayout(logicalDevice(), VkPipelineLayoutCreateInfo(), null).match(
+                    { it },
+                    { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.pipeline_layout", it)) }
+                )
+                renderPass = renderPasses[passId]!!
+                subpass = 0
+                basePipeline = VkPipeline(MemorySegment.NULL)
+                basePipelineIndex = -1
+            }).toCStructArray(VkGraphicsPipelineCreateInfo.LAYOUT),
+            null
+        ).match(
+            { it },
+            { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.pipeline", it)) }
+        )
     }
 }

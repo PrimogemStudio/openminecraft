@@ -32,4 +32,6 @@ interface IRenderer : Closeable {
     fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType): Deferred<Int>
     fun linkShader(progId: Identifier, progs: Array<Identifier>): Deferred<Int>
     fun createRenderPass(passId: Identifier)
+
+    fun createPipeline(pipeId: Identifier, progId: Identifier, passId: Identifier)
 }

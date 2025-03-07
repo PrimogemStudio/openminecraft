@@ -5,6 +5,7 @@ import com.primogemstudio.engine.foreign.align
 import com.primogemstudio.engine.foreign.cacheOffsets
 import com.primogemstudio.engine.foreign.heap.HeapStructArray
 import com.primogemstudio.engine.foreign.heap.IHeapObject
+import org.joml.Vector4f
 import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
@@ -56,5 +57,18 @@ class VkPipelineColorBlendStateCreateInfo(private val seg: MemorySegment) : IHea
         set(value) {
             seg.set(ADDRESS, OFFSETS[6], value.ref())
             seg.set(JAVA_INT, OFFSETS[5], value.length)
+        }
+    var blendConstants: Vector4f
+        get() = Vector4f(
+            seg.get(JAVA_FLOAT, OFFSETS[7]),
+            seg.get(JAVA_FLOAT, OFFSETS[8]),
+            seg.get(JAVA_FLOAT, OFFSETS[9]),
+            seg.get(JAVA_FLOAT, OFFSETS[10])
+        )
+        set(value) {
+            seg.set(JAVA_FLOAT, OFFSETS[7], value.x)
+            seg.set(JAVA_FLOAT, OFFSETS[8], value.y)
+            seg.set(JAVA_FLOAT, OFFSETS[9], value.z)
+            seg.set(JAVA_FLOAT, OFFSETS[10], value.w)
         }
 }
