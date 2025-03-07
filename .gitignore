@@ -43,3 +43,4 @@ bin/
 .idea/
 hs_err*
 .kotlin/
+.xmake
