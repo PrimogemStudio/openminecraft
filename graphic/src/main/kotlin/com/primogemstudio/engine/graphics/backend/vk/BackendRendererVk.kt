@@ -109,10 +109,7 @@ import com.primogemstudio.engine.i18n.Internationalization.tr
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import org.joml.Vector2i
 import org.joml.Vector4f
 import java.lang.foreign.MemorySegment
@@ -129,6 +126,7 @@ class BackendRendererVk(
     private val compiler = ShaderCompilerVk(this)
     private val shaders = mutableMapOf<Identifier, VkShaderModule>()
     private val shaderTypes = mutableMapOf<Identifier, ShaderType>()
+    private val shaderProgsData = mutableMapOf<Identifier, Array<Identifier>>()
     private val shaderProgs = mutableMapOf<Identifier, HeapStructArray<VkPipelineShaderStageCreateInfo>>()
     private val renderPasses = mutableMapOf<Identifier, VkRenderPass>()
     private val pipelineCreationData = mutableMapOf<Identifier, Pair<Identifier, Identifier>>()
@@ -242,6 +240,9 @@ class BackendRendererVk(
         pipelines.clear()
         renderPasses.values.forEach { vkDestroyRenderPass(logicalDevice(), it, null) }
         renderPasses.clear()
+        shaderProgs.clear()
+        shaderTypes.clear()
+        shaderProgsData.clear()
         shaders.values.forEach { vkDestroyShaderModule(logicalDevice(), it, null) }
         shaders.clear()
 
@@ -263,6 +264,10 @@ class BackendRendererVk(
         vkDeviceWaitIdle(logicalDevice())
 
         swapchain.reinit()
+
+        shaderProgs.clear()
+        shaderProgsData.forEach { runBlocking { linkShader(it.key, it.value).await() } }
+
         renderPasses.values.forEach { vkDestroyRenderPass(logicalDevice(), it, null) }
         val target = renderPasses.map { it.key }.toTypedArray()
         renderPasses.clear()
@@ -323,6 +328,7 @@ class BackendRendererVk(
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun linkShader(progId: Identifier, progs: Array<Identifier>): Deferred<Int> = GlobalScope.async {
+        shaderProgsData[progId] = progs
         val shaders = progs.filter { shaders.containsKey(it) }
 
         shaderProgs[progId] = shaders.map {
