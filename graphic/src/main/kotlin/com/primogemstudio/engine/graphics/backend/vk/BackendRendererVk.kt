@@ -2,7 +2,12 @@ package com.primogemstudio.engine.graphics.backend.vk
 
 import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwInit
 import com.primogemstudio.engine.bindings.glfw.GLFWVulkanFuncs.glfwGetRequiredInstanceExtensions
+import com.primogemstudio.engine.bindings.vulkan.khr.swapchain.VkPresentInfoKHR
+import com.primogemstudio.engine.bindings.vulkan.khr.swapchain.VkSwapchainKHRFuncs.VK_ERROR_OUT_OF_DATE_KHR
 import com.primogemstudio.engine.bindings.vulkan.khr.swapchain.VkSwapchainKHRFuncs.VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+import com.primogemstudio.engine.bindings.vulkan.khr.swapchain.VkSwapchainKHRFuncs.VK_SUBOPTIMAL_KHR
+import com.primogemstudio.engine.bindings.vulkan.khr.swapchain.VkSwapchainKHRFuncs.vkAcquireNextImageKHR
+import com.primogemstudio.engine.bindings.vulkan.khr.swapchain.VkSwapchainKHRFuncs.vkQueuePresentKHR
 import com.primogemstudio.engine.bindings.vulkan.utils.fromVkApiVersion
 import com.primogemstudio.engine.bindings.vulkan.utils.fromVkVersion
 import com.primogemstudio.engine.bindings.vulkan.utils.toFullErr
@@ -14,11 +19,14 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ATTACHMENT_LO
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ATTACHMENT_LOAD_OP_DONT_CARE
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ATTACHMENT_STORE_OP_DONT_CARE
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_ATTACHMENT_STORE_OP_STORE
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_BUFFER_USAGE_VERTEX_BUFFER_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONENT_A_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONENT_B_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONENT_G_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONENT_R_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COMMAND_BUFFER_LEVEL_PRIMARY
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_CULL_MODE_BACK_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_FENCE_CREATE_SIGNALED_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_FORMAT_R32G32B32_SFLOAT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_FORMAT_R32G32_SFLOAT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_FRONT_FACE_CLOCKWISE
@@ -26,6 +34,8 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_IMAGE_LAYOUT_
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_IMAGE_LAYOUT_UNDEFINED
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_LOGIC_OP_COPY
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MAKE_API_VERSION
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_PIPELINE_BIND_POINT_GRAPHICS
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_POLYGON_MODE_FILL
@@ -38,25 +48,47 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_VERTEX_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHARING_MODE_EXCLUSIVE
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUBPASS_CONTENTS_INLINE
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUBPASS_EXTERNAL
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUCCESS
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_VERTEX_INPUT_RATE_VERTEX
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkAllocateCommandBuffers
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkBeginCommandBuffer
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCmdBeginRenderPass
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCmdBindPipeline
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCmdBindVertexBuffers
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCmdDraw
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCmdEndRenderPass
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateCommandPool
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateFence
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateFramebuffer
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateGraphicsPipelines
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreatePipelineLayout
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateRenderPass
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateSemaphore
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateShaderModule
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyCommandPool
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyFence
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyFramebuffer
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyPipeline
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyPipelineLayout
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyRenderPass
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroySemaphore
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyShaderModule
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDeviceWaitIdle
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEndCommandBuffer
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceLayerProperties
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkFreeCommandBuffers
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceFeatures
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkQueueSubmit
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkResetFences
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkWaitForFences
+import com.primogemstudio.engine.foreign.heap.HeapIntArray
+import com.primogemstudio.engine.foreign.heap.HeapLongArray
 import com.primogemstudio.engine.foreign.heap.HeapPointerArray
 import com.primogemstudio.engine.foreign.heap.HeapStructArray
 import com.primogemstudio.engine.foreign.toCStructArray
@@ -65,6 +97,8 @@ import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceQueuesVk
 import com.primogemstudio.engine.graphics.backend.vk.dev.LogicalDeviceVk
 import com.primogemstudio.engine.graphics.backend.vk.dev.PhysicalDeviceVk
+import com.primogemstudio.engine.graphics.backend.vk.pipeline.FrameDataVk
+import com.primogemstudio.engine.graphics.backend.vk.pipeline.MemoryBufferVk
 import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderCompilerVk
 import com.primogemstudio.engine.graphics.backend.vk.shader.ShaderLanguage
 import com.primogemstudio.engine.graphics.backend.vk.swapchain.SwapchainVk
@@ -89,6 +123,8 @@ class BackendRendererVk(
     val deviceSelector: (Array<VkPhysicalDevice>) -> VkPhysicalDevice,
     val layerEnabler: (Array<String>) -> Array<String>
 ) : IRenderer, IReinitable {
+    private val maxFrames = 2
+
     private val logger = LoggerFactory.getAsyncLogger()
     private val compiler = ShaderCompilerVk(this)
     private val shaders = mutableMapOf<Identifier, VkShaderModule>()
@@ -100,6 +136,11 @@ class BackendRendererVk(
     private val pipelineLayouts = mutableMapOf<Identifier, VkPipelineLayout>()
     private var swapchainFramebufferBindedPass: Identifier? = null
     private val swapchainFramebuffers = mutableListOf<VkFramebuffer>()
+    private val vertexBuffers = mutableMapOf<Identifier, MemoryBufferVk>()
+
+    private val swapchainCommandBuffers = mutableListOf<VkCommandBuffer>()
+
+    private val imageSyncObjects = mutableListOf<FrameDataVk>()
 
     val validationLayer: ValidationLayerVk
     val instance: VkInstance
@@ -170,9 +211,25 @@ class BackendRendererVk(
             null
         ).match({ it }, { throw IllegalStateException() })
         logger.info(tr("engine.renderer.backend_vk.stage.commandbuffer"))
+
+        val sc = VkSemaphoreCreateInfo()
+        val fc = VkFenceCreateInfo().apply { flag = VK_FENCE_CREATE_SIGNALED_BIT }
+        for (i in 0..<maxFrames) {
+            imageSyncObjects.add(
+                FrameDataVk(
+                    vkCreateSemaphore(logicalDevice(), sc, null).match({ it }, { throw IllegalStateException() }),
+                    vkCreateSemaphore(logicalDevice(), sc, null).match({ it }, { throw IllegalStateException() }),
+                    vkCreateFence(logicalDevice(), fc, null).match({ it }, { throw IllegalStateException() })
+                )
+            )
+        }
     }
 
     override fun close() {
+        vkFreeCommandBuffers(logicalDevice(), commandPool, HeapPointerArray(swapchainCommandBuffers.toTypedArray()))
+        swapchainCommandBuffers.clear()
+        vertexBuffers.forEach { it.value.close() }
+        vertexBuffers.clear()
         vkDestroyCommandPool(logicalDevice(), commandPool, null)
         swapchainFramebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
         swapchainFramebuffers.clear()
@@ -186,13 +243,23 @@ class BackendRendererVk(
         shaders.values.forEach { vkDestroyShaderModule(logicalDevice(), it, null) }
         shaders.clear()
 
+        vkDeviceWaitIdle(logicalDevice())
+        imageSyncObjects.forEach {
+            vkDestroyFence(logicalDevice(), it.fence, null)
+            vkDestroySemaphore(logicalDevice(), it.imageAvailableSemaphore, null)
+            vkDestroySemaphore(logicalDevice(), it.renderFinishedSemaphore, null)
+        }
+        imageSyncObjects.clear()
+
         swapchain.close()
         logicalDevice.close()
         validationLayer.close()
+        window.close()
         vkDestroyInstance(instance, null)
     }
 
     override fun reinit() {
+        swapchain.reinit()
         renderPasses.values.forEach { vkDestroyRenderPass(logicalDevice(), it, null) }
         val target = renderPasses.map { it.key }.toTypedArray()
         renderPasses.clear()
@@ -208,6 +275,10 @@ class BackendRendererVk(
         swapchainFramebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
         swapchainFramebuffers.clear()
         swapchainFramebufferBindedPass?.let { bindOutputFramebuffer(it) }
+
+        vkFreeCommandBuffers(logicalDevice(), commandPool, HeapPointerArray(swapchainCommandBuffers.toTypedArray()))
+        swapchainCommandBuffers.clear()
+        createTestCommandBuffer()
     }
 
     override fun version(): Version = physicalDevice.physicalDeviceProps.driverVersion.fromVkApiVersion()
@@ -417,5 +488,124 @@ class BackendRendererVk(
         }
 
         logger.info(tr("engine.renderer.backend_vk.stage.framebuffer", passId))
+    }
+
+    override fun createVertexBuffer(vtxId: Identifier, size: Long) {
+        vertexBuffers[vtxId] = MemoryBufferVk(
+            this,
+            size,
+            VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+            VK_SHARING_MODE_EXCLUSIVE,
+            VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT or VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
+        )
+
+        logger.info(tr("engine.renderer.backend_vk.stage.vtxbuffer", size))
+    }
+
+    override fun writeVertexBuffer(vtxId: Identifier, arr: ByteArray) {
+        vertexBuffers[vtxId]!!.apply {
+            mapMemory().apply { put(arr) }
+            unmapMemory()
+        }
+    }
+
+    override fun createTestCommandBuffer() {
+        val commandBuffers = vkAllocateCommandBuffers(logicalDevice(), VkCommandBufferAllocateInfo().apply {
+            commandPool = this@BackendRendererVk.commandPool
+            level = VK_COMMAND_BUFFER_LEVEL_PRIMARY
+            commandBufferCount = swapchainFramebuffers.size
+        }).match({ it }, { throw IllegalStateException() })
+
+        val passBeginInfo = VkRenderPassBeginInfo().apply {
+            renderPass = renderPasses.values.toList()[0]
+            renderArea = VkRect2D().apply {
+                offset = Vector2i(0, 0)
+                extent = swapchain.swapchainExtent
+            }
+            clearValues = arrayOf(VkClearValue().apply {
+                color = VkClearColorValue().apply { data = Vector4f(0f) }
+            }).toCStructArray(VkClearValue.LAYOUT)
+        }
+        val beginInfo = VkCommandBufferBeginInfo()
+
+        for (i in commandBuffers.indices) {
+            passBeginInfo.framebuffer = swapchainFramebuffers[i]
+
+            val cb = commandBuffers[i]
+            vkBeginCommandBuffer(cb, beginInfo)
+            vkCmdBeginRenderPass(cb, passBeginInfo, VK_SUBPASS_CONTENTS_INLINE)
+            vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines.values.toList()[0])
+
+            vkCmdBindVertexBuffers(
+                cb, 0, HeapPointerArray(arrayOf(vertexBuffers.values.toList()[0]())), HeapLongArray(
+                    longArrayOf(0)
+                )
+            )
+            vkCmdDraw(cb, 3, 1, 0, 0)
+            vkCmdEndRenderPass(cb)
+            vkEndCommandBuffer(cb)
+        }
+
+        swapchainCommandBuffers.addAll(commandBuffers)
+    }
+
+    private var currentFrame = 0
+    private val imagesInFlight = mutableMapOf<Int, FrameDataVk>()
+
+    fun render() {
+        val frame = imageSyncObjects[currentFrame]
+        vkWaitForFences(logicalDevice(), HeapPointerArray(arrayOf(frame.fence)), true, Long.MAX_VALUE)
+
+        val imageIdx = vkAcquireNextImageKHR(
+            logicalDevice(),
+            swapchain.swapchain,
+            Long.MAX_VALUE,
+            frame.imageAvailableSemaphore,
+            VkFence(MemorySegment.NULL)
+        ).match({ it }, {
+            if (it == VK_ERROR_OUT_OF_DATE_KHR) {
+                this.reinit()
+                return@render
+            } else throw IllegalStateException()
+        })
+
+        if (imagesInFlight.containsKey(imageIdx)) {
+            vkWaitForFences(
+                logicalDevice(),
+                HeapPointerArray(arrayOf(imagesInFlight[imageIdx]!!.fence)),
+                true,
+                Long.MAX_VALUE
+            )
+        }
+        imagesInFlight[imageIdx] = frame
+
+        vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.fence)))
+        if (vkQueueSubmit(logicalDeviceQueues.graphicsQueue, arrayOf(VkSubmitInfo().apply {
+                waitSemaphores = HeapPointerArray(arrayOf(frame.imageAvailableSemaphore))
+                waitDstStageMask = HeapIntArray(intArrayOf(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT))
+                signalSemaphores = HeapPointerArray(arrayOf(frame.renderFinishedSemaphore))
+                commandBuffers = HeapPointerArray(arrayOf(swapchainCommandBuffers[currentFrame]))
+            }
+            ).toCStructArray(VkSubmitInfo.LAYOUT), frame.fence) != VK_SUCCESS) {
+            vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.fence)))
+            throw IllegalStateException()
+        }
+
+        val result = vkQueuePresentKHR(
+            logicalDeviceQueues.presentQueue,
+            VkPresentInfoKHR().apply {
+                waitSemaphores = HeapPointerArray(arrayOf(frame.renderFinishedSemaphore))
+                swapchains = HeapPointerArray(arrayOf(swapchain.swapchain))
+                imageIndices = HeapIntArray(intArrayOf(imageIdx))
+            }
+        )
+        if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window.resizing()) {
+            window.resetState()
+            reinit()
+        } else if (result != VK_SUCCESS) {
+            throw IllegalStateException()
+        }
+
+        currentFrame = (currentFrame + 1) % maxFrames
     }
 }

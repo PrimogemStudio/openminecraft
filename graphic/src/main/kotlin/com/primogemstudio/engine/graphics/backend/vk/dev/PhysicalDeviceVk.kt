@@ -7,9 +7,11 @@ import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHRFuncs.v
 import com.primogemstudio.engine.bindings.vulkan.utils.toFullErr
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_QUEUE_GRAPHICS_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumeratePhysicalDevices
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceMemoryProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceQueueFamilyProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDevice
+import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDeviceMemoryProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.VkPhysicalDeviceProperties
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.i18n.Internationalization.tr
@@ -26,6 +28,7 @@ class PhysicalDeviceVk(
     val physicalDeviceProps: VkPhysicalDeviceProperties = vkGetPhysicalDeviceProperties(physicalDevice)
     val graphicFamily: Int
     val presentFamily: Int
+    val memoryProps: VkPhysicalDeviceMemoryProperties
 
     operator fun invoke(): VkPhysicalDevice = physicalDevice
 
@@ -49,6 +52,8 @@ class PhysicalDeviceVk(
         if (graphicFamily == -1 || presentFamily == -1) {
             throw IllegalStateException(tr("exception.renderer.backend_vk.family"))
         }
+
+        memoryProps = vkGetPhysicalDeviceMemoryProperties(physicalDevice)
 
         logger.info(
             tr(

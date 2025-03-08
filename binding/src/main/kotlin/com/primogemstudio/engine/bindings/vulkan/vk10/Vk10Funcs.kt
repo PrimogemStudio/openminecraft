@@ -918,11 +918,21 @@ object Vk10Funcs {
     fun vkFreeMemory(device: VkDevice, memory: VkDeviceMemory, allocator: VkAllocationCallbacks?) =
         callVoidFunc("vkFreeMemory", device, memory, allocator?.ref() ?: MemorySegment.NULL)
 
-    fun vkMapMemory(device: VkDevice, memory: VkDeviceMemory, offset: Long, size: Long, flags: Int, data: MemorySegment): Int {
+    fun vkMapMemory(
+        device: VkDevice,
+        memory: VkDeviceMemory,
+        offset: Long,
+        size: Long,
+        flags: Int
+    ): Result<ByteBuffer, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
-        seg.set(ADDRESS, 0, data)
-        return callFunc("vkMapMemory", Int::class, device, memory, offset, size, flags, seg)
+        val retCode = callFunc("vkMapMemory", Int::class, device, memory, offset, size, flags, seg)
+        return if (retCode == VK_SUCCESS) Result.success(
+            seg.get(ADDRESS, 0).reinterpret(size).asByteBuffer()
+        ) else Result.fail(retCode)
     }
+
+    fun vkUnmapMemory(device: VkDevice, memory: VkDeviceMemory) = callVoidFunc("vkUnmapMemory", device, memory)
 
     fun vkFlushMappedMemoryRanges(device: VkDevice, ranges: HeapStructArray<VkMappedMemoryRange>): Int =
         callFunc("vkFlushMappedMemoryRanges", Int::class, device, ranges.length, ranges)
@@ -938,6 +948,9 @@ object Vk10Funcs {
 
     fun vkBindImageMemory(device: VkDevice, image: VkImage, memory: VkDeviceMemory, offset: Long): Int =
         callFunc("vkBindImageMemory", Int::class, device, image, memory, offset)
+
+    fun vkGetBufferMemoryRequirements(device: VkDevice, buffer: VkBuffer): VkMemoryRequirements =
+        VkMemoryRequirements().apply { callVoidFunc("vkGetBufferMemoryRequirements", device, buffer, this) }
 
     fun vkGetImageMemoryRequirements(device: VkDevice, image: VkImage): VkMemoryRequirements =
         VkMemoryRequirements().apply { callVoidFunc("vkGetImageMemoryRequirements", device, image, this) }

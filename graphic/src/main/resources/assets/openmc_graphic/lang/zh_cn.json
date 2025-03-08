@@ -44,6 +44,10 @@
   "exception.renderer.backend_vk.pipeline": "无法创建 Vulkan 渲染管线: 0x%s (%s)",
   "exception.renderer.backend_vk.framebuffer": "无法创建 Vulkan 帧缓冲区: 0x%s (%s)",
   "exception.renderer.backend_vk.commandbuffer": "无法创建 Vulkan 命令缓冲区: 0x%s (%s)",
+  "exception.renderer.backend_vk.buffer": "无法创建 Vulkan 缓冲区: 0x%s (%s)",
+  "exception.renderer.backend_vk.buffer_memtype": "无法找到合适的内存类型 (%d)",
+  "exception.renderer.backend_vk.buffer_mem": "无法创建 Vulkan 内存: 0x%s (%s)",
+  "exception.renderer.backend_vk.buffer_map": "无法映射 Vulkan 内存: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "成功",
   "engine.renderer.backend_vk.status.not_ready": "未准备",
   "engine.renderer.backend_vk.status.timeout": "调用/等待超时",
@@ -79,5 +83,6 @@
   "engine.renderer.backend_vk.stage.shader_link": "%s 已链接 ...",
   "engine.renderer.backend_vk.stage.pipeline": "管线 %s (着色器: %s, 通道: %s) 已创建 ...",
   "engine.renderer.backend_vk.stage.framebuffer": "帧缓冲区已绑定至通道 %s ...",
-  "engine.renderer.backend_vk.stage.commandbuffer": "命令缓冲区初始化 ..."
+  "engine.renderer.backend_vk.stage.commandbuffer": "命令缓冲区初始化 ...",
+  "engine.renderer.backend_vk.stage.vtxbuffer": "大小为 %d 的顶点缓冲区已创建 ..."
 }

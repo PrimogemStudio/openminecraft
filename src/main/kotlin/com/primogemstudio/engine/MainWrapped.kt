@@ -1,52 +1,18 @@
 package com.primogemstudio.engine
 
-import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwInit
-import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwSetErrorCallback
-import com.primogemstudio.engine.bindings.glfw.GLFWBaseFuncs.glfwTerminate
-import com.primogemstudio.engine.bindings.glfw.GLFWContextFuncs.glfwMakeContextCurrent
-import com.primogemstudio.engine.bindings.glfw.GLFWContextFuncs.glfwSwapInterval
-import com.primogemstudio.engine.bindings.glfw.GLFWImage
-import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwCreateCursor
-import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetCursor
-import com.primogemstudio.engine.bindings.glfw.GLFWMonitor
-import com.primogemstudio.engine.bindings.glfw.GLFWWindow
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CLIENT_API
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_CREATION_API
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_VERSION_MAJOR
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_CONTEXT_VERSION_MINOR
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_NATIVE_CONTEXT_API
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_OPENGL_API
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.GLFW_TRANSPARENT_FRAMEBUFFER
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwCreateWindow
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwDestroyWindow
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwPollEvents
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSetFramebufferSizeCallback
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwSwapBuffers
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowHint
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_COLOR_BUFFER_BIT
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_TRIANGLES
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.GL_TRUE
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glBegin
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glClear
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glClearColor
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glColor4f
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glEnd
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glLineWidth
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glVertex3f
-import com.primogemstudio.engine.bindings.opengl.gl11.GL11Funcs.glViewport
-import com.primogemstudio.engine.foreign.heap.HeapByteArray
-import com.primogemstudio.engine.graphics.IRenderer
 import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
-import java.lang.foreign.MemorySegment
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
 
 suspend fun main() {
-    val re: IRenderer = BackendRendererVk(
+    val re = BackendRendererVk(
         ApplicationInfo(
             "openminecraft",
             Version.from(0u, 0u, 1u),
@@ -87,7 +53,28 @@ suspend fun main() {
 
     re.bindOutputFramebuffer(target)
 
-    glfwInit()
+    val mainVtxBuffer = Identifier(namespace = "openmc_graphic", path = "main_vtxbuffer")
+    re.createVertexBuffer(mainVtxBuffer, 60)
+
+    val bb = ByteBuffer.allocate(60).order(ByteOrder.nativeOrder())
+    floatArrayOf(
+        0.0f, -0.5f, 1.0f, 0.0f, 0.0f,
+        0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+        -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+    ).forEach { bb.putFloat(it) }
+
+    re.writeVertexBuffer(mainVtxBuffer, bb.array())
+    re.createTestCommandBuffer()
+
+    while (!glfwWindowShouldClose(re.window.window)) {
+        re.render()
+
+        glfwPollEvents()
+    }
+
+    re.close()
+
+    /*glfwInit()
     glfwSetErrorCallback { err, desc ->
         println("$err $desc")
     }
@@ -151,5 +138,5 @@ suspend fun main() {
     }
 
     glfwDestroyWindow(window)
-    glfwTerminate()
+    glfwTerminate()*/
 }

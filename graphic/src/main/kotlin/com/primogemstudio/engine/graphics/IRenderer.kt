@@ -35,4 +35,9 @@ interface IRenderer : Closeable {
 
     fun createPipeline(pipeId: Identifier, progId: Identifier, passId: Identifier)
     fun bindOutputFramebuffer(passId: Identifier)
+
+    fun createVertexBuffer(vtxId: Identifier, size: Long)
+    fun writeVertexBuffer(vtxId: Identifier, arr: ByteArray)
+
+    fun createTestCommandBuffer()
 }

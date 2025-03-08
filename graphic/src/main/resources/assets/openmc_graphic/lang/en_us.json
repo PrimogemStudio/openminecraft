@@ -44,6 +44,10 @@
   "exception.renderer.backend_vk.pipeline": "Failed to create vulkan pipeline: 0x%s (%s)",
   "exception.renderer.backend_vk.framebuffer": "Failed to create vulkan framebuffer: 0x%s (%s)",
   "exception.renderer.backend_vk.commandbuffer": "Failed to create vulkan command buffer: 0x%s (%s)",
+  "exception.renderer.backend_vk.buffer": "Failed to create vulkan buffer: 0x%s (%s)",
+  "exception.renderer.backend_vk.buffer_memtype": "Failed to find suitable memory type (%d)",
+  "exception.renderer.backend_vk.buffer_mem": "Failed to create vulkan memory: 0x%s (%s)",
+  "exception.renderer.backend_vk.buffer_map": "Failed to map vulkan memory: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "Success",
   "engine.renderer.backend_vk.status.not_ready": "Not ready",
   "engine.renderer.backend_vk.status.timeout": "Invoke/Wait time out",
@@ -79,5 +83,6 @@
   "engine.renderer.backend_vk.stage.shader_link": "%s linked ...",
   "engine.renderer.backend_vk.stage.pipeline": "Pipeline %s with shader %s, render pass %s was created ...",
   "engine.renderer.backend_vk.stage.framebuffer": "Framebuffer was bind to pass %s ...",
-  "engine.renderer.backend_vk.stage.commandbuffer": "Command buffer init ..."
+  "engine.renderer.backend_vk.stage.commandbuffer": "Command buffer init ...",
+  "engine.renderer.backend_vk.stage.vtxbuffer": "Vertex buffer with size %d created ..."
 }

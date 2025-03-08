@@ -25,7 +25,7 @@ class VkRenderPassBeginInfo(private val seg: MemorySegment) : IHeapObject(seg) {
         private val OFFSETS = LAYOUT.cacheOffsets()
     }
 
-    constructor() : this(Arena.ofAuto().allocate(VkRect2D.LAYOUT)) {
+    constructor() : this(Arena.ofAuto().allocate(LAYOUT)) {
         sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO
     }
 
@@ -39,8 +39,8 @@ class VkRenderPassBeginInfo(private val seg: MemorySegment) : IHeapObject(seg) {
         get() = VkRenderPass(seg.get(ADDRESS, OFFSETS[2]))
         set(value) = seg.set(ADDRESS, OFFSETS[2], value.ref())
     var framebuffer: VkFramebuffer
-        get() = VkFramebuffer(seg.get(ADDRESS, OFFSETS[2]))
-        set(value) = seg.set(ADDRESS, OFFSETS[2], value.ref())
+        get() = VkFramebuffer(seg.get(ADDRESS, OFFSETS[3]))
+        set(value) = seg.set(ADDRESS, OFFSETS[3], value.ref())
     var renderArea: VkRect2D
         get() = VkRect2D(seg.asSlice(OFFSETS[4], VkRect2D.LAYOUT.byteSize()))
         set(value) {

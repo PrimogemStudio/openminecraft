@@ -39,6 +39,18 @@ class BackendRendererOpenGL(
         TODO("Not yet implemented")
     }
 
+    override fun createVertexBuffer(vtxId: Identifier, size: Long) {
+        TODO("Not yet implemented")
+    }
+
+    override fun writeVertexBuffer(vtxId: Identifier, arr: ByteArray) {
+        TODO("Not yet implemented")
+    }
+
+    override fun createTestCommandBuffer() {
+        TODO("Not yet implemented")
+    }
+
     override fun version(): Version {
         try {
             val vers = glGetString(GL_VERSION).split(" ")[0].split(".").map { it.toUShort() }
