@@ -35,7 +35,7 @@ class BackendRendererOpenGL(
         TODO("Not yet implemented")
     }
 
-    override fun createFramebuffer(bufferId: Identifier, passId: Identifier) {
+    override fun bindFramebuffer(passId: Identifier) {
         TODO("Not yet implemented")
     }
 

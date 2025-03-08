@@ -41,16 +41,22 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUBPASS_EXTERNAL
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_VERTEX_INPUT_RATE_VERTEX
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateCommandPool
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateFramebuffer
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateGraphicsPipelines
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreatePipelineLayout
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateRenderPass
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateShaderModule
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyFramebuffer
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyInstance
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyPipeline
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyPipelineLayout
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyRenderPass
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyShaderModule
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceLayerProperties
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceFeatures
+import com.primogemstudio.engine.foreign.heap.HeapPointerArray
 import com.primogemstudio.engine.foreign.heap.HeapStructArray
 import com.primogemstudio.engine.foreign.toCStructArray
 import com.primogemstudio.engine.graphics.IRenderer
@@ -81,14 +87,18 @@ class BackendRendererVk(
     override val windowInfo: ApplicationWindowInfo,
     val deviceSelector: (Array<VkPhysicalDevice>) -> VkPhysicalDevice,
     val layerEnabler: (Array<String>) -> Array<String>
-) : IRenderer {
+) : IRenderer, IReinitable {
     private val logger = LoggerFactory.getAsyncLogger()
     private val compiler = ShaderCompilerVk(this)
     private val shaders = mutableMapOf<Identifier, VkShaderModule>()
     private val shaderTypes = mutableMapOf<Identifier, ShaderType>()
     private val shaderProgs = mutableMapOf<Identifier, HeapStructArray<VkPipelineShaderStageCreateInfo>>()
     private val renderPasses = mutableMapOf<Identifier, VkRenderPass>()
+    private val pipelineCreationData = mutableMapOf<Identifier, Pair<Identifier, Identifier>>()
     private val pipelines = mutableMapOf<Identifier, VkPipeline>()
+    private val pipelineLayouts = mutableMapOf<Identifier, VkPipelineLayout>()
+    private var framebufferBindedPass: Identifier? = null
+    private val framebuffers = mutableListOf<VkFramebuffer>()
 
     val validationLayer: ValidationLayerVk
     val instance: VkInstance
@@ -97,6 +107,7 @@ class BackendRendererVk(
     val logicalDevice: LogicalDeviceVk
     val logicalDeviceQueues: LogicalDeviceQueuesVk
     val swapchain: SwapchainVk
+    val commandPool: VkCommandPool
 
     init {
         glfwInit()
@@ -152,16 +163,49 @@ class BackendRendererVk(
         logger.info(tr("engine.renderer.backend_vk.stage.logic_device_queue"))
         swapchain = SwapchainVk(this)
         logger.info(tr("engine.renderer.backend_vk.stage.swapchain"))
+        commandPool = vkCreateCommandPool(
+            logicalDevice(),
+            VkCommandPoolCreateInfo().apply { queueFamilyIndex = physicalDevice.graphicFamily },
+            null
+        ).match({ it }, { throw IllegalStateException() })
+        logger.info(tr("engine.renderer.backend_vk.stage.commandbuffer"))
     }
 
     override fun close() {
+        framebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
+        framebuffers.clear()
+        pipelineCreationData.clear()
+        pipelineLayouts.values.forEach { vkDestroyPipelineLayout(logicalDevice(), it, null) }
+        pipelineLayouts.clear()
+        pipelines.values.forEach { vkDestroyPipeline(logicalDevice(), it, null) }
+        pipelines.clear()
         renderPasses.values.forEach { vkDestroyRenderPass(logicalDevice(), it, null) }
+        renderPasses.clear()
         shaders.values.forEach { vkDestroyShaderModule(logicalDevice(), it, null) }
+        shaders.clear()
 
         swapchain.close()
         logicalDevice.close()
         validationLayer.close()
         vkDestroyInstance(instance, null)
+    }
+
+    override fun reinit() {
+        renderPasses.values.forEach { vkDestroyRenderPass(logicalDevice(), it, null) }
+        val target = renderPasses.map { it.key }.toTypedArray()
+        renderPasses.clear()
+        target.forEach { createRenderPass(it) }
+
+        pipelineLayouts.values.forEach { vkDestroyPipelineLayout(logicalDevice(), it, null) }
+        pipelines.values.forEach { vkDestroyPipeline(logicalDevice(), it, null) }
+
+        pipelineLayouts.clear()
+        pipelines.clear()
+        pipelineCreationData.forEach { createPipeline(it.key, it.value.first, it.value.second) }
+
+        framebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
+        framebuffers.clear()
+        framebufferBindedPass?.let { bindFramebuffer(it) }
     }
 
     override fun version(): Version = physicalDevice.physicalDeviceProps.driverVersion.fromVkApiVersion()
@@ -259,6 +303,7 @@ class BackendRendererVk(
     }
 
     override fun createPipeline(pipeId: Identifier, progId: Identifier, passId: Identifier) {
+        pipelineCreationData[pipeId] = Pair(progId, passId)
         pipelines[pipeId] = vkCreateGraphicsPipelines(
             logicalDevice(),
             VkPipelineCache(MemorySegment.NULL),
@@ -331,6 +376,8 @@ class BackendRendererVk(
                     { it },
                     { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.pipeline_layout", it)) }
                 )
+                pipelineLayouts[pipeId] = layout
+
                 renderPass = renderPasses[passId]!!
                 subpass = 0
                 basePipeline = VkPipeline(MemorySegment.NULL)
@@ -345,7 +392,27 @@ class BackendRendererVk(
         logger.info(tr("engine.renderer.backend_vk.stage.pipeline", pipeId, progId, passId))
     }
 
-    override fun createFramebuffer(bufferId: Identifier, passId: Identifier) {
-        TODO("Not yet implemented")
+    override fun bindFramebuffer(passId: Identifier) {
+        framebufferBindedPass = passId
+
+        framebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
+        framebuffers.clear()
+
+        val ci = VkFramebufferCreateInfo().apply {
+            renderPass = renderPasses[passId]!!
+            width = swapchain.swapchainExtent.x
+            height = swapchain.swapchainExtent.y
+            layers = 1
+        }
+
+        for (image in swapchain.swapchainImageViews) {
+            ci.attachments = HeapPointerArray(arrayOf(image))
+            framebuffers.add(vkCreateFramebuffer(logicalDevice(), ci, null).match(
+                { it },
+                { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.framebuffer", it)) }
+            ))
+        }
+
+        logger.info(tr("engine.renderer.backend_vk.stage.framebuffer", passId))
     }
 }

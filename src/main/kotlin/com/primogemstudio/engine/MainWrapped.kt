@@ -85,6 +85,8 @@ suspend fun main() {
     val pipetest = Identifier(namespace = "openmc_graphic", path = "main_pipe")
     re.createPipeline(pipetest, shaderPr, target)
 
+    re.bindFramebuffer(target)
+
     glfwInit()
     glfwSetErrorCallback { err, desc ->
         println("$err $desc")

@@ -39,9 +39,10 @@
   "exception.renderer.backend_vk.shader": "无法创建 Vulkan 着色器模块: 0x%s (%s)",
   "exception.renderer.backend_vk.layer": "无法查询 Vulkan 层: 0x%s (%s)",
   "exception.renderer.backend_vk.ext": "无法查询 Vulkan 扩展: 0x%s (%s)",
-  "exception.renderer.backend_vk.renderpass": "无法创建 Vulkan Render Pass: 0x%s (%s)",
+  "exception.renderer.backend_vk.renderpass": "无法创建 Vulkan 渲染通道: 0x%s (%s)",
   "exception.renderer.backend_vk.pipeline_layout": "无法创建 Vulkan 渲染管线格式: 0x%s (%s)",
   "exception.renderer.backend_vk.pipeline": "无法创建 Vulkan 渲染管线: 0x%s (%s)",
+  "exception.renderer.backend_vk.framebuffer": "无法创建 Vulkan 帧缓冲区: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "成功",
   "engine.renderer.backend_vk.status.not_ready": "未准备",
   "engine.renderer.backend_vk.status.timeout": "调用/等待超时",
@@ -75,5 +76,7 @@
   "engine.renderer.backend_vk.stage.swapchain": "交换链初始化 ...",
   "engine.renderer.backend_vk.stage.shader_compile": "%s %s 已编译 ...",
   "engine.renderer.backend_vk.stage.shader_link": "%s 已链接 ...",
-  "engine.renderer.backend_vk.stage.pipeline": "管线 %s (着色器: %s, Pass: %s) 已创建 ..."
+  "engine.renderer.backend_vk.stage.pipeline": "管线 %s (着色器: %s, 通道: %s) 已创建 ...",
+  "engine.renderer.backend_vk.stage.framebuffer": "帧缓冲区已绑定至通道 %s ...",
+  "engine.renderer.backend_vk.stage.commandbuffer": "命令缓冲区初始化 ..."
 }

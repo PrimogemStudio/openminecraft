@@ -42,6 +42,7 @@
   "exception.renderer.backend_vk.renderpass": "Failed to create vulkan renderpass: 0x%s (%s)",
   "exception.renderer.backend_vk.pipeline_layout": "Failed to create vulkan pipeline layout: 0x%s (%s)",
   "exception.renderer.backend_vk.pipeline": "Failed to create vulkan pipeline: 0x%s (%s)",
+  "exception.renderer.backend_vk.framebuffer": "Failed to create vulkan framebuffer: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "Success",
   "engine.renderer.backend_vk.status.not_ready": "Not ready",
   "engine.renderer.backend_vk.status.timeout": "Invoke/Wait time out",
@@ -75,5 +76,7 @@
   "engine.renderer.backend_vk.stage.swapchain": "Swapchain init ...",
   "engine.renderer.backend_vk.stage.shader_compile": "%s %s compiled ...",
   "engine.renderer.backend_vk.stage.shader_link": "%s linked ...",
-  "engine.renderer.backend_vk.stage.pipeline": "Pipeline %s with shader %s, render pass %s was created ..."
+  "engine.renderer.backend_vk.stage.pipeline": "Pipeline %s with shader %s, render pass %s was created ...",
+  "engine.renderer.backend_vk.stage.framebuffer": "Framebuffer was bind to pass %s ...",
+  "engine.renderer.backend_vk.stage.commandbuffer": "Command buffer init ..."
 }
