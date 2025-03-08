@@ -74,5 +74,6 @@
   "engine.renderer.backend_vk.stage.logic_device_queue": "获取逻辑设备队列 ...",
   "engine.renderer.backend_vk.stage.swapchain": "交换链初始化 ...",
   "engine.renderer.backend_vk.stage.shader_compile": "%s %s 已编译 ...",
-  "engine.renderer.backend_vk.stage.shader_link": "%s 已链接 ..."
+  "engine.renderer.backend_vk.stage.shader_link": "%s 已链接 ...",
+  "engine.renderer.backend_vk.stage.pipeline": "管线 %s (着色器: %s, Pass: %s) 已创建 ..."
 }

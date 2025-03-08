@@ -40,7 +40,7 @@
       ]
     },
     {
-      "type": "com.primogemstudio.engine.neoloader.plat.NativeLibConfigModel",
+      "type": "com.primogemstudio.engine.loader.plat.NativeLibConfigModel",
       "allDeclaredFields": true,
       "methods": [
         {
@@ -63,46 +63,6 @@
     },
     {
       "type": "java.lang.reflect.RecordComponent"
-    },
-    {
-      "type": "java.nio.Buffer",
-      "allDeclaredFields": true
-    },
-    {
-      "type": "java.nio.ByteBuffer",
-      "allDeclaredFields": true
-    },
-    {
-      "type": "java.nio.DirectByteBuffer",
-      "allDeclaredFields": true
-    },
-    {
-      "type": "java.nio.DirectCharBufferU",
-      "allDeclaredFields": true
-    },
-    {
-      "type": "java.nio.DirectDoubleBufferU",
-      "allDeclaredFields": true
-    },
-    {
-      "type": "java.nio.DirectFloatBufferU",
-      "allDeclaredFields": true
-    },
-    {
-      "type": "java.nio.DirectIntBufferU",
-      "allDeclaredFields": true
-    },
-    {
-      "type": "java.nio.DirectLongBufferU",
-      "allDeclaredFields": true
-    },
-    {
-      "type": "java.nio.DirectShortBufferU",
-      "allDeclaredFields": true
-    },
-    {
-      "type": "java.nio.MappedByteBuffer",
-      "allDeclaredFields": true
     },
     {
       "type": "java.sql.Date"
@@ -128,8 +88,109 @@
       ]
     },
     {
-      "type": "sun.misc.Unsafe",
-      "allDeclaredFields": true
+      "type": "kotlinx.coroutines.CancellableContinuationImpl",
+      "fields": [
+        {
+          "name": "_decisionAndIndex$volatile"
+        },
+        {
+          "name": "_parentHandle$volatile"
+        },
+        {
+          "name": "_state$volatile"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.coroutines.JobSupport",
+      "fields": [
+        {
+          "name": "_parentHandle$volatile"
+        },
+        {
+          "name": "_state$volatile"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.coroutines.internal.DispatchedContinuation",
+      "fields": [
+        {
+          "name": "_reusableCancellableContinuation$volatile"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LockFreeLinkedListNode",
+      "fields": [
+        {
+          "name": "_next$volatile"
+        },
+        {
+          "name": "_prev$volatile"
+        },
+        {
+          "name": "_removedRef$volatile"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LockFreeTaskQueue",
+      "fields": [
+        {
+          "name": "_cur$volatile"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.coroutines.internal.LockFreeTaskQueueCore",
+      "fields": [
+        {
+          "name": "_next$volatile"
+        },
+        {
+          "name": "_state$volatile"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.coroutines.scheduling.CoroutineScheduler",
+      "fields": [
+        {
+          "name": "_isTerminated$volatile"
+        },
+        {
+          "name": "controlState$volatile"
+        },
+        {
+          "name": "parkedWorkersStack$volatile"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.coroutines.scheduling.CoroutineScheduler$Worker",
+      "fields": [
+        {
+          "name": "workerCtl$volatile"
+        }
+      ]
+    },
+    {
+      "type": "kotlinx.coroutines.scheduling.WorkQueue",
+      "fields": [
+        {
+          "name": "blockingTasksInBuffer$volatile"
+        },
+        {
+          "name": "consumerIndex$volatile"
+        },
+        {
+          "name": "lastScheduledTask$volatile"
+        },
+        {
+          "name": "producerIndex$volatile"
+        }
+      ]
     },
     {
       "type": "sun.security.provider.NativePRNG",
@@ -154,9 +215,6 @@
   ],
   "resources": [
     {
-      "glob": "META-INF/MANIFEST.MF"
-    },
-    {
       "glob": "assets/openmc/lang/en_us.json"
     },
     {
@@ -173,6 +231,12 @@
     },
     {
       "glob": "assets/openmc_graphic/locale.json"
+    },
+    {
+      "glob": "assets/openmc_graphic/shaders/basic_shader.frag"
+    },
+    {
+      "glob": "assets/openmc_graphic/shaders/basic_shader.vert"
     },
     {
       "glob": "assets/openmc_nativeloader/lang/en_us.json"
@@ -210,6 +274,9 @@
     {
       "glob": "assets/openmc_nativeloader/lib/linux/x64/libyoga.so"
     },
+    {
+      "glob": "assets/openmc_nativeloader/locale.json"
+    },
 
     {
       "glob": "assets/openmc_nativeloader/lib/windows/x64/freetype.dll"
@@ -238,8 +305,6 @@
     {
       "glob": "assets/openmc_nativeloader/lib/windows/x64/yoga.dll"
     },
-
-    
     {
       "glob": "assets/openmc_nativeloader/lib/macos/x64/libfreetype.dylib"
     },
@@ -267,7 +332,6 @@
     {
       "glob": "assets/openmc_nativeloader/lib/macos/x64/libyoga.so"
     },
-    
     {
       "glob": "assets/openmc_nativeloader/lib/macos/arm64/libfreetype.dylib"
     },
@@ -294,9 +358,6 @@
     },
     {
       "glob": "assets/openmc_nativeloader/lib/macos/arm64/libyoga.so"
-    },
-    {
-      "glob": "assets/openmc_nativeloader/locale.json"
     }
   ],
   "bundles": [],

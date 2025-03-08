@@ -341,5 +341,11 @@ class BackendRendererVk(
             { it },
             { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.pipeline", it)) }
         )[0]
+
+        logger.info(tr("engine.renderer.backend_vk.stage.pipeline", pipeId, progId, passId))
+    }
+
+    override fun createFramebuffer(bufferId: Identifier, passId: Identifier) {
+        TODO("Not yet implemented")
     }
 }

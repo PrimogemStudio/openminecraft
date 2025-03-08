@@ -62,17 +62,17 @@ suspend fun main() {
         { it.first() },
         { arrayOf() }
     )
-    val frg = Identifier(namespace = "openmc_graphic", path = "basic_shader_frag")
-    val vtx = Identifier(namespace = "openmc_graphic", path = "basic_shader_vert")
+    val frg = Identifier(namespace = "openmc_graphic", path = "vtx_shader_frag")
+    val vtx = Identifier(namespace = "openmc_graphic", path = "vtx_shader_vert")
 
     re.registerShader(
         frg,
-        Identifier(namespace = "openmc_graphic", path = "shaders/basic_shader.frag"),
+        Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.frag"),
         ShaderType.Fragment
     ).await()
     re.registerShader(
         vtx,
-        Identifier(namespace = "openmc_graphic", path = "shaders/basic_shader.vert"),
+        Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.vert"),
         ShaderType.Vertex
     ).await()
 
