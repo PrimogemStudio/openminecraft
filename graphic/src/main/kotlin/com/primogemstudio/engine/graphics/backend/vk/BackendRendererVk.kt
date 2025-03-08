@@ -226,6 +226,8 @@ class BackendRendererVk(
     }
 
     override fun close() {
+        vkDeviceWaitIdle(logicalDevice())
+
         vkFreeCommandBuffers(logicalDevice(), commandPool, HeapPointerArray(swapchainCommandBuffers.toTypedArray()))
         swapchainCommandBuffers.clear()
         vertexBuffers.forEach { it.value.close() }
@@ -243,7 +245,6 @@ class BackendRendererVk(
         shaders.values.forEach { vkDestroyShaderModule(logicalDevice(), it, null) }
         shaders.clear()
 
-        vkDeviceWaitIdle(logicalDevice())
         imageSyncObjects.forEach {
             vkDestroyFence(logicalDevice(), it.fence, null)
             vkDestroySemaphore(logicalDevice(), it.imageAvailableSemaphore, null)
@@ -259,6 +260,8 @@ class BackendRendererVk(
     }
 
     override fun reinit() {
+        vkDeviceWaitIdle(logicalDevice())
+
         swapchain.reinit()
         renderPasses.values.forEach { vkDestroyRenderPass(logicalDevice(), it, null) }
         val target = renderPasses.map { it.key }.toTypedArray()
