@@ -43,6 +43,7 @@
   "exception.renderer.backend_vk.pipeline_layout": "无法创建 Vulkan 渲染管线格式: 0x%s (%s)",
   "exception.renderer.backend_vk.pipeline": "无法创建 Vulkan 渲染管线: 0x%s (%s)",
   "exception.renderer.backend_vk.framebuffer": "无法创建 Vulkan 帧缓冲区: 0x%s (%s)",
+  "exception.renderer.backend_vk.commandbuffer": "无法创建 Vulkan 命令缓冲区: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "成功",
   "engine.renderer.backend_vk.status.not_ready": "未准备",
   "engine.renderer.backend_vk.status.timeout": "调用/等待超时",

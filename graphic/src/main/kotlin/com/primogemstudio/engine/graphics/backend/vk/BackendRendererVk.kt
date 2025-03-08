@@ -48,6 +48,7 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreatePipelineLayout
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateRenderPass
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateShaderModule
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyCommandPool
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyFramebuffer
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyInstance
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyPipeline
@@ -97,8 +98,8 @@ class BackendRendererVk(
     private val pipelineCreationData = mutableMapOf<Identifier, Pair<Identifier, Identifier>>()
     private val pipelines = mutableMapOf<Identifier, VkPipeline>()
     private val pipelineLayouts = mutableMapOf<Identifier, VkPipelineLayout>()
-    private var framebufferBindedPass: Identifier? = null
-    private val framebuffers = mutableListOf<VkFramebuffer>()
+    private var swapchainFramebufferBindedPass: Identifier? = null
+    private val swapchainFramebuffers = mutableListOf<VkFramebuffer>()
 
     val validationLayer: ValidationLayerVk
     val instance: VkInstance
@@ -172,8 +173,9 @@ class BackendRendererVk(
     }
 
     override fun close() {
-        framebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
-        framebuffers.clear()
+        vkDestroyCommandPool(logicalDevice(), commandPool, null)
+        swapchainFramebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
+        swapchainFramebuffers.clear()
         pipelineCreationData.clear()
         pipelineLayouts.values.forEach { vkDestroyPipelineLayout(logicalDevice(), it, null) }
         pipelineLayouts.clear()
@@ -203,9 +205,9 @@ class BackendRendererVk(
         pipelines.clear()
         pipelineCreationData.forEach { createPipeline(it.key, it.value.first, it.value.second) }
 
-        framebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
-        framebuffers.clear()
-        framebufferBindedPass?.let { bindFramebuffer(it) }
+        swapchainFramebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
+        swapchainFramebuffers.clear()
+        swapchainFramebufferBindedPass?.let { bindOutputFramebuffer(it) }
     }
 
     override fun version(): Version = physicalDevice.physicalDeviceProps.driverVersion.fromVkApiVersion()
@@ -372,7 +374,7 @@ class BackendRendererVk(
                     blendConstants = Vector4f(0f, 0f, 0f, 0f)
                 }
 
-                layout = vkCreatePipelineLayout(logicalDevice(), VkPipelineLayoutCreateInfo(), null).match(
+                layout = vkCreatePipelineLayout(logicalDevice(), VkPipelineLayoutCreateInfo().apply {}, null).match(
                     { it },
                     { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.pipeline_layout", it)) }
                 )
@@ -392,11 +394,11 @@ class BackendRendererVk(
         logger.info(tr("engine.renderer.backend_vk.stage.pipeline", pipeId, progId, passId))
     }
 
-    override fun bindFramebuffer(passId: Identifier) {
-        framebufferBindedPass = passId
+    override fun bindOutputFramebuffer(passId: Identifier) {
+        swapchainFramebufferBindedPass = passId
 
-        framebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
-        framebuffers.clear()
+        swapchainFramebuffers.forEach { vkDestroyFramebuffer(logicalDevice(), it, null) }
+        swapchainFramebuffers.clear()
 
         val ci = VkFramebufferCreateInfo().apply {
             renderPass = renderPasses[passId]!!
@@ -407,7 +409,8 @@ class BackendRendererVk(
 
         for (image in swapchain.swapchainImageViews) {
             ci.attachments = HeapPointerArray(arrayOf(image))
-            framebuffers.add(vkCreateFramebuffer(logicalDevice(), ci, null).match(
+            swapchainFramebuffers.add(
+                vkCreateFramebuffer(logicalDevice(), ci, null).match(
                 { it },
                 { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.framebuffer", it)) }
             ))

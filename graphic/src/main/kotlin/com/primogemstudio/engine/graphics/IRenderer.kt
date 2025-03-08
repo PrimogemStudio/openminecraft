@@ -34,5 +34,5 @@ interface IRenderer : Closeable {
     fun createRenderPass(passId: Identifier)
 
     fun createPipeline(pipeId: Identifier, progId: Identifier, passId: Identifier)
-    fun bindFramebuffer(passId: Identifier)
+    fun bindOutputFramebuffer(passId: Identifier)
 }

@@ -37,7 +37,7 @@ class VkPipelineLayoutCreateInfo(private val seg: MemorySegment) : IHeapObject(s
     var flag: Int
         get() = seg.get(JAVA_INT, OFFSETS[2])
         set(value) = seg.set(JAVA_INT, OFFSETS[2], value)
-    var setLayouts: HeapPointerArray<VkDescriptorSetLayout>
+    var descriptors: HeapPointerArray<VkDescriptorSetLayout>
         get() = HeapPointerArray(
             seg.get(JAVA_INT, OFFSETS[3]),
             seg.get(ADDRESS, OFFSETS[4])

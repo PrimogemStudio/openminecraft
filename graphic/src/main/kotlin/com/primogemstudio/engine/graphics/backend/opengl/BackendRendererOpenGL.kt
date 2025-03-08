@@ -35,7 +35,7 @@ class BackendRendererOpenGL(
         TODO("Not yet implemented")
     }
 
-    override fun bindFramebuffer(passId: Identifier) {
+    override fun bindOutputFramebuffer(passId: Identifier) {
         TODO("Not yet implemented")
     }
 

@@ -43,6 +43,7 @@
   "exception.renderer.backend_vk.pipeline_layout": "Failed to create vulkan pipeline layout: 0x%s (%s)",
   "exception.renderer.backend_vk.pipeline": "Failed to create vulkan pipeline: 0x%s (%s)",
   "exception.renderer.backend_vk.framebuffer": "Failed to create vulkan framebuffer: 0x%s (%s)",
+  "exception.renderer.backend_vk.commandbuffer": "Failed to create vulkan command buffer: 0x%s (%s)",
   "engine.renderer.backend_vk.status.success": "Success",
   "engine.renderer.backend_vk.status.not_ready": "Not ready",
   "engine.renderer.backend_vk.status.timeout": "Invoke/Wait time out",
