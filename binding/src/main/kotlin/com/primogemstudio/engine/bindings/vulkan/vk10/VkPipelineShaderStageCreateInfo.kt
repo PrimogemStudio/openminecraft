@@ -35,10 +35,10 @@ class VkPipelineShaderStageCreateInfo(private val seg: MemorySegment) : IHeapObj
     var next: MemorySegment
         get() = seg.get(ADDRESS, OFFSETS[1]).reinterpret(Long.MAX_VALUE)
         set(value) = seg.set(ADDRESS, OFFSETS[1], value)
-    var stage: Int
+    var flags: Int
         get() = seg.get(JAVA_INT, OFFSETS[2])
         set(value) = seg.set(JAVA_INT, OFFSETS[2], value)
-    var flag: Int
+    var stage: Int
         get() = seg.get(JAVA_INT, OFFSETS[3])
         set(value) = seg.set(JAVA_INT, OFFSETS[3], value)
     var module: VkShaderModule

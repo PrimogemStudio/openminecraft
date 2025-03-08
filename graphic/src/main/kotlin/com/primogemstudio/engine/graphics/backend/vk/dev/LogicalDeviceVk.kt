@@ -14,7 +14,8 @@ import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import java.io.Closeable
 
 class LogicalDeviceVk(
-    private val renderer: BackendRendererVk
+    private val renderer: BackendRendererVk,
+    private val features: VkPhysicalDeviceFeatures
 ) : Closeable {
     val device: VkDevice = vkCreateDevice(
         renderer.physicalDevice(),
@@ -25,7 +26,7 @@ class LogicalDeviceVk(
                     queuePriorities = HeapFloatArray(floatArrayOf(1f))
                 }
             }.toTypedArray().toCStructArray(VkDeviceQueueCreateInfo.LAYOUT)
-            features = VkPhysicalDeviceFeatures()
+            features = this@LogicalDeviceVk.features
             extensions = arrayOf(VK_KHR_SWAPCHAIN_EXTENSION_NAME)
             layers = renderer.validationLayer.layerArg()
         },

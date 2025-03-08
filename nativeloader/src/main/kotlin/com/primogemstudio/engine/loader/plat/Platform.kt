@@ -15,7 +15,7 @@ import java.util.*
 
 enum class PlatformSystem(val id: String) {
     Windows("windows"),
-    Linux("org/lwjgl/system/linux"),
+    Linux("linux"),
     MacOS("macos"),
     FreeBSD("freebsd"),
     Android("android"),
@@ -42,7 +42,7 @@ object Platform {
 
     val system = System.getProperty("os.name").lowercase(Locale.ROOT).let {
         if (it.contains("windows")) PlatformSystem.Windows
-        else if (it.contains("org/lwjgl/system/linux")) PlatformSystem.Linux
+        else if (it.contains("linux")) PlatformSystem.Linux
         else if (it.contains("mac") || it.contains("osx")) PlatformSystem.MacOS
         else if (it.contains("freebsd")) PlatformSystem.FreeBSD
         else if (it.contains("android")) PlatformSystem.Android

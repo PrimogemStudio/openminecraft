@@ -38,6 +38,7 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_VERTEX_BIT
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUBPASS_EXTERNAL
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_VERTEX_INPUT_RATE_VERTEX
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkCreateGraphicsPipelines
@@ -49,6 +50,7 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyInstanc
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyRenderPass
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkDestroyShaderModule
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInstanceLayerProperties
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceFeatures
 import com.primogemstudio.engine.foreign.heap.HeapStructArray
 import com.primogemstudio.engine.foreign.toCStructArray
 import com.primogemstudio.engine.graphics.IRenderer
@@ -86,6 +88,7 @@ class BackendRendererVk(
     private val shaderTypes = mutableMapOf<Identifier, ShaderType>()
     private val shaderProgs = mutableMapOf<Identifier, HeapStructArray<VkPipelineShaderStageCreateInfo>>()
     private val renderPasses = mutableMapOf<Identifier, VkRenderPass>()
+    private val pipelines = mutableMapOf<Identifier, VkPipeline>()
 
     val validationLayer: ValidationLayerVk
     val instance: VkInstance
@@ -143,13 +146,12 @@ class BackendRendererVk(
         logger.info(tr("engine.renderer.backend_vk.stage.window"))
         physicalDevice = PhysicalDeviceVk(this)
         logger.info(tr("engine.renderer.backend_vk.stage.phy_device"))
-        logicalDevice = LogicalDeviceVk(this)
+        logicalDevice = LogicalDeviceVk(this, vkGetPhysicalDeviceFeatures(physicalDevice()))
         logger.info(tr("engine.renderer.backend_vk.stage.logic_device"))
         logicalDeviceQueues = LogicalDeviceQueuesVk(this)
         logger.info(tr("engine.renderer.backend_vk.stage.logic_device_queue"))
         swapchain = SwapchainVk(this)
         logger.info(tr("engine.renderer.backend_vk.stage.swapchain"))
-
     }
 
     override fun close() {
@@ -202,26 +204,24 @@ class BackendRendererVk(
     @OptIn(DelicateCoroutinesApi::class)
     override fun linkShader(progId: Identifier, progs: Array<Identifier>): Deferred<Int> = GlobalScope.async {
         val shaders = progs.filter { shaders.containsKey(it) }
-        shaderProgs[progId] = HeapStructArray<VkPipelineShaderStageCreateInfo>(
-            VkPipelineShaderStageCreateInfo.LAYOUT,
-            shaders.size
-        ).apply {
-            for (i in shaders.indices) {
-                VkPipelineShaderStageCreateInfo(this[i]).apply {
-                    module = this@BackendRendererVk.shaders[shaders[i]]!!
-                    stage = when (this@BackendRendererVk.shaderTypes[shaders[i]]!!) {
-                        ShaderType.Vertex -> VK_SHADER_STAGE_VERTEX_BIT
-                        ShaderType.Fragment -> VK_SHADER_STAGE_FRAGMENT_BIT
-                        ShaderType.TessControl -> VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
-                        ShaderType.TessEvaluation -> VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
-                        ShaderType.Geometry -> VK_SHADER_STAGE_GEOMETRY_BIT
-                        ShaderType.Compute -> VK_SHADER_STAGE_COMPUTE_BIT
-                        else -> VK_SHADER_STAGE_ALL_GRAPHICS
-                    }
-                    name = "main"
+
+        shaderProgs[progId] = shaders.map {
+            VkPipelineShaderStageCreateInfo().apply {
+                module = this@BackendRendererVk.shaders[it]!!
+                stage = when (this@BackendRendererVk.shaderTypes[it]!!) {
+                    ShaderType.Vertex -> VK_SHADER_STAGE_VERTEX_BIT
+                    ShaderType.Fragment -> VK_SHADER_STAGE_FRAGMENT_BIT
+                    ShaderType.TessControl -> VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
+                    ShaderType.TessEvaluation -> VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
+                    ShaderType.Geometry -> VK_SHADER_STAGE_GEOMETRY_BIT
+                    ShaderType.Compute -> VK_SHADER_STAGE_COMPUTE_BIT
+                    else -> VK_SHADER_STAGE_ALL_GRAPHICS
                 }
+                name = "main"
+                sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO
             }
-        }
+        }.toTypedArray().toCStructArray(VkPipelineShaderStageCreateInfo.LAYOUT)
+
         logger.info(tr("engine.renderer.backend_vk.stage.shader_link", progs.toList()))
         0
     }
@@ -259,7 +259,7 @@ class BackendRendererVk(
     }
 
     override fun createPipeline(pipeId: Identifier, progId: Identifier, passId: Identifier) {
-        vkCreateGraphicsPipelines(
+        pipelines[pipeId] = vkCreateGraphicsPipelines(
             logicalDevice(),
             VkPipelineCache(MemorySegment.NULL),
             arrayOf(VkGraphicsPipelineCreateInfo().apply {
@@ -340,6 +340,6 @@ class BackendRendererVk(
         ).match(
             { it },
             { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.pipeline", it)) }
-        )
+        )[0]
     }
 }

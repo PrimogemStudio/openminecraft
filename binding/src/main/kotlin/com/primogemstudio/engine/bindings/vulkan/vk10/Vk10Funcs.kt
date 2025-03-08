@@ -1326,7 +1326,7 @@ object Vk10Funcs {
     ): Result<VkRenderPass, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode =
-            callFunc("vkCreateRenderPass", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL)
+            callFunc("vkCreateRenderPass", Int::class, device, createInfo, allocator?.ref() ?: MemorySegment.NULL, seg)
         return if (retCode == VK_SUCCESS) Result.success(VkRenderPass(seg.get(ADDRESS, 0))) else Result.fail(retCode)
     }
 
