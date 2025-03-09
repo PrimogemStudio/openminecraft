@@ -26,12 +26,13 @@ int main(int argc, char** argv) {
 
     void* jliLib = dlopen(argv[0], RTLD_GLOBAL | RTLD_LAZY);
     memcpy(pthBase, exec, 14);
-    char* bootArgs[3];
+    char* bootArgs[4];
     bootArgs[0] = argv[0];
-    bootArgs[1] = "-jar";
-    bootArgs[2] = "./app/openminecraft.jar";
+    bootArgs[1] = "--enable-native-access=ALL-UNNAMED";
+    bootArgs[2] = "-jar";
+    bootArgs[3] = "./app/openminecraft.jar";
     ((jvmEntryPoint) dlsym(jliLib, "JLI_Launch"))(
-        3, bootArgs,
+        4, bootArgs,
         0, NULL,
         0, NULL,
         "1.8.0-internal", "1.8.0", "java", "openjdk",

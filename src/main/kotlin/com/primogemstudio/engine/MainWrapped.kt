@@ -6,16 +6,19 @@ import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
+import com.primogemstudio.engine.lexer.JsonLexer
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
-import org.objectweb.asm.ClassWriter
+import java.io.ByteArrayInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.concurrent.thread
 
 suspend fun main() {
-    val cw = ClassWriter(0)
-
+    val t = JsonLexer(ByteArrayInputStream("{\"test\": 114514, \"test2\": 1144.11}".toByteArray()))
+    while (true) {
+        t.nextToken()
+    }
 
     val re = BackendRendererVk(
         ApplicationInfo(
