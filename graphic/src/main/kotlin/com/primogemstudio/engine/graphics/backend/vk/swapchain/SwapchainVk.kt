@@ -28,8 +28,10 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkImageViewCreateInfo
 import com.primogemstudio.engine.foreign.heap.HeapIntArray
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.backend.vk.IReinitable
+import com.primogemstudio.engine.logging.LoggerFactory
 import org.joml.Vector2i
 import org.joml.Vector4i
+import java.lang.foreign.MemorySegment
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.properties.Delegates
@@ -37,6 +39,8 @@ import kotlin.properties.Delegates
 class SwapchainVk(
     private val renderer: BackendRendererVk
 ) : IReinitable {
+    private val logger = LoggerFactory.getAsyncLogger()
+
     lateinit var swapchain: VkSwapchainKHR
     lateinit var swapchainImages: Array<VkImage>
     lateinit var swapchainExtent: Vector2i
@@ -82,7 +86,7 @@ class SwapchainVk(
                 compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR
                 presentMode = choosePresentModes(supp.presentModes)
                 clipped = true
-                if (::swapchain.isInitialized) oldSwapchain = swapchain
+                oldSwapchain = VkSwapchainKHR(MemorySegment.NULL)
             },
             null
         ).match(
@@ -145,7 +149,15 @@ class SwapchainVk(
 
     override fun reinit() {
         close()
-        swapchainBaseInit()
+        while (true) {
+            try {
+                swapchainBaseInit()
+                break
+            }
+            catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     override fun close() {

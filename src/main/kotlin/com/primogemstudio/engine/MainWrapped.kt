@@ -1,7 +1,11 @@
 package com.primogemstudio.engine
 
+import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetCursorPosCallback
+import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetScrollCallback
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwGetWindowSize
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwPollEvents
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
+import com.primogemstudio.engine.foreign.heap.HeapInt
 import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
@@ -62,14 +66,22 @@ suspend fun main() {
         0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
         -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
     ).forEach { bb.putFloat(it) }
-
     re.writeVertexBuffer(mainVtxBuffer, bb.array())
+
     re.createTestCommandBuffer()
 
     while (!glfwWindowShouldClose(re.window.window)) {
         re.render()
 
         glfwPollEvents()
+
+        val bb = ByteBuffer.allocate(60).order(ByteOrder.nativeOrder())
+        floatArrayOf(
+            0.0f, -0.5f, 1.0f, 0.0f, 0.0f,
+            0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+        ).forEach { bb.putFloat(it) }
+        re.writeVertexBuffer(mainVtxBuffer, bb.array())
     }
 
     re.close()

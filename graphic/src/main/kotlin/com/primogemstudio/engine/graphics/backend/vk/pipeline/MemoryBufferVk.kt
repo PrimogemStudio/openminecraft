@@ -31,6 +31,7 @@ class MemoryBufferVk(
         sharingMode = this@MemoryBufferVk.sharingMode
     }, null).match({ it }, { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.buffer", it)) })
     private val memory: VkDeviceMemory
+    private var mapped = false
 
     init {
         val req = vkGetBufferMemoryRequirements(renderer.logicalDevice(), buffer)
@@ -52,6 +53,7 @@ class MemoryBufferVk(
     }
 
     fun mapMemory(): ByteBuffer {
+        mapped = true
         return vkMapMemory(renderer.logicalDevice(), memory, 0, size, 0).match({ it }, {
             throw IllegalStateException(
                 toFullErr("exception.renderer.backend_vk.buffer_map", it)
@@ -61,11 +63,13 @@ class MemoryBufferVk(
 
     fun unmapMemory() {
         vkUnmapMemory(renderer.logicalDevice(), memory)
+        mapped = false
     }
 
     operator fun invoke(): VkBuffer = buffer
 
     override fun close() {
+        if (mapped) unmapMemory()
         vkDestroyBuffer(renderer.logicalDevice(), buffer, null)
         vkFreeMemory(renderer.logicalDevice(), memory, null)
     }
