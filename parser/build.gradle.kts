@@ -5,18 +5,9 @@ plugins {
 group = "${properties["openminecraft.group"]}"
 version = "${properties["openminecraft.version"]}"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(rootProject.project(":openminecraft-base"))
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["openminecraft.kotlinx_coroutines_core_version"]}")
-}
-
-tasks.test {
-    useJUnitPlatform()
 }
 
 kotlin {

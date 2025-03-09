@@ -10,23 +10,6 @@ dependencies {
     implementation(rootProject.project(":openminecraft-binding"))
     implementation(rootProject.project(":openminecraft-nativeloader"))
 
-    properties["openminecraft.lwjgl_version"].toString().apply {
-        properties["openminecraft.lwjgl_mods"].toString().split(",").forEach { mod ->
-            implementation("org.lwjgl", mod, this)
-
-            if (mod != "lwjgl-harfbuzz") properties["openminecraft.lwjgl_natives"].toString().split(",").forEach {
-                if (mod == "lwjgl-vulkan") {
-                    if (it == "natives-macos" || it == "natives-macos-arm64") runtimeOnly(
-                        "org.lwjgl",
-                        mod,
-                        this,
-                        classifier = it
-                    )
-                } else runtimeOnly("org.lwjgl", mod, this, classifier = it)
-            }
-        }
-    }
-
     implementation("org.joml", "joml", "${properties["openminecraft.joml_version"]}")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["openminecraft.kotlinx_coroutines_core_version"]}")

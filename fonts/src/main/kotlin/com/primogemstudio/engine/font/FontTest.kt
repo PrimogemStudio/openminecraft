@@ -1,12 +1,8 @@
 package com.primogemstudio.engine.font
 
-import org.lwjgl.system.MemoryUtil
-import org.lwjgl.util.harfbuzz.HarfBuzz.*
-import org.lwjgl.util.harfbuzz.OpenType.hb_ot_color_palette_get_count
-
 @OptIn(ExperimentalStdlibApi::class)
 fun main() {
-    System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
+    /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
     System.setProperty("org.lwjgl.util.NoFunctionChecks", "true")
     val blob = hb_blob_create_from_file("/home/coder2/extsources/noto-emoji/fonts/Noto-COLRv1.ttf")
     val face = hb_face_create(blob, 0)
@@ -66,5 +62,5 @@ fun main() {
         println("GLYPH START #$i")
         hb_font_paint_glyph(font, i, funcs, 0, 0, 0)
         println("GLYPH END #$i")
-    }
+    }*/
 }
