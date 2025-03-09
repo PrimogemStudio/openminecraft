@@ -12,6 +12,9 @@ class JsonLexer(i: InputStream) : AbstractLexer(i) {
         const val JSON_VALUE_COMMA = 5
         const val JSON_VALUE_NUMBER = 6
         const val JSON_VALUE_NUMBER_POINT = 7
+        const val JSON_VALUE_STRING_QUOTE_START = 8
+        const val JSON_VALUE_STRING = 9
+        const val JSON_VALUE_STRING_QUOTE_END = 10
     }
 
     override fun nextToken() {
@@ -44,8 +47,13 @@ class JsonLexer(i: InputStream) : AbstractLexer(i) {
             }
 
             JSON_VALUE_COMMA -> {
-                if (c > '9' || c < '0') throw IllegalStateException()
                 // Other cases!
+                if (c == '"') {
+                    state = JSON_VALUE_STRING_QUOTE_START
+                    return
+                }
+                if (c > '9' || c < '0') throw IllegalStateException()
+
                 state = JSON_VALUE_NUMBER
                 return
             }
@@ -65,6 +73,19 @@ class JsonLexer(i: InputStream) : AbstractLexer(i) {
                 if (c > '9' || c < '0') throw IllegalStateException()
                 state = JSON_VALUE_NUMBER
                 return
+            }
+
+            JSON_VALUE_STRING_QUOTE_START, JSON_VALUE_STRING -> {
+                state = if (c != '"') JSON_VALUE_STRING else JSON_VALUE_STRING_QUOTE_END
+                return
+            }
+
+            JSON_VALUE_STRING_QUOTE_END -> {
+                if (c == ',') {
+                    state = JSON_OBJECT_INTERNAL
+                    return
+                } else if (c == '}') state = JSON_NULL
+                else throw IllegalStateException()
             }
 
             else -> TODO()
