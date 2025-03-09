@@ -66,10 +66,10 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: windows-latest
-            osname: windows
-            gc: serial
-            march: compatibility
+          # - os: windows-latest
+          #   osname: windows
+          #   gc: serial
+          #   march: compatibility
           - os: windows-latest
             osname: windows
             gc: serial
