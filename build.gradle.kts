@@ -17,10 +17,11 @@ dependencies {
     implementation(rootProject.project(":openminecraft-nativeloader"))
     implementation(rootProject.project(":openminecraft-base"))
     implementation(rootProject.project(":openminecraft-binding"))
-    implementation(rootProject.project(":openminecraft-parser"))
+    implementation(rootProject.project(":openminecraft-compiler"))
     if (System.getProperty("openminecraft.graalvm.env") == "1") implementation(rootProject.project(":openminecraft-nativeimage"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["openminecraft.kotlinx_coroutines_core_version"]}")
+    implementation("org.ow2.asm:asm-tree:${properties["openminecraft.asm_version"]}")
 }
 
 tasks.jar {

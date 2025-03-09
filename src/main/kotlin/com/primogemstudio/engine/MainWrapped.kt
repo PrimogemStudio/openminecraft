@@ -8,11 +8,15 @@ import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
+import org.objectweb.asm.ClassWriter
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.concurrent.thread
 
 suspend fun main() {
+    val cw = ClassWriter(0)
+
+
     val re = BackendRendererVk(
         ApplicationInfo(
             "openminecraft",
