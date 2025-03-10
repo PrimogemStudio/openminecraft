@@ -78,7 +78,7 @@ suspend fun main() {
         while (!glfwWindowShouldClose(re.window.window)) {
             val bb = ByteBuffer.allocate(60).order(ByteOrder.nativeOrder())
             floatArrayOf(
-                0.0f, -0.5f, 1.0f, 0.0f, 0.0f,
+                0.0f, -0.5f, Random.nextFloat(), 0.0f, 0.0f,
                 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
                 -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
             ).forEach { bb.putFloat(it) }
