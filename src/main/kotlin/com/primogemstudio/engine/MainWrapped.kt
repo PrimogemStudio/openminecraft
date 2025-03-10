@@ -91,6 +91,7 @@ suspend fun main() {
         re.render()
 
         glfwPollEvents()
+        sleep(8)
     }
 
     re.close()
