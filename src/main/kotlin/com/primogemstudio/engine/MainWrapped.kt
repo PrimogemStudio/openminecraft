@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.concurrent.thread
+import kotlin.random.Random
 
 suspend fun main() {
     /*val t = JsonLexer(ByteArrayInputStream("{\"test\": 114514, \"test2\": 1144.11, \"test3\": \"test\"}".toByteArray()))
