@@ -8,7 +8,6 @@ version = "${properties["openminecraft.version"]}"
 dependencies {
     implementation(rootProject.project(":openminecraft-compiler"))
     implementation(rootProject.project(":openminecraft-base"))
-    implementation("com.google.code.gson:gson:${properties["openminecraft.gson_version"]}")
 }
 
 kotlin {

@@ -7,8 +7,6 @@ version = "${properties["openminecraft.version"]}"
 
 dependencies {
     implementation("org.ow2.asm:asm-tree:${properties["openminecraft.asm_version"]}")
-
-    implementation(rootProject.project(":openminecraft-base"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["openminecraft.kotlinx_coroutines_core_version"]}")
 }
 

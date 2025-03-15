@@ -1,6 +1,6 @@
 package com.primogemstudio.engine.i18n
 
-import com.primogemstudio.engine.json.GsonObjects
+import com.primogemstudio.engine.json.JsonWrap
 import com.primogemstudio.engine.logging.LoggerFactory
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.resource.ResourceManager
@@ -24,12 +24,12 @@ object Internationalization {
         targetTranslations.clear()
         logger.info("Available locale files: ${localeList.filter { ResourceManager(it) != null }}")
         localeList.mapNotNull { ResourceManager(it) }.forEach {
-            GsonObjects.GSON.fromJson(it.readAllBytes().toString(Charsets.UTF_8), Map::class.java).forEach { (k, v) ->
+            JsonWrap.lexer(it.readAllBytes().toString(Charsets.UTF_8)).parseTree().forEach { (k, v) ->
                 val t = ResourceManager(Identifier.parse(v.toString()))
-                if (!targetTranslations.containsKey(k)) targetTranslations[k.toString()] = mutableMapOf()
+                if (!targetTranslations.containsKey(k)) targetTranslations[k] = mutableMapOf()
                 logger.info("Processing $k -> $v")
                 if (t != null) {
-                    GsonObjects.GSON.fromJson(t.readAllBytes().toString(Charsets.UTF_8), Map::class.java)
+                    JsonWrap.lexer(t.readAllBytes().toString(Charsets.UTF_8)).parseTree()
                         .forEach { (ki, vi) ->
                             targetTranslations[k]?.set(ki.toString(), vi.toString())
                         }

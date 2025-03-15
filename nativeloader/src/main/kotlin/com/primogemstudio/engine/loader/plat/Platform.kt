@@ -3,7 +3,7 @@ package com.primogemstudio.engine.loader.plat
 import com.primogemstudio.engine.exceptions.PlatformLibInitException
 import com.primogemstudio.engine.foreign.NativeMethodCache
 import com.primogemstudio.engine.i18n.Internationalization.tr
-import com.primogemstudio.engine.json.GsonObjects
+import com.primogemstudio.engine.json.JsonWrap
 import com.primogemstudio.engine.loader.INativeLib
 import com.primogemstudio.engine.loader.sys.OpenGLESLoader
 import com.primogemstudio.engine.loader.sys.OpenGLLoader
@@ -79,7 +79,7 @@ object Platform {
             else -> OpenGLLoader.source().load()
         }
 
-        val libst = GsonObjects.lexer(
+        val libst = JsonWrap.lexer(
             ResourceManager(Identifier(namespace = "openmc_nativeloader", path = "lib.json"))
                 ?.readAllBytes()
                 ?.toString(Charsets.UTF_8) ?: ""
