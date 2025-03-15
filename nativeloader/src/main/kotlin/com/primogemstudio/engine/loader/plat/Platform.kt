@@ -79,19 +79,18 @@ object Platform {
             else -> OpenGLLoader.source().load()
         }
 
-        val libst = GsonObjects.GSON.fromJson(
+        val libst = GsonObjects.lexer(
             ResourceManager(Identifier(namespace = "openmc_nativeloader", path = "lib.json"))
                 ?.readAllBytes()
-                ?.toString(Charsets.UTF_8),
-            NativeLibConfigModel::class.java
-        )
-        libst.required?.forEach {
+                ?.toString(Charsets.UTF_8) ?: ""
+        ).let { it.parseTree() }.let { NativeLibConfigModel(it) }
+        libst.required.forEach {
             if (!INativeLib.default(it).load()) {
                 logger.error(tr("engine.nativeloader.load.requiredfail"))
                 return false
             }
         }
-        libst.optional?.forEach {
+        libst.optional.forEach {
             if (it == "glfw") {
                 try {
                     if (NativeMethodCache.dlsymLoader.find("glfwInit").isPresent) return@forEach

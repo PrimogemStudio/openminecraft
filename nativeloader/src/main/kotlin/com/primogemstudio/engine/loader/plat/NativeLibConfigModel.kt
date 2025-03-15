@@ -1,6 +1,8 @@
 package com.primogemstudio.engine.loader.plat
 
 data class NativeLibConfigModel(
-    val required: List<String>? = null,
-    val optional: List<String>? = null
-)
+    private val rawData: Map<String, Any>
+) {
+    val required: List<String> = (rawData["required"] as List<*>).map { it.toString() }
+    val optional: List<String> = (rawData["optional"] as List<*>).map { it.toString() }
+}

@@ -9,8 +9,6 @@ import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
-import com.primogemstudio.engine.lexer.JsonLexer
-import com.primogemstudio.engine.lexer.JsonTokens
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
 import java.nio.ByteBuffer
@@ -18,13 +16,6 @@ import java.nio.ByteOrder
 import kotlin.concurrent.thread
 
 suspend fun main() {
-    /*val t = JsonLexer(ByteArrayInputStream("{\"test\": 114514, \"test2\": 1144.11, \"test3\": \"test\"}".toByteArray()))
-    while (true) {
-        t.nextToken()
-    }*/
-
-    println(JsonLexer("[11, 12, \"test\", [1144.1], [114.565, 77]]").parse(JsonTokens.JsonArray))
-
     val re = BackendRendererVk(
         ApplicationInfo(
             "openminecraft",
