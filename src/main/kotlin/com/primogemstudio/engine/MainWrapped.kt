@@ -1,25 +1,29 @@
 package com.primogemstudio.engine
 
+import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetCursorPosCallback
+import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwGetFramebufferSize
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwPollEvents
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
+import com.primogemstudio.engine.foreign.heap.HeapInt
 import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
 import com.primogemstudio.engine.lexer.JsonLexer
+import com.primogemstudio.engine.lexer.JsonTokens
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
-import java.io.ByteArrayInputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import kotlin.concurrent.thread
-import kotlin.random.Random
 
 suspend fun main() {
     /*val t = JsonLexer(ByteArrayInputStream("{\"test\": 114514, \"test2\": 1144.11, \"test3\": \"test\"}".toByteArray()))
     while (true) {
         t.nextToken()
     }*/
+
+    println(JsonLexer("[11, 12, \"test\", [1144.1], [114.565, 77]]").parse(JsonTokens.JsonArray))
 
     val re = BackendRendererVk(
         ApplicationInfo(
@@ -75,11 +79,22 @@ suspend fun main() {
 
     re.createTestCommandBuffer()
 
+    var xx = 0f
+    var yy = 0f
+    glfwSetCursorPosCallback(re.window.window) { _, x, y ->
+        var xp = HeapInt()
+        var yp = HeapInt()
+        glfwGetFramebufferSize(re.window.window, xp, yp)
+
+        xx = x.toFloat() / xp.value().toFloat() * 2 - 1
+        yy = y.toFloat() / yp.value().toFloat() * 2 - 1
+    }
+
     val thr = thread(start = false) {
         while (!glfwWindowShouldClose(re.window.window)) {
             val bb = ByteBuffer.allocate(60).order(ByteOrder.nativeOrder())
             floatArrayOf(
-                0.0f, -0.5f, Random.nextFloat(), 0.0f, 0.0f,
+                xx, yy, 1.0f, 0.0f, 0.0f,
                 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
                 -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
             ).forEach { bb.putFloat(it) }
@@ -92,7 +107,6 @@ suspend fun main() {
         re.render()
 
         glfwPollEvents()
-        // Thread.sleep(8)
     }
 
     re.close()

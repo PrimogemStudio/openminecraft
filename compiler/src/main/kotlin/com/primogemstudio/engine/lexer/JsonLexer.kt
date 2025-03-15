@@ -1,96 +1,75 @@
 package com.primogemstudio.engine.lexer
 
-import java.io.InputStream
+enum class JsonTokens {
+    JsonObject,
+    JsonArray,
+    JsonNumber,
+    JsonString
+}
 
-class JsonLexer(i: InputStream) : AbstractLexer(i) {
-    companion object {
-        const val JSON_NULL = 0
-        const val JSON_OBJECT_INTERNAL = 1
-        const val JSON_NAME_QUOTE_START = 2
-        const val JSON_NAME = 3
-        const val JSON_NAME_QUOTE_END = 4
-        const val JSON_VALUE_COMMA = 5
-        const val JSON_VALUE_NUMBER = 6
-        const val JSON_VALUE_NUMBER_POINT = 7
-        const val JSON_VALUE_STRING_QUOTE_START = 8
-        const val JSON_VALUE_STRING = 9
-        const val JSON_VALUE_STRING_QUOTE_END = 10
-    }
+class JsonLexer(text: String) : ILexer<JsonTokens>() {
+    private val textProcessed = text.replace("\n", "").replace("\t", "")
 
-    override fun nextToken() {
-        val c = nextChr()
-        print(c)
-        if (c == ' ' || c == '\t' || c == '\n') return
-
-        when (state) {
-            JSON_NULL -> {
-                if (c != '{') throw IllegalStateException()
-                state = JSON_OBJECT_INTERNAL
-                return
+    private var index = 0
+    override fun parse(type: JsonTokens): Any {
+        when (type) {
+            JsonTokens.JsonString -> {
+                if (textProcessed[index] != '"') TODO("Non string!")
+                index++
+                val st = index
+                while (textProcessed[index] != '"') index++
+                return textProcessed.substring(st, index).apply { index++ }
             }
 
-            JSON_OBJECT_INTERNAL -> {
-                if (c != '"') throw IllegalStateException()
-                state = JSON_NAME_QUOTE_START
-                return
-            }
-
-            JSON_NAME_QUOTE_START, JSON_NAME -> {
-                state = if (c != '"') JSON_NAME else JSON_NAME_QUOTE_END
-                return
-            }
-
-            JSON_NAME_QUOTE_END -> {
-                if (c != ':') throw IllegalStateException()
-                state = JSON_VALUE_COMMA
-                return
-            }
-
-            JSON_VALUE_COMMA -> {
-                // Other cases!
-                if (c == '"') {
-                    state = JSON_VALUE_STRING_QUOTE_START
-                    return
+            JsonTokens.JsonNumber -> {
+                if (!isNumber(textProcessed[index])) TODO("Non number!")
+                val st = index
+                var numpoint = false
+                while (index < textProcessed.length && isNumber(textProcessed[index])) {
+                    val c = textProcessed[index]
+                    if (c == '.') {
+                        if (numpoint) TODO("Corrupt floating number format!")
+                        numpoint = true
+                    }
+                    index++
                 }
-                if (c > '9' || c < '0') throw IllegalStateException()
-
-                state = JSON_VALUE_NUMBER
-                return
+                val tx = textProcessed.substring(st, index)
+                return if (numpoint) {
+                    tx.toDouble()
+                } else tx.toLong()
             }
 
-            JSON_VALUE_NUMBER -> {
-                if (c == ',') {
-                    state = JSON_OBJECT_INTERNAL
-                    return
-                } else if (c == '}') state = JSON_NULL
-                else if (c == '.') {
-                    state = JSON_VALUE_NUMBER_POINT
-                    return
-                } else if (c > '9' || c < '0') throw IllegalStateException()
-            }
+            JsonTokens.JsonArray -> {
+                if (textProcessed[index] != '[') TODO("Not an array!")
+                index++
+                val datas = mutableListOf<Any>()
 
-            JSON_VALUE_NUMBER_POINT -> {
-                if (c > '9' || c < '0') throw IllegalStateException()
-                state = JSON_VALUE_NUMBER
-                return
-            }
+                while (textProcessed[index] != ']') {
+                    val tx = textProcessed[index]
+                    if (isNumber(tx)) {
+                        datas.add(parse(JsonTokens.JsonNumber))
+                        checkArrayObjEnd()
+                    } else if (tx == '"') {
+                        datas.add(parse(JsonTokens.JsonString))
+                        checkArrayObjEnd()
+                    } else if (tx == '[') {
+                        datas.add(parse(JsonTokens.JsonArray))
+                        checkArrayObjEnd()
+                    } else if (tx == ' ') {
+                        index++
+                    } else TODO("Corrupt array format!")
+                }
+                index++
 
-            JSON_VALUE_STRING_QUOTE_START, JSON_VALUE_STRING -> {
-                state = if (c != '"') JSON_VALUE_STRING else JSON_VALUE_STRING_QUOTE_END
-                return
+                return datas
             }
-
-            JSON_VALUE_STRING_QUOTE_END -> {
-                if (c == ',') {
-                    state = JSON_OBJECT_INTERNAL
-                    return
-                } else if (c == '}') state = JSON_NULL
-                else throw IllegalStateException()
-            }
-
             else -> TODO()
         }
+        TODO()
+    }
 
-        if (state == JSON_NULL) TODO("End!")
+    private fun isNumber(c: Char): Boolean = ('0' <= c && c <= '9') || c == '.'
+    private fun checkArrayObjEnd() {
+        if (textProcessed[index] == ',') index++ else if (textProcessed[index] == ']') return else TODO("Not a valid array element end!")
     }
 }
