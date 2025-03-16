@@ -1,6 +1,5 @@
 package com.primogemstudio.engine
 
-import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetCursorPosCallback
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwPollEvents
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
 import com.primogemstudio.engine.graphics.ShaderType
@@ -67,14 +66,9 @@ suspend fun main() {
 
     re.createTestCommandBuffer()
 
-    glfwSetCursorPosCallback(re.window.window) { _, x, y ->
-        println("$x, $y")
-    }
-
     while (!glfwWindowShouldClose(re.window.window)) {
-        re.render()
-
         glfwPollEvents()
+        re.render()
     }
 
     re.close()

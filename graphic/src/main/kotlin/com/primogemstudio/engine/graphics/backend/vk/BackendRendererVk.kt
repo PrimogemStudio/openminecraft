@@ -449,7 +449,7 @@ class BackendRendererVk(
                             VK_COLOR_COMPONENT_R_BIT or VK_COLOR_COMPONENT_G_BIT or VK_COLOR_COMPONENT_B_BIT or VK_COLOR_COMPONENT_A_BIT
                         blendEnable = false
                     }).toCStructArray(VkPipelineColorBlendAttachmentState.LAYOUT)
-                    blendConstants = Vector4f(0f, 0f, 0f, 0f)
+                    blendConstants = Vector4f(0f)
                 }
 
                 layout = vkCreatePipelineLayout(logicalDevice(), VkPipelineLayoutCreateInfo().apply {}, null).match(

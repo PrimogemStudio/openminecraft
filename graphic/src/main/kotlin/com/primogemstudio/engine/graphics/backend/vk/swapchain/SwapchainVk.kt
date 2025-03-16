@@ -61,8 +61,10 @@ class SwapchainVk(
             VkSwapchainCreateInfoKHR().apply {
                 surface = renderer.window.surface
                 minImageCount = imageCount
-                imageFormat = chooseFormats(supp.formats).format
-                imageColorSpace = chooseFormats(supp.formats).colorSpace
+                chooseFormats(supp.formats).apply {
+                    imageFormat = format
+                    imageColorSpace = colorSpace
+                }
                 imageExtent = chooseExtent(supp.capabilities)
                 imageArrayLayers = 1
                 imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT
