@@ -13,6 +13,19 @@
       ]
     },
     {
+      "type": "com.primogemstudio.engine.bindings.glfw.GLFWCursorPosFun",
+      "methods": [
+        {
+          "name": "call",
+          "parameterTypes": [
+            "java.lang.foreign.MemorySegment",
+            "double",
+            "double"
+          ]
+        }
+      ]
+    },
+    {
       "type": "com.primogemstudio.engine.bindings.glfw.GLFWFrameBufferSizeFun",
       "methods": [
         {

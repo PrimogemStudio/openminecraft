@@ -587,13 +587,14 @@ class BackendRendererVk(
         imagesInFlight[imageIdx] = frame
 
         vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.fence)))
-        if (vkQueueSubmit(logicalDeviceQueues.graphicsQueue, arrayOf(VkSubmitInfo().apply {
-                waitSemaphores = HeapPointerArray(arrayOf(frame.imageAvailableSemaphore))
-                waitDstStageMask = HeapIntArray(intArrayOf(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT))
-                signalSemaphores = HeapPointerArray(arrayOf(frame.renderFinishedSemaphore))
-                commandBuffers = HeapPointerArray(arrayOf(swapchainCommandBuffers[currentFrame]))
-            }
-            ).toCStructArray(VkSubmitInfo.LAYOUT), frame.fence) != VK_SUCCESS) {
+        val retCode = vkQueueSubmit(logicalDeviceQueues.graphicsQueue, arrayOf(VkSubmitInfo().apply {
+            waitSemaphores = HeapPointerArray(arrayOf(frame.imageAvailableSemaphore))
+            waitDstStageMask = HeapIntArray(intArrayOf(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT))
+            signalSemaphores = HeapPointerArray(arrayOf(frame.renderFinishedSemaphore))
+            commandBuffers = HeapPointerArray(arrayOf(swapchainCommandBuffers[currentFrame]))
+        }
+        ).toCStructArray(VkSubmitInfo.LAYOUT), frame.fence)
+        if (retCode != VK_SUCCESS) {
             vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.fence)))
             throw IllegalStateException()
         }

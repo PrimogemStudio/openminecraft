@@ -4,7 +4,7 @@ import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceCapabiliti
 import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceFormatKHR
 import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHRFuncs.VK_COLOR_SPACE_SRGB_NONLINEAR_KHR
 import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHRFuncs.VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR
-import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHRFuncs.VK_PRESENT_MODE_IMMEDIATE_KHR
+import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHRFuncs.VK_PRESENT_MODE_FIFO_KHR
 import com.primogemstudio.engine.bindings.vulkan.khr.surface.VkSurfaceKHRFuncs.VK_PRESENT_MODE_MAILBOX_KHR
 import com.primogemstudio.engine.bindings.vulkan.khr.swapchain.VkSwapchainCreateInfoKHR
 import com.primogemstudio.engine.bindings.vulkan.khr.swapchain.VkSwapchainKHR
@@ -28,7 +28,6 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkImageViewCreateInfo
 import com.primogemstudio.engine.foreign.heap.HeapIntArray
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.backend.vk.IReinitable
-import com.primogemstudio.engine.logging.LoggerFactory
 import org.joml.Vector2i
 import org.joml.Vector4i
 import java.lang.foreign.MemorySegment
@@ -39,8 +38,6 @@ import kotlin.properties.Delegates
 class SwapchainVk(
     private val renderer: BackendRendererVk
 ) : IReinitable {
-    private val logger = LoggerFactory.getAsyncLogger()
-
     lateinit var swapchain: VkSwapchainKHR
     lateinit var swapchainImages: Array<VkImage>
     lateinit var swapchainExtent: Vector2i
@@ -132,7 +129,7 @@ class SwapchainVk(
             ?: formats[0]
 
     private fun choosePresentModes(modes: IntArray): Int =
-        modes.firstOrNull { it == VK_PRESENT_MODE_MAILBOX_KHR } ?: VK_PRESENT_MODE_IMMEDIATE_KHR
+        modes.firstOrNull { it == VK_PRESENT_MODE_MAILBOX_KHR } ?: VK_PRESENT_MODE_FIFO_KHR
 
     private fun chooseExtent(cap: VkSurfaceCapabilitiesKHR): Vector2i {
         if (cap.currentExtent.x != -1) return cap.currentExtent

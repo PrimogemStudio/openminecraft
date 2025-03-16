@@ -1,10 +1,8 @@
 package com.primogemstudio.engine
 
 import com.primogemstudio.engine.bindings.glfw.GLFWInputFuncs.glfwSetCursorPosCallback
-import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwGetFramebufferSize
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwPollEvents
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
-import com.primogemstudio.engine.foreign.heap.HeapInt
 import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
@@ -13,7 +11,6 @@ import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
-import kotlin.concurrent.thread
 
 suspend fun main() {
     val re = BackendRendererVk(
@@ -70,31 +67,11 @@ suspend fun main() {
 
     re.createTestCommandBuffer()
 
-    var xx = 0f
-    var yy = 0f
     glfwSetCursorPosCallback(re.window.window) { _, x, y ->
-        var xp = HeapInt()
-        var yp = HeapInt()
-        glfwGetFramebufferSize(re.window.window, xp, yp)
-
-        xx = x.toFloat() / xp.value().toFloat() * 2 - 1
-        yy = y.toFloat() / yp.value().toFloat() * 2 - 1
-    }
-
-    val thr = thread(start = false) {
-        while (!glfwWindowShouldClose(re.window.window)) {
-            val bb = ByteBuffer.allocate(60).order(ByteOrder.nativeOrder())
-            floatArrayOf(
-                xx, yy, 1.0f, 0.0f, 0.0f,
-                0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-                -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
-            ).forEach { bb.putFloat(it) }
-            re.writeVertexBuffer(mainVtxBuffer, bb.array())
-        }
+        println("$x, $y")
     }
 
     while (!glfwWindowShouldClose(re.window.window)) {
-        if (thr.state == Thread.State.NEW) thr.start()
         re.render()
 
         glfwPollEvents()
