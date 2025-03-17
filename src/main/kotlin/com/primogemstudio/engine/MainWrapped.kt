@@ -18,7 +18,7 @@ suspend fun main() {
             Version.from(0u, 0u, 1u),
             "openminecraft",
             Version.from(0u, 0u, 1u),
-            Version.fromStandard(1u, 0u, 0u, 0u)
+            Version.fromStandard(1u, 3u, 0u, 0u)
         ),
         ApplicationWindowInfo(
             windowTitle = "OpenMinecraft Dev Preview",
