@@ -9,10 +9,11 @@ enum class JsonTokens {
 
 @Suppress("UNCHECKED_CAST")
 class JsonLexer(text: String) : ILexer<JsonTokens>() {
-    private var textProcessed = text.replace("\n", "").replace("\t", "")
+    private var textProcessed = text.replace("\n", "").replace("\t", "").replace("\r", "")
 
     fun updateText(text: String) {
-        textProcessed = text.replace("\n", "").replace("\t", "")
+        textProcessed = text.replace("\n", "").replace("\t", "").replace("\r", "")
+
         index = 0
     }
 
