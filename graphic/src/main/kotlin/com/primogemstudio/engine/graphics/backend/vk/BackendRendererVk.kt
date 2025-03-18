@@ -591,7 +591,7 @@ class BackendRendererVk(
             waitSemaphores = HeapPointerArray(arrayOf(frame.imageAvailableSemaphore))
             waitDstStageMask = HeapIntArray(intArrayOf(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT))
             signalSemaphores = HeapPointerArray(arrayOf(frame.renderFinishedSemaphore))
-            commandBuffers = HeapPointerArray(arrayOf(swapchainCommandBuffers[currentFrame]))
+            commandBuffers = HeapPointerArray(arrayOf(swapchainCommandBuffers[imageIdx]))
         }
         ).toCStructArray(VkSubmitInfo.LAYOUT), frame.fence)
         if (retCode != VK_SUCCESS) {
