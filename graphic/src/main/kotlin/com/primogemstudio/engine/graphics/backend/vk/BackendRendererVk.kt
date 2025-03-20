@@ -120,6 +120,10 @@ class BackendRendererVk(
     val deviceSelector: (Array<VkPhysicalDevice>) -> VkPhysicalDevice,
     val layerEnabler: (Array<String>) -> Array<String>
 ) : IRenderer, IReinitable {
+    companion object {
+        const val MaxInFlightFrames = 2
+    }
+
     private val logger = LoggerFactory.getAsyncLogger()
     private val compiler = ShaderCompilerVk(this)
     private val shaders = mutableMapOf<Identifier, VkShaderModule>()
@@ -210,7 +214,7 @@ class BackendRendererVk(
 
         val sc = VkSemaphoreCreateInfo()
         val fc = VkFenceCreateInfo().apply { flag = VK_FENCE_CREATE_SIGNALED_BIT }
-        for (i in 0..<swapchain.swapchainImages.size) {
+        for (i in 0..<MaxInFlightFrames) {
             imageSyncObjects.add(
                 FrameDataVk(
                     vkCreateSemaphore(logicalDevice(), sc, null).match({ it }, { throw IllegalStateException() }),
@@ -614,6 +618,6 @@ class BackendRendererVk(
             throw IllegalStateException()
         }
 
-        currentFrame = (currentFrame + 1) % swapchain.swapchainImages.size
+        currentFrame = (currentFrame + 1) % MaxInFlightFrames
     }
 }
