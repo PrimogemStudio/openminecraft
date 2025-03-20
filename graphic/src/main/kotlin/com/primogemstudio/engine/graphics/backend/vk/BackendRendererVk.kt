@@ -85,6 +85,7 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInsta
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkFreeCommandBuffers
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceFeatures
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkQueueSubmit
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkQueueWaitIdle
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkResetFences
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkWaitForFences
 import com.primogemstudio.engine.foreign.heap.HeapIntArray
@@ -564,7 +565,7 @@ class BackendRendererVk(
     private val imagesInFlight = mutableMapOf<Int, FrameDataVk>()
 
     fun render() {
-        val frame = imageSyncObjects[currentFrame]
+        val frame = imageSyncObjects[0]
         vkWaitForFences(logicalDevice(), HeapPointerArray(arrayOf(frame.fence)), true, Long.MAX_VALUE)
 
         val imageIdx = vkAcquireNextImageKHR(
@@ -580,7 +581,7 @@ class BackendRendererVk(
             } else throw IllegalStateException()
         })
 
-        if (imagesInFlight.containsKey(imageIdx)) {
+        /*if (imagesInFlight.containsKey(imageIdx)) {
             vkWaitForFences(
                 logicalDevice(),
                 HeapPointerArray(arrayOf(imagesInFlight[imageIdx]!!.fence)),
@@ -588,7 +589,7 @@ class BackendRendererVk(
                 Long.MAX_VALUE
             )
         }
-        imagesInFlight[imageIdx] = frame
+        imagesInFlight[imageIdx] = frame*/
 
         vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.fence)))
         val retCode = vkQueueSubmit(logicalDeviceQueues.graphicsQueue, arrayOf(VkSubmitInfo().apply {
@@ -618,6 +619,8 @@ class BackendRendererVk(
             throw IllegalStateException()
         }
 
-        currentFrame = (currentFrame + 1) % MaxInFlightFrames
+        vkQueueWaitIdle(logicalDeviceQueues.presentQueue)
+
+        // currentFrame = (currentFrame + 1) % MaxInFlightFrames
     }
 }
