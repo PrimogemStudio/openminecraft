@@ -35,15 +35,19 @@ suspend fun main() {
         frg,
         Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.frag"),
         ShaderType.Fragment
-    ).await()
+    )
+    Thread.sleep(5000)
+
     re.registerShader(
         vtx,
         Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.vert"),
         ShaderType.Vertex
-    ).await()
+    )
+    Thread.sleep(5000)
 
     val shaderPr = Identifier(namespace = "openmc_graphic", path = "vtx_shader")
-    re.linkShader(shaderPr, arrayOf(frg, vtx)).await()
+    re.linkShader(shaderPr, arrayOf(frg, vtx))
+    Thread.sleep(5000)
 
     val target = Identifier(namespace = "openmc_graphic", path = "main_pass")
     re.createRenderPass(target)
