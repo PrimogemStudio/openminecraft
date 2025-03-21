@@ -573,7 +573,7 @@ class BackendRendererVk(
             frame.imageAvailableSemaphore,
             frame.imageAvailableFence
         ).match({ it }, {
-            if (it == VK_ERROR_OUT_OF_DATE_KHR) {
+            if (it == VK_ERROR_OUT_OF_DATE_KHR || it == VK_SUBOPTIMAL_KHR) {
                 this.reinit()
                 return@render
             } else throw IllegalStateException()
@@ -603,7 +603,6 @@ class BackendRendererVk(
             }
         )
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window.resizing()) {
-            println("retart")
             window.resetState()
             reinit()
         } else if (result != VK_SUCCESS) {

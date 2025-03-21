@@ -8,6 +8,7 @@ import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
+import kotlinx.coroutines.runBlocking
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
@@ -31,20 +32,23 @@ suspend fun main() {
     val frg = Identifier(namespace = "openmc_graphic", path = "vtx_shader_frag")
     val vtx = Identifier(namespace = "openmc_graphic", path = "vtx_shader_vert")
 
-    re.registerShader(
-        frg,
-        Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.frag"),
-        ShaderType.Fragment
-    ).await()
-
-    re.registerShader(
-        vtx,
-        Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.vert"),
-        ShaderType.Vertex
-    ).await()
-
     val shaderPr = Identifier(namespace = "openmc_graphic", path = "vtx_shader")
-    re.linkShader(shaderPr, arrayOf(frg, vtx)).await()
+
+    runBlocking {
+        re.registerShader(
+            frg,
+            Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.frag"),
+            ShaderType.Fragment
+        ).join()
+
+        re.registerShader(
+            vtx,
+            Identifier(namespace = "openmc_graphic", path = "shaders/vtx_shader.vert"),
+            ShaderType.Vertex
+        ).join()
+
+        re.linkShader(shaderPr, arrayOf(frg, vtx)).join()
+    }
 
     val target = Identifier(namespace = "openmc_graphic", path = "main_pass")
     re.createRenderPass(target)
