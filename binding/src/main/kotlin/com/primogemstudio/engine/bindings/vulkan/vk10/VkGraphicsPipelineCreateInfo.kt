@@ -49,7 +49,7 @@ class VkGraphicsPipelineCreateInfo(private val seg: MemorySegment) : IHeapObject
     var flag: Int
         get() = seg.get(JAVA_INT, OFFSETS[2])
         set(value) = seg.set(JAVA_INT, OFFSETS[2], value)
-    var stages: HeapStructArray<VkPipelineShaderStageCreateInfo>
+    var shaders: HeapStructArray<VkPipelineShaderStageCreateInfo>
         get() = HeapStructArray(
             seg.get(JAVA_INT, OFFSETS[3]),
             seg.get(ADDRESS, OFFSETS[4]),

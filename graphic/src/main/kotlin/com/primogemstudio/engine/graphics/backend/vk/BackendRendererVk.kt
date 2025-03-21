@@ -49,7 +49,6 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHADER_STAGE_VERTEX_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SHARING_MODE_EXCLUSIVE
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUBPASS_CONTENTS_INLINE
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUBPASS_EXTERNAL
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_SUCCESS
@@ -85,13 +84,12 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkEnumerateInsta
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkFreeCommandBuffers
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkGetPhysicalDeviceFeatures
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkQueueSubmit
-import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkQueueWaitIdle
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkResetFences
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.vkWaitForFences
+import com.primogemstudio.engine.foreign.heap.HeapByteArray
 import com.primogemstudio.engine.foreign.heap.HeapIntArray
 import com.primogemstudio.engine.foreign.heap.HeapLongArray
 import com.primogemstudio.engine.foreign.heap.HeapPointerArray
-import com.primogemstudio.engine.foreign.heap.HeapStructArray
 import com.primogemstudio.engine.foreign.toCStructArray
 import com.primogemstudio.engine.graphics.IRenderer
 import com.primogemstudio.engine.graphics.ShaderType
@@ -127,10 +125,9 @@ class BackendRendererVk(
 
     private val logger = LoggerFactory.getAsyncLogger()
     private val compiler = ShaderCompilerVk(this)
-    private val shaders = mutableMapOf<Identifier, VkShaderModule>()
+    private val shaders = mutableMapOf<Identifier, HeapByteArray>()
     private val shaderTypes = mutableMapOf<Identifier, ShaderType>()
-    private val shaderProgsData = mutableMapOf<Identifier, Array<Identifier>>()
-    private val shaderProgs = mutableMapOf<Identifier, HeapStructArray<VkPipelineShaderStageCreateInfo>>()
+    private val shaderProgs = mutableMapOf<Identifier, Array<Identifier>>()
     private val renderPasses = mutableMapOf<Identifier, VkRenderPass>()
     private val pipelineCreationData = mutableMapOf<Identifier, Pair<Identifier, Identifier>>()
     private val pipelines = mutableMapOf<Identifier, VkPipeline>()
@@ -220,6 +217,7 @@ class BackendRendererVk(
                 FrameDataVk(
                     vkCreateSemaphore(logicalDevice(), sc, null).match({ it }, { throw IllegalStateException() }),
                     vkCreateSemaphore(logicalDevice(), sc, null).match({ it }, { throw IllegalStateException() }),
+                    vkCreateFence(logicalDevice(), fc, null).match({ it }, { throw IllegalStateException() }),
                     vkCreateFence(logicalDevice(), fc, null).match({ it }, { throw IllegalStateException() })
                 )
             )
@@ -245,12 +243,11 @@ class BackendRendererVk(
         renderPasses.clear()
         shaderProgs.clear()
         shaderTypes.clear()
-        shaderProgsData.clear()
-        shaders.values.forEach { vkDestroyShaderModule(logicalDevice(), it, null) }
+        shaderProgs.clear()
         shaders.clear()
 
         imageSyncObjects.forEach {
-            vkDestroyFence(logicalDevice(), it.fence, null)
+            vkDestroyFence(logicalDevice(), it.renderFinishedFence, null)
             vkDestroySemaphore(logicalDevice(), it.imageAvailableSemaphore, null)
             vkDestroySemaphore(logicalDevice(), it.renderFinishedSemaphore, null)
         }
@@ -268,8 +265,7 @@ class BackendRendererVk(
 
         swapchain.reinit()
 
-        shaderProgs.clear()
-        shaderProgsData.forEach { runBlocking { linkShader(it.key, it.value).await() } }
+        shaderProgs.forEach { runBlocking { linkShader(it.key, it.value).await() } }
 
         renderPasses.values.forEach { vkDestroyRenderPass(logicalDevice(), it, null) }
         val target = renderPasses.map { it.key }.toTypedArray()
@@ -298,23 +294,14 @@ class BackendRendererVk(
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun registerShader(shaderId: Identifier, src: Identifier, type: ShaderType): Deferred<Int> =
-        GlobalScope.async {
+        CoroutineScope(Dispatchers.Default).async {
             shaderTypes[shaderId] = type
             try {
                 val compilerType = com.primogemstudio.engine.graphics.backend.vk.shader.ShaderType.entries[type.ordinal]
-                shaders[shaderId] = vkCreateShaderModule(
-                    logicalDevice(),
-                    VkShaderModuleCreateInfo().apply {
-                        code = compiler.compile(
-                            src,
-                            compilerType,
-                            ShaderLanguage.Glsl
-                        )
-                    },
-                    null
-                ).match(
-                    { it },
-                    { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.shader", it)) }
+                shaders[shaderId] = compiler.compile(
+                    src,
+                    compilerType,
+                    ShaderLanguage.Glsl
                 )
                 logger.info(
                     tr(
@@ -327,29 +314,12 @@ class BackendRendererVk(
             } catch (_: Exception) {
                 1
             }
-    }
+        }
 
     @OptIn(DelicateCoroutinesApi::class)
-    override fun linkShader(progId: Identifier, progs: Array<Identifier>): Deferred<Int> = GlobalScope.async {
-        shaderProgsData[progId] = progs
-        val shaders = progs.filter { shaders.containsKey(it) }
-
-        shaderProgs[progId] = shaders.map {
-            VkPipelineShaderStageCreateInfo().apply {
-                module = this@BackendRendererVk.shaders[it]!!
-                stage = when (this@BackendRendererVk.shaderTypes[it]!!) {
-                    ShaderType.Vertex -> VK_SHADER_STAGE_VERTEX_BIT
-                    ShaderType.Fragment -> VK_SHADER_STAGE_FRAGMENT_BIT
-                    ShaderType.TessControl -> VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
-                    ShaderType.TessEvaluation -> VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
-                    ShaderType.Geometry -> VK_SHADER_STAGE_GEOMETRY_BIT
-                    ShaderType.Compute -> VK_SHADER_STAGE_COMPUTE_BIT
-                    else -> VK_SHADER_STAGE_ALL_GRAPHICS
-                }
-                name = "main"
-                sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO
-            }
-        }.toTypedArray().toCStructArray(VkPipelineShaderStageCreateInfo.LAYOUT)
+    override fun linkShader(progId: Identifier, progs: Array<Identifier>): Deferred<Int> =
+        CoroutineScope(Dispatchers.Default).async {
+            shaderProgs[progId] = progs.filter { shaders.containsKey(it) }.toTypedArray()
 
         logger.info(tr("engine.renderer.backend_vk.stage.shader_link", progs.toList()))
         0
@@ -389,11 +359,40 @@ class BackendRendererVk(
 
     override fun createPipeline(pipeId: Identifier, progId: Identifier, passId: Identifier) {
         pipelineCreationData[pipeId] = Pair(progId, passId)
+        println(shaderProgs)
+        val shaderModules = shaderProgs[progId]!!
+            .map { Pair(shaders[it], it) }
+            .map {
+                Pair(
+                    vkCreateShaderModule(
+                        logicalDevice(),
+                        VkShaderModuleCreateInfo().apply { code = it.first!! },
+                        null
+                    ).match(
+                        { it },
+                        { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.shader", it)) }),
+                    it.second
+                )
+            }
         pipelines[pipeId] = vkCreateGraphicsPipelines(
             logicalDevice(),
             VkPipelineCache(MemorySegment.NULL),
             arrayOf(VkGraphicsPipelineCreateInfo().apply {
-                stages = shaderProgs[progId]!!
+                shaders = shaderModules.map {
+                    VkPipelineShaderStageCreateInfo().apply {
+                        module = it.first
+                        stage = when (this@BackendRendererVk.shaderTypes[it.second]!!) {
+                            ShaderType.Vertex -> VK_SHADER_STAGE_VERTEX_BIT
+                            ShaderType.Fragment -> VK_SHADER_STAGE_FRAGMENT_BIT
+                            ShaderType.TessControl -> VK_SHADER_STAGE_TESSELLATION_CONTROL_BIT
+                            ShaderType.TessEvaluation -> VK_SHADER_STAGE_TESSELLATION_EVALUATION_BIT
+                            ShaderType.Geometry -> VK_SHADER_STAGE_GEOMETRY_BIT
+                            ShaderType.Compute -> VK_SHADER_STAGE_COMPUTE_BIT
+                            else -> VK_SHADER_STAGE_ALL_GRAPHICS
+                        }
+                        name = "main"
+                    }
+                }.toTypedArray().toCStructArray(VkPipelineShaderStageCreateInfo.LAYOUT)
                 vertex = VkPipelineVertexInputStateCreateInfo().apply {
                     bindings = arrayOf(VkVertexInputBindingDescription().apply {
                         binding = 0
@@ -474,6 +473,8 @@ class BackendRendererVk(
             { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.pipeline", it)) }
         )[0]
 
+        shaderModules.forEach { vkDestroyShaderModule(logicalDevice(), it.first, null) }
+
         logger.info(tr("engine.renderer.backend_vk.stage.pipeline", pipeId, progId, passId))
     }
 
@@ -494,9 +495,9 @@ class BackendRendererVk(
             ci.attachments = HeapPointerArray(arrayOf(image))
             swapchainFramebuffers.add(
                 vkCreateFramebuffer(logicalDevice(), ci, null).match(
-                { it },
-                { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.framebuffer", it)) }
-            ))
+                    { it },
+                    { throw IllegalStateException(toFullErr("exception.renderer.backend_vk.framebuffer", it)) }
+                ))
         }
 
         logger.info(tr("engine.renderer.backend_vk.stage.framebuffer", passId))
@@ -561,19 +562,16 @@ class BackendRendererVk(
         swapchainCommandBuffers.addAll(commandBuffers)
     }
 
-    private var currentFrame = 0
-    private val imagesInFlight = mutableMapOf<Int, FrameDataVk>()
-
     fun render() {
         val frame = imageSyncObjects[0]
-        vkWaitForFences(logicalDevice(), HeapPointerArray(arrayOf(frame.fence)), true, Long.MAX_VALUE)
+        vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.imageAvailableFence)))
 
         val imageIdx = vkAcquireNextImageKHR(
             logicalDevice(),
             swapchain.swapchain,
             Long.MAX_VALUE,
             frame.imageAvailableSemaphore,
-            VkFence(MemorySegment.NULL)
+            frame.imageAvailableFence
         ).match({ it }, {
             if (it == VK_ERROR_OUT_OF_DATE_KHR) {
                 this.reinit()
@@ -581,28 +579,20 @@ class BackendRendererVk(
             } else throw IllegalStateException()
         })
 
-        /*if (imagesInFlight.containsKey(imageIdx)) {
-            vkWaitForFences(
-                logicalDevice(),
-                HeapPointerArray(arrayOf(imagesInFlight[imageIdx]!!.fence)),
-                true,
-                Long.MAX_VALUE
-            )
-        }
-        imagesInFlight[imageIdx] = frame*/
+        vkWaitForFences(logicalDevice(), HeapPointerArray(arrayOf(frame.imageAvailableFence)), true, Long.MAX_VALUE)
+        vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.renderFinishedFence)))
 
-        vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.fence)))
         val retCode = vkQueueSubmit(logicalDeviceQueues.graphicsQueue, arrayOf(VkSubmitInfo().apply {
             waitSemaphores = HeapPointerArray(arrayOf(frame.imageAvailableSemaphore))
             waitDstStageMask = HeapIntArray(intArrayOf(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT))
             signalSemaphores = HeapPointerArray(arrayOf(frame.renderFinishedSemaphore))
             commandBuffers = HeapPointerArray(arrayOf(swapchainCommandBuffers[imageIdx]))
         }
-        ).toCStructArray(VkSubmitInfo.LAYOUT), frame.fence)
+        ).toCStructArray(VkSubmitInfo.LAYOUT), frame.renderFinishedFence)
         if (retCode != VK_SUCCESS) {
-            vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.fence)))
             throw IllegalStateException()
         }
+        vkWaitForFences(logicalDevice(), HeapPointerArray(arrayOf(frame.renderFinishedFence)), true, Long.MAX_VALUE)
 
         val result = vkQueuePresentKHR(
             logicalDeviceQueues.presentQueue,
@@ -613,14 +603,11 @@ class BackendRendererVk(
             }
         )
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window.resizing()) {
+            println("retart")
             window.resetState()
             reinit()
         } else if (result != VK_SUCCESS) {
             throw IllegalStateException()
         }
-
-        vkQueueWaitIdle(logicalDeviceQueues.presentQueue)
-
-        // currentFrame = (currentFrame + 1) % MaxInFlightFrames
     }
 }
