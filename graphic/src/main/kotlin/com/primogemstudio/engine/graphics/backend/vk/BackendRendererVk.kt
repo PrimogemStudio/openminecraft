@@ -261,11 +261,12 @@ class BackendRendererVk(
     }
 
     override fun reinit() {
+        window.resetState()
         vkDeviceWaitIdle(logicalDevice())
 
         swapchain.reinit()
 
-        shaderProgs.forEach { runBlocking { linkShader(it.key, it.value).await() } }
+        shaderProgs.forEach { runBlocking { linkShader(it.key, it.value).join() } }
 
         renderPasses.values.forEach { vkDestroyRenderPass(logicalDevice(), it, null) }
         val target = renderPasses.map { it.key }.toTypedArray()
@@ -359,7 +360,6 @@ class BackendRendererVk(
 
     override fun createPipeline(pipeId: Identifier, progId: Identifier, passId: Identifier) {
         pipelineCreationData[pipeId] = Pair(progId, passId)
-        println(shaderProgs)
         val shaderModules = shaderProgs[progId]!!
             .map { Pair(shaders[it], it) }
             .map {
@@ -564,6 +564,11 @@ class BackendRendererVk(
 
     fun render() {
         val frame = imageSyncObjects[0]
+
+        frameSubmit(frame).apply { if (this != -1) framePresent(frame, this) }
+    }
+
+    private fun frameSubmit(frame: FrameDataVk): Int {
         vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.imageAvailableFence)))
 
         val imageIdx = vkAcquireNextImageKHR(
@@ -575,11 +580,16 @@ class BackendRendererVk(
         ).match({ it }, {
             if (it == VK_ERROR_OUT_OF_DATE_KHR || it == VK_SUBOPTIMAL_KHR) {
                 this.reinit()
-                return@render
+                return@frameSubmit -1
             } else throw IllegalStateException()
         })
 
         vkWaitForFences(logicalDevice(), HeapPointerArray(arrayOf(frame.imageAvailableFence)), true, Long.MAX_VALUE)
+
+        return imageIdx
+    }
+
+    private fun framePresent(frame: FrameDataVk, imageIdx: Int) {
         vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.renderFinishedFence)))
 
         val retCode = vkQueueSubmit(logicalDeviceQueues.graphicsQueue, arrayOf(VkSubmitInfo().apply {
@@ -603,7 +613,6 @@ class BackendRendererVk(
             }
         )
         if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || window.resizing()) {
-            window.resetState()
             reinit()
         } else if (result != VK_SUCCESS) {
             throw IllegalStateException()
