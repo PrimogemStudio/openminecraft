@@ -41,5 +41,5 @@ while (true) {
     val typen = remap(args[0][1])
     val ar = args.subList(1, args.size).map { "${it[0]}: ${remap(it[1])}" }.joinToString(", ")
     val call = args.subList(1, args.size).map { it[0] }.joinToString(", ")
-    if (typen == "") println("fun $funname(${ar}) = callVoidFunc(\"$funname\", $call)") else println("fun $funname(${ar}): $typen = callFunc(\"$funname\", $typen::class, $call)")
+    if (typen == "") println("fun $funname(${ar}) = callVoidFunc(\"$funname\", $call)") else println("fun $funname(${ar}): $typen = $typen(callPointerFunc(\"$funname\", $call))")
 }
