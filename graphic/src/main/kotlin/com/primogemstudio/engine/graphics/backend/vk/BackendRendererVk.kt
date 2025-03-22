@@ -25,6 +25,7 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONE
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONENT_G_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COLOR_COMPONENT_R_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COMMAND_BUFFER_LEVEL_PRIMARY
+import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_CULL_MODE_BACK_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_FENCE_CREATE_SIGNALED_BIT
 import com.primogemstudio.engine.bindings.vulkan.vk10.Vk10Funcs.VK_FORMAT_R32G32B32_SFLOAT
@@ -537,7 +538,9 @@ class BackendRendererVk(
                 color = VkClearColorValue().apply { data = Vector4f(0f) }
             }).toCStructArray(VkClearValue.LAYOUT)
         }
-        val beginInfo = VkCommandBufferBeginInfo()
+        val beginInfo = VkCommandBufferBeginInfo().apply {
+            flag = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT
+        }
 
         for (i in commandBuffers.indices) {
             passBeginInfo.framebuffer = swapchainFramebuffers[i]
