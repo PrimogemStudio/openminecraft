@@ -119,10 +119,6 @@ class BackendRendererVk(
     val deviceSelector: (Array<VkPhysicalDevice>) -> VkPhysicalDevice,
     val layerEnabler: (Array<String>) -> Array<String>
 ) : IRenderer, IReinitable {
-    companion object {
-        const val MaxInFlightFrames = 2
-    }
-
     private val logger = LoggerFactory.getAsyncLogger()
     private val compiler = ShaderCompilerVk(this)
     private val shaders = mutableMapOf<Identifier, HeapByteArray>()
@@ -212,7 +208,8 @@ class BackendRendererVk(
 
         val sc = VkSemaphoreCreateInfo()
         val fc = VkFenceCreateInfo().apply { flag = VK_FENCE_CREATE_SIGNALED_BIT }
-        for (i in 0..<MaxInFlightFrames) {
+
+        swapchain.swapchainImages.indices.forEach {
             imageSyncObjects.add(
                 FrameDataVk(
                     vkCreateSemaphore(logicalDevice(), sc, null).match({ it }, { throw IllegalStateException() }),
@@ -562,17 +559,21 @@ class BackendRendererVk(
         swapchainCommandBuffers.addAll(commandBuffers)
     }
 
-    fun render() {
-        val frame = imageSyncObjects[0]
+    private var imageIndex = 0
 
+    fun render() {
+        val frame = imageSyncObjects[imageIndex]
+
+        frameImageAcquireWait(frame)
         frameImageAcquire(frame).apply {
-            frameImageAcquireWait(frame)
             if (this != -1) {
-                frameSubmit(frame, this)
                 frameSubmitWait(frame)
+                frameSubmit(frame, this)
                 framePresent(frame, this)
             }
         }
+
+        imageIndex = (imageIndex + 1) % swapchain.swapchainImages.size
     }
 
     private fun frameImageAcquire(frame: FrameDataVk): Int {
@@ -591,8 +592,6 @@ class BackendRendererVk(
             } else throw IllegalStateException()
         })
 
-        vkWaitForFences(logicalDevice(), HeapPointerArray(arrayOf(frame.imageAvailableFence)), true, Long.MAX_VALUE)
-
         return imageIdx
     }
 
@@ -603,13 +602,16 @@ class BackendRendererVk(
     private fun frameSubmit(frame: FrameDataVk, imageIdx: Int) {
         vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.renderFinishedFence)))
 
-        val retCode = vkQueueSubmit(logicalDeviceQueues.graphicsQueue, arrayOf(VkSubmitInfo().apply {
-            waitSemaphores = HeapPointerArray(arrayOf(frame.imageAvailableSemaphore))
-            waitDstStageMask = HeapIntArray(intArrayOf(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT))
-            signalSemaphores = HeapPointerArray(arrayOf(frame.renderFinishedSemaphore))
-            commandBuffers = HeapPointerArray(arrayOf(swapchainCommandBuffers[imageIdx]))
-        }
-        ).toCStructArray(VkSubmitInfo.LAYOUT), frame.renderFinishedFence)
+        val retCode = vkQueueSubmit(
+            logicalDeviceQueues.graphicsQueue,
+            arrayOf(VkSubmitInfo().apply {
+                waitSemaphores = HeapPointerArray(arrayOf(frame.imageAvailableSemaphore))
+                waitDstStageMask = HeapIntArray(intArrayOf(VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT))
+                signalSemaphores = HeapPointerArray(arrayOf(frame.renderFinishedSemaphore))
+                commandBuffers = HeapPointerArray(arrayOf(swapchainCommandBuffers[imageIdx]))
+            }).toCStructArray(VkSubmitInfo.LAYOUT),
+            frame.renderFinishedFence
+        )
         if (retCode != VK_SUCCESS) {
             throw IllegalStateException()
         }
