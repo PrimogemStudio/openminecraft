@@ -10,6 +10,7 @@ import com.primogemstudio.engine.foreign.heap.HeapInt
 import com.primogemstudio.engine.foreign.heap.HeapPointerArray
 import com.primogemstudio.engine.foreign.heap.HeapStructArray
 import com.primogemstudio.engine.foreign.heap.IHeapObject
+import com.primogemstudio.engine.foreign.unbox
 import com.primogemstudio.engine.types.Result
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
@@ -53,7 +54,7 @@ object VkSwapchainKHRFuncs {
             allocator?.ref() ?: MemorySegment.NULL,
             seg
         )
-        return if (retCode == VK_SUCCESS) Result.success(VkSwapchainKHR(seg.get(ADDRESS, 0))) else Result.fail(retCode)
+        return if (retCode == VK_SUCCESS) Result.success(VkSwapchainKHR(seg.unbox())) else Result.fail(retCode)
     }
 
     fun vkDestroySwapchainKHR(device: VkDevice, swapchain: VkSwapchainKHR, allocator: VkAllocationCallbacks?) =

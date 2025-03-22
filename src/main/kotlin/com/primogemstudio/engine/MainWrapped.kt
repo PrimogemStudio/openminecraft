@@ -1,5 +1,8 @@
 package com.primogemstudio.engine
 
+import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_Done_FreeType
+import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_Init_FreeType
+import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_New_Face
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwPollEvents
 import com.primogemstudio.engine.bindings.glfw.GLFWWindowFuncs.glfwWindowShouldClose
 import com.primogemstudio.engine.graphics.ShaderType
@@ -13,6 +16,11 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 suspend fun main() {
+    val lib = FT_Init_FreeType()
+    val r = FT_New_Face(lib, "/usr/share/fonts/StarRailFont.ttf", 0)
+    println(r.numFaces)
+    FT_Done_FreeType(lib)
+
     val re = BackendRendererVk(
         ApplicationInfo(
             "openminecraft",

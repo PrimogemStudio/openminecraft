@@ -44,6 +44,8 @@ fun Array<String>.toCStrArray(): MemorySegment {
     }
 }
 
+fun MemorySegment.unbox(): MemorySegment = this.get(ADDRESS, 0)
+fun MemorySegment.unbox(layout: MemoryLayout): MemorySegment = this.get(ADDRESS, 0).reinterpret(layout.byteSize())
 fun MemorySegment.toPointerArray(length: Int): Array<MemorySegment> =
     HeapPointerArray<IHeapObject>(length, this.reinterpret(length * sizetLength() * 1L), null).value()
 

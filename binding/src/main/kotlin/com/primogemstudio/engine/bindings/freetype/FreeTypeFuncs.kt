@@ -6,12 +6,13 @@ import com.primogemstudio.engine.foreign.heap.HeapInt
 import com.primogemstudio.engine.foreign.heap.HeapStructArray
 import com.primogemstudio.engine.foreign.heap.IHeapObject
 import com.primogemstudio.engine.foreign.toCString
+import com.primogemstudio.engine.foreign.unbox
 import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
 
 class FT_Library(data: MemorySegment) : IHeapObject(data)
-class FT_Face(data: MemorySegment) : IHeapObject(data)
+class FT_Module(data: MemorySegment) : IHeapObject(data)
 
 object FreeTypeFuncs {
     const val FT_FACE_FLAG_SCALABLE = 1L.shl(0)
@@ -37,10 +38,16 @@ object FreeTypeFuncs {
     const val FT_STYLE_FLAG_ITALIC = 1
     const val FT_STYLE_FLAG_BOLD = 2
 
+    const val FT_OPEN_MEMORY = 0x1
+    const val FT_OPEN_STREAM = 0x2
+    const val FT_OPEN_PATHNAME = 0x4
+    const val FT_OPEN_DRIVER = 0x8
+    const val FT_OPEN_PARAMS = 0x10
+
     fun FT_Init_FreeType(): FT_Library {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         callVoidFunc("FT_Init_FreeType", seg)
-        return FT_Library(seg.get(ADDRESS, 0))
+        return FT_Library(seg.unbox())
     }
 
     fun FT_Done_FreeType(library: FT_Library) = callVoidFunc("FT_Done_FreeType", library)
@@ -50,7 +57,7 @@ object FreeTypeFuncs {
     fun FT_New_Face(library: FT_Library, filepath: String, index: Long): FT_Face {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         callVoidFunc("FT_New_Face", library, filepath.toCString(), index, seg)
-        return FT_Face(seg.get(ADDRESS, 0))
+        return FT_Face(seg.unbox(FT_Face.LAYOUT))
     }
 
     fun FT_Done_Face(face: FT_Face) = callVoidFunc("FT_Done_Face", face)
@@ -58,7 +65,7 @@ object FreeTypeFuncs {
     fun FT_New_Memory_Face(library: FT_Library, file: HeapByte, size: Long, index: Long): FT_Face {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         callVoidFunc("FT_New_Memory_Face", library, file, size, index, seg)
-        return FT_Face(seg.get(ADDRESS, 0))
+        return FT_Face(seg.unbox(FT_Face.LAYOUT))
     }
 
     fun FT_Face_Properties(face: FT_Face, properties: HeapStructArray<FT_Parameter>) = callVoidFunc(
@@ -68,5 +75,13 @@ object FreeTypeFuncs {
         properties
     )
 
+    fun FT_Open_Face(library: FT_Library, args: FT_Open_Args, index: Long): FT_Face {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        callVoidFunc("FT_Open_Face", library, args, index, seg)
+        return FT_Face(seg.unbox(FT_Face.LAYOUT))
+    }
+
+    fun FT_Attach_File(face: FT_Face, filepath: String) = callVoidFunc("FT_Attach_File", face, filepath.toCString())
+    fun FT_Attach_Stream(file: FT_Face, parameters: FT_Open_Args) = callVoidFunc("FT_Attach_Stream", file, parameters)
 
 }
