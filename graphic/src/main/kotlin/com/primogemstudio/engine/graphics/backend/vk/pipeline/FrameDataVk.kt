@@ -6,6 +6,6 @@ import com.primogemstudio.engine.bindings.vulkan.vk10.VkSemaphore
 data class FrameDataVk(
     val imageAvailableSemaphore: VkSemaphore,
     val renderFinishedSemaphore: VkSemaphore,
-    val renderFinishedFence: VkFence,
+    val finishFinishedFence: VkFence,
     val imageAvailableFence: VkFence,
 )
