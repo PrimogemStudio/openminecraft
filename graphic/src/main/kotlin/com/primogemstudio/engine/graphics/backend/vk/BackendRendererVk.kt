@@ -565,10 +565,17 @@ class BackendRendererVk(
     fun render() {
         val frame = imageSyncObjects[0]
 
-        frameSubmit(frame).apply { if (this != -1) framePresent(frame, this) }
+        frameImageAcquire(frame).apply {
+            frameImageAcquireWait(frame)
+            if (this != -1) {
+                frameSubmit(frame, this)
+                frameSubmitWait(frame)
+                framePresent(frame, this)
+            }
+        }
     }
 
-    private fun frameSubmit(frame: FrameDataVk): Int {
+    private fun frameImageAcquire(frame: FrameDataVk): Int {
         vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.imageAvailableFence)))
 
         val imageIdx = vkAcquireNextImageKHR(
@@ -580,7 +587,7 @@ class BackendRendererVk(
         ).match({ it }, {
             if (it == VK_ERROR_OUT_OF_DATE_KHR || it == VK_SUBOPTIMAL_KHR) {
                 this.reinit()
-                return@frameSubmit -1
+                return@frameImageAcquire -1
             } else throw IllegalStateException()
         })
 
@@ -589,7 +596,11 @@ class BackendRendererVk(
         return imageIdx
     }
 
-    private fun framePresent(frame: FrameDataVk, imageIdx: Int) {
+    private fun frameImageAcquireWait(frame: FrameDataVk) {
+        vkWaitForFences(logicalDevice(), HeapPointerArray(arrayOf(frame.imageAvailableFence)), true, Long.MAX_VALUE)
+    }
+
+    private fun frameSubmit(frame: FrameDataVk, imageIdx: Int) {
         vkResetFences(logicalDevice(), HeapPointerArray(arrayOf(frame.renderFinishedFence)))
 
         val retCode = vkQueueSubmit(logicalDeviceQueues.graphicsQueue, arrayOf(VkSubmitInfo().apply {
@@ -602,8 +613,13 @@ class BackendRendererVk(
         if (retCode != VK_SUCCESS) {
             throw IllegalStateException()
         }
-        vkWaitForFences(logicalDevice(), HeapPointerArray(arrayOf(frame.renderFinishedFence)), true, Long.MAX_VALUE)
+    }
 
+    private fun frameSubmitWait(frame: FrameDataVk) {
+        vkWaitForFences(logicalDevice(), HeapPointerArray(arrayOf(frame.renderFinishedFence)), true, Long.MAX_VALUE)
+    }
+
+    private fun framePresent(frame: FrameDataVk, imageIdx: Int) {
         val result = vkQueuePresentKHR(
             logicalDeviceQueues.presentQueue,
             VkPresentInfoKHR().apply {
