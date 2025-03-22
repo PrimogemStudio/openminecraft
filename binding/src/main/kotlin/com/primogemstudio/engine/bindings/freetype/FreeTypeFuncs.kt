@@ -1,7 +1,9 @@
 package com.primogemstudio.engine.bindings.freetype
 
 import com.primogemstudio.engine.foreign.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.foreign.heap.HeapByte
 import com.primogemstudio.engine.foreign.heap.HeapInt
+import com.primogemstudio.engine.foreign.heap.HeapStructArray
 import com.primogemstudio.engine.foreign.heap.IHeapObject
 import com.primogemstudio.engine.foreign.toCString
 import java.lang.foreign.Arena
@@ -50,4 +52,21 @@ object FreeTypeFuncs {
         callVoidFunc("FT_New_Face", library, filepath.toCString(), index, seg)
         return FT_Face(seg.get(ADDRESS, 0))
     }
+
+    fun FT_Done_Face(face: FT_Face) = callVoidFunc("FT_Done_Face", face)
+    fun FT_Reference_Face(face: FT_Face) = callVoidFunc("FT_Reference_Face", face)
+    fun FT_New_Memory_Face(library: FT_Library, file: HeapByte, size: Long, index: Long): FT_Face {
+        val seg = Arena.ofAuto().allocate(ADDRESS)
+        callVoidFunc("FT_New_Memory_Face", library, file, size, index, seg)
+        return FT_Face(seg.get(ADDRESS, 0))
+    }
+
+    fun FT_Face_Properties(face: FT_Face, properties: HeapStructArray<FT_Parameter>) = callVoidFunc(
+        "FT_Face_Properties",
+        face,
+        properties.length,
+        properties
+    )
+
+
 }
