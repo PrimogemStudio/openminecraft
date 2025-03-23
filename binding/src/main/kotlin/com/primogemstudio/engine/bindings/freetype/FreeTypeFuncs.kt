@@ -259,4 +259,9 @@ object FreeTypeFuncs {
 
     fun FT_Request_Size(face: FT_Face, size: FT_Size_Request): Int = callFunc("FT_Request_Size", Int::class, face, size)
     fun FT_Select_Size(face: FT_Face, strikeIndex: Int): Int = callFunc("FT_Select_Size", Int::class, face, strikeIndex)
+    fun FT_Set_Transform(face: FT_Face, matrix: FT_Matrix, delta: FT_Vector) =
+        callVoidFunc("FT_Set_Transform", face, matrix, delta)
+
+    fun FT_Get_Transform(face: FT_Face, matrix: FT_Matrix, delta: FT_Vector) =
+        callVoidFunc("FT_Get_Transform", face, matrix, delta)
 }
