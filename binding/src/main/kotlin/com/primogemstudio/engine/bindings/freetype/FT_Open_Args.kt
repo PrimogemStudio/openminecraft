@@ -11,20 +11,23 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
+import java.lang.foreign.ValueLayout.ADDRESS_UNALIGNED
 import java.lang.foreign.ValueLayout.JAVA_INT
+import java.lang.foreign.ValueLayout.JAVA_INT_UNALIGNED
 import java.lang.foreign.ValueLayout.JAVA_LONG
+import java.lang.foreign.ValueLayout.JAVA_LONG_UNALIGNED
 
 class FT_Open_Args(private val seg: MemorySegment) : IHeapObject(seg) {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(
-            JAVA_INT,
-            ADDRESS,
-            JAVA_LONG,
-            ADDRESS,
-            ADDRESS,
-            ADDRESS,
-            JAVA_INT,
-            ADDRESS
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_LONG_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            JAVA_INT_UNALIGNED,
+            ADDRESS_UNALIGNED
         ).align()
         private val OFFSETS = LAYOUT.cacheOffsets()
     }
@@ -47,7 +50,7 @@ class FT_Open_Args(private val seg: MemorySegment) : IHeapObject(seg) {
         get() = seg.get(ADDRESS, OFFSETS[3]).fetchString()
         set(value) = seg.set(ADDRESS, OFFSETS[3], value.toCString())
     var stream: FT_Stream
-        get() = FT_Stream(seg.get(ADDRESS, OFFSETS[4]))
+        get() = FT_Stream(seg.get(ADDRESS, OFFSETS[4]).reinterpret(FT_Stream.LAYOUT.byteSize()))
         set(value) = seg.set(ADDRESS, OFFSETS[4], value.ref())
     var driver: FT_Module
         get() = FT_Module(seg.get(ADDRESS, OFFSETS[5]))

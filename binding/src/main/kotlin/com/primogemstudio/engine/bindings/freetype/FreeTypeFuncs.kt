@@ -11,6 +11,8 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
 
+typealias FT_Pos = Long
+
 class FT_Library(data: MemorySegment) : IHeapObject(data)
 class FT_Module(data: MemorySegment) : IHeapObject(data)
 
@@ -43,6 +45,30 @@ object FreeTypeFuncs {
     const val FT_OPEN_PATHNAME = 0x4
     const val FT_OPEN_DRIVER = 0x8
     const val FT_OPEN_PARAMS = 0x10
+
+    const val FT_ENCODE_NONE = 0
+    val FT_ENCODING_MS_SYMBOL = FT_ENC_TAG('s', 'y', 'm', 'b')
+    val FT_ENCODING_UNICODE = FT_ENC_TAG('u', 'n', 'i', 'c')
+    val FT_ENCODING_SJIS = FT_ENC_TAG('s', 'j', 'i', 's')
+    val FT_ENCODING_PRC = FT_ENC_TAG('g', 'b', 0.toChar(), 0.toChar())
+    val FT_ENCODING_BIG5 = FT_ENC_TAG('b', 'i', 'g', '5')
+    val FT_ENCODING_WANSUNG = FT_ENC_TAG('w', 'a', 'n', 's')
+    val FT_ENCODING_JOHAB = FT_ENC_TAG('j', 'o', 'h', 'a')
+    val FT_ENCODING_GB2312 = FT_ENCODING_PRC
+    val FT_ENCODING_MS_SJIS = FT_ENCODING_SJIS
+    val FT_ENCODING_MS_GB2312 = FT_ENCODING_PRC
+    val FT_ENCODING_MS_BIG5 = FT_ENCODING_BIG5
+    val FT_ENCODING_MS_WANSUNG = FT_ENCODING_WANSUNG
+    val FT_ENCODING_MS_JOHAB = FT_ENCODING_JOHAB
+    val FT_ENCODING_ADOBE_STANDARD = FT_ENC_TAG('A', 'D', 'O', 'B')
+    val FT_ENCODING_ADOBE_EXPERT = FT_ENC_TAG('A', 'D', 'B', 'E')
+    val FT_ENCODING_ADOBE_CUSTOM = FT_ENC_TAG('A', 'D', 'B', 'C')
+    val FT_ENCODING_ADOBE_LATIN_1 = FT_ENC_TAG('l', 'a', 't', '1')
+    val FT_ENCODING_OLD_LATIN_2 = FT_ENC_TAG('l', 'a', 't', '2')
+    val FT_ENCODING_APPLE_ROMAN = FT_ENC_TAG('a', 'r', 'm', 'n')
+
+    fun FT_ENC_TAG(a: Char, b: Char, c: Char, d: Char): Int =
+        a.code.shl(24).and(b.code.shl(16).and(c.code.shl(8).and(d.code)))
 
     fun FT_Init_FreeType(): FT_Library {
         val seg = Arena.ofAuto().allocate(ADDRESS)

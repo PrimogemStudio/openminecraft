@@ -5,13 +5,15 @@ import java.lang.foreign.Arena
 import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
+import java.lang.foreign.ValueLayout.ADDRESS_UNALIGNED
 import java.lang.foreign.ValueLayout.JAVA_LONG
+import java.lang.foreign.ValueLayout.JAVA_LONG_UNALIGNED
 
 class FT_Stream(private val seg: MemorySegment) : IHeapObject(seg) {
     companion object {
         val LAYOUT = MemoryLayout.unionLayout(
-            JAVA_LONG,
-            ADDRESS
+            JAVA_LONG_UNALIGNED,
+            ADDRESS_UNALIGNED
         )
     }
 

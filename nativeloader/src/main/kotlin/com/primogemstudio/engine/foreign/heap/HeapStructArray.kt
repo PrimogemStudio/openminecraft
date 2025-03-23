@@ -21,8 +21,10 @@ class HeapStructArray<T : IHeapVar<*>>(
         layout
     )
 
-    operator fun get(idx: Int): MemorySegment = seg.asSlice(layout.byteSize() * idx, layout.byteSize())
+    operator fun get(idx: Int): MemorySegment =
+        seg.reinterpret(layout.byteSize() * length).asSlice(layout.byteSize() * idx, layout.byteSize())
     operator fun set(idx: Int, data: IHeapVar<*>) {
-        seg.asSlice(layout.byteSize() * idx, layout.byteSize()).copyFrom(data.ref())
+        seg.reinterpret(layout.byteSize() * length).asSlice(layout.byteSize() * idx, layout.byteSize())
+            .copyFrom(data.ref())
     }
 }

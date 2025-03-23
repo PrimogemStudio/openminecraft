@@ -1,5 +1,6 @@
 package com.primogemstudio.engine
 
+import com.primogemstudio.engine.bindings.freetype.FT_CharMap
 import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_Done_FreeType
 import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_Init_FreeType
 import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_New_Face
@@ -18,7 +19,8 @@ import java.nio.ByteOrder
 suspend fun main() {
     val lib = FT_Init_FreeType()
     val r = FT_New_Face(lib, "/usr/share/fonts/StarRailFont.ttf", 0)
-    println(r.numFaces)
+    val cmps = r.charmaps.value().map { FT_CharMap(it.reinterpret(FT_CharMap.LAYOUT.byteSize())) }
+    println(cmps)
     FT_Done_FreeType(lib)
 
     val re = BackendRendererVk(

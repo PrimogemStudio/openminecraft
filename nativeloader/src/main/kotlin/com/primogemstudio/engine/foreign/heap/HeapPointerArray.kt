@@ -32,7 +32,12 @@ class HeapPointerArray<T : IHeapVar<*>>(
     override fun ref(): MemorySegment = seg
     override fun value(): Array<MemorySegment> = (0..<length).map { getRaw(it) }.toTypedArray()
 
-    private fun getRaw(idx: Int): MemorySegment = seg.get(ADDRESS, sizetLength() * 1L * idx)
-    operator fun get(idx: Int): T? = constructor?.invoke(seg.get(ADDRESS, sizetLength() * 1L * idx))
-    operator fun set(idx: Int, value: T) = seg.set(ADDRESS, sizetLength() * 1L * idx, value.ref())
+    private fun getRaw(idx: Int): MemorySegment =
+        seg.reinterpret(sizetLength() * length * 1L).get(ADDRESS, sizetLength() * 1L * idx)
+
+    operator fun get(idx: Int): T? =
+        constructor?.invoke(seg.reinterpret(sizetLength() * length * 1L).get(ADDRESS, sizetLength() * 1L * idx))
+
+    operator fun set(idx: Int, value: T) =
+        seg.reinterpret(sizetLength() * length * 1L).set(ADDRESS, sizetLength() * 1L * idx, value.ref())
 }
