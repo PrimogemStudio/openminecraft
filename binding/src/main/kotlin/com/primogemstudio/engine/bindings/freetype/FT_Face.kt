@@ -43,6 +43,8 @@ class FT_Face(private val seg: MemorySegment) : IHeapObject(seg) {
             JAVA_SHORT_UNALIGNED,
             JAVA_SHORT_UNALIGNED,
             JAVA_SHORT_UNALIGNED,
+            ADDRESS_UNALIGNED,
+            ADDRESS_UNALIGNED,
             ADDRESS_UNALIGNED
         ).align()
         private val OFFSETS = LAYOUT.cacheOffsets()
@@ -127,8 +129,10 @@ class FT_Face(private val seg: MemorySegment) : IHeapObject(seg) {
     var glyph: FT_GlyphSlot
         get() = FT_GlyphSlot(seg.get(ADDRESS, OFFSETS[21]).reinterpret(FT_GlyphSlot.LAYOUT.byteSize()))
         set(value) = seg.set(ADDRESS, OFFSETS[21], value.ref())
-
-    /*
-    FT_Size           size;
-    FT_CharMap        charmap;*/
+    var size: FT_Size
+        get() = FT_Size(seg.get(ADDRESS, OFFSETS[22]).reinterpret(FT_Size.LAYOUT.byteSize()))
+        set(value) = seg.set(ADDRESS, OFFSETS[22], value.ref())
+    var charmap: FT_CharMap
+        get() = FT_CharMap(seg.get(ADDRESS, OFFSETS[23]).reinterpret(FT_CharMap.LAYOUT.byteSize()))
+        set(value) = seg.set(ADDRESS, OFFSETS[23], value.ref())
 }
