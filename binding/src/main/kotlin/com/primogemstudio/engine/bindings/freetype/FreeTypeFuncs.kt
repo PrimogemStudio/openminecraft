@@ -400,5 +400,8 @@ object FreeTypeFuncs {
     fun FT_Face_GetCharsOfVariant(face: FT_Face, variantSelector: Long): HeapIntArray =
         HeapIntArray(Int.MAX_VALUE, callFunc("FT_Face_GetCharsOfVariant", MemorySegment::class, face, variantSelector))
 
-
+    // Glyph Color Management
+    // Glyph Layer Management
+    // Glyph Management
+    // Size Management
 }
