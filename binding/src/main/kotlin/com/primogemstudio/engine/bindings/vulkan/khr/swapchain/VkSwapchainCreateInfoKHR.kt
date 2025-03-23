@@ -12,7 +12,6 @@ import java.lang.foreign.MemoryLayout
 import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.*
 
-// TODO Complete structure
 class VkSwapchainCreateInfoKHR(private val seg: MemorySegment) : IHeapObject(seg) {
     companion object {
         val LAYOUT = MemoryLayout.structLayout(

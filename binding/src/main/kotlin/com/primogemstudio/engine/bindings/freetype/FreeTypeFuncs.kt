@@ -1,9 +1,13 @@
 package com.primogemstudio.engine.bindings.freetype
 
 import com.primogemstudio.engine.foreign.NativeMethodCache.callFunc
+import com.primogemstudio.engine.foreign.NativeMethodCache.callPointerFunc
 import com.primogemstudio.engine.foreign.NativeMethodCache.callVoidFunc
+import com.primogemstudio.engine.foreign.fetchString
 import com.primogemstudio.engine.foreign.heap.HeapByte
 import com.primogemstudio.engine.foreign.heap.HeapInt
+import com.primogemstudio.engine.foreign.heap.HeapIntArray
+import com.primogemstudio.engine.foreign.heap.HeapLong
 import com.primogemstudio.engine.foreign.heap.HeapStructArray
 import com.primogemstudio.engine.foreign.heap.IHeapObject
 import com.primogemstudio.engine.foreign.toCString
@@ -16,6 +20,7 @@ import java.lang.foreign.ValueLayout.ADDRESS
 typealias FT_Pos = Long
 typealias FT_Fixed = Long
 typealias FT_F26Dot6 = Long
+typealias FT_F2Dot14 = Short
 
 class FT_Library(data: MemorySegment) : IHeapObject(data)
 class FT_Module(data: MemorySegment) : IHeapObject(data)
@@ -219,6 +224,25 @@ object FreeTypeFuncs {
     val FT_LOAD_TARGET_LCD = FT_LOAD_TARGET_(FT_RENDER_MODE_LCD)
     val FT_LOAD_TARGET_LCD_V = FT_LOAD_TARGET_(FT_RENDER_MODE_LCD_V)
 
+    const val FT_KERNING_DEFAULT = 0
+    const val FT_KERNING_UNFITTED = 1
+    const val FT_KERNING_UNSCALED = 2
+
+    const val FT_FSTYPE_INSTALLABLE_EMBEDDING = 0x0000
+    const val FT_FSTYPE_RESTRICTED_LICENSE_EMBEDDING = 0x0002
+    const val FT_FSTYPE_PREVIEW_AND_PRINT_EMBEDDING = 0x0004
+    const val FT_FSTYPE_EDITABLE_EMBEDDING = 0x0008
+    const val FT_FSTYPE_NO_SUBSETTING = 0x0100
+    const val FT_FSTYPE_BITMAP_EMBEDDING_ONLY = 0x0200
+
+    const val FT_SUBGLYPH_FLAG_ARGS_ARE_WORDS = 1
+    const val FT_SUBGLYPH_FLAG_ARGS_ARE_XY_VALUES = 2
+    const val FT_SUBGLYPH_FLAG_ROUND_XY_TO_GRID = 4
+    const val FT_SUBGLYPH_FLAG_SCALE = 8
+    const val FT_SUBGLYPH_FLAG_XY_SCALE = 0x40
+    const val FT_SUBGLYPH_FLAG_2X2 = 0x80
+    const val FT_SUBGLYPH_FLAG_USE_MY_METRICS = 0x200
+
     fun FT_ENC_TAG(a: Char, b: Char, c: Char, d: Char): Int =
         a.code.shl(24).and(b.code.shl(16).and(c.code.shl(8).and(d.code)))
     fun FT_IMAGE_TAG(a: Char, b: Char, c: Char, d: Char): Long =
@@ -227,7 +251,7 @@ object FreeTypeFuncs {
     fun FT_Init_FreeType(): Result<FT_Library, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("FT_Init_FreeType", Int::class, seg)
-        return if (retCode == 0) Result.success(FT_Library(seg.unbox())) else Result.fail(retCode)
+        return if (retCode == FT_ERROR_OK) Result.success(FT_Library(seg.unbox())) else Result.fail(retCode)
     }
 
     fun FT_Done_FreeType(library: FT_Library): Int = callFunc("FT_Done_FreeType", Int::class, library)
@@ -237,7 +261,7 @@ object FreeTypeFuncs {
     fun FT_New_Face(library: FT_Library, filepath: String, index: Long): Result<FT_Face, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("FT_New_Face", Int::class, library, filepath.toCString(), index, seg)
-        return if (retCode == 0) Result.success(FT_Face(seg.unbox(FT_Face.LAYOUT))) else Result.fail(retCode)
+        return if (retCode == FT_ERROR_OK) Result.success(FT_Face(seg.unbox(FT_Face.LAYOUT))) else Result.fail(retCode)
     }
 
     fun FT_Done_Face(face: FT_Face): Int = callFunc("FT_Done_Face", Int::class, face)
@@ -245,7 +269,7 @@ object FreeTypeFuncs {
     fun FT_New_Memory_Face(library: FT_Library, file: HeapByte, size: Long, index: Long): Result<FT_Face, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("FT_New_Memory_Face", Int::class, library, file, size, index, seg)
-        return if (retCode == 0) Result.success(FT_Face(seg.unbox(FT_Face.LAYOUT))) else Result.fail(retCode)
+        return if (retCode == FT_ERROR_OK) Result.success(FT_Face(seg.unbox(FT_Face.LAYOUT))) else Result.fail(retCode)
     }
 
     fun FT_Face_Properties(face: FT_Face, properties: HeapStructArray<FT_Parameter>): Int = callFunc(
@@ -259,7 +283,7 @@ object FreeTypeFuncs {
     fun FT_Open_Face(library: FT_Library, args: FT_Open_Args, index: Long): Result<FT_Face, Int> {
         val seg = Arena.ofAuto().allocate(ADDRESS)
         val retCode = callFunc("FT_Open_Face", Int::class, library, args, index, seg)
-        return if (retCode == 0) Result.success(FT_Face(seg.unbox(FT_Face.LAYOUT))) else Result.fail(retCode)
+        return if (retCode == FT_ERROR_OK) Result.success(FT_Face(seg.unbox(FT_Face.LAYOUT))) else Result.fail(retCode)
     }
 
     fun FT_Attach_File(face: FT_Face, filepath: String): Int =
@@ -307,4 +331,74 @@ object FreeTypeFuncs {
     fun FT_LOAD_TARGET_(x: Int): Int = x.and(15).shl(16)
     fun FT_Render_Glyph(slot: FT_GlyphSlot, renderMode: Int): Int =
         callFunc("FT_Render_Glyph", Int::class, slot, renderMode)
+    fun FT_Get_Kerning(face: FT_Face, leftGlyph: Int, rightGlyph: Int, kernMode: Int): Result<FT_Vector, Int> {
+        val data = FT_Vector()
+        val retCode = callFunc("FT_Get_Kerning", Int::class, face, leftGlyph, rightGlyph, kernMode, data)
+        return if (retCode == FT_ERROR_OK) Result.success(data) else Result.fail(retCode)
+    }
+
+    fun FT_Get_Track_Kerning(face: FT_Face, pointSize: FT_Fixed, degree: Int): Result<FT_Fixed, Int> {
+        val data = HeapLong()
+        val retCode = callFunc("FT_Get_Track_Kerning", Int::class, face, pointSize, degree, data)
+        return if (retCode == FT_ERROR_OK) Result.success(data.value()) else Result.fail(retCode)
+    }
+
+    fun FT_Select_Charmap(face: FT_Face, encoding: Int): Int = callFunc("FT_Select_Charmap", Int::class, face, encoding)
+    fun FT_Set_Charmap(face: FT_Face, charmap: FT_CharMap): Int = callFunc("FT_Set_Charmap", Int::class, face, charmap)
+    fun FT_Get_Charmap_Index(charmap: FT_CharMap): Int = callFunc("FT_Get_Charmap_Index", Int::class, charmap)
+    fun FT_Get_Char_Index(face: FT_Face, charcode: Long): Int =
+        callFunc("FT_Get_Char_Index", Int::class, face, charcode)
+
+    fun FT_Get_First_Char(face: FT_Face): Pair<Int, Long> {
+        val data = HeapInt()
+        val ret = callFunc("FT_Get_First_Char", Long::class, face, data)
+        return Pair(data.value(), ret)
+    }
+
+    fun FT_Get_Next_Char(face: FT_Face, charcode: Long): Pair<Int, Long> {
+        val data = HeapInt()
+        val ret = callFunc("FT_Get_Next_Char", Long::class, face, charcode, data)
+        return Pair(data.value(), ret)
+    }
+
+    fun FT_Load_Char(face: FT_Face, charcode: Long, loadFlags: Int): Int =
+        callFunc("FT_Load_Char", Int::class, face, charcode, loadFlags)
+
+    fun FT_Get_Name_Index(face: FT_Face, name: String): Int =
+        callFunc("FT_Get_Name_Index", Int::class, face, name.toCString())
+
+    fun FT_Get_Glyph_Name(face: FT_Face, glyphIndex: Int): Result<String, Int> {
+        val seg = Arena.ofAuto().allocate(256)
+        val retCode = callFunc("FT_Get_Glyph_Name", Int::class, face, glyphIndex, seg, 256)
+        return if (retCode == FT_ERROR_OK) Result.success(seg.fetchString()) else Result.fail(retCode)
+    }
+
+    fun FT_Get_Postscript_Name(face: FT_Face): String = callPointerFunc("FT_Get_Postscript_Name", face).fetchString()
+    fun FT_Get_FSType_Flags(face: FT_Face): Short = callFunc("FT_Get_FSType_Flags", Short::class, face)
+    fun FT_Get_SubGlyph_Info(
+        glyph: FT_GlyphSlot,
+        subIndex: Int,
+        pIndex: HeapInt,
+        pFlags: HeapInt,
+        pArg1: HeapInt,
+        pArg2: HeapInt,
+        pTransform: FT_Matrix
+    ): Int = callFunc("FT_Get_SubGlyph_Info", Int::class, glyph, subIndex, pIndex, pFlags, pArg1, pArg2, pTransform)
+
+    fun FT_Face_GetCharVariantIndex(face: FT_Face, charcode: Long, variantSelector: Long): Int =
+        callFunc("FT_Face_GetCharVariantIndex", Int::class, face, charcode, variantSelector)
+
+    fun FT_Face_GetCharVariantIsDefault(face: FT_Face, charcode: Long, variantSelector: Long): Int =
+        callFunc("FT_Face_GetCharVariantIsDefault", Int::class, face, charcode, variantSelector)
+
+    fun FT_Face_GetVariantSelectors(face: FT_Face): HeapIntArray =
+        HeapIntArray(Int.MAX_VALUE, callFunc("FT_Face_GetVariantSelectors", MemorySegment::class, face))
+
+    fun FT_Face_GetVariantsOfChar(face: FT_Face, charcode: Long): HeapIntArray =
+        HeapIntArray(Int.MAX_VALUE, callFunc("FT_Face_GetVariantsOfChar", MemorySegment::class, face, charcode))
+
+    fun FT_Face_GetCharsOfVariant(face: FT_Face, variantSelector: Long): HeapIntArray =
+        HeapIntArray(Int.MAX_VALUE, callFunc("FT_Face_GetCharsOfVariant", MemorySegment::class, face, variantSelector))
+
+
 }
