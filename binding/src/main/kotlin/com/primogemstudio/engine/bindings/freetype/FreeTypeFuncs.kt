@@ -184,6 +184,41 @@ object FreeTypeFuncs {
     const val FT_ERROR_CORRUPTED_FONT_HEADER = 0xB9
     const val FT_ERROR_CORRUPTED_FONT_GLYPHS = 0xBA
 
+    const val FT_LOAD_DEFAULT = 0
+    const val FT_LOAD_NO_SCALE = 1.shl(0)
+    const val FT_LOAD_NO_HINTING = 1.shl(1)
+    const val FT_LOAD_RENDER = 1.shl(2)
+    const val FT_LOAD_NO_BITMAP = 1.shl(3)
+    const val FT_LOAD_VERTICAL_LAYOUT = 1.shl(4)
+    const val FT_LOAD_FORCE_AUTOHINT = 1.shl(5)
+    const val FT_LOAD_CROP_BITMAP = 1.shl(6)
+    const val FT_LOAD_PEDANTIC = 1.shl(7)
+    const val FT_LOAD_IGNORE_GLOBAL_ADVANCE_WIDTH = 1.shl(9)
+    const val FT_LOAD_NO_RECURSE = 1.shl(10)
+    const val FT_LOAD_IGNORE_TRANSFORM = 1.shl(11)
+    const val FT_LOAD_MONOCHROME = 1.shl(12)
+    const val FT_LOAD_LINEAR_DESIGN = 1.shl(13)
+    const val FT_LOAD_SBITS_ONLY = 1.shl(14)
+    const val FT_LOAD_NO_AUTOHINT = 1.shl(15)
+    const val FT_LOAD_COLOR = 1.shl(20)
+    const val FT_LOAD_COMPUTE_METRICS = 1.shl(21)
+    const val FT_LOAD_BITMAP_METRICS_ONLY = 1.shl(22)
+    const val FT_LOAD_NO_SVG = 1.shl(24)
+
+    const val FT_RENDER_MODE_NORMAL = 0
+    const val FT_RENDER_MODE_LIGHT = 1
+    const val FT_RENDER_MODE_MONO = 2
+    const val FT_RENDER_MODE_LCD = 3
+    const val FT_RENDER_MODE_LCD_V = 4
+    const val FT_RENDER_MODE_SDF = 5
+    const val FT_RENDER_MODE_MAX = 6
+
+    val FT_LOAD_TARGET_NORMAL = FT_LOAD_TARGET_(FT_RENDER_MODE_NORMAL)
+    val FT_LOAD_TARGET_LIGHT = FT_LOAD_TARGET_(FT_RENDER_MODE_LIGHT)
+    val FT_LOAD_TARGET_MONO = FT_LOAD_TARGET_(FT_RENDER_MODE_MONO)
+    val FT_LOAD_TARGET_LCD = FT_LOAD_TARGET_(FT_RENDER_MODE_LCD)
+    val FT_LOAD_TARGET_LCD_V = FT_LOAD_TARGET_(FT_RENDER_MODE_LCD_V)
+
     fun FT_ENC_TAG(a: Char, b: Char, c: Char, d: Char): Int =
         a.code.shl(24).and(b.code.shl(16).and(c.code.shl(8).and(d.code)))
     fun FT_IMAGE_TAG(a: Char, b: Char, c: Char, d: Char): Long =
@@ -264,4 +299,12 @@ object FreeTypeFuncs {
 
     fun FT_Get_Transform(face: FT_Face, matrix: FT_Matrix, delta: FT_Vector) =
         callVoidFunc("FT_Get_Transform", face, matrix, delta)
+
+    fun FT_Load_Glyph(face: FT_Face, glyphIndex: Int, loadFlags: Int): Int =
+        callFunc("FT_Load_Glyph", Int::class, face, glyphIndex, loadFlags)
+
+    fun FT_LOAD_TARGET_MODE(x: Int): Int = x.shr(16).and(15)
+    fun FT_LOAD_TARGET_(x: Int): Int = x.and(15).shl(16)
+    fun FT_Render_Glyph(slot: FT_GlyphSlot, renderMode: Int): Int =
+        callFunc("FT_Render_Glyph", Int::class, slot, renderMode)
 }
