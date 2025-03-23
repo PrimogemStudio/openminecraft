@@ -12,9 +12,12 @@ import java.lang.foreign.MemorySegment
 import java.lang.foreign.ValueLayout.ADDRESS
 
 typealias FT_Pos = Long
+typealias FT_Fixed = Long
 
 class FT_Library(data: MemorySegment) : IHeapObject(data)
 class FT_Module(data: MemorySegment) : IHeapObject(data)
+class FT_SubGlyph(data: MemorySegment) : IHeapObject(data)
+class FT_Slot_Internal(data: MemorySegment) : IHeapObject(data)
 
 object FreeTypeFuncs {
     const val FT_FACE_FLAG_SCALABLE = 1L.shl(0)
@@ -67,8 +70,17 @@ object FreeTypeFuncs {
     val FT_ENCODING_OLD_LATIN_2 = FT_ENC_TAG('l', 'a', 't', '2')
     val FT_ENCODING_APPLE_ROMAN = FT_ENC_TAG('a', 'r', 'm', 'n')
 
+    const val FT_GLYPH_FORMAT_NONE = 0L
+    val FT_GLYPH_FORMAT_COMPOSITE = FT_IMAGE_TAG('c', 'o', 'm', 'p')
+    val FT_GLYPH_FORMAT_BITMAP = FT_IMAGE_TAG('b', 'i', 't', 's')
+    val FT_GLYPH_FORMAT_OUTLINE = FT_IMAGE_TAG('o', 'u', 't', 'l')
+    val FT_GLYPH_FORMAT_PLOTTER = FT_IMAGE_TAG('p', 'l', 'o', 't')
+    val FT_GLYPH_FORMAT_SVG = FT_IMAGE_TAG('S', 'V', 'G', ' ')
+
     fun FT_ENC_TAG(a: Char, b: Char, c: Char, d: Char): Int =
         a.code.shl(24).and(b.code.shl(16).and(c.code.shl(8).and(d.code)))
+    fun FT_IMAGE_TAG(a: Char, b: Char, c: Char, d: Char): Long =
+        a.code.shl(24).and(b.code.shl(16).and(c.code.shl(8).and(d.code))).toLong()
 
     fun FT_Init_FreeType(): FT_Library {
         val seg = Arena.ofAuto().allocate(ADDRESS)

@@ -1,6 +1,7 @@
 package com.primogemstudio.engine
 
 import com.primogemstudio.engine.bindings.freetype.FT_CharMap
+import com.primogemstudio.engine.bindings.freetype.FT_GlyphSlot
 import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_Done_FreeType
 import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_Init_FreeType
 import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_New_Face
@@ -21,6 +22,7 @@ suspend fun main() {
     val r = FT_New_Face(lib, "/usr/share/fonts/StarRailFont.ttf", 0)
     val cmps = r.charmaps.value().map { FT_CharMap(it.reinterpret(FT_CharMap.LAYOUT.byteSize())) }
     println(cmps)
+    println(FT_GlyphSlot.LAYOUT.byteSize())
     FT_Done_FreeType(lib)
 
     val re = BackendRendererVk(
