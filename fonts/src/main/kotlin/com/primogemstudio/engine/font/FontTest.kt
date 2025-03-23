@@ -1,5 +1,13 @@
 package com.primogemstudio.engine.font
 
+import com.primogemstudio.engine.bindings.freetype.FT_Vector
+import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_Done_FreeType
+import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_Init_FreeType
+import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_LOAD_DEFAULT
+import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_Load_Glyph
+import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_New_Face
+import com.primogemstudio.engine.bindings.freetype.FreeTypeFuncs.FT_Render_Glyph
+
 @OptIn(ExperimentalStdlibApi::class)
 fun main() {
     /*System.setProperty("org.lwjgl.harfbuzz.libname", "freetype")
@@ -63,4 +71,12 @@ fun main() {
         hb_font_paint_glyph(font, i, funcs, 0, 0, 0)
         println("GLYPH END #$i")
     }*/
+
+    val lib = FT_Init_FreeType().match({ it }, { throw IllegalStateException() })
+    val r = FT_New_Face(lib, "/usr/share/fonts/StarRailFont.ttf", 0).match({ it }, { throw IllegalStateException() })
+    println(FT_Load_Glyph(r, 11, FT_LOAD_DEFAULT))
+    println(FT_Render_Glyph(r.glyph, 0))
+    val ll = (0..<r.glyph.outline.points.length).map { FT_Vector(r.glyph.outline.points[it]) }.map { Pair(it.x, it.y) }
+    println(ll)
+    FT_Done_FreeType(lib)
 }

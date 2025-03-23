@@ -11,6 +11,8 @@ repositories {
 
 dependencies {
     implementation(rootProject.project(":openminecraft-base"))
+    implementation(rootProject.project(":openminecraft-binding"))
+    implementation(rootProject.project(":openminecraft-nativeloader"))
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["openminecraft.kotlinx_coroutines_core_version"]}")
 }
