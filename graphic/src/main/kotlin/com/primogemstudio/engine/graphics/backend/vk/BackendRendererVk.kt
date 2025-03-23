@@ -568,10 +568,11 @@ class BackendRendererVk(
     fun render() {
         val frame = imageSyncObjects[imageIndex]
 
+        frameSubmitWait(frame)
         frameImageAcquireWait(frame)
         frameImageAcquire(frame).apply {
             if (this != -1) {
-                frameSubmitWait(frame)
+                // frameSubmitWait(frame)
                 frameSubmit(frame, this)
                 framePresent(frame, this)
             }
