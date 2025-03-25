@@ -93,11 +93,11 @@ jobs:
             gc: serial
             march: native
 
-          - os: macos-13
+          - os: macos-latest
             osname: darwin
             gc: serial
             march: compatibility
-          - os: macos-13
+          - os: macos-latest
             osname: darwin
             gc: serial
             march: native
