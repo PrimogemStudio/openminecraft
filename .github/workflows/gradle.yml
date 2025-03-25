@@ -101,14 +101,6 @@ jobs:
             osname: darwin
             gc: serial
             march: native
-          - os: macos-14
-            osname: darwin
-            gc: serial
-            march: compatibility
-          - os: macos-14
-            osname: darwin
-            gc: serial
-            march: native
 
     name: Native Image for ${{ matrix.osname }} (${{ matrix.march }}, ${{ matrix.gc }})
     needs: build
