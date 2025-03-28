@@ -1,7 +1,7 @@
 package com.primogemstudio.engine.lexer
 
 enum class FunctionDescToken { Map, Type, FuncDesc, Args, TypeName }
-enum class DescType { ReturnFunc, PointerType }
+enum class DescType { ReturnFunc, ArrayArgPostFunc, PointerType }
 
 data class FunctionDescData(
     val funcName: String,
@@ -28,6 +28,14 @@ fun mapType(s: String): String = when (s) {
     "f*" -> "HeapFloat"
     "d*" -> "HeapDouble"
     "z*" -> "HeapBoolean"
+    "b[" -> "HeapByteArray"
+    "c[" -> "HeapCharArray"
+    "s[" -> "HeapShortArray"
+    "i[" -> "HeapIntArray"
+    "l[" -> "HeapLongArray"
+    "f[" -> "HeapFloatArray"
+    "d[" -> "HeapDoubleArray"
+    "z[" -> "HeapBooleanArray"
     "*" -> "MemorySegment"
     "v" -> ""
     else -> s
@@ -35,6 +43,10 @@ fun mapType(s: String): String = when (s) {
 
 fun isPointer(s: String): Boolean =
     s !in listOf("b", "c", "s", "i", "l", "f", "d", "z", "b*", "c*", "s*", "i*", "l*", "f*", "d*", "z*", "v")
+fun isArray(s: String): Boolean =
+    s in listOf("b[", "c[", "s[", "i[", "l[", "f[", "d[", "z[").map { mapType(it) } || s == "String"
+
+fun stringToC(name: String, map: Map<String, String>): String = if (map[name] == "String") "$name.toCString()" else name
 
 @Suppress("UNCHECKED_CAST")
 class FunctionDescLexer(text: String) : ILexer<FunctionDescToken>() {
@@ -61,6 +73,7 @@ class FunctionDescLexer(text: String) : ILexer<FunctionDescToken>() {
                 when (textProcessed.substring(baseIndex, index)) {
                     "tp" -> DescType.PointerType
                     "fr" -> DescType.ReturnFunc
+                    "fap" -> DescType.ArrayArgPostFunc
                     else -> TODO("Invalid desc type!")
                 } as R
             }
@@ -116,6 +129,24 @@ class FunctionDescLexer(text: String) : ILexer<FunctionDescToken>() {
                                     desc.first, mapType(desc.second), isPointer(desc.second),
                                     args,
                                     args.map { it.key }
+                                        .map { stringToC(it, args) }
+                                )
+                            )
+                            index++
+                        }
+
+                        DescType.ArrayArgPostFunc -> {
+                            val desc = parse<Pair<String, String>>(FunctionDescToken.FuncDesc)
+                            val args = if (textProcessed[index] == '\n') mapOf() else parse<Map<String, String>>(
+                                FunctionDescToken.Args
+                            ).map { Pair(it.key, mapType(it.value)) }.toMap()
+                            defs.add(
+                                FunctionDescData(
+                                    desc.first, mapType(desc.second), isPointer(desc.second),
+                                    args,
+                                    args.map { it.key }
+                                        .flatMap { if (isArray(args[it]!!)) listOf(it, "$it.length") else listOf(it) }
+                                        .map { stringToC(it, args) }
                                 )
                             )
                             index++

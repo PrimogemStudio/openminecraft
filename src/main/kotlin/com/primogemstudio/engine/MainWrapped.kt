@@ -17,7 +17,7 @@ import java.nio.ByteOrder
 
 suspend fun main() {
     val t =
-        FunctionDescLexer("fr,hb_buffer_set_user_data.z:buffer.hb_buffer_t,key.*,data.*,destroy.hb_destroy_func_t,replace.z\n").parse<List<Any>>(
+        FunctionDescLexer("fap,hb_buffer_add_utf8.v:buffer.hb_buffer_t,text.String,itemOffset.i,itemLength.i\n").parse<List<Any>>(
             FunctionDescToken.Map
         )
     FunctionDescSerial(System.out).write(t)

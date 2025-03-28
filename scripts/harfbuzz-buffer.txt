@@ -6,4 +6,12 @@ fr,hb_buffer_get_empty.hb_buffer_t
 fr,hb_buffer_reference.hb_buffer_t:buffer.hb_buffer_t
 fr,hb_buffer_destroy.v:buffer.hb_buffer_t
 fr,hb_buffer_set_user_data.z:buffer.hb_buffer_t,key.*,data.*,destroy.hb_destroy_func_t,replace.z
-
+fr,hb_buffer_get_user_data.*:buffer.hb_buffer_t,key.*
+fr,hb_buffer_reset.v:buffer.hb_buffer_t
+fr,hb_buffer_clear_contents.v:buffer.hb_buffer_t
+fr,hb_buffer_pre_allocate.z:buffer.hb_buffer_t,size.i
+fr,hb_buffer_add.v:buffer.hb_buffer_t,codepoint.i,cluster.i
+fap,hb_buffer_add_codepoints.v:buffer.hb_buffer_t,text.i[,itemOffset.i,itemLength.i
+fap,hb_buffer_add_utf32.v:buffer.hb_buffer_t,text.i[,itemOffset.i,itemLength.i
+fap,hb_buffer_add_utf16.v:buffer.hb_buffer_t,text.s[,itemOffset.i,itemLength.i
+fap,hb_buffer_add_utf8.v:buffer.hb_buffer_t,text.String,itemOffset.i,itemLength.i
