@@ -93,7 +93,7 @@ object Platform {
         libst.optional.forEach {
             if (it == "glfw") {
                 try {
-                    if (NativeMethodCache.dlsymLoader.find("glfwInit").isPresent) return@forEach
+                    if (NativeMethodCache.impl.dlsymLoader.find("glfwInit").isPresent) return@forEach
                 } catch (_: Throwable) {
 
                 }

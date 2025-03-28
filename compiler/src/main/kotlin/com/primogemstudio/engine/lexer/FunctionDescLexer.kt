@@ -1,13 +1,40 @@
 package com.primogemstudio.engine.lexer
 
-enum class FunctionDescToken { Map, Type, FuncDesc, Args }
+enum class FunctionDescToken { Map, Type, FuncDesc, Args, TypeName }
 enum class DescType { ReturnFunc, PointerType }
 
 data class FunctionDescData(
-    private val funcName: String,
-    private val retType: String,
-    private val args: Map<String, String>
+    val funcName: String,
+    val retType: String,
+    val retIsPointer: Boolean,
+    val args: Map<String, String>,
+    val argInvoke: List<String>
 )
+
+fun mapType(s: String): String = when (s) {
+    "b" -> "Byte"
+    "c" -> "Char"
+    "s" -> "Short"
+    "i" -> "Int"
+    "l" -> "Long"
+    "f" -> "Float"
+    "d" -> "Double"
+    "z" -> "Boolean"
+    "b*" -> "HeapByte"
+    "c*" -> "HeapChar"
+    "s*" -> "HeapShort"
+    "i*" -> "HeapInt"
+    "l*" -> "HeapLong"
+    "f*" -> "HeapFloat"
+    "d*" -> "HeapDouble"
+    "z*" -> "HeapBoolean"
+    "*" -> "MemorySegment"
+    "v" -> ""
+    else -> s
+}
+
+fun isPointer(s: String): Boolean =
+    s !in listOf("b", "c", "s", "i", "l", "f", "d", "z", "b*", "c*", "s*", "i*", "l*", "f*", "d*", "z*", "v")
 
 @Suppress("UNCHECKED_CAST")
 class FunctionDescLexer(text: String) : ILexer<FunctionDescToken>() {
@@ -16,6 +43,15 @@ class FunctionDescLexer(text: String) : ILexer<FunctionDescToken>() {
 
     override fun <R> parse(type: FunctionDescToken): R {
         return when (type) {
+            FunctionDescToken.TypeName -> {
+                index++
+                var baseIndex = index
+                while (index < textProcessed.length && textProcessed[index] != '\n') {
+                    index++
+                }
+                return (textProcessed.substring(baseIndex, index) as R)
+            }
+
             FunctionDescToken.Type -> {
                 val baseIndex = index
                 while (textProcessed[index] != ',') {
@@ -72,13 +108,23 @@ class FunctionDescLexer(text: String) : ILexer<FunctionDescToken>() {
                     when (parse<DescType>(FunctionDescToken.Type)) {
                         DescType.ReturnFunc -> {
                             val desc = parse<Pair<String, String>>(FunctionDescToken.FuncDesc)
+                            val args = if (textProcessed[index] == '\n') mapOf() else parse<Map<String, String>>(
+                                FunctionDescToken.Args
+                            ).map { Pair(it.key, mapType(it.value)) }.toMap()
                             defs.add(
                                 FunctionDescData(
-                                    desc.first, desc.second, parse<Map<String, String>>(FunctionDescToken.Args)
+                                    desc.first, mapType(desc.second), isPointer(desc.second),
+                                    args,
+                                    args.map { it.key }
                                 )
                             )
+                            index++
                         }
 
+                        DescType.PointerType -> {
+                            defs.add(parse<String>(FunctionDescToken.TypeName))
+                            index++
+                        }
                         else -> TODO()
                     }
                 }

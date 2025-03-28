@@ -9,13 +9,18 @@ import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
 import com.primogemstudio.engine.lexer.FunctionDescLexer
 import com.primogemstudio.engine.lexer.FunctionDescToken
 import com.primogemstudio.engine.resource.Identifier
+import com.primogemstudio.engine.serial.FunctionDescSerial
 import com.primogemstudio.engine.types.Version
 import kotlinx.coroutines.runBlocking
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 suspend fun main() {
-    println(FunctionDescLexer("fr,hb_buffer_allocation_successful.b:buffer.hb_buffer_t\n").parse<Any>(FunctionDescToken.Map))
+    val t =
+        FunctionDescLexer("fr,hb_buffer_set_user_data.z:buffer.hb_buffer_t,key.*,data.*,destroy.hb_destroy_func_t,replace.z\n").parse<List<Any>>(
+            FunctionDescToken.Map
+        )
+    FunctionDescSerial(System.out).write(t)
     System.exit(0)
 
     val re = BackendRendererVk(
