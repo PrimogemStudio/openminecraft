@@ -18,15 +18,15 @@ class JsonLexer(text: String) : ILexer<JsonTokens>() {
     }
 
     private var index = 0
-    fun parseTree(): Map<String, Any> = parse(JsonTokens.JsonObject) as Map<String, Any>
-    override fun parse(type: JsonTokens): Any {
+    fun parseTree(): Map<String, Any> = parse<Map<String, Any>>(JsonTokens.JsonObject)
+    override fun <R> parse(type: JsonTokens): R {
         when (type) {
             JsonTokens.JsonString -> {
                 if (textProcessed[index] != '"') TODO("Non string!")
                 index++
                 val st = index
                 while (textProcessed[index] != '"') index++
-                return textProcessed.substring(st, index).apply { index++ }
+                return textProcessed.substring(st, index).apply { index++ } as R
             }
 
             JsonTokens.JsonNumber -> {
@@ -43,8 +43,8 @@ class JsonLexer(text: String) : ILexer<JsonTokens>() {
                 }
                 val tx = textProcessed.substring(st, index)
                 return if (numpoint) {
-                    tx.toDouble()
-                } else tx.toLong()
+                    tx.toDouble() as R
+                } else tx.toLong() as R
             }
 
             JsonTokens.JsonArray -> {
@@ -81,7 +81,7 @@ class JsonLexer(text: String) : ILexer<JsonTokens>() {
                 }
                 index++
 
-                return datas
+                return datas as R
             }
 
             JsonTokens.JsonObject -> {
@@ -96,7 +96,7 @@ class JsonLexer(text: String) : ILexer<JsonTokens>() {
                     }
 
                     if (textProcessed[index] != '"') TODO("Corrupt object format!")
-                    val key = parse(JsonTokens.JsonString).toString()
+                    val key = parse<String>(JsonTokens.JsonString).toString()
                     while (textProcessed[index] == ' ') index++
                     if (textProcessed[index] != ':') TODO("Corrupt object format!")
                     index++
@@ -131,7 +131,7 @@ class JsonLexer(text: String) : ILexer<JsonTokens>() {
                 }
                 index++
 
-                return datas
+                return datas as R
             }
             else -> TODO()
         }

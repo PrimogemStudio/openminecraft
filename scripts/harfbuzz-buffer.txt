@@ -1,0 +1,5 @@
+tp,hb_buffer_t
+fr,hb_buffer_create.hb_buffer_t
+fr,hb_buffer_allocation_successful.b:buffer.hb_buffer_t
+fr,hb_buffer_create.hb_buffer_t:buffer.hb_buffer_t
+fr,hb_buffer_get_empty.hb_buffer_t

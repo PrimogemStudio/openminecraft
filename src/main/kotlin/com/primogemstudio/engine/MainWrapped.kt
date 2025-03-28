@@ -6,6 +6,8 @@ import com.primogemstudio.engine.graphics.ShaderType
 import com.primogemstudio.engine.graphics.backend.vk.BackendRendererVk
 import com.primogemstudio.engine.graphics.data.ApplicationInfo
 import com.primogemstudio.engine.graphics.data.ApplicationWindowInfo
+import com.primogemstudio.engine.lexer.FunctionDescLexer
+import com.primogemstudio.engine.lexer.FunctionDescToken
 import com.primogemstudio.engine.resource.Identifier
 import com.primogemstudio.engine.types.Version
 import kotlinx.coroutines.runBlocking
@@ -13,6 +15,9 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 suspend fun main() {
+    println(FunctionDescLexer("fr,hb_buffer_allocation_successful.b:buffer.hb_buffer_t\n").parse<Any>(FunctionDescToken.Map))
+    System.exit(0)
+
     val re = BackendRendererVk(
         ApplicationInfo(
             "openminecraft",
