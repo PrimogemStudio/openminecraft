@@ -29,6 +29,9 @@ class FunctionDescSerial(out: OutputStream) : PrintStream(out) {
                         }): ${it.retType} = callFunc(\"${it.funcName}\", ${it.retType}::class$a)"
                     )
                 }
+            } else if (it is Pair<*, *>) {
+                if (it.second.toString().contains("(")) this.println("val ${it.first} = ${it.second}")
+                else this.println("const val ${it.first} = ${it.second}")
             } else {
                 this.println("class $it(data: MemorySegment): IHeapObject(data)")
             }

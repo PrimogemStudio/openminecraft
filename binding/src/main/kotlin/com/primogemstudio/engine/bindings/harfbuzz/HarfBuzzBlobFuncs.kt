@@ -96,5 +96,4 @@ object HarfBuzzBlobFuncs {
     }
 
     fun hb_blob_get_length(blob: hb_blob_t): Int = callFunc("hb_blob_get_length", Int::class, blob)
-
 }

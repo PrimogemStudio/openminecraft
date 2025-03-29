@@ -1,7 +1,7 @@
 package com.primogemstudio.engine.lexer
 
 enum class FunctionDescToken { Map, Type, FuncDesc, Args, TypeName }
-enum class DescType { ReturnFunc, ArrayArgPostFunc, PointerType }
+enum class DescType { ReturnFunc, ArrayArgPostFunc, PointerType, ConstantMacro }
 
 data class FunctionDescData(
     val funcName: String,
@@ -74,6 +74,7 @@ class FunctionDescLexer(text: String) : ILexer<FunctionDescToken>() {
                     "tp" -> DescType.PointerType
                     "fr" -> DescType.ReturnFunc
                     "fap" -> DescType.ArrayArgPostFunc
+                    "cm" -> DescType.ConstantMacro
                     else -> TODO("Invalid desc type!")
                 } as R
             }
@@ -156,6 +157,12 @@ class FunctionDescLexer(text: String) : ILexer<FunctionDescToken>() {
                             defs.add(parse<String>(FunctionDescToken.TypeName))
                             index++
                         }
+
+                        DescType.ConstantMacro -> {
+                            defs.add(parse<Pair<String, String>>(FunctionDescToken.FuncDesc))
+                            index++
+                        }
+
                         else -> TODO()
                     }
                 }
