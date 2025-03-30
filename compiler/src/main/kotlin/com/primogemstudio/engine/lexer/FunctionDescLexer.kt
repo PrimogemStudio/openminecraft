@@ -1,7 +1,7 @@
 package com.primogemstudio.engine.lexer
 
 enum class FunctionDescToken { Map, Type, FuncDesc, Args, TypeName }
-enum class DescType { ReturnFunc, ArrayArgPostFunc, PointerType, ConstantMacro }
+enum class DescType { ReturnFunc, ArrayArgPostFunc, PointerType, ConstantMacro, StructType, FileSep }
 
 data class FunctionDescData(
     val funcName: String,
@@ -10,6 +10,15 @@ data class FunctionDescData(
     val args: Map<String, String>,
     val argInvoke: List<String>
 )
+
+data class StructTypeDescData(
+    val name: String,
+    val comps: Map<String, String>,
+    val accessTypes: Map<String, String>,
+)
+
+data class PointerTypeDescData(val name: String)
+data class ConstantDescData(val name: String, val value: String)
 
 fun mapType(s: String): String = when (s) {
     "b" -> "Byte"
@@ -75,6 +84,8 @@ class FunctionDescLexer(text: String) : ILexer<FunctionDescToken>() {
                     "fr" -> DescType.ReturnFunc
                     "fap" -> DescType.ArrayArgPostFunc
                     "cm" -> DescType.ConstantMacro
+                    "tc" -> DescType.StructType
+                    "fi" -> DescType.FileSep
                     else -> TODO("Invalid desc type!")
                 } as R
             }
@@ -154,12 +165,45 @@ class FunctionDescLexer(text: String) : ILexer<FunctionDescToken>() {
                         }
 
                         DescType.PointerType -> {
+                            defs.add(PointerTypeDescData(parse<String>(FunctionDescToken.TypeName)))
+                            index++
+                        }
+
+                        DescType.FileSep -> {
                             defs.add(parse<String>(FunctionDescToken.TypeName))
                             index++
                         }
 
                         DescType.ConstantMacro -> {
-                            defs.add(parse<Pair<String, String>>(FunctionDescToken.FuncDesc))
+                            parse<Pair<String, String>>(FunctionDescToken.FuncDesc).apply {
+                                defs.add(
+                                    ConstantDescData(
+                                        first,
+                                        second
+                                    )
+                                )
+                            }
+                            index++
+                        }
+
+                        DescType.StructType -> {
+                            val desc = parse<Pair<String, String>>(FunctionDescToken.FuncDesc)
+                            val args = if (textProcessed[index] == '\n') mapOf() else parse<Map<String, String>>(
+                                FunctionDescToken.Args
+                            ).map { Pair(it.key, mapType(it.value)) }.toMap()
+                            defs.add(StructTypeDescData(desc.first, args.mapKeys { mapType(it.key) }, args.mapValues {
+                                when (it.value) {
+                                    "Byte" -> "JAVA_BYTE"
+                                    "Char" -> "JAVA_CHAR"
+                                    "Short" -> "JAVA_SHORT"
+                                    "Int" -> "JAVA_INT"
+                                    "Long" -> "JAVA_LONG"
+                                    "Float" -> "JAVA_FLOAT"
+                                    "Double" -> "JAVA_DOUBLE"
+                                    "Boolean" -> "JAVA_BOOLEAN"
+                                    else -> "ADDRESS"
+                                }
+                            }))
                             index++
                         }
 

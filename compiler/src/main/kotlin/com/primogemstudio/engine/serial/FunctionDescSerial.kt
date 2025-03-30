@@ -1,6 +1,9 @@
 package com.primogemstudio.engine.serial
 
+import com.primogemstudio.engine.lexer.ConstantDescData
 import com.primogemstudio.engine.lexer.FunctionDescData
+import com.primogemstudio.engine.lexer.PointerTypeDescData
+import com.primogemstudio.engine.lexer.StructTypeDescData
 import java.io.OutputStream
 import java.io.PrintStream
 
@@ -29,11 +32,37 @@ class FunctionDescSerial(out: OutputStream) : PrintStream(out) {
                         }): ${it.retType} = callFunc(\"${it.funcName}\", ${it.retType}::class$a)"
                     )
                 }
-            } else if (it is Pair<*, *>) {
-                if (it.second.toString().contains("(")) this.println("val ${it.first} = ${it.second}")
-                else this.println("const val ${it.first} = ${it.second}")
+            } else if (it is ConstantDescData) {
+                if (it.value.toString().contains("(")) this.println("val ${it.name} = ${it.value}")
+                else this.println("const val ${it.name} = ${it.value}")
+            } else if (it is PointerTypeDescData) {
+                this.println("class ${it.name}(data: MemorySegment): IHeapObject(data)")
+            } else if (it is StructTypeDescData) {
+                this.println("class ${it.name}(seg: MemorySegment): IHeapObject(seg) {")
+                this.println("    companion object {")
+                this.println("        val LAYOUT = MemoryLayout.structLayout(")
+                this.println(it.accessTypes.map { "            ${it.value}_UNALIGNED" }.joinToString(",\n"))
+                this.println("        ).align()")
+                this.println("        private val OFFSETS = LAYOUT.cacheOffsets()")
+                this.println("    }")
+                this.println("")
+                this.println("    constructor() : this(Arena.ofAuto().allocate(LAYOUT))")
+                this.println("")
+                var id = 0
+                it.comps.keys.forEach { k ->
+                    this.println("    var $k: ${it.comps[k]}")
+                    if (it.comps[k] != "MemorySegment" && it.accessTypes[k] == "ADDRESS") {
+                        this.println("        get() = ${it.comps[k]}(seg.get(${it.accessTypes[k]}, OFFSETS[$id]))")
+                        this.println("        set(value) = seg.set(${it.accessTypes[k]}, OFFSETS[$id], value.ref())")
+                    } else {
+                        this.println("        get() = seg.get(${it.accessTypes[k]}, OFFSETS[$id])")
+                        this.println("        set(value) = seg.set(${it.accessTypes[k]}, OFFSETS[$id], value)")
+                    }
+                    id++
+                }
+                this.println("}")
             } else {
-                this.println("class $it(data: MemorySegment): IHeapObject(data)")
+                this.println(it)
             }
         }
     }
