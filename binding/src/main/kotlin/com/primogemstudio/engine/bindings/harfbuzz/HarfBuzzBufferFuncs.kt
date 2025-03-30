@@ -159,4 +159,7 @@ object HarfBuzzBufferFuncs {
         )
     }
 
+    fun hb_buffer_has_positions(buffer: hb_buffer_t): Boolean =
+        callFunc("hb_buffer_has_positions", Boolean::class, buffer)
+
 }
